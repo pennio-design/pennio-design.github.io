@@ -53,7 +53,9 @@ button {
   color: #fff;
   border-radius: 4px;
 }
-
+.instagram-media {
+  align-items: center;
+}
 /* Modal Styles */
 .modal {
   display: none; /* Hidden by default */
