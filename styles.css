@@ -21,25 +21,21 @@ body {
   padding-top: 80px; 
 }
 
-/* Header (Fixed with Gradient) */
-/* General Header Styling */
+/* Default styles for the header */
 header {
+    background: var(--pennio-orange);
+    padding: 15px 0;
     position: fixed;
     width: 100%;
     top: 0;
-    left: 0;
-    background: var(--pennio-orange);
-    padding: 15px 0;
     z-index: 1000;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Container for flexible layout */
 .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
-    margin: auto;
     padding: 0 20px;
 }
 
@@ -78,6 +74,10 @@ header {
     text-decoration: none;
 }
 
+
+
+
+
 /* Mobile Menu Button */
 #menu-toggle {
     display: none;
@@ -87,6 +87,15 @@ header {
     color: var(--pennio-white);
     cursor: pointer;
 }
+
+
+
+
+
+
+
+
+
 
 /* Responsive (Mobile) */
 @media (max-width: 768px) {
@@ -258,36 +267,6 @@ footer {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
-}
-
-/* Media Queries for Mobile */
-@media (max-width: 768px) {
-  .hamburger {
-    display: block;
-  }
-  
-  nav {
-    position: absolute;
-    top: 60px; /* Adjust based on header height */
-    right: 20px;
-    background: var(--pennio-orange);
-    border-radius: 4px;
-    padding: 10px;
-    display: none; /* Hidden by default */
-    flex-direction: column;
-  }
-
-  nav.active {
-    display: flex; /* Shown when toggled */
-  }
-
-  nav ul {
-    flex-direction: column;
-  }
-
-  nav ul li {
-    margin: 10px 0;
-  }
 }
 
 
