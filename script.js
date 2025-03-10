@@ -63,3 +63,14 @@ document.addEventListener("DOMContentLoaded", function() {
     observer.observe(section);
   });
 });
+
+// Toggle Menu
+document.getElementById("menu-toggle").addEventListener("click", function() {
+    let nav = document.querySelector(".nav-links");
+    let icon = this.querySelector("i");
+    nav.classList.toggle("active");
+    icon.classList.toggle("fa-bars");
+    icon.classList.toggle("fa-xmark");
+});
+
+
