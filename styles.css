@@ -1,15 +1,28 @@
+/* 
+  PENNIO Color Palette (Approx.)
+  Feel free to adjust these hex values to precisely match your brand’s colors.
+*/
+:root {
+  --pennio-orange: #FF6A00; /* Vibrant Orange */
+  --pennio-yellow: #FFD600; /* Bright Yellow */
+  --pennio-black: #000000;  /* Black */
+  --pennio-white: #FFFFFF;  /* White */
+}
+
 /* Global Styles */
 body {
   font-family: Inter, sans-serif;
   margin: 0;
   padding: 0;
   text-align: center;
+  color: var(--pennio-black);
+  background-color: var(--pennio-white);
 }
 
 /* Header and Navigation */
 header {
-  background: black;
-  color: white;
+  background: var(--pennio-orange);
+  color: var(--pennio-white);
   padding: 15px;
 }
 
@@ -24,8 +37,9 @@ nav ul li {
 }
 
 nav ul li a {
-  color: white;
+  color: var(--pennio-white);
   text-decoration: none;
+  font-weight: bold;
 }
 
 /* Section Styles */
@@ -33,29 +47,23 @@ section {
   padding: 50px 20px;
 }
 
-/* Footer */
-footer {
-  background: black;
-  color: white;
-  padding: 10px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
-
-/* Button Styling */
+/* Buttons */
 button {
   padding: 10px 20px;
   font-size: 1rem;
   cursor: pointer;
   border: none;
-  background-color: #333;
-  color: #fff;
+  background-color: var(--pennio-yellow);
+  color: var(--pennio-black);
   border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
-.instagram-media {
-  align-items: center;
+
+button:hover {
+  background-color: var(--pennio-orange);
+  color: var(--pennio-white);
 }
+
 /* Modal Styles */
 .modal {
   display: none; /* Hidden by default */
@@ -70,7 +78,7 @@ button {
 }
 
 .modal-content {
-  background-color: #fefefe;
+  background-color: var(--pennio-white);
   margin: 5% auto;
   padding: 20px;
   border: 1px solid #888;
@@ -87,6 +95,16 @@ button {
   font-size: 28px;
   font-weight: bold;
   cursor: pointer;
+}
+
+/* Footer */
+footer {
+  background: var(--pennio-black);
+  color: var(--pennio-white);
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 
 /* Smooth scrolling */
