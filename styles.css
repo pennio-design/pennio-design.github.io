@@ -19,28 +19,103 @@ body {
   background-color: var(--pennio-white);
 }
 
-/* Header and Navigation */
+/* Floating Header */
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   background: var(--pennio-orange);
   color: var(--pennio-white);
-  padding: 15px;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Navigation styles */
+nav {
+  display: flex;
 }
 
 nav ul {
+  display: flex;
   list-style: none;
+  margin: 0;
   padding: 0;
 }
 
 nav ul li {
-  display: inline;
   margin: 0 15px;
 }
 
-nav ul li a {
-  color: var(--pennio-white);
-  text-decoration: none;
-  font-weight: bold;
+/* Hamburger icon (hidden on larger screens) */
+.hamburger {
+  display: none;
+  font-size: 24px;
+  cursor: pointer;
 }
+
+/* Responsive behavior for screens under 768px */
+@media (max-width: 768px) {
+  /* Show hamburger and hide navigation links by default */
+  .hamburger {
+    display: block;
+  }
+  
+  nav {
+    position: absolute;
+    top: 60px; /* Adjust based on header height */
+    right: 20px;
+    background: var(--pennio-orange);
+    border-radius: 4px;
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+  }
+
+
+/* Active nav link style */
+nav ul li a.active {
+  border-bottom: 2px solid var(--pennio-yellow);
+  transition: border-bottom 0.3s ease;
+}
+
+/* Section fade-in animation */
+.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
+ 
+  nav.active {
+    display: flex;
+  }
+  
+  nav ul {
+    flex-direction: column;
+  }
+  
+  nav ul li {
+    margin: 10px 0;
+  }
+}
+
+/* Adjust body padding to account for fixed header */
+body {
+  padding-top: 80px; /* Adjust if header height changes */
+}
+
 
 /* Section Styles */
 section {
@@ -116,5 +191,22 @@ html {
   justify-content: center;
   align-items: center;
   margin: 0 auto;
+}
+
+/* Style for social links */
+.social-links {
+  margin-top: 20px;
+}
+
+.social-links a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: var(--pennio-orange);
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--pennio-yellow);
 }
 
