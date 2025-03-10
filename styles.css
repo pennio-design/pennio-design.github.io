@@ -177,7 +177,7 @@ footer {
   background: var(--pennio-black);
   color: var(--pennio-white);
   padding: 10px;
-  position: fixed;
+  position: relative;
   bottom: 0;
   width: 100%;
 }
