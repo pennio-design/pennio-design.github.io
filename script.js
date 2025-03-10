@@ -18,5 +18,48 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  // Optional: additional interactive features (e.g., adding nav link active state, animations, etc.)
+  // Hamburger menu toggle for responsive header
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("nav-menu");
+
+  hamburger.addEventListener("click", function() {
+    navMenu.classList.toggle("active");
+  });
+
+  // Active navigation link based on scroll position
+  const sections = document.querySelectorAll("section");
+  const navLinks = document.querySelectorAll("nav ul li a");
+
+  window.addEventListener("scroll", function() {
+    let currentSectionId = "";
+    
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100; // Offset adjusted for header height
+      if (window.pageYOffset >= sectionTop) {
+        currentSectionId = section.getAttribute("id");
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove("active");
+      if (link.getAttribute("href").includes(currentSectionId)) {
+        link.classList.add("active");
+      }
+    });
+  });
+
+  // Optional: Smooth fade-in animation for sections when they enter the viewport
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll("section").forEach(section => {
+    section.classList.add("hidden");
+    observer.observe(section);
+  });
 });
