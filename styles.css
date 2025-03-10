@@ -1,31 +1,33 @@
- /* 
+/* 
   PENNIO Color Palette (Approx.)
-  Feel free to adjust these hex values to precisely match your brand’s colors.
+  Adjust these to your exact brand values if needed.
 */
 :root {
-  --pennio-orange: #FF6A00; /* Vibrant Orange */
-  --pennio-yellow: #FFD600; /* Bright Yellow */
-  --pennio-black: #000000;  /* Black */
-  --pennio-white: #FFFFFF;  /* White */
+  --pennio-orange: #FF6A00;
+  --pennio-yellow: #FFD600;
+  --pennio-black: #000000;
+  --pennio-white: #FFFFFF;
 }
 
 /* Global Styles */
 body {
-  font-family: Inter, sans-serif;
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   text-align: center;
   color: var(--pennio-black);
   background-color: var(--pennio-white);
+  /* Reserve space for fixed header */
+  padding-top: 80px; 
 }
 
-/* Floating Header */
+/* Header (Fixed with Gradient) */
 header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: var(--pennio-orange);
+  background: linear-gradient(90deg, var(--pennio-yellow), var(--pennio-orange));
   color: var(--pennio-white);
   padding: 15px 20px;
   display: flex;
@@ -35,20 +37,36 @@ header {
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Navigation styles */
+/* Header Title */
+header h1 {
+  margin: 0;
+}
+
+/* Navigation */
 nav {
   display: flex;
 }
 
 nav ul {
-  display: flex;
   list-style: none;
+  display: flex;
   margin: 0;
   padding: 0;
 }
 
 nav ul li {
   margin: 0 15px;
+}
+
+nav ul li a {
+  color: var(--pennio-white);
+  text-decoration: none;
+  font-weight: bold;
+  transition: opacity 0.3s ease;
+}
+
+nav ul li a:hover {
+  opacity: 0.8;
 }
 
 /* Hamburger icon (hidden on larger screens) */
@@ -58,92 +76,92 @@ nav ul li {
   cursor: pointer;
 }
 
-/* Responsive behavior for screens under 768px */
-@media (max-width: 768px) {
-  /* Show hamburger and hide navigation links by default */
-  .hamburger {
-    display: block;
-  }
-  
-  nav {
-    position: absolute;
-    top: 60px; /* Adjust based on header height */
-    right: 20px;
-    background: var(--pennio-orange);
-    border-radius: 4px;
-    padding: 10px;
-    display: none;
-    flex-direction: column;
-  }
-
-
-/* Active nav link style */
-nav ul li a.active {
-  border-bottom: 2px solid var(--pennio-yellow);
-  transition: border-bottom 0.3s ease;
+/* Hero Section */
+.hero {
+  min-height: 80vh; /* Make it large for a hero look */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--pennio-white);
+  padding: 50px 20px;
 }
 
-/* Section fade-in animation */
-.hidden {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+.hero h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
-.visible {
-  opacity: 1;
-  transform: translateY(0);
+.hero p {
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
 }
 
-
-
- 
-  nav.active {
-    display: flex;
-  }
-  
-  nav ul {
-    flex-direction: column;
-  }
-  
-  nav ul li {
-    margin: 10px 0;
-  }
+/* CTA Button */
+.cta {
+  padding: 15px 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  background-color: var(--pennio-orange);
+  color: var(--pennio-white);
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.cta:hover {
+  background-color: var(--pennio-yellow);
+  color: var(--pennio-black);
 }
 
-/* Adjust body padding to account for fixed header */
-body {
-  padding-top: 80px; /* Adjust if header height changes */
+/* Floating Contact Icons */
+.floating-icons {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--pennio-black);
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 10px;
+  z-index: 9999;
 }
 
+.floating-icons a {
+  color: var(--pennio-white);
+  text-decoration: none;
+  margin: 5px 0;
+  display: inline-block;
+  padding: 8px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.floating-icons a:hover {
+  background: var(--pennio-orange);
+}
 
 /* Section Styles */
 section {
   padding: 50px 20px;
 }
 
-/* Buttons */
+/* Buttons (general) */
 button {
   padding: 10px 20px;
   font-size: 1rem;
   cursor: pointer;
   border: none;
-  background-color: var(--pennio-yellow);
-  color: var(--pennio-black);
   border-radius: 4px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-button:hover {
-  background-color: var(--pennio-orange);
-  color: var(--pennio-white);
 }
 
 /* Modal Styles */
 .modal {
   display: none; /* Hidden by default */
   position: fixed;
-  z-index: 100;
+  z-index: 2000;
   left: 0;
   top: 0;
   width: 100%;
@@ -177,7 +195,7 @@ footer {
   background: var(--pennio-black);
   color: var(--pennio-white);
   padding: 10px;
-  position: relative;
+  position: fixed;
   bottom: 0;
   width: 100%;
 }
@@ -186,27 +204,33 @@ footer {
 html {
   scroll-behavior: smooth;
 }
-#insta-feed {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-}
 
-/* Style for social links */
-.social-links {
-  margin-top: 20px;
-}
+/* Media Queries for Mobile */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+  
+  nav {
+    position: absolute;
+    top: 60px; /* Adjust based on header height */
+    right: 20px;
+    background: linear-gradient(90deg, var(--pennio-yellow), var(--pennio-orange));
+    border-radius: 4px;
+    padding: 10px;
+    display: none; /* Hidden by default */
+    flex-direction: column;
+  }
 
-.social-links a {
-  margin: 0 10px;
-  text-decoration: none;
-  color: var(--pennio-orange);
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
+  nav.active {
+    display: flex; /* Shown when toggled */
+  }
 
-.social-links a:hover {
-  color: var(--pennio-yellow);
-}
+  nav ul {
+    flex-direction: column;
+  }
 
+  nav ul li {
+    margin: 10px 0;
+  }
+}
