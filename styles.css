@@ -22,53 +22,108 @@ body {
 }
 
 /* Header (Fixed with Gradient) */
+/* General Header Styling */
 header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: var(--pennio-orange);
-  color: var(--pennio-white);
-  padding: 15px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: orange;
+    padding: 15px 0;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Header Title */
-header h1 {
-  margin: 0;
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
 }
 
-/* Navigation */
-nav {
-  display: flex;
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
 }
 
-nav ul {
-  list-style: none;
-  display: flex;
-  margin: 0;
-  padding: 0;
+/* Navbar Links */
+.nav-links ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
 }
 
-nav ul li {
-  margin: 0 15px;
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
-nav ul li a {
-  color: var(--pennio-white);
-  text-decoration: none;
-  font-weight: bold;
-  transition: opacity 0.3s ease;
+.nav-links a:hover {
+    opacity: 0.8;
 }
 
-nav ul li a:hover {
-  opacity: 0.8;
+/* CTA Button */
+.cta-btn {
+    background: yellow;
+    color: black;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
 }
 
+/* Mobile Menu Button */
+#menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+}
+
+/* Responsive (Mobile) */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: orange;
+        width: 100%;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    .nav-links ul {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .cta-btn {
+        display: none;
+    }
+
+    .cta-btn.active {
+        display: block;
+        margin-top: 10px;
+    }
+
+    #menu-toggle {
+        display: block;
+    }
+}
 /* Hamburger icon (hidden on larger screens) */
 .hamburger {
   display: none;
