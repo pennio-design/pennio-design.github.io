@@ -12,7 +12,6 @@
   <!-- Header with Gradient & Hamburger -->
   <header>
     <h1>PENNIO</h1>
-    <div class="hamburger" id="hamburger">&#9776;</div>
     <nav id="nav-menu">
       <ul>
         <li><a href="#home">Home</a></li>
@@ -21,6 +20,9 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
+    <button id="menu-toggle">
+    <i class="fa-solid fa-bars"></i>
+    </button>
   </header>
 
   <!-- Floating Contact Icons -->
@@ -67,7 +69,12 @@
   <!-- CONTACT Section -->
   <section id="contact">
     <h2>Contact</h2>
-    <p>Email me: <a href="mailto:pauloyatowo@gmail.com">pauloyatowo@gmail.com</a></p>
+    <form action="https://formsubmit.co/pauloyatowo@gmail.com" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" placeholder="Your Message" required></textarea>
+        <button type="submit">Send Message</button>
+    </form>
   </section>
 
   <!-- Footer -->
