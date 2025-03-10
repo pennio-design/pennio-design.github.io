@@ -27,7 +27,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(90deg, var(--pennio-yellow), var(--pennio-orange));
+  background: var(--pennio-orange);
   color: var(--pennio-white);
   padding: 15px 20px;
   display: flex;
@@ -195,7 +195,7 @@ footer {
   background: var(--pennio-black);
   color: var(--pennio-white);
   padding: 10px;
-  position: fixed;
+  position: relative;
   bottom: 0;
   width: 100%;
 }
