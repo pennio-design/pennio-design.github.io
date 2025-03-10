@@ -28,7 +28,7 @@ header {
     width: 100%;
     top: 0;
     left: 0;
-    background: orange;
+    background: var(--pennio-orange);
     padding: 15px 0;
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -46,7 +46,7 @@ header {
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: white;
+    color: var(--pennio-white);
     text-decoration: none;
 }
 
@@ -70,7 +70,7 @@ header {
 
 /* CTA Button */
 .cta-btn {
-    background: yellow;
+    background: var(--pennio-yellow);
     color: black;
     padding: 10px 20px;
     border-radius: 5px;
@@ -290,9 +290,15 @@ html {
   }
 }
 
-#instagram {
-  justify-content: center;
+
+
+.instagram-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
+
 
 /* Contact Section */
 #contact {
