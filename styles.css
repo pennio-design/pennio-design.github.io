@@ -84,7 +84,7 @@ header {
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: white;
+    color: var(--pennio-white);
     cursor: pointer;
 }
 
@@ -96,7 +96,7 @@ header {
         position: absolute;
         top: 60px;
         right: 0;
-        background: orange;
+        background: var(--pennio-orange);
         width: 100%;
         text-align: center;
         padding: 20px 0;
@@ -270,7 +270,7 @@ html {
     position: absolute;
     top: 60px; /* Adjust based on header height */
     right: 20px;
-    background: linear-gradient(90deg, var(--pennio-yellow), var(--pennio-orange));
+    background: var(--pennio-orange);
     border-radius: 4px;
     padding: 10px;
     display: none; /* Hidden by default */
