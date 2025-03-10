@@ -291,8 +291,62 @@ html {
 }
 
 #instagram {
-  display: flex;
   justify-content: center;
-  margin: auto;
-  
 }
+
+/* Contact Section */
+#contact {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Input Fields */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input, textarea {
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    width: 100%;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: var(--pennio-orange);
+    outline: none;
+}
+
+/* Submit Button */
+button {
+    background: var(--pennio-orange);
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: darkorange;
+  }
