@@ -69,16 +69,23 @@
     </div>
   </section>
 
-  <!-- CONTACT Section -->
-  <section id="contact">
-    <h2>Contact</h2>
+<!-- CONTACT Section -->
+<section id="contact">
+    <h2>Contact Me</h2>
     <form action="https://formsubmit.co/ea0da421e8e6e82457be40792262eeed" method="POST">
         <input type="text" name="name" placeholder="Your Name" required>
         <input type="email" name="email" placeholder="Your Email" required>
         <textarea name="message" placeholder="Your Message" required></textarea>
+        
+        <!-- Hidden input to prevent spam -->
+        <input type="hidden" name="_captcha" value="false">
+        
+        <!-- Redirect after submission -->
+        <input type="hidden" name="_next" value="thank-you.html">
+        
         <button type="submit">Send Message</button>
     </form>
-  </section>
+</section>
 
   <!-- Footer -->
   <footer>
