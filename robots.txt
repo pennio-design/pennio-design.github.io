@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /temp/
+
+Sitemap: https://pennio-design.github.io/sitemap.xml
