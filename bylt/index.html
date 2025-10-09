@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="BYLT — Build Your Loyal Tribe. Empower your brand to BYLD (Build Your Loyal Tribe) through a 6-pillar strategy for loyal community growth." />
+    <meta property="og:title" content="BYLT — Build Your Loyal Tribe" />
+    <meta property="og:description" content="The ecosystem that helps you BYLD a dedicated community around your brand." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://pennio-design.github.io/bylt/og-image.jpg" />
+    <meta name="theme-color" content="#3F51B5" />
+    <title>BYLT — Build Your Loyal Tribe</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" />
+
+    <!-- Tailwind (CDN) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <script>
+      // Tailwind config inline for GH Pages simplicity
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'bylt-black': '#1A1A1A',
+              'bylt-graphite': '#6F7684',
+              'root-indigo': '#3F51B5',
+              'map-green': '#00A389',
+              'voice-aqua': '#00BFFF',
+              'frame-gray': '#A3B1C5',
+              'echo-orange': '#FF5722',
+              'focus-taupe': '#795548',
+            },
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      html, body { scroll-behavior: smooth; }
+      body { background-color: #F5F6F8; color: #1A1A1A; font-family: 'Inter', sans-serif; }
+      .hero-bg { background: linear-gradient(-45deg,#e0e7ff,#c3dafe,#a7c0fe,#8aaffa); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+      @keyframes bgmove { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
+      .reveal { opacity:0; transform:translateY(20px); transition:opacity .6s,transform .6s; }
+      .visible { opacity:1; transform:translateY(0); }
+    </style>
+  </head>
+
+  <body class="antialiased">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+      <nav class="max-w-7xl mx-auto flex justify-between items-center p-4">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-bylt-black">BYLT</h1>
+        <a href="#bylt4u" class="bg-root-indigo hover:bg-bylt-black text-white font-semibold px-4 py-2 rounded-lg transition">Explore BYLT4U</a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero-bg text-center py-24">
+      <div class="max-w-3xl mx-auto px-4">
+        <h2 class="text-5xl md:text-6xl font-extrabold mb-6">Your <span class="text-root-indigo">Loyal Tribe</span><br><span class="text-bylt-black">Truly BYLT.</span></h2>
+        <p class="text-lg md:text-xl text-bylt-graphite mb-8">Empowering you to <b>BYLD</b> (<b>Build Your Loyal Tribe</b>)—a dedicated community whose identity is tied to your brand.</p>
+        <a href="#services" class="inline-block bg-root-indigo text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:bg-indigo-600 transition">Explore the BYLT Ecosystem</a>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="max-w-7xl mx-auto px-4 py-20">
+      <h3 class="text-3xl md:text-4xl font-extrabold text-center mb-12">The Six Pillars of <span class="text-root-indigo">Strategic Tribe BYLDing</span></h3>
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Card Template Example -->
+        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-root-indigo hover:shadow-xl transition">
+          <i data-lucide="anchor" class="w-10 h-10 text-root-indigo mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-root-indigo">Root</span></h4>
+          <p class="text-bylt-graphite text-sm">Define your foundation—values, mission, and vision. Your <b>Buying Tribe</b> starts with <b>BYLT</b>.</p>
+        </div>
+
+        <!-- Repeat others in the same minimal structure -->
+        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-map-green hover:shadow-xl transition">
+          <i data-lucide="compass" class="w-10 h-10 text-map-green mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-map-green">Map</span></h4>
+          <p class="text-bylt-graphite text-sm">Strategically map your tribe’s growth and conversion journey.</p>
+        </div>
+
+        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-voice-aqua hover:shadow-xl transition">
+          <i data-lucide="megaphone" class="w-10 h-10 text-voice-aqua mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-voice-aqua">Voice</span></h4>
+          <p class="text-bylt-graphite text-sm">Unify your tone and message to attract and retain your tribe.</p>
+        </div>
+
+        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-frame-gray hover:shadow-xl transition">
+          <i data-lucide="layout-grid" class="w-10 h-10 text-frame-gray mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-frame-gray">Frame</span></h4>
+          <p class="text-bylt-graphite text-sm">Craft a visual identity that expresses your tribe’s essence.</p>
+        </div>
+
+        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-echo-orange hover:shadow-xl transition">
+          <i data-lucide="send" class="w-10 h-10 text-echo-orange mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-echo-orange">Echo</span></h4>
+          <p class="text-bylt-graphite text-sm">Deploy campaigns that amplify your tribe’s voice.</p>
+        </div>
+
+        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-focus-taupe hover:shadow-xl transition">
+          <i data-lucide="shield" class="w-10 h-10 text-focus-taupe mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-focus-taupe">Focus</span></h4>
+          <p class="text-bylt-graphite text-sm">Keep operations aligned so your energy stays on BYLDing.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BYLT4U -->
+    <section id="bylt4u" class="text-white py-20 px-4 bg-gradient-to-br from-gray-900 to-black text-center">
+      <h3 class="text-4xl font-extrabold mb-4">BYLT4U — <span class="text-root-indigo">Built For You.</span></h3>
+      <p class="max-w-2xl mx-auto text-lg text-white/80 mb-8">Our done-for-you service manages every pillar of the BYLT ecosystem so your brand grows without friction.</p>
+      <a href="#contact" class="bg-white text-root-indigo font-bold px-10 py-3 rounded-xl shadow-lg hover:bg-gray-100 transition">Go BYLT4U</a>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="bg-white py-20 text-center">
+      <h3 class="text-3xl font-extrabold text-bylt-black mb-4">Get Started Today</h3>
+      <p class="text-bylt-graphite mb-8">Email us to start <b>BYLDing</b> your tribe.</p>
+      <a href="mailto:info@bylt.com" class="text-root-indigo text-lg hover:underline">info@bylt.com</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-bylt-black text-center text-white py-6 text-sm">
+      <p>&copy; 2025 <b>BYLT</b> — Build Your Loyal Tribe. <br />Part of <b>pennio-design.github.io</b>.</p>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide?.createIcons();
+        const observer = new IntersectionObserver(entries =>
+          entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); } })
+        , { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      });
+    </script>
+  </body>
+</html>
