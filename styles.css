@@ -44,7 +44,6 @@
     max-width: 400px;
     margin: 5px 0;
   }
-}
 footer a {
   color: var(--pennio-yellow);
   text-decoration: none;
@@ -55,4 +54,5 @@ footer a {
 footer a:hover {
   color: var(--pennio-orange);
   text-decoration: none;
+}
 }
