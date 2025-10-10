@@ -56,7 +56,7 @@ For any inquiries or further information, please contact:
 - **Email:** [pauloyatowo@gmail.com](mailto:pauloyatowo@gmail.com)
 - **Website:** [pennio-design.github.io](https://pennio-design.github.io/)
 - **LinkedIn:** [linkedin.com/in/pauloyatowo](https://linkedin.com/in/pauloyatowo)
-- **Instagram:** [instagram.com/pennio__](https://instagram.com/pennio__)
+- **Instagram:** [instagram.com/pennio__](https://instagram.com/pennio.design)
 - **Phone:** +234 810 183 3138
 
 *Designed with clarity, strategy, and creative impact by Paul Oyatowo.*
