@@ -11,160 +11,163 @@
   <link rel="manifest" href="/site.webmanifest">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-
 <body>
-  <!-- Header -->
-  <header>
-    <div class="container">
-      <a href="#" class="logo">PENNIO.DESIGN</a>
-      <nav class="nav-links" id="nav-menu">
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#services">Services</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-      <a href="#contact" class="cta-btn">Get in Touch</a>
-      <button id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
-    </div>
-  </header>
 
-  <!-- Floating Contact Icons -->
-  <div class="floating-icons">
-    <a href="https://instagram.com/pennio.design" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-    <a href="https://wa.me/2348101833138" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+<header>
+  <div class="container">
+    <a href="#" class="logo">PENNIO.DESIGN</a>
+    <nav class="nav-links" id="nav-menu">
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#services">BYLT</a></li>
+        <li><a href="#instagram">Instagram</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="#contact" class="cta-btn">Get in Touch</a>
+    <button id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
   </div>
+</header>
 
-  <!-- Hero -->
-  <section id="home" class="hero">
-    <h2 class="gradient-text">Building Brands that Speak, Sell & Stay</h2>
-    <p>PENNIO helps businesses create clarity-driven brands that look good, sound right, and grow strong — without stress.</p>
-    <div class="cta-group">
-      <button class="cta" onclick="window.location.href='#contact'">Start Your Project</button>
-      <button class="cta alt" onclick="prefillService('Clarity Session')">Book a Clarity Session</button>
+<!-- HERO -->
+<section id="home" class="hero">
+  <h2>Building Brands that Speak, Sell & Stay</h2>
+  <p>PENNIO helps businesses build clarity-driven brands that look good, sound right, and grow strong — without stress.</p>
+  <div class="cta-group">
+    <button class="cta" onclick="window.location.href='#contact'">Start Your Project</button>
+    <button class="cta alt" onclick="prefillService('Clarity Session')">Book a Clarity Session</button>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <h2>Featured Work</h2>
+  <p>Every brand tells a story. Here are a few I’ve helped bring to life.</p>
+  <button id="openPortfolio">View My PDF Portfolio</button>
+</section>
+
+<!-- WHAT WE’RE BYLDING -->
+<section id="services" class="bylt-section">
+  <h2 class="gradient-text">What We’re BYLDing</h2>
+  <p class="section-sub">Clarity-driven systems for brands that want to grow smart.</p>
+
+  <div class="service-grid">
+    <div class="service-card" onclick="prefillService('BYLT.Root — Discovery & Foundation')">
+      <i class="fa-solid fa-seedling service-icon"></i>
+      <h3>BYLT.Root</h3>
+      <p>Build your foundation — values, purpose, and brand clarity.</p>
     </div>
-  </section>
 
-  <!-- Portfolio -->
-  <section id="portfolio">
-    <h2 class="gradient-text">Featured Work</h2>
-    <p>Every brand tells a story. Here are a few I’ve helped bring to life.</p>
-    <button id="openPortfolio" class="cta">View My PDF Portfolio</button>
-  </section>
-
-  <!-- Services -->
-  <section id="services">
-    <h2 class="gradient-text">Services</h2>
-    <p>Explore how we help brands grow with clarity, creativity, and confidence.</p>
-
-    <div class="service-grid">
-      <div class="service-card" onclick="prefillService('Brand Systems Setup (BYLT4U)')">
-        <i class="fa-solid fa-layer-group service-icon"></i>
-        <h3>Brand Systems Setup (BYLT4U)</h3>
-        <p>All six brand pillars built for you — one seamless setup that saves time and stress.</p>
-      </div>
-
-      <div class="service-card" onclick="prefillService('Campaign Strategy')">
-        <i class="fa-solid fa-bullhorn service-icon"></i>
-        <h3>Campaign Strategy</h3>
-        <p>From concept to conversion — plan your next winning campaign with clarity.</p>
-      </div>
-
-      <div class="service-card" onclick="prefillService('Brand Design')">
-        <i class="fa-solid fa-pen-nib service-icon"></i>
-        <h3>Brand Design</h3>
-        <p>Logos, systems, and identities that make your brand instantly recognizable.</p>
-      </div>
-
-      <div class="service-card" onclick="prefillService('Website Experience')">
-        <i class="fa-solid fa-globe service-icon"></i>
-        <h3>Website Experience</h3>
-        <p>Designs that look great and work seamlessly — helping your brand shine online.</p>
-      </div>
-
-      <div class="service-card" onclick="prefillService('Automation Flow')">
-        <i class="fa-solid fa-gear service-icon"></i>
-        <h3>Automation Flow</h3>
-        <p>Build systems that keep your brand organized, efficient, and stress-free.</p>
-      </div>
-
-      <div class="service-card" onclick="prefillService('Content System')">
-        <i class="fa-solid fa-comments service-icon"></i>
-        <h3>Content System</h3>
-        <p>Consistent content made easy — structure your storytelling for results.</p>
-      </div>
-
-      <div class="service-card" onclick="prefillService('Clarity Session')">
-        <i class="fa-solid fa-lightbulb service-icon"></i>
-        <h3>Clarity Session</h3>
-        <p>One focused session to bring direction, structure, and focus to your brand vision.</p>
-      </div>
+    <div class="service-card" onclick="prefillService('BYLT.Map — Strategy & Growth')">
+      <i class="fa-solid fa-map-marked-alt service-icon"></i>
+      <h3>BYLT.Map</h3>
+      <p>Plan your growth journey with a clear brand strategy.</p>
     </div>
-  </section>
 
-  <!-- Contact -->
-  <section id="contact">
-    <h2 class="gradient-text">Let’s Build Together</h2>
-    <p>Tell me what you want to create — I’ll help you bring it to life with design, clarity, and purpose.</p>
-
-    <form id="contactForm" action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" method="POST" target="hidden_iframe">
-      <input type="hidden" name="_subject" value="New Project Request from PENNIO.DESIGN" />
-      <input type="hidden" name="_captcha" value="false" />
-
-      <input type="text" name="name" placeholder="Your Name" required>
-      <input type="email" name="email" placeholder="Your Email" required>
-
-      <label for="service">Choose a Service</label>
-      <select name="service" id="service" required>
-        <option value="" disabled selected>Select one...</option>
-        <option value="Brand Systems Setup (BYLT4U)">Brand Systems Setup (BYLT4U)</option>
-        <option value="Campaign Strategy">Campaign Strategy</option>
-        <option value="Brand Design">Brand Design</option>
-        <option value="Website Experience">Website Experience</option>
-        <option value="Automation Flow">Automation Flow</option>
-        <option value="Content System">Content System</option>
-        <option value="Clarity Session">Clarity Session</option>
-      </select>
-
-      <textarea name="message" id="message" placeholder="Tell me about your project..." required></textarea>
-      <button type="submit">Send Message</button>
-    </form>
-
-    <iframe name="hidden_iframe" style="display:none;"></iframe>
-
-    <div id="thank-you-message" style="display:none;">
-      <h3>Thank You!</h3>
-      <p>Your message has been sent successfully. I’ll be in touch shortly.</p>
-      <a href="#contact" id="refreshForm">Send another message</a>
+    <div class="service-card" onclick="prefillService('BYLT.Voice — Messaging & Storytelling')">
+      <i class="fa-solid fa-bullhorn service-icon"></i>
+      <h3>BYLT.Voice</h3>
+      <p>Shape your message so people listen, connect, and remember.</p>
     </div>
-  </section>
 
-  <script>
-    function prefillService(serviceName) {
-      document.getElementById('service').value = serviceName;
-      document.getElementById('message').value = `Hi PENNIO, I’m interested in the ${serviceName} service.`;
-      document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
-    }
+    <div class="service-card" onclick="prefillService('BYLT.Frame — Design & Visual Identity')">
+      <i class="fa-solid fa-palette service-icon"></i>
+      <h3>BYLT.Frame</h3>
+      <p>Design visuals that make your brand instantly recognisable.</p>
+    </div>
 
-    document.getElementById("contactForm").addEventListener("submit", function () {
-      document.getElementById("contactForm").style.display = "none";
-      document.getElementById("thank-you-message").style.display = "block";
-    });
+    <div class="service-card" onclick="prefillService('BYLT.Echo — Marketing & Launch')">
+      <i class="fa-solid fa-broadcast-tower service-icon"></i>
+      <h3>BYLT.Echo</h3>
+      <p>Launch and market your brand with smart campaigns.</p>
+    </div>
 
-    document.getElementById("refreshForm").addEventListener("click", function (event) {
-      event.preventDefault();
-      document.getElementById("contactForm").style.display = "block";
-      document.getElementById("thank-you-message").style.display = "none";
-      document.getElementById("contactForm").reset();
-    });
-  </script>
+    <div class="service-card" onclick="prefillService('BYLT.Focus — Systems & Operations')">
+      <i class="fa-solid fa-cogs service-icon"></i>
+      <h3>BYLT.Focus</h3>
+      <p>Build smooth systems so your brand runs effortlessly.</p>
+    </div>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 PENNIO.DESIGN – Designed for Clarity.<br>
-      <a href="https://pennio-design.github.io/bylt" target="_blank">Explore BYLT by PENNIO</a>
-    </p>
-  </footer>
+    <div class="service-card bylt4u" onclick="prefillService('BYLT4U — Done-For-You System Pack')">
+      <span class="badge">Most Popular</span>
+      <i class="fa-solid fa-hands-helping service-icon"></i>
+      <h3>BYLT4U</h3>
+      <p>All six pillars. One seamless setup built for you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- INSTAGRAM -->
+<section id="instagram">
+  <h2>Latest Projects</h2>
+  <div id="insta-feed" class="instagram-container">
+    <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/pennio.design/" data-instgrm-version="14" style="background:#FFF; border:0; margin:1px; max-width:540px; min-width:326px; padding:0; width:99.375%;"></blockquote>
+    <script async src="//www.instagram.com/embed.js"></script>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2>Let’s Build Together</h2>
+  <p class="intro">Tell me what you want to create — I’ll help you bring it to life with design, clarity, and purpose.</p>
+
+  <form id="contactForm" action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" method="POST" target="hidden_iframe">
+    <input type="hidden" name="_subject" value="New Project Request from PENNIO.DESIGN" />
+    <input type="hidden" name="_captcha" value="false" />
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="email" name="email" placeholder="Your Email" required>
+
+    <label for="service">Choose a Service</label>
+    <select name="service" id="service" required>
+      <option value="" disabled selected>Select one...</option>
+      <option value="BYLT.Root">BYLT.Root</option>
+      <option value="BYLT.Map">BYLT.Map</option>
+      <option value="BYLT.Voice">BYLT.Voice</option>
+      <option value="BYLT.Frame">BYLT.Frame</option>
+      <option value="BYLT.Echo">BYLT.Echo</option>
+      <option value="BYLT.Focus">BYLT.Focus</option>
+      <option value="BYLT4U">BYLT4U</option>
+    </select>
+
+    <textarea name="message" id="message" placeholder="Tell me about your project..." required></textarea>
+    <button type="submit">Send Message</button>
+  </form>
+
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+  <div id="thank-you-message" style="display:none;">
+    <h3>Thank You!</h3>
+    <p>Your message has been sent successfully. I’ll be in touch shortly.</p>
+    <a href="#contact" id="refreshForm">Send another message</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>© 2025 PENNIO.DESIGN — Designed for Clarity.</p>
+  <a href="https://pennio-design.github.io/bylt" target="_blank">Explore BYLT</a>
+</footer>
+
+<script>
+  function prefillService(serviceName) {
+    document.getElementById('service').value = serviceName;
+    document.getElementById('message').value = `Hi PENNIO, I’m interested in ${serviceName}.`;
+    document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  document.getElementById("contactForm").addEventListener("submit", function () {
+    document.getElementById("contactForm").style.display = "none";
+    document.getElementById("thank-you-message").style.display = "block";
+  });
+
+  document.getElementById("refreshForm").addEventListener("click", function (event) {
+    event.preventDefault();
+    document.getElementById("contactForm").style.display = "block";
+    document.getElementById("thank-you-message").style.display = "none";
+    document.getElementById("contactForm").reset();
+  });
+</script>
+
 </body>
 </html>
