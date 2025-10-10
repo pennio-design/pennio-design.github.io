@@ -1,39 +1,22 @@
-/* ===========================
-   PENNIO DESIGN — Global Styles
-=========================== */
-
-/* Brand Palette */
 :root {
   --pennio-orange: #FF6A00;
   --pennio-yellow: #FFD600;
   --pennio-black: #000000;
   --pennio-white: #FFFFFF;
-  --gradient: linear-gradient(90deg, #FF6A00 0%, #FFD600 100%);
 }
 
-/* Reset & Global */
-* {
+/* General */
+body {
+  font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: 'Inter', Arial, sans-serif;
-  background-color: var(--pennio-white);
   color: var(--pennio-black);
-  text-align: center;
-  line-height: 1.6;
+  background-color: var(--pennio-white);
   padding-top: 80px;
+  text-align: center;
 }
 
-/* ===========================
-   HEADER
-=========================== */
+/* Header */
 header {
   background: var(--pennio-orange);
   padding: 15px 0;
@@ -52,12 +35,11 @@ header {
 
 .logo {
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: bold;
   color: var(--pennio-white);
   text-decoration: none;
 }
 
-/* Navigation */
 .nav-links ul {
   display: flex;
   list-style: none;
@@ -66,321 +48,143 @@ header {
 
 .nav-links a {
   text-decoration: none;
-  color: var(--pennio-white);
-  font-weight: 600;
-  transition: 0.3s ease;
-}
-
-.nav-links a:hover {
-  opacity: 0.85;
-}
-
-/* CTA Button */
-.cta-btn {
-  background: var(--pennio-yellow);
-  color: var(--pennio-black);
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 700;
-  text-decoration: none;
+  color: white;
+  font-weight: bold;
   transition: 0.3s;
 }
+.nav-links a:hover { opacity: 0.8; }
 
-.cta-btn:hover {
+/* Buttons */
+.cta-btn, button {
   background: var(--pennio-orange);
-  color: var(--pennio-white);
-  transform: translateY(-2px);
-}
-
-/* Mobile Menu Button */
-#menu-toggle {
-  display: none;
-  background: none;
+  color: white;
   border: none;
-  font-size: 1.5rem;
-  color: var(--pennio-white);
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 5px;
   cursor: pointer;
+  transition: 0.3s;
+}
+.cta-btn:hover, button:hover {
+  background: var(--pennio-yellow);
+  color: var(--pennio-black);
 }
 
-/* ===========================
-   HERO SECTION
-=========================== */
+/* Hero */
 .hero {
   min-height: 80vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background: var(--pennio-white);
+  justify-content: center;
   padding: 50px 20px;
 }
-
 .hero h2 {
-  font-size: 2.4rem;
-  font-weight: 800;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 15px;
-}
-
-.hero p {
-  max-width: 650px;
-  color: #444;
-  margin-bottom: 25px;
-}
-
-.cta-group {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-/* Solid Buttons */
-.cta {
-  padding: 14px 28px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  background: var(--pennio-orange);
-  color: var(--pennio-white);
-  transition: all 0.3s ease;
-}
-
-.cta.alt {
-  background: var(--pennio-white);
-  border: 2px solid var(--pennio-orange);
-  color: var(--pennio-orange);
-}
-
-.cta:hover {
-  transform: scale(1.05);
-  background: var(--pennio-black);
-  color: var(--pennio-white);
-}
-
-/* ===========================
-   FLOATING ICONS
-=========================== */
-.floating-icons {
-  position: fixed;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  background-color: var(--pennio-black);
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  padding: 10px;
-  z-index: 9999;
-}
-
-.floating-icons a {
-  color: var(--pennio-white);
-  margin: 8px 0;
-  font-size: 1.4rem;
-  transition: 0.3s;
-}
-
-.floating-icons a:hover {
-  color: var(--pennio-yellow);
-}
-
-/* ===========================
-   SERVICES SECTION
-=========================== */
-#services {
-  padding: 80px 20px;
-  background: #fafafa;
-}
-
-#services h2 {
   font-size: 2rem;
-  font-weight: 800;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 40px;
+  margin-bottom: 1rem;
+}
+.hero p {
+  max-width: 600px;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
 }
 
+/* BYLT Section */
+.bylt-section {
+  background: #fafafa;
+  padding: 80px 20px;
+}
+.gradient-text {
+  background: linear-gradient(90deg, var(--pennio-orange), var(--pennio-yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+.section-sub {
+  max-width: 600px;
+  margin: 10px auto 50px;
+  color: #555;
+  font-size: 1rem;
+}
+
+/* Service Cards */
 .service-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 25px;
   justify-items: center;
-  align-items: stretch;
 }
-
 .service-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 35px 25px;
+  background: white;
+  border-radius: 14px;
+  padding: 30px 20px;
   text-align: center;
   transition: all 0.3s ease;
-  cursor: pointer;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  cursor: pointer;
 }
-
 .service-card:hover {
-  transform: translateY(-6px);
-  background: var(--pennio-orange);
-  color: var(--pennio-white);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 24px rgba(255,106,0,0.3);
 }
-
 .service-icon {
   font-size: 2.2rem;
   color: var(--pennio-orange);
   margin-bottom: 15px;
-  transition: 0.3s;
 }
-
-.service-card:hover .service-icon {
-  color: var(--pennio-white);
-  transform: scale(1.15);
-}
-
 .service-card h3 {
-  margin: 15px 0 10px;
-  font-size: 1.25rem;
+  margin: 10px 0 8px;
   font-weight: 700;
 }
-
 .service-card p {
   font-size: 0.95rem;
   color: #555;
-  line-height: 1.5;
 }
 
-/* ===========================
-   CONTACT SECTION
-=========================== */
-#contact {
-  max-width: 600px;
-  margin: 60px auto;
-  padding: 40px 25px;
-  background: var(--pennio-white);
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
-
-#contact h2 {
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-input,
-textarea,
-select {
-  padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  font-size: 1rem;
-  transition: border 0.3s ease;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: var(--pennio-orange);
-  outline: none;
-}
-
-/* Submit Button */
-button {
-  background: var(--pennio-orange);
-  color: var(--pennio-white);
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
+/* BYLT4U Highlight */
+.bylt4u {
   background: var(--pennio-black);
+  border: 2px solid var(--pennio-yellow);
   color: var(--pennio-white);
-  transform: translateY(-2px);
+  position: relative;
+  animation: glowPulse 3s ease-out 1;
+}
+.bylt4u .service-icon { color: var(--pennio-yellow); }
+.bylt4u h3, .bylt4u p { color: var(--pennio-white); }
+.bylt4u:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(255, 214, 0, 0.4);
+}
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--pennio-yellow);
+  color: var(--pennio-black);
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
-/* ===========================
-   FOOTER
-=========================== */
+/* Pulse Animation */
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 0 rgba(255,214,0,0); }
+  50% { box-shadow: 0 0 25px rgba(255,214,0,0.6); }
+  100% { box-shadow: 0 0 0 rgba(255,214,0,0); }
+}
+
+/* Footer */
 footer {
   background: var(--pennio-black);
   color: var(--pennio-white);
   padding: 20px;
-  font-size: 0.9rem;
 }
-
 footer a {
   color: var(--pennio-yellow);
   text-decoration: none;
+  font-weight: 600;
 }
-
 footer a:hover {
-  text-decoration: underline;
-}
-
-/* ===========================
-   RESPONSIVE
-=========================== */
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    background: var(--pennio-orange);
-    position: absolute;
-    top: 60px;
-    right: 0;
-    width: 100%;
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  .nav-links ul {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .nav-links.active {
-    display: flex;
-  }
-
-  .cta-btn {
-    display: none;
-  }
-
-  .cta-btn.active {
-    display: block;
-    margin-top: 10px;
-  }
-
-  #menu-toggle {
-    display: block;
-  }
-
-  .service-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .cta-group {
-    flex-direction: column;
-    gap: 10px;
-  }
+  color: var(--pennio-orange);
 }
