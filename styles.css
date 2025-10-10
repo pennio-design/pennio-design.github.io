@@ -1,31 +1,26 @@
-/* ==========================================================
-   🎨 PENNIO DESIGN — Modern Portfolio Stylesheet
-   Clean. Bold. Functional.
-   ========================================================== */
-
-/* Brand Colors */
+/* 
+  PENNIO Color Palette
+*/
 :root {
   --pennio-orange: #FF6A00;
   --pennio-yellow: #FFD600;
   --pennio-black: #000000;
   --pennio-white: #FFFFFF;
-  --pennio-gray: #f7f7f7;
-  --pennio-text: #222222;
 }
 
-/* Base Styles */
-html {
-  scroll-behavior: smooth;
-}
-
+/* Global Styles */
 body {
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  color: var(--pennio-text);
+  text-align: center;
+  color: var(--pennio-black);
   background-color: var(--pennio-white);
-  line-height: 1.6;
-  padding-top: 80px; /* Fixed header space */
+  padding-top: 80px;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 /* Header */
@@ -36,94 +31,115 @@ header {
   width: 100%;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 25px;
+  padding: 0 20px;
 }
 
 .logo {
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: bold;
   color: var(--pennio-white);
   text-decoration: none;
-  letter-spacing: 0.5px;
 }
 
 /* Navigation */
 .nav-links ul {
   display: flex;
   list-style: none;
-  gap: 28px;
-  padding: 0;
-  margin: 0;
+  gap: 30px;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: var(--pennio-white);
-  font-weight: 600;
-  transition: opacity 0.3s;
-}
-
-.nav-links a:hover {
-  opacity: 0.75;
-}
-
-/* CTA Button in Header */
-.cta-btn {
-  background: var(--pennio-yellow);
-  color: var(--pennio-black);
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 700;
-  text-decoration: none;
+  color: white;
+  font-weight: bold;
   transition: 0.3s;
 }
 
-.cta-btn:hover {
-  background: var(--pennio-black);
-  color: var(--pennio-white);
+.nav-links a:hover {
+  opacity: 0.8;
 }
 
-/* Mobile Menu Button */
+/* CTA Button */
+.cta-btn {
+  background: var(--pennio-yellow);
+  color: black;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Mobile Menu */
 #menu-toggle {
   display: none;
   background: none;
   border: none;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   color: var(--pennio-white);
   cursor: pointer;
 }
 
 /* Hero Section */
 .hero {
-  min-height: 85vh;
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background: linear-gradient(145deg, #fff, #f9f9f9);
-  padding: 60px 20px;
-  text-align: center;
+  justify-content: center;
+  background-color: var(--pennio-white);
+  padding: 50px 20px;
 }
 
 .hero h2 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  max-width: 700px;
+  font-size: 2rem;
   margin-bottom: 1rem;
 }
 
 .hero p {
-  font-size: 1.1rem;
-  max-width: 650px;
-  color: #555;
-  margin-bottom: 2rem;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(90deg, var(--pennio-orange), var(--pennio-yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Gradient Buttons */
+.cta,
+.service-buttons button {
+  background: linear-gradient(90deg, var(--pennio-orange), var(--pennio-yellow));
+  color: var(--pennio-black);
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 14px 30px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+.cta:hover,
+.service-buttons button:hover {
+  transform: translateY(-3px);
+  color: var(--pennio-white);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+.cta.alt {
+  background: linear-gradient(90deg, var(--pennio-yellow), var(--pennio-orange));
+  color: var(--pennio-black);
 }
 
 /* CTA Group */
@@ -134,34 +150,21 @@ header {
   justify-content: center;
 }
 
-.cta {
-  padding: 14px 28px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  text-transform: capitalize;
-  transition: all 0.3s ease;
-  min-width: 180px;
+@media (max-width: 768px) {
+  .cta-group {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .cta {
+    width: 90%;
+    max-width: 400px;
+    margin: 5px 0;
+  }
 }
 
-.cta {
-  background-color: var(--pennio-orange);
-  color: var(--pennio-white);
-}
-
-.cta.alt {
-  background-color: var(--pennio-yellow);
-  color: var(--pennio-black);
-}
-
-.cta:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
-}
-
-/* Floating Icons */
+/* Floating Contact Icons */
 .floating-icons {
   position: fixed;
   top: 50%;
@@ -172,138 +175,135 @@ header {
   background-color: var(--pennio-black);
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
-  padding: 8px;
+  padding: 10px;
   z-index: 9999;
 }
 
 .floating-icons a {
   color: var(--pennio-white);
   text-decoration: none;
-  margin: 6px 0;
+  margin: 5px 0;
   display: inline-block;
-  padding: 10px;
-  font-size: 1.2rem;
+  padding: 8px;
+  font-weight: bold;
   transition: background 0.3s ease;
 }
 
 .floating-icons a:hover {
   background: var(--pennio-orange);
-  border-radius: 50%;
 }
 
-/* Section Defaults */
+/* Sections */
 section {
-  padding: 60px 20px;
+  padding: 50px 20px;
 }
 
-section h2 {
-  font-size: 2rem;
-  margin-bottom: 15px;
-  text-transform: capitalize;
-  font-weight: 700;
-}
-
-/* Portfolio & Services */
-#portfolio, #services {
-  background-color: var(--pennio-gray);
-  border-radius: 10px;
-  max-width: 900px;
-  margin: 50px auto;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
-
-#services h2 {
-  margin-bottom: 25px;
-}
-
-.service-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-}
-
-.service-buttons button {
-  background-color: var(--pennio-orange);
-  color: var(--pennio-white);
-  border: none;
-  padding: 12px 24px;
-  border-radius: 6px;
+/* Buttons */
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
   cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
+  border: none;
+  border-radius: 4px;
 }
 
-.service-buttons button:hover {
-  background-color: var(--pennio-black);
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+  background-color: var(--pennio-white);
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  position: relative;
+  border-radius: 4px;
+}
+
+.close {
+  color: #aaa;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Instagram */
+.instagram-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 /* Contact Section */
 #contact {
   max-width: 600px;
-  margin: 80px auto;
-  background: var(--pennio-white);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-  padding: 30px;
-  border-radius: 10px;
+  margin: 50px auto;
+  padding: 20px;
+  background: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-#contact h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 10px;
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-#contact .intro {
-  color: #555;
-  margin-bottom: 25px;
-}
-
-/* Form */
+/* Inputs */
 form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
 }
 
-input, textarea, select {
-  padding: 14px;
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input,
+textarea,
+select {
+  padding: 12px;
   border: 2px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 15px;
+  transition: 0.3s;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   border-color: var(--pennio-orange);
   outline: none;
-}
-
-/* Buttons (Forms & General) */
-button {
-  background: var(--pennio-orange);
-  color: var(--pennio-white);
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background: var(--pennio-black);
-  color: var(--pennio-white);
 }
 
 /* Footer */
 footer {
   background: var(--pennio-black);
   color: var(--pennio-white);
-  padding: 20px 10px;
-  font-size: 0.9rem;
+  padding: 10px;
+  position: relative;
+  bottom: 0;
+  width: 100%;
 }
 
+/* Footer link styling */
 footer a {
   color: var(--pennio-yellow);
   text-decoration: none;
@@ -313,15 +313,16 @@ footer a {
 
 footer a:hover {
   color: var(--pennio-orange);
+  text-decoration: none;
 }
 
-/* Responsive */
+/* Responsive Nav */
 @media (max-width: 768px) {
   .nav-links {
     display: none;
     flex-direction: column;
     position: absolute;
-    top: 65px;
+    top: 60px;
     right: 0;
     background: var(--pennio-orange);
     width: 100%;
@@ -338,24 +339,16 @@ footer a:hover {
     display: flex;
   }
 
-  #menu-toggle {
-    display: block;
-  }
-
   .cta-btn {
     display: none;
   }
 
-  .cta-group {
-    flex-direction: column;
+  .cta-btn.active {
+    display: block;
+    margin-top: 10px;
   }
 
-  .cta {
-    width: 90%;
-    margin: 5px 0;
-  }
-
-  .service-buttons button {
-    width: 90%;
+  #menu-toggle {
+    display: block;
   }
 }
