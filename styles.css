@@ -5,18 +5,22 @@
   --pennio-white: #FFFFFF;
 }
 
-/* General */
-body {
-  font-family: 'Inter', sans-serif;
+/* Global Reset */
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
   color: var(--pennio-black);
   background-color: var(--pennio-white);
   padding-top: 80px;
   text-align: center;
+  overflow-x: hidden;
 }
 
-/* Header */
 header {
   background: var(--pennio-orange);
   padding: 15px 0;
@@ -43,50 +47,79 @@ header {
 .nav-links ul {
   display: flex;
   list-style: none;
-  gap: 30px;
+  gap: 25px;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: white;
-  font-weight: bold;
+  color: var(--pennio-white);
+  font-weight: 600;
   transition: 0.3s;
 }
 .nav-links a:hover { opacity: 0.8; }
 
-/* Buttons */
-.cta-btn, button {
-  background: var(--pennio-orange);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-weight: bold;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.cta-btn:hover, button:hover {
+.cta-btn {
   background: var(--pennio-yellow);
   color: var(--pennio-black);
+  border-radius: 6px;
+  padding: 10px 18px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.cta-btn:hover {
+  background: var(--pennio-white);
+  color: var(--pennio-orange);
 }
 
 /* Hero */
 .hero {
-  min-height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 50px 20px;
+  padding: 60px 20px;
+  min-height: 80vh;
 }
+
 .hero h2 {
   font-size: 2rem;
+  font-weight: 800;
   margin-bottom: 1rem;
 }
+
 .hero p {
   max-width: 600px;
-  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  color: #444;
   line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.cta-group {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cta {
+  background: var(--pennio-orange);
+  color: var(--pennio-white);
+  border: none;
+  border-radius: 6px;
+  padding: 14px 28px;
+  font-weight: 600;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+.cta.alt {
+  background: var(--pennio-yellow);
+  color: var(--pennio-black);
+}
+.cta:hover {
+  background: var(--pennio-black);
+  color: var(--pennio-yellow);
 }
 
 /* BYLT Section */
@@ -94,51 +127,62 @@ header {
   background: #fafafa;
   padding: 80px 20px;
 }
+
 .gradient-text {
   background: linear-gradient(90deg, var(--pennio-orange), var(--pennio-yellow));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 800;
 }
+
 .section-sub {
-  max-width: 600px;
-  margin: 10px auto 50px;
   color: #555;
+  margin: 10px auto 50px;
+  max-width: 600px;
   font-size: 1rem;
 }
 
 /* Service Cards */
 .service-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px;
   justify-items: center;
+  padding: 0 15px;
 }
+
 .service-card {
-  background: white;
+  width: 100%;
+  max-width: 330px;
+  background: var(--pennio-white);
   border-radius: 14px;
   padding: 30px 20px;
   text-align: center;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   cursor: pointer;
 }
 .service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 24px rgba(255,106,0,0.3);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(255,106,0,0.25);
 }
+
 .service-icon {
-  font-size: 2.2rem;
+  font-size: 2.3rem;
   color: var(--pennio-orange);
   margin-bottom: 15px;
 }
+
 .service-card h3 {
-  margin: 10px 0 8px;
+  margin: 8px 0;
   font-weight: 700;
+  font-size: 1.1rem;
 }
+
 .service-card p {
-  font-size: 0.95rem;
   color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 /* BYLT4U Highlight */
@@ -149,12 +193,17 @@ header {
   position: relative;
   animation: glowPulse 3s ease-out 1;
 }
-.bylt4u .service-icon { color: var(--pennio-yellow); }
-.bylt4u h3, .bylt4u p { color: var(--pennio-white); }
-.bylt4u:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(255, 214, 0, 0.4);
+.bylt4u .service-icon {
+  color: var(--pennio-yellow);
 }
+.bylt4u h3, .bylt4u p {
+  color: var(--pennio-white);
+}
+.bylt4u:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 20px rgba(255,214,0,0.4);
+}
+
 .badge {
   position: absolute;
   top: 12px;
@@ -167,18 +216,86 @@ header {
   border-radius: 4px;
 }
 
-/* Pulse Animation */
+/* Glow Animation */
 @keyframes glowPulse {
   0% { box-shadow: 0 0 0 rgba(255,214,0,0); }
-  50% { box-shadow: 0 0 25px rgba(255,214,0,0.6); }
+  50% { box-shadow: 0 0 25px rgba(255,214,0,0.7); }
   100% { box-shadow: 0 0 0 rgba(255,214,0,0); }
+}
+
+/* Instagram */
+#instagram {
+  padding: 60px 20px;
+}
+.instagram-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Contact */
+#contact {
+  max-width: 650px;
+  margin: 60px auto;
+  padding: 30px 20px;
+  background: var(--pennio-white);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+#contact h2 {
+  color: var(--pennio-orange);
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+#contact .intro {
+  margin-bottom: 25px;
+  color: #333;
+  line-height: 1.5;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+input, select, textarea {
+  padding: 12px;
+  border-radius: 6px;
+  border: 2px solid #ddd;
+  font-size: 1rem;
+  transition: border 0.3s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--pennio-orange);
+  outline: none;
+}
+
+button[type="submit"] {
+  background: var(--pennio-orange);
+  color: var(--pennio-white);
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button[type="submit"]:hover {
+  background: var(--pennio-yellow);
+  color: var(--pennio-black);
 }
 
 /* Footer */
 footer {
   background: var(--pennio-black);
   color: var(--pennio-white);
-  padding: 20px;
+  padding: 25px;
+  text-align: center;
 }
 footer a {
   color: var(--pennio-yellow);
@@ -187,4 +304,27 @@ footer a {
 }
 footer a:hover {
   color: var(--pennio-orange);
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+  .nav-links ul {
+    display: none;
+  }
+
+  .service-card {
+    max-width: 90%;
+  }
+
+  .hero h2 {
+    font-size: 1.6rem;
+  }
+
+  .service-grid {
+    padding: 0 10px;
+  }
+
+  #contact {
+    margin: 40px 15px;
+  }
 }
