@@ -1,123 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PENNIO.DESIGN – Portfolio</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-</head>
-<body>
-<header>
-    <div class="container">
-        <a href="#" class="logo">PENNIO.DESIGN</a>
-        <nav class="nav-links" id="nav-menu">
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#portfolio">Portfolio</a></li>
-                <li><a href="#instagram">Instagram</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-        <a href="#contact" class="cta-btn">Get in Touch</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="BYLT BY PENNIO — Build Your Loyal Tribe. Empower your brand to BYLD (Build Your Loyal Tribe) through simple systems for clarity and growth." />
+    <meta property="og:title" content="BYLT — Build Your Loyal Tribe" />
+    <meta property="og:description" content="The ecosystem that helps you BYLD a dedicated community around your brand." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://pennio-design.github.io/bylt/og-image.jpg" />
+    <meta name="theme-color" content="#3F51B5" />
+    <title>BYLT BY PENNIO — Build Your Loyal Tribe</title>
 
-        <!-- Mobile Menu Toggle -->
-        <button id="menu-toggle">
-            <i class="fa-solid fa-bars"></i>
-        </button>
+    <link rel="icon" href="favicon.ico" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'bylt-black': '#1A1A1A',
+              'bylt-graphite': '#6F7684',
+              'root-indigo': '#3F51B5',
+              'map-green': '#00A389',
+              'voice-aqua': '#00BFFF',
+              'frame-gray': '#A3B1C5',
+              'echo-orange': '#FF5722',
+              'focus-taupe': '#795548',
+            },
+            fontFamily: { sans: ['Inter', 'sans-serif'] },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      html, body { scroll-behavior: smooth; }
+      body { background-color: #F5F6F8; color: #1A1A1A; font-family: 'Inter', sans-serif; }
+      .hero-bg { background: linear-gradient(-45deg,#e0e7ff,#c3dafe,#a7c0fe,#8aaffa); background-size:400% 400%; animation:bgmove 15s ease infinite; }
+      @keyframes bgmove { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
+      .reveal { opacity:0; transform:translateY(20px); transition:opacity .6s,transform .6s; }
+      .visible { opacity:1; transform:translateY(0); }
+      #thankYouPopup { display:none; }
+    </style>
+  </head>
+
+  <body class="antialiased">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+      <nav class="max-w-7xl mx-auto flex justify-between items-center p-4">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-bylt-black">BYLT BY PENNIO</h1>
+        <a href="#leadform" class="bg-root-indigo hover:bg-bylt-black text-white font-semibold px-4 py-2 rounded-lg transition">Start Now</a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero-bg text-center py-24">
+      <div class="max-w-3xl mx-auto px-4">
+        <h2 class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+          Build a Brand That Works — Not One That Wastes Time
+        </h2>
+        <p class="text-lg md:text-xl text-bylt-graphite mb-8">
+          BYLT helps you create a simple, strong brand system that saves time, grows your community, and builds loyalty.
+        </p>
+        <a href="#services" class="inline-block bg-root-indigo text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:bg-indigo-600 transition">
+          See What You’ll Get
+        </a>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="max-w-7xl mx-auto px-4 py-20">
+      <h3 class="text-3xl md:text-4xl font-extrabold text-center mb-12">The Six Pillars of <span class="text-root-indigo">BYLT</span></h3>
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+        <div class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-root-indigo hover:shadow-xl transition cursor-pointer" data-service="BYLT.Root — Discovery & Foundation">
+          <i data-lucide="anchor" class="w-10 h-10 text-root-indigo mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-root-indigo">Root</span></h4>
+          <p class="text-bylt-graphite text-sm">Define what your brand truly stands for — your values, mission, and voice.</p>
+        </div>
+
+        <div class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-map-green hover:shadow-xl transition cursor-pointer" data-service="BYLT.Map — Strategy & Growth">
+          <i data-lucide="compass" class="w-10 h-10 text-map-green mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-map-green">Map</span></h4>
+          <p class="text-bylt-graphite text-sm">Create a clear plan to grow your audience and community sustainably.</p>
+        </div>
+
+        <div class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-voice-aqua hover:shadow-xl transition cursor-pointer" data-service="BYLT.Voice — Messaging & Storytelling">
+          <i data-lucide="megaphone" class="w-10 h-10 text-voice-aqua mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-voice-aqua">Voice</span></h4>
+          <p class="text-bylt-graphite text-sm">Shape your brand message so people listen, connect, and remember you.</p>
+        </div>
+
+        <div class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-frame-gray hover:shadow-xl transition cursor-pointer" data-service="BYLT.Frame — Design & Visual Identity">
+          <i data-lucide="layout-grid" class="w-10 h-10 text-frame-gray mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-frame-gray">Frame</span></h4>
+          <p class="text-bylt-graphite text-sm">Design your look — logo, colours, and brand visuals that stand out.</p>
+        </div>
+
+        <div class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-echo-orange hover:shadow-xl transition cursor-pointer" data-service="BYLT.Echo — Marketing & Launch">
+          <i data-lucide="send" class="w-10 h-10 text-echo-orange mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-echo-orange">Echo</span></h4>
+          <p class="text-bylt-graphite text-sm">Plan your campaigns, content, and launch strategies for impact.</p>
+        </div>
+
+        <div class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-focus-taupe hover:shadow-xl transition cursor-pointer" data-service="BYLT.Focus — Systems & Operations">
+          <i data-lucide="shield" class="w-10 h-10 text-focus-taupe mb-4"></i>
+          <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-focus-taupe">Focus</span></h4>
+          <p class="text-bylt-graphite text-sm">Simplify your operations so your brand runs smoothly every day.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lead Magnet Form -->
+    <section id="leadform" class="bg-white py-20 text-center">
+      <h3 class="text-3xl font-extrabold text-bylt-black mb-4">Get Your Brand System Started</h3>
+      <p class="text-bylt-graphite mb-8 max-w-2xl mx-auto">
+        Fill the form below — let’s help you build a simple, strong, and stress-free brand system.
+      </p>
+
+      <div class="max-w-lg mx-auto">
+        <form id="byltForm" action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" method="POST" class="bg-gray-50 p-8 rounded-2xl shadow-lg space-y-4">
+          <input type="hidden" name="_subject" value="New BYLT Lead" />
+          <input type="hidden" name="_template" value="box" />
+          <input type="hidden" name="_captcha" value="false" />
+
+          <div>
+            <label class="block text-left font-semibold mb-1">Your Name</label>
+            <input type="text" name="Name" required class="w-full border-gray-300 rounded-md p-3" placeholder="Enter your full name" />
+          </div>
+
+          <div>
+            <label class="block text-left font-semibold mb-1">Email Address</label>
+            <input type="email" name="Email" required class="w-full border-gray-300 rounded-md p-3" placeholder="your@email.com" />
+          </div>
+
+          <div>
+            <label class="block text-left font-semibold mb-1">Brand or Business Name</label>
+            <input type="text" name="Brand" class="w-full border-gray-300 rounded-md p-3" placeholder="e.g. Brillá.ng" />
+          </div>
+
+          <!-- New Service Field -->
+          <div>
+            <label class="block text-left font-semibold mb-1">Select Service</label>
+            <select name="Service" id="selectedService" required class="w-full border-gray-300 rounded-md p-3 bg-white">
+              <option value="" disabled selected>Select one...</option>
+              <option value="BYLT.Root — Discovery & Foundation">BYLT.Root — Discovery & Foundation</option>
+              <option value="BYLT.Map — Strategy & Growth">BYLT.Map — Strategy & Growth</option>
+              <option value="BYLT.Voice — Messaging & Storytelling">BYLT.Voice — Messaging & Storytelling</option>
+              <option value="BYLT.Frame — Design & Visual Identity">BYLT.Frame — Design & Visual Identity</option>
+              <option value="BYLT.Echo — Marketing & Launch">BYLT.Echo — Marketing & Launch</option>
+              <option value="BYLT.Focus — Systems & Operations">BYLT.Focus — Systems & Operations</option>
+              <option value="BYLT4U — Done For You Service">BYLT4U — Done For You Service</option>
+              <option value="General Inquiry">General Inquiry</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-left font-semibold mb-1">Message</label>
+            <textarea name="Message" rows="4" class="w-full border-gray-300 rounded-md p-3" placeholder="Tell us what you’d like to build with BYLT..."></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-root-indigo text-white font-bold py-3 rounded-lg hover:bg-bylt-black transition">
+            Send My Request
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Thank You Popup -->
+    <div id="thankYouPopup" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+      <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md text-center">
+        <h4 class="text-2xl font-bold text-root-indigo mb-2">Thank You!</h4>
+        <p class="text-bylt-graphite mb-6">Your message has been received. We’ll get back to you shortly.</p>
+        <button id="closePopup" class="bg-root-indigo text-white px-6 py-2 rounded-lg hover:bg-bylt-black transition">Close</button>
+      </div>
     </div>
-</header>
 
-  <!-- Floating Contact Icons -->
-  <div class="floating-icons">
-    <a href="https://instagram.com/pennio.design" target="_blank" rel="noopener noreferrer">
-      <i class="fa-brands fa-instagram"></i>
-    </a>
-    <a href="https://wa.me/2348101833138" target="_blank" rel="noopener noreferrer">
-      <i class="fa-brands fa-whatsapp"></i>
-    </a>
-  </div>
+    <!-- Footer -->
+    <footer class="bg-bylt-black text-center text-white py-6 text-sm">
+      <p>&copy; 2025 <b>BYLT</b> — Build Your Loyal Tribe.<br />Part of <b><a href="https://pennio-design.github.io" target="_blank">pennio-design.github.io</a></b>.</p>
+    </footer>
 
-  <!-- HERO / HOME Section -->
-  <section id="home" class="hero">
-    <h2>Creative Branding &amp; Visual Storytelling</h2>
-    <p>Welcome to my creative world. I specialize in branding, logo design, and visual storytelling.</p>
-    <!-- Call-to-Action Button -->
-    <button class="cta" onclick="window.location.href='#contact'">
-      Book a Discovery Call
-    </button>
-  </section>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide?.createIcons();
 
-  <!-- PORTFOLIO Section -->
-  <section id="portfolio">
-    <h2>Portfolio</h2>
-    <!-- Button to trigger PDF modal -->
-    <button id="openPortfolio">View My PDF Portfolio</button>
-  </section>
+        // Scroll reveal
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              observer.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  <!-- INSTAGRAM Section -->
-  <section id="instagram">
-    <h2>Latest Work</h2>
-    <div id="insta-feed" class="instagram-container">
-      <blockquote
-        class="instagram-media"
-        data-instgrm-permalink="https://www.instagram.com/pennio.design/"
-        data-instgrm-version="14"
-        style="background:#FFF; border:0; margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%;">
-      </blockquote>
-      <script async src="//www.instagram.com/embed.js"></script>
-    </div>
-  </section>
+        // Service click prefill
+        document.querySelectorAll('.service-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const service = card.getAttribute('data-service');
+            const select = document.getElementById('selectedService');
+            select.value = service;
+            document.querySelector('#leadform').scrollIntoView({ behavior: 'smooth' });
+          });
+        });
 
-<!-- CONTACT Section -->
-<section id="contact">
-    <h2>Contact</h2>
-    <form id="contactForm" action="https://formsubmit.co/ea0da421e8e6e82457be40792262eeed" method="POST" target="hidden_iframe">
-    <input type="text" name="name" placeholder="Your Name" required>
-    <input type="email" name="email" placeholder="Your Email" required>
-    <textarea name="message" placeholder="Your Message" required></textarea>
-    <button type="submit">Send Message</button>
-</form>
+        // Form submit with popup (no captcha)
+        const form = document.getElementById('byltForm');
+        const popup = document.getElementById('thankYouPopup');
+        const closeBtn = document.getElementById('closePopup');
 
-<iframe name="hidden_iframe" style="display: none;"></iframe>
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          fetch(form.action, { method: 'POST', body: new FormData(form) })
+            .then(() => {
+              popup.style.display = 'flex';
+              form.reset();
+            })
+            .catch(() => alert('Something went wrong. Please try again.'));
+        });
 
-<div id="thank-you-message" style="display: none;">
-    <h3>Thank You!</h3>
-    <p>Your message has been sent successfully. I will get back to you soon.</p>
-    <a href="#contact" id="refreshForm">Send another message</a>
-</div>
-</section>
-<script>
-    document.getElementById("contactForm").addEventListener("submit", function () {
-        document.getElementById("contactForm").style.display = "none";
-        document.getElementById("thank-you-message").style.display = "block";
-    });
-
-    document.getElementById("refreshForm").addEventListener("click", function (event) {
-        event.preventDefault();
-        document.getElementById("contactForm").style.display = "block";
-        document.getElementById("thank-you-message").style.display = "none";
-        document.getElementById("contactForm").reset();
-    });
-</script>
-
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 PENNIO – All rights reserved.</p>
-  </footer>
-
-  <!-- Modal for PDF Portfolio -->
-  <div id="portfolioModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <embed src="portfolio.pdf" type="application/pdf" width="100%" height="600px" />
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+        closeBtn.addEventListener('click', () => {
+          popup.style.display = 'none';
+        });
+      });
+    </script>
+  </body>
 </html>
