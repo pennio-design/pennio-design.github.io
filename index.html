@@ -13,111 +13,145 @@
 </head>
 <body>
 <header>
-    <div class="container">
-        <a href="#" class="logo">PENNIO.DESIGN</a>
-        <nav class="nav-links" id="nav-menu">
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#portfolio">Portfolio</a></li>
-                <li><a href="#instagram">Instagram</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-        <a href="#contact" class="cta-btn">Get in Touch</a>
-
-        <!-- Mobile Menu Toggle -->
-        <button id="menu-toggle">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-    </div>
+  <div class="container">
+    <a href="#" class="logo">PENNIO.DESIGN</a>
+    <nav class="nav-links" id="nav-menu">
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#instagram">Instagram</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="https://pennio-design.github.io/bylt" target="_blank">BYLT</a></li>
+      </ul>
+    </nav>
+    <a href="#contact" class="cta-btn">Get in Touch</a>
+    <button id="menu-toggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+  </div>
 </header>
 
-  <!-- Floating Contact Icons -->
-  <div class="floating-icons">
-    <a href="https://instagram.com/pennio.design" target="_blank" rel="noopener noreferrer">
-      <i class="fa-brands fa-instagram"></i>
-    </a>
-    <a href="https://wa.me/2348101833138" target="_blank" rel="noopener noreferrer">
-      <i class="fa-brands fa-whatsapp"></i>
-    </a>
+<!-- Floating Contact Icons -->
+<div class="floating-icons">
+  <a href="https://instagram.com/pennio.design" target="_blank" rel="noopener noreferrer">
+    <i class="fa-brands fa-instagram"></i>
+  </a>
+  <a href="https://wa.me/2348101833138" target="_blank" rel="noopener noreferrer">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+</div>
+
+<!-- HERO Section -->
+<section id="home" class="hero">
+  <h2>Building Brands that Speak, Sell & Stay</h2>
+  <p>PENNIO helps businesses build clarity-driven brands that look good, sound right, and grow strong — without stress.</p>
+  <div class="cta-group">
+    <button class="cta" onclick="window.location.href='#contact'">Start Your Project</button>
+    <button class="cta alt" onclick="prefillService('Clarity Session')">Book a Clarity Session</button>
+    <button class="cta link" onclick="window.open('https://pennio-design.github.io/bylt', '_blank')">Explore BYLT</button>
   </div>
+</section>
 
-  <!-- HERO / HOME Section -->
-  <section id="home" class="hero">
-    <h2>Creative Branding &amp; Visual Storytelling</h2>
-    <p>Welcome to my creative world. I specialize in branding, logo design, and visual storytelling.</p>
-    <!-- Call-to-Action Button -->
-    <button class="cta" onclick="window.location.href='#contact'">
-      Book a Discovery Call
-    </button>
-  </section>
+<!-- PORTFOLIO Section -->
+<section id="portfolio">
+  <h2>Featured Work</h2>
+  <p>Every brand tells a story. Here are a few I’ve helped bring to life.</p>
+  <button id="openPortfolio">View My PDF Portfolio</button>
+</section>
 
-  <!-- PORTFOLIO Section -->
-  <section id="portfolio">
-    <h2>Portfolio</h2>
-    <!-- Button to trigger PDF modal -->
-    <button id="openPortfolio">View My PDF Portfolio</button>
-  </section>
+<!-- SERVICES Quick Links -->
+<section id="services">
+  <h2>Services</h2>
+  <div class="service-buttons">
+    <button onclick="prefillService('Brand Systems Setup (BYLT4U)')">Brand Systems Setup (BYLT4U)</button>
+    <button onclick="prefillService('Campaign Strategy')">Campaign Strategy</button>
+    <button onclick="prefillService('Brand Design')">Brand Design</button>
+    <button onclick="prefillService('Website Experience')">Website Experience</button>
+    <button onclick="prefillService('Automation Flow')">Automation Flow</button>
+    <button onclick="prefillService('Content System')">Content System</button>
+    <button onclick="prefillService('Clarity Session')">Clarity Session</button>
+  </div>
+</section>
 
-  <!-- INSTAGRAM Section -->
-  <section id="instagram">
-    <h2>Latest Work</h2>
-    <div id="insta-feed" class="instagram-container">
-      <blockquote
-        class="instagram-media"
-        data-instgrm-permalink="https://www.instagram.com/pennio.design/"
-        data-instgrm-version="14"
-        style="background:#FFF; border:0; margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%;">
-      </blockquote>
-      <script async src="//www.instagram.com/embed.js"></script>
-    </div>
-  </section>
+<!-- INSTAGRAM Section -->
+<section id="instagram">
+  <h2>Latest Projects</h2>
+  <div id="insta-feed" class="instagram-container">
+    <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/pennio.design/" data-instgrm-version="14" style="background:#FFF; border:0; margin:1px; max-width:540px; min-width:326px; padding:0; width:99.375%;"></blockquote>
+    <script async src="//www.instagram.com/embed.js"></script>
+  </div>
+</section>
 
 <!-- CONTACT Section -->
 <section id="contact">
-    <h2>Contact</h2>
-    <form id="contactForm" action="https://formsubmit.co/ea0da421e8e6e82457be40792262eeed" method="POST" target="hidden_iframe">
+  <h2>Let’s Build Together</h2>
+  <p class="intro">Tell me what you want to create — I’ll help you bring it to life with design, clarity, and purpose.</p>
+
+  <form id="contactForm" action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" method="POST" target="hidden_iframe">
+    <input type="hidden" name="_subject" value="New Project Request from PENNIO.DESIGN" />
+    <input type="hidden" name="_captcha" value="false" />
+
     <input type="text" name="name" placeholder="Your Name" required>
     <input type="email" name="email" placeholder="Your Email" required>
-    <textarea name="message" placeholder="Your Message" required></textarea>
+
+    <label for="service">Choose a Service</label>
+    <select name="service" id="service" required>
+      <option value="" disabled selected>Select one...</option>
+      <option value="Brand Systems Setup (BYLT4U)">Brand Systems Setup (BYLT4U)</option>
+      <option value="Campaign Strategy">Campaign Strategy</option>
+      <option value="Brand Design">Brand Design</option>
+      <option value="Website Experience">Website Experience</option>
+      <option value="Automation Flow">Automation Flow</option>
+      <option value="Content System">Content System</option>
+      <option value="Clarity Session">Clarity Session</option>
+    </select>
+
+    <textarea name="message" id="message" placeholder="Tell me about your project..." required></textarea>
     <button type="submit">Send Message</button>
-</form>
+  </form>
 
-<iframe name="hidden_iframe" style="display: none;"></iframe>
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
 
-<div id="thank-you-message" style="display: none;">
+  <div id="thank-you-message" style="display:none;">
     <h3>Thank You!</h3>
-    <p>Your message has been sent successfully. I will get back to you soon.</p>
+    <p>Your message has been sent successfully. I’ll be in touch shortly.</p>
     <a href="#contact" id="refreshForm">Send another message</a>
-</div>
+  </div>
 </section>
-<script>
-    document.getElementById("contactForm").addEventListener("submit", function () {
-        document.getElementById("contactForm").style.display = "none";
-        document.getElementById("thank-you-message").style.display = "block";
-    });
 
-    document.getElementById("refreshForm").addEventListener("click", function (event) {
-        event.preventDefault();
-        document.getElementById("contactForm").style.display = "block";
-        document.getElementById("thank-you-message").style.display = "none";
-        document.getElementById("contactForm").reset();
-    });
+<script>
+  function prefillService(serviceName) {
+    document.getElementById('service').value = serviceName;
+    document.getElementById('message').value = `Hi PENNIO, I’m interested in the ${serviceName} service.`;
+    document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  document.getElementById("contactForm").addEventListener("submit", function () {
+    document.getElementById("contactForm").style.display = "none";
+    document.getElementById("thank-you-message").style.display = "block";
+  });
+
+  document.getElementById("refreshForm").addEventListener("click", function (event) {
+    event.preventDefault();
+    document.getElementById("contactForm").style.display = "block";
+    document.getElementById("thank-you-message").style.display = "none";
+    document.getElementById("contactForm").reset();
+  });
 </script>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 PENNIO – All rights reserved.</p>
-  </footer>
+<!-- Footer -->
+<footer>
+  <p>© 2025 PENNIO.DESIGN – Designed for Clarity. | <a href="https://pennio-design.github.io/bylt" target="_blank">Explore BYLT</a></p>
+</footer>
 
-  <!-- Modal for PDF Portfolio -->
-  <div id="portfolioModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <embed src="portfolio.pdf" type="application/pdf" width="100%" height="600px" />
-    </div>
+<!-- Modal for PDF Portfolio -->
+<div id="portfolioModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <embed src="portfolio.pdf" type="application/pdf" width="100%" height="600px" />
   </div>
+</div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
