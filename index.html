@@ -57,23 +57,49 @@
   <section id="services">
     <h2 class="gradient-text">Services</h2>
     <p>Explore how we help brands grow with clarity, creativity, and confidence.</p>
-    <div class="service-buttons">
-      <button onclick="prefillService('Brand Systems Setup (BYLT4U)')"><i class="fa-solid fa-layer-group"></i><br>Brand Systems Setup (BYLT4U)</button>
-      <button onclick="prefillService('Campaign Strategy')"><i class="fa-solid fa-bullhorn"></i><br>Campaign Strategy</button>
-      <button onclick="prefillService('Brand Design')"><i class="fa-solid fa-pen-nib"></i><br>Brand Design</button>
-      <button onclick="prefillService('Website Experience')"><i class="fa-solid fa-globe"></i><br>Website Experience</button>
-      <button onclick="prefillService('Automation Flow')"><i class="fa-solid fa-gear"></i><br>Automation Flow</button>
-      <button onclick="prefillService('Content System')"><i class="fa-solid fa-comments"></i><br>Content System</button>
-      <button onclick="prefillService('Clarity Session')"><i class="fa-solid fa-lightbulb"></i><br>Clarity Session</button>
-    </div>
-  </section>
 
-  <!-- Instagram -->
-  <section id="instagram">
-    <h2 class="gradient-text">Latest Projects</h2>
-    <div class="instagram-container">
-      <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/pennio.design/" data-instgrm-version="14"></blockquote>
-      <script async src="//www.instagram.com/embed.js"></script>
+    <div class="service-grid">
+      <div class="service-card" onclick="prefillService('Brand Systems Setup (BYLT4U)')">
+        <i class="fa-solid fa-layer-group service-icon"></i>
+        <h3>Brand Systems Setup (BYLT4U)</h3>
+        <p>All six brand pillars built for you — one seamless setup that saves time and stress.</p>
+      </div>
+
+      <div class="service-card" onclick="prefillService('Campaign Strategy')">
+        <i class="fa-solid fa-bullhorn service-icon"></i>
+        <h3>Campaign Strategy</h3>
+        <p>From concept to conversion — plan your next winning campaign with clarity.</p>
+      </div>
+
+      <div class="service-card" onclick="prefillService('Brand Design')">
+        <i class="fa-solid fa-pen-nib service-icon"></i>
+        <h3>Brand Design</h3>
+        <p>Logos, systems, and identities that make your brand instantly recognizable.</p>
+      </div>
+
+      <div class="service-card" onclick="prefillService('Website Experience')">
+        <i class="fa-solid fa-globe service-icon"></i>
+        <h3>Website Experience</h3>
+        <p>Designs that look great and work seamlessly — helping your brand shine online.</p>
+      </div>
+
+      <div class="service-card" onclick="prefillService('Automation Flow')">
+        <i class="fa-solid fa-gear service-icon"></i>
+        <h3>Automation Flow</h3>
+        <p>Build systems that keep your brand organized, efficient, and stress-free.</p>
+      </div>
+
+      <div class="service-card" onclick="prefillService('Content System')">
+        <i class="fa-solid fa-comments service-icon"></i>
+        <h3>Content System</h3>
+        <p>Consistent content made easy — structure your storytelling for results.</p>
+      </div>
+
+      <div class="service-card" onclick="prefillService('Clarity Session')">
+        <i class="fa-solid fa-lightbulb service-icon"></i>
+        <h3>Clarity Session</h3>
+        <p>One focused session to bring direction, structure, and focus to your brand vision.</p>
+      </div>
     </div>
   </section>
 
@@ -140,15 +166,5 @@
       <a href="https://pennio-design.github.io/bylt" target="_blank">Explore BYLT by PENNIO</a>
     </p>
   </footer>
-
-  <!-- Modal for PDF Portfolio -->
-  <div id="portfolioModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <embed src="portfolio.pdf" type="application/pdf" width="100%" height="600px" />
-    </div>
-  </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
