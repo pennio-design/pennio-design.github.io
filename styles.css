@@ -1,34 +1,39 @@
-/* 
-  PENNIO Color Palette
-*/
+/* ===========================
+   PENNIO DESIGN — Global Styles
+=========================== */
+
+/* Brand Palette */
 :root {
   --pennio-orange: #FF6A00;
   --pennio-yellow: #FFD600;
   --pennio-black: #000000;
   --pennio-white: #FFFFFF;
-  --pennio-gray: #F5F5F5;
+  --gradient: linear-gradient(90deg, #FF6A00 0%, #FFD600 100%);
 }
 
-/* Global Reset */
+/* Reset & Global */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Inter', Arial, sans-serif;
-  color: var(--pennio-black);
-  background-color: var(--pennio-white);
-  padding-top: 80px;
-  line-height: 1.6;
-}
-
 html {
   scroll-behavior: smooth;
 }
 
-/* Header */
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: var(--pennio-white);
+  color: var(--pennio-black);
+  text-align: center;
+  line-height: 1.6;
+  padding-top: 80px;
+}
+
+/* ===========================
+   HEADER
+=========================== */
 header {
   background: var(--pennio-orange);
   padding: 15px 0;
@@ -43,13 +48,11 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
-  max-width: 1200px;
-  margin: auto;
 }
 
 .logo {
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 800;
   color: var(--pennio-white);
   text-decoration: none;
 }
@@ -65,84 +68,99 @@ header {
   text-decoration: none;
   color: var(--pennio-white);
   font-weight: 600;
-  transition: opacity 0.3s ease;
+  transition: 0.3s ease;
 }
 
 .nav-links a:hover {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 /* CTA Button */
 .cta-btn {
-  background: var(--pennio-yellow);
+  background: var(--gradient);
   color: var(--pennio-black);
   padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: 600;
+  border-radius: 8px;
+  font-weight: 700;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
 .cta-btn:hover {
-  background: var(--pennio-white);
+  transform: translateY(-2px);
 }
 
-/* Hero Section */
+/* Mobile Menu Button */
+#menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--pennio-white);
+  cursor: pointer;
+}
+
+/* ===========================
+   HERO SECTION
+=========================== */
 .hero {
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-height: 80vh;
+  align-items: center;
+  background: var(--pennio-white);
   padding: 50px 20px;
-  background: linear-gradient(180deg, var(--pennio-white), var(--pennio-gray));
-  text-align: center;
 }
 
 .hero h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 2.4rem;
+  font-weight: 800;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 15px;
 }
 
 .hero p {
-  max-width: 600px;
-  margin-bottom: 2rem;
+  max-width: 650px;
+  color: #444;
+  margin-bottom: 25px;
 }
 
-.gradient-text {
-  background: linear-gradient(90deg, var(--pennio-orange), var(--pennio-yellow));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* CTA Group */
 .cta-group {
   display: flex;
+  gap: 15px;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
 }
 
+/* Gradient Button */
 .cta {
-  background: linear-gradient(90deg, var(--pennio-orange), var(--pennio-yellow));
-  color: var(--pennio-black);
-  font-weight: 600;
+  padding: 14px 28px;
   border: none;
   border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
-  padding: 14px 32px;
+  background: var(--gradient);
+  color: var(--pennio-black);
   transition: all 0.3s ease;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.cta.alt {
+  background: transparent;
+  border: 2px solid var(--pennio-orange);
+  color: var(--pennio-orange);
 }
 
 .cta:hover {
-  transform: translateY(-3px);
-  color: var(--pennio-white);
-  text-shadow: 0 0 8px rgba(255,255,255,0.6);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+  transform: scale(1.05);
 }
 
-/* Floating Icons */
+/* ===========================
+   FLOATING ICONS
+=========================== */
 .floating-icons {
   position: fixed;
   top: 50%;
@@ -159,72 +177,106 @@ header {
 
 .floating-icons a {
   color: var(--pennio-white);
-  text-decoration: none;
-  margin: 5px 0;
-  padding: 8px;
-  font-size: 1.3rem;
-  transition: background 0.3s ease;
+  margin: 8px 0;
+  font-size: 1.4rem;
+  transition: 0.3s;
 }
 
 .floating-icons a:hover {
-  background: var(--pennio-orange);
+  color: var(--pennio-yellow);
 }
 
-/* Section Structure */
-section {
-  padding: 80px 20px;
-  max-width: 1200px;
-  margin: auto;
-}
-
-section h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 2rem;
-}
-
-/* Service Cards Grid */
+/* ===========================
+   SERVICES SECTION
+=========================== */
 #services {
-  background: var(--pennio-gray);
-  border-radius: 12px;
+  padding: 80px 20px;
+  background: #fafafa;
 }
 
-.service-buttons {
+#services h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 20px;
+}
+
+.service-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-top: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  justify-items: center;
+  align-items: stretch;
   padding: 0 10px;
 }
 
-.service-buttons button {
-  background: var(--pennio-white);
-  color: var(--pennio-black);
-  border: 2px solid transparent;
-  border-radius: 10px;
-  padding: 25px 20px;
-  font-weight: 600;
-  font-size: 1.05rem;
-  cursor: pointer;
+.service-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 35px 25px;
+  text-align: center;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.service-buttons button:hover {
-  background: linear-gradient(90deg, var(--pennio-orange), var(--pennio-yellow));
-  color: var(--pennio-white);
-  transform: translateY(-4px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+.service-card:hover {
+  transform: translateY(-6px);
+  background: var(--gradient);
+  color: var(--pennio-black);
 }
 
-/* Contact Section */
+.service-card:hover h3,
+.service-card:hover p {
+  color: var(--pennio-black);
+}
+
+.service-card h3 {
+  margin: 15px 0 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.service-card p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.service-icon {
+  font-size: 2.2rem;
+  color: var(--pennio-orange);
+  margin-bottom: 15px;
+  transition: 0.3s;
+}
+
+.service-card:hover .service-icon {
+  transform: scale(1.15);
+  color: var(--pennio-black);
+}
+
+/* ===========================
+   CONTACT SECTION
+=========================== */
 #contact {
   max-width: 600px;
+  margin: 60px auto;
+  padding: 40px 25px;
   background: var(--pennio-white);
-  margin: 80px auto;
-  padding: 40px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+#contact h2 {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 form {
@@ -232,67 +284,70 @@ form {
   flex-direction: column;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   padding: 12px;
   border: 2px solid #ddd;
   border-radius: 6px;
-  font-size: 16px;
   margin-bottom: 15px;
-  transition: 0.3s;
+  font-size: 1rem;
+  transition: border 0.3s ease;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   border-color: var(--pennio-orange);
   outline: none;
 }
 
 /* Submit Button */
-button[type="submit"] {
-  background: linear-gradient(90deg, var(--pennio-orange), var(--pennio-yellow));
+button {
+  background: var(--gradient);
   color: var(--pennio-black);
-  padding: 14px;
+  padding: 12px;
   border: none;
   border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
-button[type="submit"]:hover {
-  color: var(--pennio-white);
+button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
 
-/* Footer */
+/* ===========================
+   FOOTER
+=========================== */
 footer {
   background: var(--pennio-black);
   color: var(--pennio-white);
-  text-align: center;
   padding: 20px;
+  font-size: 0.9rem;
 }
 
 footer a {
   color: var(--pennio-yellow);
   text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s ease;
 }
 
 footer a:hover {
-  color: var(--pennio-orange);
+  text-decoration: underline;
 }
 
-/* Responsive Navigation */
+/* ===========================
+   RESPONSIVE
+=========================== */
 @media (max-width: 768px) {
   .nav-links {
     display: none;
     flex-direction: column;
+    background: var(--pennio-orange);
     position: absolute;
     top: 60px;
     right: 0;
-    background: var(--pennio-orange);
     width: 100%;
     text-align: center;
     padding: 20px 0;
@@ -307,57 +362,25 @@ footer a:hover {
     display: flex;
   }
 
+  .cta-btn {
+    display: none;
+  }
+
+  .cta-btn.active {
+    display: block;
+    margin-top: 10px;
+  }
+
   #menu-toggle {
     display: block;
   }
 
-  .cta-btn {
-    display: none;
-  }
   .service-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-top: 40px;
-}
+    grid-template-columns: 1fr;
+  }
 
-.service-card {
-  background: linear-gradient(180deg, #fff, #f9f9f9);
-  border-radius: 12px;
-  padding: 30px 20px;
-  text-align: center;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-  background: linear-gradient(180deg, var(--pennio-yellow), var(--pennio-orange));
-  color: var(--pennio-black);
-}
-
-.service-card h3 {
-  margin-top: 10px;
-  font-size: 1.2rem;
-  font-weight: 700;
-}
-
-.service-card p {
-  font-size: 0.95rem;
-  color: #333;
-  line-height: 1.5;
-}
-
-.service-icon {
-  font-size: 2rem;
-  color: var(--pennio-orange);
-  transition: transform 0.3s ease;
-}
-
-.service-card:hover .service-icon {
-  transform: scale(1.1);
-  color: var(--pennio-black);
-}
+  .cta-group {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
