@@ -3,17 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="BYLT BY PENNIO — We build the systems that help your brand grow with clarity and ease." />
-    <meta property="og:title" content="BYLT by PENNIO — Build Your Loyal Tribe" />
-    <meta property="og:description" content="A done-for-you brand system designed to make your business simple, clear, and ready to grow." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://pennio-design.github.io/bylt/og-image.jpg" />
+    <meta name="description" content="BYLT BY PENNIO — Build Your Loyal Tribe. Build a brand system that grows with clarity and ease." />
     <meta name="theme-color" content="#3F51B5" />
     <title>BYLT by PENNIO — Build Your Loyal Tribe</title>
 
+    <!-- Favicon -->
     <link rel="icon" href="favicon.ico" />
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
 
     <script>
@@ -39,8 +42,6 @@
     <style>
       html, body { scroll-behavior: smooth; }
       body { background-color: #F5F6F8; color: #1A1A1A; font-family: 'Inter', sans-serif; }
-      .hero-bg { background: linear-gradient(-45deg,#e0e7ff,#c3dafe,#a7c0fe,#8aaffa); background-size:400% 400%; animation:bgmove 15s ease infinite; }
-      @keyframes bgmove { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
       .reveal { opacity:0; transform:translateY(20px); transition:opacity .6s,transform .6s; }
       .visible { opacity:1; transform:translateY(0); }
     </style>
@@ -52,12 +53,12 @@
     <header class="bg-white shadow-sm sticky top-0 z-50">
       <nav class="max-w-7xl mx-auto flex justify-between items-center p-4">
         <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-bylt-black">BYLT BY PENNIO</h1>
-        <a href="#bylt4u" class="bg-root-indigo hover:bg-bylt-black text-white font-semibold px-4 py-2 rounded-lg transition">Get BYLT4U</a>
+        <a href="#leadform" class="bg-root-indigo hover:bg-bylt-black text-white font-semibold px-4 py-2 rounded-lg transition">Get Started</a>
       </nav>
     </header>
 
     <!-- Hero -->
-    <section class="hero-bg text-center py-24">
+    <section class="text-center py-24 bg-gradient-to-br from-indigo-50 to-white">
       <div class="max-w-3xl mx-auto px-4">
         <h2 class="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
           Build a Brand That Works.<br />
@@ -65,7 +66,7 @@
         </h2>
         <p class="text-lg md:text-xl text-bylt-graphite mb-8">
           Your brand doesn’t just need a logo — it needs a system.  
-          <b>BYLT by PENNIO</b> builds the structure that makes your brand easy to run and ready to grow.
+          <b>BYLT by PENNIO</b> helps you build that system with structure, strategy, and simplicity.
         </p>
         <a href="#services" class="inline-block bg-root-indigo text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:bg-indigo-600 transition">
           See How It Works
@@ -77,78 +78,92 @@
     <section id="services" class="max-w-7xl mx-auto px-4 py-20">
       <h3 class="text-3xl md:text-4xl font-extrabold text-center mb-12">Our Six BYLT Pillars</h3>
       <p class="text-center text-bylt-graphite max-w-2xl mx-auto mb-16">
-        Each pillar is a step towards a brand that’s clear, consistent, and built to grow.
+        Each service helps you build a clearer, stronger brand.
       </p>
 
       <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-root-indigo">
+        <div data-service="BYLT.Root" class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-root-indigo cursor-pointer hover:shadow-xl transition">
           <i data-lucide="anchor" class="w-10 h-10 text-root-indigo mb-4"></i>
           <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-root-indigo">Root</span></h4>
-          <p class="text-bylt-graphite text-sm">Define your foundation — your values, mission, and what you stand for.</p>
+          <p class="text-bylt-graphite text-sm">Define your foundation — your values, mission, and direction.</p>
         </div>
-        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-map-green">
+
+        <div data-service="BYLT.Map" class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-map-green cursor-pointer hover:shadow-xl transition">
           <i data-lucide="compass" class="w-10 h-10 text-map-green mb-4"></i>
           <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-map-green">Map</span></h4>
-          <p class="text-bylt-graphite text-sm">Plan your growth path — how to reach and keep your ideal audience.</p>
+          <p class="text-bylt-graphite text-sm">Plan your growth journey and position your brand for success.</p>
         </div>
-        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-voice-aqua">
+
+        <div data-service="BYLT.Voice" class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-voice-aqua cursor-pointer hover:shadow-xl transition">
           <i data-lucide="megaphone" class="w-10 h-10 text-voice-aqua mb-4"></i>
           <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-voice-aqua">Voice</span></h4>
-          <p class="text-bylt-graphite text-sm">Craft your message so people understand and connect instantly.</p>
+          <p class="text-bylt-graphite text-sm">Find your brand’s voice and communicate clearly to your audience.</p>
         </div>
-        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-frame-gray">
+
+        <div data-service="BYLT.Frame" class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-frame-gray cursor-pointer hover:shadow-xl transition">
           <i data-lucide="layout-grid" class="w-10 h-10 text-frame-gray mb-4"></i>
           <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-frame-gray">Frame</span></h4>
-          <p class="text-bylt-graphite text-sm">Design a look that reflects your identity and builds trust.</p>
+          <p class="text-bylt-graphite text-sm">Design a visual identity that reflects your story and values.</p>
         </div>
-        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-echo-orange">
+
+        <div data-service="BYLT.Echo" class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-echo-orange cursor-pointer hover:shadow-xl transition">
           <i data-lucide="send" class="w-10 h-10 text-echo-orange mb-4"></i>
           <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-echo-orange">Echo</span></h4>
-          <p class="text-bylt-graphite text-sm">Share your story with the world through smart campaigns.</p>
+          <p class="text-bylt-graphite text-sm">Launch campaigns that grow your tribe and amplify your reach.</p>
         </div>
-        <div class="reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-focus-taupe">
+
+        <div data-service="BYLT.Focus" class="service-card reveal bg-white p-8 rounded-2xl shadow-md border-t-4 border-focus-taupe cursor-pointer hover:shadow-xl transition">
           <i data-lucide="shield" class="w-10 h-10 text-focus-taupe mb-4"></i>
           <h4 class="text-2xl font-semibold mb-2">BYLT.<span class="text-focus-taupe">Focus</span></h4>
-          <p class="text-bylt-graphite text-sm">Keep your operations organised so your brand stays consistent.</p>
+          <p class="text-bylt-graphite text-sm">Set up systems that keep your brand organised and consistent.</p>
         </div>
       </div>
     </section>
 
-    <!-- BYLT4U -->
-    <section id="bylt4u" class="text-white py-20 px-4 bg-gradient-to-br from-gray-900 to-black text-center">
-      <h3 class="text-4xl font-extrabold mb-4">🚀 BYLT4U — Built For You</h3>
-      <p class="max-w-2xl mx-auto text-lg text-white/80 mb-8">
-        Don’t want to do it all yourself?  
-        <b>BYLT4U</b> is our done-for-you service — we build the full brand system for you, from foundation to launch.
-      </p>
-      <a href="#contact" class="bg-white text-root-indigo font-bold px-10 py-3 rounded-xl shadow-lg hover:bg-gray-100 transition">
-        Start With BYLT4U
-      </a>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="bg-white py-20 text-center">
-      <h3 class="text-3xl font-extrabold text-bylt-black mb-4">Get Started</h3>
+    <!-- Lead Magnet Form -->
+    <section id="leadform" class="bg-white py-20 text-center">
+      <h3 class="text-3xl font-extrabold text-bylt-black mb-4">Get Your Brand System Started</h3>
       <p class="text-bylt-graphite mb-8 max-w-2xl mx-auto">
-        Fill the form below — let’s help you build the system that makes your brand easier to run and ready to grow.
+        Fill the form below — let’s help you build a simple, strong, and stress-free brand system.
       </p>
-      <div class="max-w-3xl mx-auto">
-        <iframe
-          src="https://docs.google.com/forms/d/e/1FAIpQLScZgSSKQ30trTF8MdTkIK0m9pX1DWdMKPAgJ889LEMAeGElgQ/viewform?embedded=true"
-          width="100%"
-          height="900"
-          frameborder="0"
-          marginheight="0"
-          marginwidth="0"
-          class="rounded-2xl shadow-lg">
-          Loading…
-        </iframe>
+
+      <div class="max-w-lg mx-auto">
+        <form action="https://formsubmit.co/byltbypennio@gmail.com" method="POST" class="bg-gray-50 p-8 rounded-2xl shadow-lg space-y-4">
+          <input type="hidden" name="_subject" value="New BYLT Lead" />
+          <input type="hidden" name="_template" value="box" />
+          <input type="hidden" name="Service" id="selectedService" value="General Inquiry" />
+
+          <div>
+            <label class="block text-left font-semibold mb-1">Your Name</label>
+            <input type="text" name="Name" required class="w-full border-gray-300 rounded-md p-3" placeholder="Enter your full name" />
+          </div>
+
+          <div>
+            <label class="block text-left font-semibold mb-1">Email Address</label>
+            <input type="email" name="Email" required class="w-full border-gray-300 rounded-md p-3" placeholder="your@email.com" />
+          </div>
+
+          <div>
+            <label class="block text-left font-semibold mb-1">Brand or Business Name</label>
+            <input type="text" name="Brand" class="w-full border-gray-300 rounded-md p-3" placeholder="e.g. Brillá.ng" />
+          </div>
+
+          <div>
+            <label class="block text-left font-semibold mb-1">Message</label>
+            <textarea name="Message" rows="4" class="w-full border-gray-300 rounded-md p-3" placeholder="Tell us what you’d like to build with BYLT..."></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-root-indigo text-white font-bold py-3 rounded-lg hover:bg-bylt-black transition">
+            Send My Request
+          </button>
+        </form>
       </div>
     </section>
 
     <!-- Footer -->
     <footer class="bg-bylt-black text-center text-white py-6 text-sm">
-      <p>&copy; 2025 <b>BYLT by PENNIO</b> — We build the system that helps your brand work. <br />Part of <b><a href="https://pennio-design.github.io" class="underline">pennio-design.github.io</a></b>.</p>
+      <p>&copy; 2025 <b>BYLT by PENNIO</b> — We build systems that make your brand work. <br />
+      <a href="https://pennio-design.github.io" class="underline">pennio-design.github.io</a></p>
     </footer>
 
     <script>
@@ -158,6 +173,15 @@
           entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); } })
         , { threshold: 0.15 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Prefill service in form when a card is clicked
+        document.querySelectorAll('.service-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const service = card.getAttribute('data-service');
+            document.getElementById('selectedService').value = service;
+            document.querySelector('#leadform').scrollIntoView({ behavior: 'smooth' });
+          });
+        });
       });
     </script>
   </body>
