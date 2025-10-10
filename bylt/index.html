@@ -3,20 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="BYLT BY PENNIO — Build Your Loyal Tribe. Build a brand system that grows with clarity and ease." />
+    <meta name="description" content="BYLT BY PENNIO — Build a brand system that grows with clarity and ease." />
     <meta name="theme-color" content="#3F51B5" />
     <title>BYLT by PENNIO — Build Your Loyal Tribe</title>
 
-    <!-- Favicon -->
     <link rel="icon" href="favicon.ico" />
-
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
-
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
 
     <script>
@@ -42,8 +35,9 @@
     <style>
       html, body { scroll-behavior: smooth; }
       body { background-color: #F5F6F8; color: #1A1A1A; font-family: 'Inter', sans-serif; }
-      .reveal { opacity:0; transform:translateY(20px); transition:opacity .6s,transform .6s; }
-      .visible { opacity:1; transform:translateY(0); }
+      .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s, transform .6s; }
+      .visible { opacity: 1; transform: translateY(0); }
+      .hidden-popup { display: none; }
     </style>
   </head>
 
@@ -128,7 +122,7 @@
       </p>
 
       <div class="max-w-lg mx-auto">
-        <form action="https://formsubmit.co/byltbypennio@gmail.com" method="POST" class="bg-gray-50 p-8 rounded-2xl shadow-lg space-y-4">
+        <form id="byltForm" action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" method="POST" class="bg-gray-50 p-8 rounded-2xl shadow-lg space-y-4">
           <input type="hidden" name="_subject" value="New BYLT Lead" />
           <input type="hidden" name="_template" value="box" />
           <input type="hidden" name="Service" id="selectedService" value="General Inquiry" />
@@ -145,7 +139,7 @@
 
           <div>
             <label class="block text-left font-semibold mb-1">Brand or Business Name</label>
-            <input type="text" name="Brand" class="w-full border-gray-300 rounded-md p-3" placeholder="e.g. Brillá.ng" />
+            <input type="text" name="Brand" class="w-full border-gray-300 rounded-md p-3" placeholder="e.g. PENNIO" />
           </div>
 
           <div>
@@ -160,6 +154,15 @@
       </div>
     </section>
 
+    <!-- Thank You Popup -->
+    <div id="thankYouPopup" class="hidden-popup fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md text-center">
+        <h4 class="text-2xl font-bold text-root-indigo mb-2">Thank You!</h4>
+        <p class="text-bylt-graphite mb-6">Your message has been received. We’ll get back to you shortly.</p>
+        <button id="closePopup" class="bg-root-indigo text-white px-6 py-2 rounded-lg hover:bg-bylt-black transition">Close</button>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-bylt-black text-center text-white py-6 text-sm">
       <p>&copy; 2025 <b>BYLT by PENNIO</b> — We build systems that make your brand work. <br />
@@ -169,18 +172,40 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         lucide?.createIcons();
+
+        // Animate cards
         const observer = new IntersectionObserver(entries =>
           entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); } })
         , { threshold: 0.15 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        // Prefill service in form when a card is clicked
+        // Prefill service
         document.querySelectorAll('.service-card').forEach(card => {
           card.addEventListener('click', () => {
             const service = card.getAttribute('data-service');
             document.getElementById('selectedService').value = service;
             document.querySelector('#leadform').scrollIntoView({ behavior: 'smooth' });
           });
+        });
+
+        // Handle form submission (Thank You popup)
+        const form = document.getElementById('byltForm');
+        const popup = document.getElementById('thankYouPopup');
+        const closeBtn = document.getElementById('closePopup');
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+          }).then(() => {
+            popup.style.display = 'flex';
+            form.reset();
+          }).catch(() => alert('Something went wrong, please try again.'));
+        });
+
+        closeBtn.addEventListener('click', () => {
+          popup.style.display = 'none';
         });
       });
     </script>
