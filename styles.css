@@ -306,12 +306,36 @@ footer a:hover {
   color: var(--pennio-orange);
 }
 
-/* Mobile Optimization */
-@media (max-width: 768px) {
-  .nav-links ul {
-    display: none;
-  }
 
+/* Fix Portfolio Button */
+#openPortfolio {
+  background: var(--pennio-orange);
+  color: var(--pennio-white);
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#openPortfolio:hover {
+  background: var(--pennio-yellow);
+  color: var(--pennio-black);
+}
+
+/* Fix Hamburger Visibility */
+#menu-toggle {
+  display: none;
+}
+
+/* Show hamburger only on mobile */
+@media (max-width: 768px) {
+  #menu-toggle {
+    display: block;
+  }
   .service-card {
     max-width: 90%;
   }
