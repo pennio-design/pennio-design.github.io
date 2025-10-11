@@ -10,6 +10,10 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -136,6 +140,7 @@
       <option value="BYLT.Echo">BYLT.Echo</option>
       <option value="BYLT.Focus">BYLT.Focus</option>
       <option value="BYLT4U">BYLT4U</option>
+      <option value="Clarity Session">Clarity Session</option> <!-- Added for the button -->
     </select>
 
     <textarea name="message" id="message" placeholder="Tell me about your project..." required></textarea>
@@ -157,13 +162,16 @@
   <a href="https://pennio-design.github.io/bylt" target="_blank">Explore BYLT</a>
 </footer>
 
+<!-- General Site JavaScript -->
 <script>
+  // Function to prefill service (existing)
   function prefillService(serviceName) {
     document.getElementById('service').value = serviceName;
     document.getElementById('message').value = `Hi PENNIO, I’m interested in ${serviceName}.`;
     document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
   }
 
+  // Contact Form Submission (existing)
   document.getElementById("contactForm").addEventListener("submit", function () {
     document.getElementById("contactForm").style.display = "none";
     document.getElementById("thank-you-message").style.display = "block";
@@ -175,6 +183,59 @@
     document.getElementById("thank-you-message").style.display = "none";
     document.getElementById("contactForm").reset();
   });
+
+  // NEW: Hamburger Menu Toggle
+  const menuToggle = document.getElementById('menu-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  const ctaButton = document.querySelector('header .cta-btn'); // Select the header cta-btn
+
+  if (menuToggle && navMenu) {
+    menuToggle.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
+      ctaButton.classList.toggle('active'); // Toggle visibility of CTA button as well
+      menuToggle.querySelector('i').classList.toggle('fa-bars');
+      menuToggle.querySelector('i').classList.toggle('fa-times'); // Optional: change icon to 'X'
+    });
+
+    // Close menu when a navigation link is clicked (for smoother mobile experience)
+    document.querySelectorAll('#nav-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        navMenu.classList.remove('active');
+        ctaButton.classList.remove('active');
+        menuToggle.querySelector('i').classList.remove('fa-times');
+        menuToggle.querySelector('i').classList.add('fa-bars');
+      });
+    });
+  }
+
+
+  // NEW: PDF Modal Functionality
+  const openPortfolioBtn = document.getElementById('openPortfolio');
+  const pdfModal = document.getElementById('pdfModal');
+  const closeModalSpan = document.querySelector('.modal .close');
+  const pdfFrame = document.getElementById('pdfFrame');
+
+  if (openPortfolioBtn && pdfModal && closeModalSpan && pdfFrame) {
+    openPortfolioBtn.addEventListener('click', () => {
+      pdfModal.style.display = 'block';
+      // Set the src for the PDF iframe
+      // IMPORTANT: Ensure 'portfolio.pdf' is in the same directory as index.html
+      pdfFrame.src = 'portfolio.pdf';
+    });
+
+    closeModalSpan.addEventListener('click', () => {
+      pdfModal.style.display = 'none';
+      pdfFrame.src = ''; // Clear the iframe src when closing
+    });
+
+    // Close the modal if user clicks outside of the modal content
+    window.addEventListener('click', (event) => {
+      if (event.target === pdfModal) {
+        pdfModal.style.display = 'none';
+        pdfFrame.src = ''; // Clear the iframe src when closing
+      }
+    });
+  }
 </script>
 
 </body>
