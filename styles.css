@@ -13,7 +13,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif; /* Now linked in HTML */
   color: var(--pennio-black);
   background-color: var(--pennio-white);
   padding-top: 80px;
@@ -143,6 +143,70 @@ header {
   box-shadow: 0 5px 12px rgba(0,0,0,0.2);
   background: var(--pennio-yellow);
   color: var(--pennio-black);
+}
+
+/* NEW: PDF Modal Styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 2000; /* Sit on top of everything */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+  padding-top: 60px; /* Location of the box */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 15% from the top and centered */
+  padding: 0; /* Remove padding here */
+  border: 1px solid #888;
+  width: 90%; /* Could be more responsive */
+  max-width: 900px; /* Max width for larger screens */
+  height: 80vh; /* Set a height for the modal content */
+  position: relative;
+  border-radius: 8px;
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Stack children vertically */
+}
+
+.modal-content iframe {
+  width: 100%;
+  flex-grow: 1; /* Make iframe take up available space */
+  border: none; /* Remove iframe default border */
+  border-bottom-left-radius: 8px; /* Match modal border radius */
+  border-bottom-right-radius: 8px;
+}
+
+.modal .close {
+  color: #aaa;
+  font-size: 30px;
+  font-weight: bold;
+  position: absolute; /* Position close button */
+  top: 10px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 2001; /* Ensure close button is above iframe */
+  background: var(--pennio-black);
+  color: var(--pennio-white);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.modal .close:hover,
+.modal .close:focus {
+  color: var(--pennio-white);
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 1;
 }
 
 /* BYLT Section */
@@ -330,18 +394,72 @@ footer a:hover {
 
 /* Hamburger Visibility */
 #menu-toggle {
-  display: none;
+  display: none; /* Hidden by default on desktop */
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--pennio-white);
+  cursor: pointer;
 }
 
 /* Show hamburger only on mobile */
 @media (max-width: 768px) {
   #menu-toggle {
-    display: block;
+    display: block; /* Show hamburger on mobile */
+    margin-left: 15px; /* Add some space if needed */
   }
-  .nav-links ul {
+
+  /* Hide original nav links and CTA button */
+  .nav-links, .cta-btn {
     display: none;
   }
+
+  /* Mobile menu styles when active */
+  .nav-links.active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 70px; /* Adjust based on header height */
+    left: 0;
+    width: 100%;
+    background: var(--pennio-orange);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    padding: 20px 0;
+    z-index: 999;
+  }
+
+  .nav-links.active ul {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .nav-links.active a {
+    padding: 10px 20px;
+    display: block;
+  }
+
+  .cta-btn.active {
+    display: block; /* Show CTA button in mobile menu as well if desired */
+    position: absolute;
+    top: 10px; /* Aligned with header */
+    right: 20px;
+    z-index: 1001; /* Ensure it's above the opened menu */
+    background: var(--pennio-yellow);
+    color: var(--pennio-black);
+  }
+
+  /* Adjust hero section padding for mobile when menu is open to prevent overlap */
+  body.menu-open {
+    padding-top: calc(80px + 100px); /* Adjust based on your nav-links.active height */
+  }
+
   .hero h2 { font-size: 1.6rem; }
   .service-card { max-width: 90%; }
   #contact { margin: 40px 15px; }
+
+  .modal-content {
+    width: 95%; /* Adjust for smaller screens */
+    height: 90vh; /* Make modal take more vertical space */
+    margin-top: 20px;
+  }
 }
