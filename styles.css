@@ -21,6 +21,7 @@ body {
   overflow-x: hidden;
 }
 
+/* Header */
 header {
   background: var(--pennio-orange);
   padding: 15px 0;
@@ -28,6 +29,7 @@ header {
   width: 100%;
   top: 0;
   z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .container {
@@ -122,6 +124,27 @@ header {
   color: var(--pennio-yellow);
 }
 
+/* Portfolio Button */
+#openPortfolio {
+  background: var(--pennio-orange);
+  color: var(--pennio-white);
+  border: none;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 6px;
+  margin-top: 15px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+#openPortfolio:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+  background: var(--pennio-yellow);
+  color: var(--pennio-black);
+}
+
 /* BYLT Section */
 .bylt-section {
   background: #fafafa;
@@ -142,18 +165,16 @@ header {
   font-size: 1rem;
 }
 
-/* Service Cards */
+/* Service Cards Grid */
 .service-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 25px;
   justify-items: center;
   padding: 0 15px;
 }
 
 .service-card {
-  width: 100%;
-  max-width: 330px;
   background: var(--pennio-white);
   border-radius: 14px;
   padding: 30px 20px;
@@ -161,6 +182,8 @@ header {
   box-shadow: 0 5px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   cursor: pointer;
+  width: 100%;
+  max-width: 320px;
 }
 .service-card:hover {
   transform: translateY(-6px);
@@ -170,19 +193,19 @@ header {
 .service-icon {
   font-size: 2.3rem;
   color: var(--pennio-orange);
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .service-card h3 {
   margin: 8px 0;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .service-card p {
   color: #555;
   font-size: 0.95rem;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 /* BYLT4U Highlight */
@@ -193,12 +216,8 @@ header {
   position: relative;
   animation: glowPulse 3s ease-out 1;
 }
-.bylt4u .service-icon {
-  color: var(--pennio-yellow);
-}
-.bylt4u h3, .bylt4u p {
-  color: var(--pennio-white);
-}
+.bylt4u .service-icon { color: var(--pennio-yellow); }
+.bylt4u h3, .bylt4u p { color: var(--pennio-white); }
 .bylt4u:hover {
   transform: translateY(-6px);
   box-shadow: 0 0 20px rgba(255,214,0,0.4);
@@ -233,11 +252,14 @@ header {
   align-items: center;
   width: 100%;
 }
+.instagram-media {
+  margin: 0 auto;
+}
 
 /* Contact */
 #contact {
   max-width: 650px;
-  margin: 60px auto;
+  margin: 80px auto;
   padding: 30px 20px;
   background: var(--pennio-white);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
@@ -306,27 +328,7 @@ footer a:hover {
   color: var(--pennio-orange);
 }
 
-
-/* Fix Portfolio Button */
-#openPortfolio {
-  background: var(--pennio-orange);
-  color: var(--pennio-white);
-  border: none;
-  padding: 12px 24px;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 6px;
-  margin-top: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-#openPortfolio:hover {
-  background: var(--pennio-yellow);
-  color: var(--pennio-black);
-}
-
-/* Fix Hamburger Visibility */
+/* Hamburger Visibility */
 #menu-toggle {
   display: none;
 }
@@ -339,21 +341,7 @@ footer a:hover {
   .nav-links ul {
     display: none;
   }
-
-  }
-  .service-card {
-    max-width: 90%;
-  }
-
-  .hero h2 {
-    font-size: 1.6rem;
-  }
-
-  .service-grid {
-    padding: 0 10px;
-  }
-
-  #contact {
-    margin: 40px 15px;
-  }
+  .hero h2 { font-size: 1.6rem; }
+  .service-card { max-width: 90%; }
+  #contact { margin: 40px 15px; }
 }
