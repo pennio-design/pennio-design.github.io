@@ -336,6 +336,11 @@ footer a:hover {
   #menu-toggle {
     display: block;
   }
+  .nav-links ul {
+    display: none;
+  }
+
+  }
   .service-card {
     max-width: 90%;
   }
