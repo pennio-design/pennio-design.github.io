@@ -35,6 +35,8 @@
               'frame-gray': '#A3B1C5',
               'echo-orange': '#FF5722',
               'focus-taupe': '#795548',
+              'bylt-accent': '#FFD700', // Bright gold for primary action
+              'bylt-secondary': '#FFAB40', // Complementary orange for hover
             },
             fontFamily: { sans: ['Inter', 'sans-serif'] },
           },
@@ -50,6 +52,16 @@
       .reveal { opacity:0; transform:translateY(20px); transition:opacity .6s,transform .6s; }
       .visible { opacity:1; transform:translateY(0); }
       #thankYouPopup { display:none; }
+
+      /* Keyframes for the pulse animation */
+      @keyframes pulseOnce {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.03); }
+        100% { transform: scale(1); }
+      }
+      .animate-pulse-once {
+        animation: pulseOnce 1.5s ease-out 1; /* 1.5s duration, runs once */
+      }
     </style>
   </head>
 
@@ -59,7 +71,7 @@
     <header class="bg-white shadow-sm sticky top-0 z-50">
       <nav class="max-w-7xl mx-auto flex justify-between items-center p-4">
         <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight text-bylt-black">BYLT BY PENNIO</h1>
-        <a href="#leadform" class="bg-root-indigo hover:bg-bylt-black text-white font-semibold px-4 py-2 rounded-lg transition">Start Now</a>
+        <a href="#leadform" class="bg-bylt-accent hover:bg-bylt-secondary text-bylt-black font-semibold px-4 py-2 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 shadow-md">Start Now</a>
       </nav>
     </header>
 
@@ -72,7 +84,7 @@
         <p class="text-lg md:text-xl text-bylt-graphite mb-8">
           BYLT helps you create a simple, strong brand system that saves time, grows your community, and builds loyalty.
         </p>
-        <a href="#services" class="inline-block bg-root-indigo text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:bg-indigo-600 transition">
+        <a href="#services" class="inline-block bg-bylt-accent text-bylt-black font-bold px-8 py-3 rounded-xl shadow-lg hover:bg-bylt-secondary transition duration-300 ease-in-out transform hover:scale-105 active:scale-95 animate-pulse-once">
           See What You’ll Get
         </a>
       </div>
