@@ -307,7 +307,7 @@
   </section>
 
   <!-- ==============================================
-       3. CONTACT SECTION (The Hidden Iframe Fix)
+       3. CONTACT SECTION (Updated ID + Iframe Fix)
        ============================================== -->
   <section id="contact" class="py-24 px-4 md:px-6 bg-[#FAFAFA]">
     <div class="max-w-xl mx-auto">
@@ -330,16 +330,17 @@
       <!-- FORM -->
       <div id="formContainer" class="bg-white border border-brand-border rounded-2xl p-8 shadow-card">
         
-        <!-- HIDDEN IFRAME to catch submission -->
+        <!-- HIDDEN IFRAME to catch submission (Prevents mobile freezing) -->
         <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
         <!-- FORM TARGETS THE IFRAME -->
         <form id="contactForm" 
-              action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" 
+              action="https://formsubmit.co/ea0da421e8e6e82457be40792262eeed" 
               method="POST" 
               target="hidden_iframe"
               class="flex flex-col gap-5">
             
+            <!-- Honeypot & Config -->
             <input type="hidden" name="_subject" value="New Project Request from PENNIO.DESIGN" />
             <input type="hidden" name="_captcha" value="false" />
 
