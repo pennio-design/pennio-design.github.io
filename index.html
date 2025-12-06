@@ -1,414 +1,297 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PENNIO.DESIGN – Portfolio</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Google Fonts - Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <!-- Add this to your <head> section -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          brand: {
-            orange: '#FF6A00',
-            yellow: '#FFD600',
-            black: '#0a0a0a',
+  <title>PENNIO.DESIGN – The System</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            brand: {
+              orange: '#FF6A00',
+              dark: '#0a0a0a',
+              gray: '#f5f5f5',
+              border: '#e5e5e5'
+            }
+          },
+          boxShadow: {
+            'card': '0 2px 8px rgba(0,0,0,0.04)',
+            'card-hover': '0 12px 24px rgba(0,0,0,0.06)'
           }
-        },
-        fontFamily: {
-          sans: ['Inter', 'sans-serif'],
         }
       }
     }
-  }
-</script>
-<style>
-  /* Custom Animation for the Tree Drawing Effect */
-  .tree-path {
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    transition: stroke-dashoffset 1.5s ease-out;
-  }
-  .group:hover .tree-path {
-    stroke-dashoffset: 0;
-  }
-  
-  /* Leaf pop-in animation */
-  .tree-leaf {
-    transform: scale(0);
-    transform-origin: center;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  .group:hover .tree-leaf {
-    transform: scale(1);
-  }
-  /* Stagger delays for leaves */
-  .group:hover .leaf-1 { transition-delay: 0.5s; }
-  .group:hover .leaf-2 { transition-delay: 0.6s; }
-  .group:hover .leaf-3 { transition-delay: 0.7s; }
+  </script>
 
-  /* Grid Layout Fixes */
-  .bento-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  @media (min-width: 768px) {
-    .bento-grid {
-      grid-template-columns: repeat(3, 1fr);
-      grid-auto-rows: 260px;
+  <style>
+    /* ----------------------------------
+       TREE ANIMATION 
+       ---------------------------------- */
+    .tree-path {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      transition: stroke-dashoffset 1.2s ease-out;
     }
-    .col-span-2 { grid-column: span 2; }
-    .row-span-1 { grid-row: span 1; }
-  }
-</style>
-</head>
-<body>
-
-<header>
-  <div class="container">
-    <a href="#" class="logo">PENNIO.DESIGN</a>
-    <nav class="nav-links" id="nav-menu">
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#portfolio">Portfolio</a></li>
-        <li><a href="#services">BYLT</a></li>
-        <li><a href="#instagram">Instagram</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-    <a href="#contact" class="cta-btn">Get in Touch</a>
-    <button id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
-  </div>
-</header>
-
-<!-- HERO -->
-<section id="home" class="hero">
-  <h2>Building Brands that Speak, Sell & Stay</h2>
-  <p>PENNIO helps businesses build clarity-driven brands that look good, sound right, and grow strong — without stress.</p>
-  <div class="cta-group">
-    <button class="cta" onclick="window.location.href='#contact'">Start Your Project</button>
-    <button class="cta alt" onclick="prefillService('Clarity Session')">Book a Clarity Session</button>
-  </div>
-</section>
-
-<!-- PORTFOLIO -->
-<section id="portfolio">
-  <h2>Featured Work</h2>
-  <p>Every brand tells a story. Here are a few I’ve helped bring to life.</p>
-  <button id="openPortfolio">View My PDF Portfolio</button>
-
-<!-- Modal -->
-<div id="pdfModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <iframe id="pdfFrame" src="" frameborder="0"></iframe>
-  </div>
-</div>
-</section>
-
-<!-- WHAT WE’RE BYLDING -->
-<!-- WHAT WE’RE BYLDING (Replaced) -->
-<section id="services" class="bg-neutral-50 py-24 px-4 md:px-6 font-sans text-neutral-900 relative overflow-hidden">
-  
-  <!-- Subtle Background Pattern -->
-  <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
-
-  <div class="max-w-6xl mx-auto relative z-10">
+    .group:hover .tree-path { stroke-dashoffset: 0; }
     
-    <!-- Header -->
-    <div class="mb-16 md:text-center max-w-2xl mx-auto">
-      <h2 class="text-brand-orange font-bold uppercase tracking-wider text-sm mb-3">What We're BYLDing</h2>
-      <h3 class="text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900">Clarity-driven systems for growth.</h3>
-      <p class="mt-4 text-neutral-500 text-lg">Modular systems designed to help your brand look good, sound right, and scale without stress.</p>
+    .tree-leaf {
+      transform: scale(0);
+      transform-origin: center;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .group:hover .tree-leaf { transform: scale(1); }
+    .leaf-1 { transition-delay: 0.8s; }
+    .leaf-2 { transition-delay: 0.9s; }
+    .leaf-3 { transition-delay: 1.0s; }
+
+    /* ----------------------------------
+       BENTO GRID LOGIC
+       ---------------------------------- */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    /* Desktop: 3 Columns */
+    @media (min-width: 768px) {
+      .bento-grid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 280px;
+      }
+      .md\:col-span-2 { grid-column: span 2; }
+      .md\:col-span-3 { grid-column: span 3; }
+    }
+  </style>
+</head>
+<body class="bg-[#FAFAFA] text-neutral-900 font-sans antialiased">
+
+  <!-- NAVIGATION -->
+  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-brand-border z-50">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="#" class="font-bold text-lg tracking-tight">PENNIO<span class="text-brand-orange">.DESIGN</span></a>
+      <div class="hidden md:flex gap-8 text-sm font-medium text-neutral-600">
+        <a href="#process" class="hover:text-brand-orange transition-colors">The System</a>
+        <a href="#pricing" class="hover:text-brand-orange transition-colors">Pricing</a>
+      </div>
+      <a href="#contact" class="px-4 py-2 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-brand-orange transition-colors">Book a Call</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="pt-32 pb-16 px-6 text-center max-w-4xl mx-auto">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-700 text-xs font-semibold mb-6 uppercase tracking-wider">
+      <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+      Accepting Q1 Projects
+    </div>
+    <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-neutral-900">
+      Building Brands that <br class="hidden md:block" />
+      <span class="text-brand-orange">Speak, Sell & Stay.</span>
+    </h1>
+    <p class="text-lg text-neutral-500 max-w-2xl mx-auto leading-relaxed">
+      A linear system to clarify your message, design your identity, and grow your business without the stress.
+    </p>
+  </section>
+
+  <!-- ==============================================
+       1. THE PROCESS (Bento Grid)
+       ============================================== -->
+  <section id="process" class="py-10 px-4 md:px-6 max-w-6xl mx-auto">
+    
+    <div class="mb-8 flex items-end justify-between">
+      <div>
+        <h2 class="text-2xl font-bold">What We're BYLDing</h2>
+        <p class="text-neutral-500 mt-1">Six pillars. One cohesive system.</p>
+      </div>
     </div>
 
-    <!-- BENTO GRID -->
     <div class="bento-grid">
       
-      <!-- 1. BYLT.Root (The Tree Animation Card) -->
-      <div onclick="prefillService('BYLT.Root')" class="col-span-2 group relative bg-white border border-neutral-200 rounded-2xl p-6 flex flex-col md:flex-row justify-between overflow-hidden cursor-pointer hover:border-brand-orange hover:shadow-xl transition-all duration-300">
-        <div class="flex flex-col justify-between z-10 h-full relative">
+      <!-- 01. ROOT -->
+      <div onclick="prefillService('BYLT.Root')" class="md:col-span-2 group relative bg-white border border-brand-border rounded-2xl p-8 flex flex-col md:flex-row justify-between overflow-hidden cursor-pointer hover:border-brand-orange hover:shadow-card-hover transition-all duration-300">
+        <div class="relative z-10 flex flex-col justify-between h-full">
           <div>
-            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 border border-orange-100 group-hover:scale-110 transition-transform">
+            <span class="text-brand-orange font-mono text-xs font-bold mb-2 block">01. FOUNDATION</span>
+            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 border border-orange-100 group-hover:scale-105 transition-transform">
               <i data-lucide="sprout" class="text-brand-orange"></i>
             </div>
-            <h4 class="text-xl font-bold text-neutral-900 mb-2">BYLT.Root</h4>
-            <p class="text-neutral-500 max-w-xs group-hover:text-neutral-800 transition-colors">Build your foundation — values, purpose, and brand clarity.</p>
+            <h3 class="text-2xl font-bold mb-2">BYLT.Root</h3>
+            <p class="text-neutral-500 max-w-sm text-sm leading-relaxed">
+              We define your "Why." Core values, purpose, and clarity before we design a single pixel.
+            </p>
           </div>
-          <div class="mt-4 flex items-center text-brand-orange text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
-            Start Growing <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+          <div class="mt-6 flex items-center text-sm font-semibold text-brand-orange opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all">
+            Start Phase One <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
           </div>
         </div>
-
-        <!-- The Tree SVG Animation -->
-        <div class="absolute right-[-20px] bottom-[-20px] md:right-0 md:bottom-0 w-[220px] h-[220px] pointer-events-none opacity-20 md:opacity-100 mix-blend-multiply">
-          <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Trunk -->
+        <!-- Tree Animation -->
+        <div class="absolute right-[-20px] bottom-[-20px] md:right-0 md:bottom-0 w-[220px] h-[220px] opacity-20 md:opacity-100 pointer-events-none mix-blend-multiply">
+           <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
             <path d="M100 220 L100 130" class="text-brand-orange tree-path" />
-            
-            <!-- Left Branch -->
-            <path d="M100 170 Q70 150 60 110" class="text-brand-orange tree-path" style="transition-delay: 0.1s" />
+            <path d="M100 170 Q70 150 60 110" class="text-brand-orange tree-path" style="transition-delay: 0.2s" />
             <circle cx="60" cy="110" r="6" fill="#FFD600" stroke="none" class="tree-leaf leaf-1" />
-
-            <!-- Right Branch -->
-            <path d="M100 150 Q130 130 140 100" class="text-brand-orange tree-path" style="transition-delay: 0.2s" />
+            <path d="M100 150 Q130 130 140 100" class="text-brand-orange tree-path" style="transition-delay: 0.3s" />
             <circle cx="140" cy="100" r="8" fill="#FF6A00" stroke="none" class="tree-leaf leaf-2" />
-
-            <!-- Top Branch -->
-            <path d="M100 130 L100 70" class="text-brand-orange tree-path" style="transition-delay: 0.3s" />
+            <path d="M100 130 L100 70" class="text-brand-orange tree-path" style="transition-delay: 0.4s" />
             <circle cx="100" cy="70" r="10" fill="#FF6A00" stroke="none" class="tree-leaf leaf-3" />
           </svg>
         </div>
       </div>
 
-      <!-- 2. BYLT.Map -->
-      <div onclick="prefillService('BYLT.Map')" class="group relative bg-white border border-neutral-200 rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
-            <i data-lucide="arrow-right" class="text-brand-orange w-5 h-5"></i>
-        </div>
-        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-          <i data-lucide="map" class="text-brand-orange"></i>
-        </div>
+      <!-- 02. MAP -->
+      <div onclick="prefillService('BYLT.Map')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
         <div>
-          <h4 class="text-lg font-bold text-neutral-900 mb-1">BYLT.Map</h4>
-          <p class="text-sm text-neutral-500 leading-relaxed">Plan your growth journey with a clear brand strategy.</p>
+          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">02. STRATEGY</span>
+          <div class="flex items-start justify-between mb-4">
+            <i data-lucide="map" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
+          </div>
+          <h4 class="text-lg font-bold mb-1">BYLT.Map</h4>
+          <p class="text-sm text-neutral-500">Your roadmap to market dominance.</p>
         </div>
       </div>
 
-      <!-- 3. BYLT.Voice -->
-      <div onclick="prefillService('BYLT.Voice')" class="group relative bg-white border border-neutral-200 rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
-            <i data-lucide="arrow-right" class="text-brand-orange w-5 h-5"></i>
-        </div>
-        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-          <i data-lucide="megaphone" class="text-brand-orange"></i>
-        </div>
+      <!-- 03. VOICE -->
+      <div onclick="prefillService('BYLT.Voice')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
         <div>
-          <h4 class="text-lg font-bold text-neutral-900 mb-1">BYLT.Voice</h4>
-          <p class="text-sm text-neutral-500 leading-relaxed">Shape your message so people listen and remember.</p>
+          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">03. MESSAGING</span>
+          <div class="flex items-start justify-between mb-4">
+            <i data-lucide="megaphone" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
+          </div>
+          <h4 class="text-lg font-bold mb-1">BYLT.Voice</h4>
+          <p class="text-sm text-neutral-500">Words that convert strangers.</p>
         </div>
       </div>
 
-      <!-- 4. BYLT.Frame -->
-      <div onclick="prefillService('BYLT.Frame')" class="group relative bg-white border border-neutral-200 rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
-            <i data-lucide="arrow-right" class="text-brand-orange w-5 h-5"></i>
-        </div>
-        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-          <i data-lucide="palette" class="text-brand-orange"></i>
-        </div>
+      <!-- 04. FRAME -->
+      <div onclick="prefillService('BYLT.Frame')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
         <div>
-          <h4 class="text-lg font-bold text-neutral-900 mb-1">BYLT.Frame</h4>
-          <p class="text-sm text-neutral-500 leading-relaxed">Design visuals that make your brand instantly recognisable.</p>
+          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">04. VISUALS</span>
+          <div class="flex items-start justify-between mb-4">
+            <i data-lucide="palette" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
+          </div>
+          <h4 class="text-lg font-bold mb-1">BYLT.Frame</h4>
+          <p class="text-sm text-neutral-500">Logos and colors that stick.</p>
         </div>
       </div>
 
-      <!-- 5. BYLT.Echo -->
-      <div onclick="prefillService('BYLT.Echo')" class="group relative bg-white border border-neutral-200 rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
-            <i data-lucide="arrow-right" class="text-brand-orange w-5 h-5"></i>
-        </div>
-        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-          <i data-lucide="radio" class="text-brand-orange"></i>
-        </div>
+      <!-- 05. ECHO -->
+      <div onclick="prefillService('BYLT.Echo')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
         <div>
-          <h4 class="text-lg font-bold text-neutral-900 mb-1">BYLT.Echo</h4>
-          <p class="text-sm text-neutral-500 leading-relaxed">Launch and market your brand with smart campaigns.</p>
+          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">05. MARKETING</span>
+          <div class="flex items-start justify-between mb-4">
+            <i data-lucide="radio" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
+          </div>
+          <h4 class="text-lg font-bold mb-1">BYLT.Echo</h4>
+          <p class="text-sm text-neutral-500">Campaigns to launch loud.</p>
         </div>
       </div>
 
-      <!-- 6. BYLT.Focus -->
-      <div onclick="prefillService('BYLT.Focus')" class="group relative bg-white border border-neutral-200 rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/30 hover:shadow-lg transition-all duration-300 cursor-pointer">
-        <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
-            <i data-lucide="arrow-right" class="text-brand-orange w-5 h-5"></i>
-        </div>
-        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-          <i data-lucide="settings" class="text-brand-orange"></i>
-        </div>
+      <!-- 06. FOCUS -->
+      <div onclick="prefillService('BYLT.Focus')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
         <div>
-          <h4 class="text-lg font-bold text-neutral-900 mb-1">BYLT.Focus</h4>
-          <p class="text-sm text-neutral-500 leading-relaxed">Build smooth systems so your brand runs effortlessly.</p>
+          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">06. OPERATIONS</span>
+          <div class="flex items-start justify-between mb-4">
+            <i data-lucide="settings-2" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
+          </div>
+          <h4 class="text-lg font-bold mb-1">BYLT.Focus</h4>
+          <p class="text-sm text-neutral-500">Systems to run effortlessly.</p>
         </div>
       </div>
 
-      <!-- 7. BYLT4U (Dark Feature Card) -->
-      <div onclick="prefillService('BYLT4U')" class="col-span-2 group relative bg-[#0a0a0a] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between overflow-hidden shadow-2xl cursor-pointer">
-         <!-- Glow -->
-         <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500/20 blur-[80px] rounded-full pointer-events-none group-hover:bg-orange-500/30 transition-colors duration-500"></div>
+      <!-- 07. BYLT4U (Full Width) -->
+      <div onclick="prefillService('BYLT4U Package')" class="md:col-span-3 group relative bg-[#0a0a0a] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between overflow-hidden shadow-2xl cursor-pointer hover:scale-[1.01] transition-transform duration-300">
+        <!-- Glow Effect -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500/20 blur-[80px] rounded-full pointer-events-none"></div>
 
-         <div class="z-10 text-center md:text-left">
-           <div class="inline-flex items-center gap-2 bg-[#FFD600] text-black px-3 py-1 rounded-md text-xs font-bold mb-4 uppercase tracking-wide">
+        <div class="relative z-10 md:w-1/2">
+           <div class="inline-flex items-center gap-2 bg-[#FFD600] text-black px-3 py-1 rounded-md text-xs font-bold mb-3 uppercase tracking-wide">
              <i data-lucide="zap" class="w-3 h-3 fill-black"></i> Most Popular
            </div>
-           <h3 class="text-2xl font-bold text-white mb-2">BYLT4U</h3>
-           <p class="text-neutral-400 max-w-sm">All six pillars. One seamless setup built for you.</p>
-         </div>
-         
-         <!-- Visual Letters -->
-         <div class="mt-8 md:mt-0 flex gap-3 relative z-10">
-            <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center group-hover:border-brand-orange transition-colors duration-300"><span class="text-white font-bold group-hover:text-brand-orange">B</span></div>
-            <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center group-hover:border-brand-orange transition-colors duration-300 delay-75"><span class="text-white font-bold group-hover:text-brand-orange">Y</span></div>
-            <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center group-hover:border-brand-orange transition-colors duration-300 delay-100"><span class="text-white font-bold group-hover:text-brand-orange">L</span></div>
-            <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center group-hover:border-brand-orange transition-colors duration-300 delay-150"><span class="text-white font-bold group-hover:text-brand-orange">T</span></div>
-         </div>
-      </div>
+           <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">BYLT4U System</h3>
+           <p class="text-neutral-400">The "Done-For-You" Package. All six pillars, one seamless project. From strategy to website launch in 4-6 weeks.</p>
+        </div>
+        
+        <!-- Animated Visual -->
+        <div class="mt-8 md:mt-0 flex gap-3 relative z-10">
+           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300">B</div>
+           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300 delay-75">Y</div>
+           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300 delay-100">L</div>
+           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300 delay-150">T</div>
+        </div>
+     </div>
 
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Floating Action Button (FAB) -->
-<a href="#contact" class="fixed bottom-6 right-6 md:bottom-10 md:right-10 bg-brand-orange text-white pl-5 pr-6 py-4 rounded-full shadow-2xl flex items-center gap-3 font-semibold z-50 hover:bg-[#e65f00] hover:scale-105 transition-all duration-300 group">
-  <i data-lucide="message-square-plus" class="group-hover:rotate-12 transition-transform"></i>
-  <span class="hidden md:inline">Get in Touch</span>
-</a>
+  <!-- ==============================================
+       2. TRANSPARENT PRICING
+       ============================================== -->
+  <section id="pricing" class="py-20 px-4 md:px-6 bg-white border-t border-brand-border mt-12">
+    <div class="max-w-6xl mx-auto">
+      
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold mb-4">Transparent Investment</h2>
+        <p class="text-neutral-500">Choose a complete package or pick individual pillars.</p>
+      </div>
 
-<script>
-  // Initialize Lucide Icons
-  lucide.createIcons();
-</script>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start mb-20">
+        
+        <!-- PLAN 1: STRATEGY TRIO -->
+        <div class="border border-brand-border rounded-2xl p-8 flex flex-col hover:border-brand-orange/50 transition-colors bg-neutral-50/50">
+          <div class="mb-4">
+            <span class="bg-white border border-brand-border text-neutral-600 px-3 py-1 rounded-full text-xs font-bold uppercase">Strategy Core</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">BYLT.Strategy</h3>
+          <p class="text-neutral-500 text-sm mb-6 h-10">For brands that need clarity & messaging.</p>
+          <div class="text-3xl font-bold mb-6">&#8358;300,000</div>
+          
+          <ul class="space-y-3 mb-8 flex-1">
+            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>01. Root:</b> Values & Purpose</li>
+            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>02. Map:</b> Positioning</li>
+            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>03. Voice:</b> Messaging Guide</li>
+          </ul>
+          <button onclick="prefillService('BYLT.Strategy Package')" class="w-full py-3 border border-neutral-300 bg-white rounded-lg font-semibold hover:border-neutral-900 hover:bg-neutral-50 transition-colors">Book Strategy</button>
+        </div>
 
-<!-- INSTAGRAM -->
-<section id="instagram">
-  <h2>Latest Projects</h2>
-  <div id="insta-feed" class="instagram-container">
-    <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/pennio.design/" data-instgrm-version="14" style="background:#FFF; border:0; margin:1px; max-width:540px; min-width:326px; padding:0; width:99.375%;"></blockquote>
-    <script async src="//www.instagram.com/embed.js"></script>
-  </div>
-</section>
+        <!-- PLAN 2: IDENTITY (Popular) -->
+        <div class="relative bg-neutral-900 text-white rounded-2xl p-8 flex flex-col shadow-2xl transform md:-translate-y-4 z-10">
+          <div class="absolute top-0 right-0 bg-brand-orange text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">POPULAR</div>
+          <div class="mb-4">
+            <span class="bg-neutral-800 text-brand-orange px-3 py-1 rounded-full text-xs font-bold uppercase">Visual Identity</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">BYLT.Frame</h3>
+          <p class="text-neutral-400 text-sm mb-6 h-10">A complete visual overhaul. Logo, colors, and type.</p>
+          <div class="text-4xl font-bold mb-6">&#8358;450,000</div>
+          
+          <ul class="space-y-3 mb-8 flex-1">
+            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>04. Frame:</b> Full Logo Suite</li>
+            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>04. Frame:</b> Pattern & Assets</li>
+            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Bonus:</b> Social Avatars</li>
+            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Output:</b> Brand Guidelines PDF</li>
+          </ul>
+          <button onclick="prefillService('BYLT.Frame')" class="w-full py-3 bg-brand-orange rounded-lg font-semibold hover:bg-orange-600 transition-colors text-white">Get Started</button>
+        </div>
 
-<!-- CONTACT -->
-<section id="contact">
-  <h2>Let’s Build Together</h2>
-  <p class="intro">Tell me what you want to create — I’ll help you bring it to life with design, clarity, and purpose.</p>
-
-  <form id="contactForm" action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" method="POST" target="hidden_iframe">
-    <input type="hidden" name="_subject" value="New Project Request from PENNIO.DESIGN" />
-    <input type="hidden" name="_captcha" value="false" />
-    <input type="text" name="name" placeholder="Your Name" required>
-    <input type="email" name="email" placeholder="Your Email" required>
-
-    <label for="service">Choose a Service</label>
-    <select name="service" id="service" required>
-      <option value="" disabled selected>Select one...</option>
-      <option value="BYLT.Root">BYLT.Root</option>
-      <option value="BYLT.Map">BYLT.Map</option>
-      <option value="BYLT.Voice">BYLT.Voice</option>
-      <option value="BYLT.Frame">BYLT.Frame</option>
-      <option value="BYLT.Echo">BYLT.Echo</option>
-      <option value="BYLT.Focus">BYLT.Focus</option>
-      <option value="BYLT4U">BYLT4U</option>
-      <option value="Clarity Session">Clarity Session</option> <!-- Added for the button -->
-    </select>
-
-    <textarea name="message" id="message" placeholder="Tell me about your project..." required></textarea>
-    <button type="submit">Send Message</button>
-  </form>
-
-  <iframe name="hidden_iframe" style="display:none;"></iframe>
-
-  <div id="thank-you-message" style="display:none;">
-    <h3>Thank You!</h3>
-    <p>Your message has been sent successfully. I’ll be in touch shortly.</p>
-    <a href="#contact" id="refreshForm">Send another message</a>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer>
-  <p>© 2025 PENNIO.DESIGN — Designed for Clarity.</p>
-  <a href="https://pennio-design.github.io/bylt" target="_blank">Explore BYLT</a>
-</footer>
-
-<!-- General Site JavaScript -->
-<script>
-  // Function to prefill service (existing)
-  function prefillService(serviceName) {
-    document.getElementById('service').value = serviceName;
-    document.getElementById('message').value = `Hi PENNIO, I’m interested in ${serviceName}.`;
-    document.querySelector('#contact').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  // Contact Form Submission (existing)
-  document.getElementById("contactForm").addEventListener("submit", function () {
-    document.getElementById("contactForm").style.display = "none";
-    document.getElementById("thank-you-message").style.display = "block";
-  });
-
-  document.getElementById("refreshForm").addEventListener("click", function (event) {
-    event.preventDefault();
-    document.getElementById("contactForm").style.display = "block";
-    document.getElementById("thank-you-message").style.display = "none";
-    document.getElementById("contactForm").reset();
-  });
-
-  // NEW: Hamburger Menu Toggle
-  const menuToggle = document.getElementById('menu-toggle');
-  const navMenu = document.getElementById('nav-menu');
-  const ctaButton = document.querySelector('header .cta-btn'); // Select the header cta-btn
-
-  if (menuToggle && navMenu) {
-    menuToggle.addEventListener('click', () => {
-      navMenu.classList.toggle('active');
-      ctaButton.classList.toggle('active'); // Toggle visibility of CTA button as well
-      menuToggle.querySelector('i').classList.toggle('fa-bars');
-      menuToggle.querySelector('i').classList.toggle('fa-times'); // Optional: change icon to 'X'
-    });
-
-    // Close menu when a navigation link is clicked (for smoother mobile experience)
-    document.querySelectorAll('#nav-menu a').forEach(link => {
-      link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-        ctaButton.classList.remove('active');
-        menuToggle.querySelector('i').classList.remove('fa-times');
-        menuToggle.querySelector('i').classList.add('fa-bars');
-      });
-    });
-  }
-
-
-  // NEW: PDF Modal Functionality
-  const openPortfolioBtn = document.getElementById('openPortfolio');
-  const pdfModal = document.getElementById('pdfModal');
-  const closeModalSpan = document.querySelector('.modal .close');
-  const pdfFrame = document.getElementById('pdfFrame');
-
-  if (openPortfolioBtn && pdfModal && closeModalSpan && pdfFrame) {
-    openPortfolioBtn.addEventListener('click', () => {
-      pdfModal.style.display = 'block';
-      // Set the src for the PDF iframe
-      // IMPORTANT: Ensure 'portfolio.pdf' is in the same directory as index.html
-      pdfFrame.src = 'portfolio.pdf';
-    });
-
-    closeModalSpan.addEventListener('click', () => {
-      pdfModal.style.display = 'none';
-      pdfFrame.src = ''; // Clear the iframe src when closing
-    });
-
-    // Close the modal if user clicks outside of the modal content
-    window.addEventListener('click', (event) => {
-      if (event.target === pdfModal) {
-        pdfModal.style.display = 'none';
-        pdfFrame.src = ''; // Clear the iframe src when closing
-      }
-    });
-  }
-</script>
-
-</body>
-</html>
+        <!-- PLAN 3: FULL SYSTEM -->
+        <div class="border border-brand-border rounded-2xl p-8 flex flex-col hover:border-brand-orange/50 transition-colors bg-neutral-50/50">
+          <div class="mb-4">
+            <span class="bg-white border border-brand-border text-neutral-600 px-3 py-1 rounded-full text-xs font-bold uppercase">The Full Stack</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2">BYLT4U System</h3>
+          <p class="text-neutral-500 text-sm mb-6 h-10">Strategy, Design, Website, and Launch. Done for you.</p>
+          <div class="text-3xl font-bold mb-6">&#8358;1.5M <span class="text-sm font-normal text-neutral-400">+</span></div>
+          
+          <ul class="space-y-3 mb-8 flex-1">
