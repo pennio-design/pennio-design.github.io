@@ -307,7 +307,7 @@
   </section>
 
   <!-- ==============================================
-       3. CONTACT SECTION (Updated ID + Iframe Fix)
+       3. CONTACT SECTION (Fix: Standard Submit + Redirect Logic)
        ============================================== -->
   <section id="contact" class="py-24 px-4 md:px-6 bg-[#FAFAFA]">
     <div class="max-w-xl mx-auto">
@@ -317,32 +317,30 @@
         <p class="text-neutral-500">Select a package below to start your project.</p>
       </div>
 
-      <!-- SUCCESS MESSAGE (Hidden by default) -->
+      <!-- SUCCESS MESSAGE (Hidden by default, shown via JS) -->
       <div id="successMessage" class="hidden bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i>
         </div>
         <h3 class="text-2xl font-bold text-green-800 mb-2">Message Sent!</h3>
         <p class="text-green-700 mb-6">Thanks for reaching out. I'll get back to you within 24 hours.</p>
-        <button id="refreshForm" class="text-sm font-semibold text-green-800 underline">Send another message</button>
+        <button id="resetFormBtn" class="text-sm font-semibold text-green-800 underline">Send another message</button>
       </div>
 
       <!-- FORM -->
       <div id="formContainer" class="bg-white border border-brand-border rounded-2xl p-8 shadow-card">
         
-        <!-- HIDDEN IFRAME to catch submission (Prevents mobile freezing) -->
-        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-
-        <!-- FORM TARGETS THE IFRAME -->
+        <!-- Standard POST Form (No Iframe) -->
         <form id="contactForm" 
               action="https://formsubmit.co/ea0da421e8e6e82457be40792262eeed" 
               method="POST" 
-              target="hidden_iframe"
               class="flex flex-col gap-5">
             
-            <!-- Honeypot & Config -->
             <input type="hidden" name="_subject" value="New Project Request from PENNIO.DESIGN" />
             <input type="hidden" name="_captcha" value="false" />
+            
+            <!-- AUTO-REDIRECT URL: JS will set this to current page + ?success=true -->
+            <input type="hidden" name="_next" id="nextUrl" value="" />
 
             <!-- Name -->
             <div>
@@ -396,7 +394,7 @@
             </div>
 
             <!-- Submit -->
-            <button type="submit" id="submitBtn" class="w-full py-4 bg-brand-orange text-white font-bold rounded-lg hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <button type="submit" id="submitBtn" class="w-full py-4 bg-brand-orange text-white font-bold rounded-lg hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2">
                 Send Request
             </button>
         </form>
@@ -421,7 +419,7 @@
             <a href="https://instagram.com/pennio.design" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
                 <i data-lucide="instagram" class="w-5 h-5"></i>
             </a>
-            <a href="https://www.linkedin.com/in/pauloyatowo" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
+            <a href="https://www.linkedin.com/in/paul-oyatowo" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
                 <i data-lucide="linkedin" class="w-5 h-5"></i>
             </a>
             <a href="https://twitter.com/penniodesign" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
@@ -432,18 +430,14 @@
   </footer>
 
   <script>
-    // Initialize Icons
     lucide.createIcons();
 
-    // Interaction Logic
+    // 1. Prefill Service
     function prefillService(serviceName) {
         const select = document.getElementById('service');
         const contactSection = document.getElementById('contact');
-
         if(select && contactSection) {
             select.value = serviceName;
-            
-            // Fuzzy search if exact value not found
             if (select.value === "") {
                 const options = Array.from(select.querySelectorAll('option'));
                 const match = options.find(opt => opt.value.includes(serviceName));
@@ -453,57 +447,46 @@
         }
     }
 
-    // IFRAME SUBMISSION LOGIC (The Fix)
-    const form = document.getElementById('contactForm');
-    const iframe = document.getElementById('hidden_iframe');
-    const formContainer = document.getElementById('formContainer');
-    const successMessage = document.getElementById('successMessage');
-    const submitBtn = document.getElementById('submitBtn');
-    const refreshBtn = document.getElementById('refreshForm');
-    let isSubmitting = false;
+    // 2. Set Redirect URL on Load
+    // This tells FormSubmit to come back to this exact page with ?success=true
+    document.addEventListener("DOMContentLoaded", function() {
+        const nextUrlInput = document.getElementById('nextUrl');
+        if (nextUrlInput) {
+            // Remove any existing query params so we don't stack them
+            const baseUrl = window.location.origin + window.location.pathname;
+            nextUrlInput.value = baseUrl + "?success=true";
+        }
 
-    if (form) {
-        // When form is submitted...
-        form.addEventListener('submit', function() {
-            isSubmitting = true;
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = 'Sending...';
-            submitBtn.disabled = true;
-            // The form submits naturally to the hidden iframe
-        });
-    }
-
-    if (iframe) {
-        // Listen for the iframe to finish loading (which happens after FormSubmit replies)
-        iframe.onload = function() {
-            if (isSubmitting) {
-                // Show Success
+        // 3. Check for Success Flag
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            const formContainer = document.getElementById('formContainer');
+            const successMessage = document.getElementById('successMessage');
+            
+            if(formContainer && successMessage) {
                 formContainer.style.display = 'none';
                 successMessage.classList.remove('hidden');
-                successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                form.reset();
-                
-                // Reset State
-                isSubmitting = false;
-                submitBtn.innerHTML = 'Send Request';
-                submitBtn.disabled = false;
+                // Scroll to message so user sees it
+                document.getElementById('contact').scrollIntoView();
             }
-        };
-    }
+        }
+    });
 
-    // Refresh Form Logic
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            successMessage.classList.add('hidden');
-            formContainer.style.display = 'block';
+    // 4. Reset Button Logic
+    const resetBtn = document.getElementById('resetFormBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            // Clear URL param without refreshing
+            const baseUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, baseUrl);
+            
+            // Toggle UI
+            document.getElementById('successMessage').classList.add('hidden');
+            document.getElementById('formContainer').style.display = 'block';
+            document.getElementById('contactForm').reset();
         });
     }
-
-    // IMPORTANT: Check for first-time activation
-    // If you have NEVER used this email with FormSubmit, the very first email will
-    // trigger an "Activate" email. If you don't click that link in your inbox,
-    // future submissions won't work.
   </script>
 </body>
+
 </html>
