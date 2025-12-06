@@ -77,6 +77,7 @@
     }
   </style>
 </head>
+
 <body class="bg-[#FAFAFA] text-neutral-900 font-sans antialiased">
 
   <!-- NAVIGATION -->
@@ -110,7 +111,6 @@
        1. THE PROCESS (Bento Grid)
        ============================================== -->
   <section id="process" class="py-10 px-4 md:px-6 max-w-6xl mx-auto">
-    
     <div class="mb-8 flex items-end justify-between">
       <div>
         <h2 class="text-2xl font-bold">What We're BYLDing</h2>
@@ -119,7 +119,6 @@
     </div>
 
     <div class="bento-grid">
-      
       <!-- 01. ROOT -->
       <div onclick="prefillService('BYLT.Root')" class="md:col-span-2 group relative bg-white border border-brand-border rounded-2xl p-8 flex flex-col md:flex-row justify-between overflow-hidden cursor-pointer hover:border-brand-orange hover:shadow-card-hover transition-all duration-300">
         <div class="relative z-10 flex flex-col justify-between h-full">
@@ -307,76 +306,83 @@
     </div>
   </section>
 
- <!-- ==============================================
-       3. CONTACT SECTION
+  <!-- ==============================================
+       3. CONTACT SECTION (The Hidden Iframe Fix)
        ============================================== -->
   <section id="contact" class="py-24 px-4 md:px-6 bg-[#FAFAFA]">
     <div class="max-w-xl mx-auto">
       
       <div class="text-center mb-10">
         <h2 class="text-3xl font-bold mb-3">Let's Build Together</h2>
-        <p class="text-neutral-500">Tell me what you want to create — I’ll help you bring it to life.</p>
+        <p class="text-neutral-500">Select a package below to start your project.</p>
       </div>
 
       <!-- SUCCESS MESSAGE (Hidden by default) -->
-      <div id="successMessage" class="hidden bg-green-50 border border-green-200 rounded-2xl p-8 text-center shadow-sm">
+      <div id="successMessage" class="hidden bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i>
         </div>
         <h3 class="text-2xl font-bold text-green-800 mb-2">Message Sent!</h3>
-        <p class="text-green-700 mb-6">Thanks for reaching out. I'll get back to you shortly.</p>
-        <button id="resetBtn" class="px-6 py-2 bg-white border border-green-200 text-green-700 font-semibold rounded-lg hover:bg-green-100 transition-colors">
-            Send another message
-        </button>
+        <p class="text-green-700 mb-6">Thanks for reaching out. I'll get back to you within 24 hours.</p>
+        <button id="refreshForm" class="text-sm font-semibold text-green-800 underline">Send another message</button>
       </div>
 
       <!-- FORM -->
       <div id="formContainer" class="bg-white border border-brand-border rounded-2xl p-8 shadow-card">
-        <form id="contactForm" action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" method="POST" class="flex flex-col gap-5">
+        
+        <!-- HIDDEN IFRAME to catch submission -->
+        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+        <!-- FORM TARGETS THE IFRAME -->
+        <form id="contactForm" 
+              action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" 
+              method="POST" 
+              target="hidden_iframe"
+              class="flex flex-col gap-5">
             
-            <!-- Hidden Configuration Fields -->
             <input type="hidden" name="_subject" value="New Project Request from PENNIO.DESIGN" />
             <input type="hidden" name="_captcha" value="false" />
-            <input type="hidden" name="_template" value="table" />
 
             <!-- Name -->
             <div>
                 <label for="name" class="block text-sm font-semibold text-neutral-700 mb-2">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your Name" required 
+                <input type="text" id="name" name="name" placeholder="Paul Oyatowo" required 
                        class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all">
             </div>
 
             <!-- Email -->
             <div>
                 <label for="email" class="block text-sm font-semibold text-neutral-700 mb-2">Email</label>
-                <input type="email" id="email" name="email" placeholder="Your Email" required 
+                <input type="email" id="email" name="email" placeholder="paul@pennio.design" required 
                        class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all">
             </div>
 
-            <!-- SMART PRICING SELECTOR (Replaces the Table) -->
+            <!-- SMART PRICING SELECTOR -->
             <div>
-                <label for="service" class="block text-sm font-semibold text-neutral-700 mb-2">Choose a Service</label>
+                <label for="service" class="block text-sm font-semibold text-neutral-700 mb-2">Choose your Investment</label>
                 <div class="relative">
                     <select name="service" id="service" required class="w-full px-4 py-3 rounded-lg border border-neutral-200 bg-white appearance-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all">
-                        <option value="" disabled selected>Select one...</option>
+                        <option value="" disabled selected>Select an option...</option>
                         
-                        <optgroup label="Core Packages">
+                        <optgroup label="Popular Packages">
                             <option value="Clarity Session">Clarity Session (&#8358;75,000)</option>
                             <option value="BYLT.Frame">BYLT.Frame Identity (&#8358;450,000)</option>
                             <option value="BYLT4U Package">BYLT4U Full System (&#8358;1.5M+)</option>
                         </optgroup>
 
-                        <optgroup label="Individual Pillars">
-                            <option value="BYLT.Root">01. BYLT.Root (Foundation) — &#8358;100k</option>
-                            <option value="BYLT.Map">02. BYLT.Map (Strategy) — &#8358;100k</option>
-                            <option value="BYLT.Voice">03. BYLT.Voice (Messaging) — &#8358;100k</option>
-                            <option value="BYLT.Echo">05. BYLT.Echo (Marketing) — &#8358;150k</option>
-                            <option value="BYLT.Focus">06. BYLT.Focus (Systems) — &#8358;100k</option>
+                        <optgroup label="Single Pillars">
+                            <option value="BYLT.Root">01. Root (Foundation) — &#8358;100,000</option>
+                            <option value="BYLT.Map">02. Map (Strategy) — &#8358;100,000</option>
+                            <option value="BYLT.Voice">03. Voice (Messaging) — &#8358;100,000</option>
+                            <option value="BYLT.Echo">05. Echo (Marketing Kit) — &#8358;150,000</option>
+                            <option value="BYLT.Focus">06. Focus (Ops Setup) — &#8358;100,000</option>
                         </optgroup>
 
-                        <option value="Other">Other Inquiry</option>
+                        <optgroup label="Custom">
+                            <option value="Other">Other Inquiry</option>
+                        </optgroup>
                     </select>
-                    <!-- Chevron Icon -->
+                    <!-- Chevron -->
                     <i data-lucide="chevron-down" class="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i>
                 </div>
             </div>
@@ -384,97 +390,19 @@
             <!-- Message -->
             <div>
                 <label for="message" class="block text-sm font-semibold text-neutral-700 mb-2">Project Details</label>
-                <textarea name="message" id="message" rows="4" placeholder="Tell me about your project..." required 
+                <textarea name="message" id="message" rows="4" placeholder="Tell me about your business and goals..." required 
                           class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all resize-none"></textarea>
             </div>
 
-            <!-- Submit Button -->
+            <!-- Submit -->
             <button type="submit" id="submitBtn" class="w-full py-4 bg-brand-orange text-white font-bold rounded-lg hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                Send Message
+                Send Request
             </button>
         </form>
       </div>
     </div>
   </section>
 
-  <!-- JAVASCRIPT FOR FORM HANDLING -->
-  <script>
-    // 1. Initialize Icons
-    lucide.createIcons();
-
-    // 2. Prefill Logic (Connects Bento Grid to Form)
-    function prefillService(serviceName) {
-        const select = document.getElementById('service');
-        const contactSection = document.getElementById('contact');
-
-        if(select && contactSection) {
-            // Try to find an exact match or partial match in options
-            const options = Array.from(select.querySelectorAll('option'));
-            const match = options.find(opt => opt.value.includes(serviceName));
-            
-            if (match) {
-                select.value = match.value;
-            } else {
-                select.value = "Other"; // Fallback
-            }
-            contactSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
-
-    // 3. AJAX Form Submission (Prevents Page Reload)
-    const form = document.getElementById('contactForm');
-    const formContainer = document.getElementById('formContainer');
-    const successMessage = document.getElementById('successMessage');
-    const submitBtn = document.getElementById('submitBtn');
-    const resetBtn = document.getElementById('resetBtn');
-
-    if (form) {
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Stop standard redirect
-
-            // Show Loading State
-            const originalBtnText = submitBtn.innerHTML;
-            submitBtn.innerHTML = 'Sending...';
-            submitBtn.disabled = true;
-
-            const formData = new FormData(form);
-
-            try {
-                // Send data to FormSubmit in background
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: { 'Accept': 'application/json' }
-                });
-
-                if (response.ok) {
-                    // Success: Hide Form, Show Thank You
-                    formContainer.classList.add('hidden');
-                    successMessage.classList.remove('hidden');
-                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    form.reset(); // Clear input fields
-                } else {
-                    alert('Oops! There was a problem sending your message.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Connection error. Please check your internet.');
-            } finally {
-                // Reset button state
-                submitBtn.innerHTML = originalBtnText;
-                submitBtn.disabled = false;
-            }
-        });
-    }
-
-    // 4. "Send Another Message" Logic
-    if (resetBtn) {
-        resetBtn.addEventListener('click', function() {
-            successMessage.classList.add('hidden');
-            formContainer.classList.remove('hidden');
-        });
-    }
-  </script>
   <!-- Sticky FAB -->
   <a href="#contact" class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-neutral-900 text-white px-5 py-4 rounded-full shadow-2xl hover:bg-brand-orange transition-all hover:scale-105 group">
     <i data-lucide="message-square" class="w-5 h-5"></i>
@@ -492,7 +420,7 @@
             <a href="https://instagram.com/pennio.design" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
                 <i data-lucide="instagram" class="w-5 h-5"></i>
             </a>
-            <a href="https://www.linkedin.com/in/pauloyatowo" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
+            <a href="https://www.linkedin.com/in/paul-oyatowo" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
                 <i data-lucide="linkedin" class="w-5 h-5"></i>
             </a>
             <a href="https://twitter.com/penniodesign" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
@@ -524,52 +452,57 @@
         }
     }
 
-    // INSTANT SUBMIT (AJAX) LOGIC
+    // IFRAME SUBMISSION LOGIC (The Fix)
     const form = document.getElementById('contactForm');
+    const iframe = document.getElementById('hidden_iframe');
     const formContainer = document.getElementById('formContainer');
     const successMessage = document.getElementById('successMessage');
     const submitBtn = document.getElementById('submitBtn');
+    const refreshBtn = document.getElementById('refreshForm');
+    let isSubmitting = false;
 
     if (form) {
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Stop redirect
-
-            // 1. Loading State
+        // When form is submitted...
+        form.addEventListener('submit', function() {
+            isSubmitting = true;
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = 'Sending...';
             submitBtn.disabled = true;
-
-            // 2. Collect Data
-            const formData = new FormData(form);
-
-            try {
-                // 3. Send via Fetch
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (response.ok) {
-                    // 4. Success UI
-                    formContainer.style.display = 'none';
-                    successMessage.classList.remove('hidden');
-                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    alert('Oops! Something went wrong. Please try again.');
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Connection error. Please check your internet.');
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
+            // The form submits naturally to the hidden iframe
         });
     }
+
+    if (iframe) {
+        // Listen for the iframe to finish loading (which happens after FormSubmit replies)
+        iframe.onload = function() {
+            if (isSubmitting) {
+                // Show Success
+                formContainer.style.display = 'none';
+                successMessage.classList.remove('hidden');
+                successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                form.reset();
+                
+                // Reset State
+                isSubmitting = false;
+                submitBtn.innerHTML = 'Send Request';
+                submitBtn.disabled = false;
+            }
+        };
+    }
+
+    // Refresh Form Logic
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            successMessage.classList.add('hidden');
+            formContainer.style.display = 'block';
+        });
+    }
+
+    // IMPORTANT: Check for first-time activation
+    // If you have NEVER used this email with FormSubmit, the very first email will
+    // trigger an "Activate" email. If you don't click that link in your inbox,
+    // future submissions won't work.
   </script>
 </body>
 </html>
