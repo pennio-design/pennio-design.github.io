@@ -1,89 +1,30 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PENNIO.DESIGN – Upgrade Your Brand</title>
-   
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PENNIO® — 30-Day Brand Upgrade</title>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-   
+
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          colors: {
-            brand: {
-              orange: '#FF6A00',
-              dark: '#0a0a0a',
-              gray: '#f5f5f5',
-              border: '#e5e5e5'
-            }
-          },
-          boxShadow: {
-            'card': '0 2px 8px rgba(0,0,0,0.04)',
-            'card-hover': '0 12px 24px rgba(0,0,0,0.06)'
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
-    /* ----------------------------------
-       TREE ANIMATION 
-       ---------------------------------- */
-    .tree-path {
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      transition: stroke-dashoffset 1.2s ease-out;
-    }
-    .group:hover .tree-path { stroke-dashoffset: 0; }
-    
-    .tree-leaf {
-      transform: scale(0);
-      transform-origin: center;
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .group:hover .tree-leaf { transform: scale(1); }
-    .leaf-1 { transition-delay: 0.8s; }
-    .leaf-2 { transition-delay: 0.9s; }
-    .leaf-3 { transition-delay: 1.0s; }
-
-    /* ----------------------------------
-       BENTO GRID LOGIC
-       ---------------------------------- */
-    .bento-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-    
-    /* Desktop: 3 Columns */
-    @media (min-width: 768px) {
-      .bento-grid {
-        grid-template-columns: repeat(3, 1fr);
-        grid-auto-rows: 280px;
-      }
-      .md\:col-span-2 { grid-column: span 2; }
-      .md\:col-span-3 { grid-column: span 3; }
-    }
+    html { scroll-behavior: smooth; }
   </style>
 </head>
 
-<body class="bg-[#FAFAFA] text-neutral-900 font-sans antialiased">
+<body class="bg-[#FAFAFA] text-neutral-900 antialiased">
 
   <!-- NAV -->
-  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-brand-border z-50">
+  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-neutral-200 z-40">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="#" class="font-bold text-lg tracking-tight">
-        PENNIO<span class="text-brand-orange">.DESIGN</span>
-      </a>
-      <a href="#apply" class="px-4 py-2 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-brand-orange transition-colors">
+      <div class="font-bold tracking-tight text-lg">
+        PENNIO<span class="text-orange-500">®</span>
+      </div>
+      <a href="#apply" class="text-sm font-semibold hover:text-orange-500">
         Apply
       </a>
     </div>
@@ -91,19 +32,19 @@
 
   <!-- HERO -->
   <section class="pt-32 pb-20 px-6 text-center max-w-4xl mx-auto">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-700 text-xs font-semibold mb-6 uppercase tracking-wider">
-      <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-      Only 3 Clients Per Month
+
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-700 text-xs font-semibold mb-6">
+      Founder‑led • Only 3 clients per month
     </div>
 
     <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-      We help service businesses<br />
-      <span class="text-brand-orange">look professional and charge more</span><br />
+      <span class="text-neutral-900">PENNIO</span> helps service businesses<br />
+      <span class="text-orange-500">look professional and charge more</span><br />
       in 30 days.
     </h1>
 
-    <p class="text-lg text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-      If your business is good but people hesitate, doubt you, or argue about price,
+    <p class="text-lg text-neutral-500 max-w-2xl mx-auto">
+      If your business is good but people hesitate, doubt you, or push back on price,
       your brand is the problem — not your service.
     </p>
 
@@ -112,7 +53,7 @@
     </p>
 
     <div class="mt-10">
-      <a href="#apply" class="px-8 py-4 bg-neutral-900 text-white font-semibold rounded-lg hover:bg-brand-orange transition-colors">
+      <a href="#apply" class="px-8 py-4 bg-neutral-900 text-white font-semibold rounded-lg hover:bg-orange-500 transition">
         Apply in 2 Minutes
       </a>
     </div>
@@ -120,93 +61,66 @@
 
   <!-- PROBLEM -->
   <section class="py-20 px-6 max-w-5xl mx-auto">
-    <h2 class="text-3xl font-bold mb-10 text-center">
-      Why good businesses still struggle
+    <h2 class="text-3xl font-bold text-center mb-10">
+      Why good businesses still lose deals
     </h2>
 
     <div class="grid md:grid-cols-3 gap-6 text-sm">
-      <div class="bg-white border border-brand-border rounded-2xl p-6">
-        People don’t understand what you do fast enough.
-      </div>
-      <div class="bg-white border border-brand-border rounded-2xl p-6">
-        You hear “let me think about it” too often.
-      </div>
-      <div class="bg-white border border-brand-border rounded-2xl p-6">
-        Your brand makes you look smaller than you really are.
-      </div>
+      <div class="bg-white border rounded-xl p-6">People don’t understand what you do quickly.</div>
+      <div class="bg-white border rounded-xl p-6">You hear “let me think about it” too often.</div>
+      <div class="bg-white border rounded-xl p-6">Your business looks smaller than it really is.</div>
     </div>
   </section>
 
   <!-- SOLUTION -->
-  <section class="py-20 px-6 bg-white border-t border-brand-border">
+  <section class="py-20 px-6 bg-white border-t">
     <div class="max-w-5xl mx-auto text-center">
-      <h2 class="text-3xl font-bold mb-4">
-        The 30-Day Brand Upgrade
-      </h2>
-
+      <h2 class="text-3xl font-bold mb-4">The 30‑Day Brand Upgrade</h2>
       <p class="text-neutral-500 max-w-2xl mx-auto mb-12">
-        In 30 days, we fix how your business looks and explains itself —
+        A focused, founder‑led process by PENNIO to fix how your business looks and explains itself —
         so people trust you faster and stop fighting your price.
       </p>
 
       <div class="grid md:grid-cols-4 gap-6 text-sm">
-        <div class="border border-brand-border rounded-xl p-6">
-          Understand your business clearly
-        </div>
-        <div class="border border-brand-border rounded-xl p-6">
-          Explain your value in simple words
-        </div>
-        <div class="border border-brand-border rounded-xl p-6">
-          Design a clean, professional look
-        </div>
-        <div class="border border-brand-border rounded-xl p-6">
-          Prepare things you can use immediately
-        </div>
+        <div class="border rounded-xl p-6">Clear business message</div>
+        <div class="border rounded-xl p-6">Simple value explanation</div>
+        <div class="border rounded-xl p-6">Clean, professional look</div>
+        <div class="border rounded-xl p-6">Ready‑to‑use materials</div>
       </div>
     </div>
   </section>
 
-  <!-- WHAT YOU GET -->
+  <!-- DELIVERABLES -->
   <section class="py-20 px-6 max-w-5xl mx-auto">
-    <h2 class="text-3xl font-bold mb-10 text-center">
-      What you get after 30 days
-    </h2>
-
-    <ul class="space-y-4 max-w-xl mx-auto text-neutral-700 text-sm">
-      <li>✔ Clear message that explains your business</li>
+    <h2 class="text-3xl font-bold text-center mb-10">What you get after 30 days</h2>
+    <ul class="max-w-xl mx-auto space-y-4 text-sm text-neutral-700">
+      <li>✔ Clear message people understand in seconds</li>
       <li>✔ Professional logo and brand look</li>
-      <li>✔ Simple brand guide to stay consistent</li>
+      <li>✔ Simple brand guide for consistency</li>
       <li>✔ Website and social media starting materials</li>
     </ul>
   </section>
 
   <!-- PRICE -->
   <section class="py-20 px-6 bg-neutral-900 text-white text-center">
-    <h2 class="text-3xl font-bold mb-4">Price</h2>
-
-    <p class="text-4xl font-bold mb-2">
-      ₦750,000 – ₦1,200,000
-    </p>
-
+    <h2 class="text-3xl font-bold mb-4">Investment</h2>
+    <p class="text-5xl font-bold mb-3">₦750,000</p>
     <p class="text-neutral-400 mb-6">
-      One-time payment. Most clients earn this back with one customer.
+      One‑time payment. Most clients recover this with one customer.
     </p>
-
-    <p class="max-w-xl mx-auto text-sm text-neutral-300">
-      If after 30 days you don’t feel more confident selling your service,
-      we keep working with you until you do.
+    <p class="text-sm text-neutral-300 max-w-xl mx-auto">
+      If after 30 days you don’t feel confident selling your service,
+      PENNIO keeps working with you until you do.
     </p>
   </section>
 
   <!-- APPLY -->
-  <section id="apply" class="py-24 px-6 bg-[#FAFAFA]">
-    <div class="max-w-xl mx-auto bg-white border border-brand-border rounded-2xl p-8 shadow-card">
-      <h2 class="text-2xl font-bold mb-2 text-center">
-        Apply for the 30-Day Brand Upgrade
-      </h2>
+  <section id="apply" class="py-24 px-6">
+    <div class="max-w-xl mx-auto bg-white border rounded-2xl p-8 shadow-sm">
 
+      <h2 class="text-2xl font-bold mb-2 text-center">Start Your Brand Upgrade</h2>
       <p class="text-sm text-neutral-500 text-center mb-8">
-        This helps us know if we’re a good fit.
+        Answer a few questions so we can confirm this will work for your business.
       </p>
 
       <form id="applyForm"
@@ -214,55 +128,57 @@
         method="POST"
         class="flex flex-col gap-5">
 
-        <input type="hidden" name="_subject" value="New Brand Upgrade Application" />
-        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_next" value="">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_subject" value="New 30‑Day Brand Upgrade Application">
 
-        <input required name="name" placeholder="Your name"
-          class="px-4 py-3 rounded-lg border border-neutral-200" />
+        <input required name="name" placeholder="Your name" class="px-4 py-3 border rounded-lg">
+        <input required name="email" type="email" placeholder="Your email" class="px-4 py-3 border rounded-lg">
+        <input required name="business" placeholder="What service do you offer?" class="px-4 py-3 border rounded-lg">
 
-        <input required name="email" type="email" placeholder="Your email"
-          class="px-4 py-3 rounded-lg border border-neutral-200" />
-
-        <input required name="business" placeholder="What service do you offer?"
-          class="px-4 py-3 rounded-lg border border-neutral-200" />
-
-        <select required name="revenue"
-          class="px-4 py-3 rounded-lg border border-neutral-200">
+        <select required name="revenue" class="px-4 py-3 border rounded-lg">
           <option value="">Monthly revenue</option>
           <option>₦0 – ₦500k</option>
           <option>₦500k – ₦2M</option>
           <option>₦2M+</option>
         </select>
 
-        <textarea required name="problem" rows="3"
-          placeholder="What is your biggest brand problem?"
-          class="px-4 py-3 rounded-lg border border-neutral-200 resize-none"></textarea>
+        <textarea required name="problem" rows="3" placeholder="What is stopping people from choosing you?" class="px-4 py-3 border rounded-lg resize-none"></textarea>
 
-        <button class="py-4 bg-brand-orange text-white font-bold rounded-lg hover:bg-orange-600">
+        <button class="py-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600">
           Send Application
         </button>
       </form>
 
       <div id="successMessage" class="hidden mt-6 p-6 bg-green-50 border border-green-200 rounded-xl text-center">
         <h3 class="text-xl font-bold text-green-800 mb-2">Application Sent</h3>
-        <p class="text-green-700 text-sm">
-          If you’re a fit, you’ll hear from me within 24 hours.
-        </p>
+        <p class="text-green-700 text-sm">If you’re a fit, you’ll hear from PENNIO within 24 hours.</p>
       </div>
     </div>
   </section>
+
+  <!-- FLOATING CTA -->
+  <a id="floatingCTA" href="#apply"
+     class="fixed bottom-6 right-6 z-50 px-6 py-4 bg-neutral-900 text-white font-semibold rounded-full shadow-lg hover:bg-orange-500 transition">
+    Apply Now
+  </a>
 
   <script>
     lucide.createIcons();
 
     const form = document.getElementById('applyForm');
     const success = document.getElementById('successMessage');
+    const cta = document.getElementById('floatingCTA');
 
-    form.addEventListener('submit', function () {
+    form.addEventListener('submit', () => {
       setTimeout(() => {
         form.classList.add('hidden');
         success.classList.remove('hidden');
       }, 800);
+    });
+
+    window.addEventListener('scroll', () => {
+      cta.textContent = window.scrollY > 600 ? 'Start Upgrade' : 'Apply Now';
     });
   </script>
 
