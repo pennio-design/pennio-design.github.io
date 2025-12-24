@@ -77,375 +77,166 @@
 
 <body class="bg-[#FAFAFA] text-neutral-900 font-sans antialiased">
 
+  <!-- NAV -->
   <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-brand-border z-50">
     <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="#" class="font-bold text-lg tracking-tight">PENNIO<span class="text-brand-orange">.DESIGN</span></a>
-      <div class="hidden md:flex gap-8 text-sm font-medium text-neutral-600">
-        <a href="#process" class="hover:text-brand-orange transition-colors">How It Works</a>
-        <a href="#pricing" class="hover:text-brand-orange transition-colors">Pricing</a>
-      </div>
-      <a href="#contact" class="px-4 py-2 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-brand-orange transition-colors">Start a Project</a>
+      <a href="#" class="font-bold text-lg tracking-tight">
+        PENNIO<span class="text-brand-orange">.DESIGN</span>
+      </a>
+      <a href="#apply" class="px-4 py-2 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-brand-orange transition-colors">
+        Apply for the Sprint
+      </a>
     </div>
   </nav>
 
-  <section class="pt-32 pb-16 px-6 text-center max-w-4xl mx-auto">
+  <!-- HERO -->
+  <section class="pt-32 pb-20 px-6 text-center max-w-4xl mx-auto">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-700 text-xs font-semibold mb-6 uppercase tracking-wider">
       <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-      Open for Q1 Projects
+      Only 3 Sprint Clients / Month
     </div>
-    <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-neutral-900">
-      We Build Brands <br class="hidden md:block" />
-      <span class="text-brand-orange">That Scale.</span>
+
+    <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">
+      We Help Service Brands<br />
+      <span class="text-brand-orange">Charge More & Close Faster</span><br />
+      in 30 Days.
     </h1>
+
     <p class="text-lg text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-      You have a great product. We give it a clear voice and a world-class look. Simple, consistent, and built to grow.
+      A focused brand sprint that upgrades how you look, sound, and sell —
+      without long timelines or agency bloat.
     </p>
-    <div class="mt-8 flex justify-center gap-4">
-        <a href="#pricing" class="px-6 py-3 bg-neutral-900 text-white font-medium rounded-lg hover:bg-neutral-800 transition-colors">See Packages</a>
-        <a href="#contact" class="px-6 py-3 border border-neutral-300 text-neutral-700 font-medium rounded-lg hover:bg-neutral-50 transition-colors">Talk to Paul</a>
+
+    <p class="text-sm text-neutral-400 mt-4">
+      For consultants, service businesses & founders already selling.
+    </p>
+
+    <div class="mt-10 flex justify-center">
+      <a href="#apply" class="px-8 py-4 bg-neutral-900 text-white font-semibold rounded-lg hover:bg-brand-orange transition-colors">
+        See If You’re a Fit (2 mins)
+      </a>
     </div>
   </section>
 
-  <section id="process" class="py-10 px-4 md:px-6 max-w-6xl mx-auto">
-    <div class="mb-8 flex items-end justify-between">
-      <div>
-        <h2 class="text-2xl font-bold">The Process</h2>
-        <p class="text-neutral-500 mt-1">Six steps. From messy ideas to a clear brand.</p>
+  <!-- PROBLEM -->
+  <section class="py-20 px-6 max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6 text-center">
+      Your business isn’t the problem.
+    </h2>
+    <p class="text-neutral-500 text-center max-w-3xl mx-auto mb-10">
+      Your brand is underperforming.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-6 text-sm">
+      <div class="bg-white border border-brand-border rounded-2xl p-6">
+        Prospects don’t get your value fast enough.
       </div>
-    </div>
-
-    <div class="bento-grid">
-      <div onclick="prefillService('Discovery')" class="md:col-span-2 group relative bg-white border border-brand-border rounded-2xl p-8 flex flex-col md:flex-row justify-between overflow-hidden cursor-pointer hover:border-brand-orange hover:shadow-card-hover transition-all duration-300">
-        <div class="relative z-10 flex flex-col justify-between h-full">
-          <div>
-            <span class="text-brand-orange font-mono text-xs font-bold mb-2 block">01. CLARITY</span>
-            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 border border-orange-100 group-hover:scale-105 transition-transform">
-              <i data-lucide="scan-search" class="text-brand-orange"></i>
-            </div>
-            <h3 class="text-2xl font-bold mb-2">The Discovery</h3>
-            <p class="text-neutral-500 max-w-sm text-sm leading-relaxed">
-              Before we design, we listen. We find the gaps in your business and define exactly what you need to fix them.
-            </p>
-          </div>
-          <div class="mt-6 flex items-center text-sm font-semibold text-brand-orange opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all">
-            Start Here <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
-          </div>
-        </div>
-        <div class="absolute right-[-20px] bottom-[-20px] md:right-0 md:bottom-0 w-[220px] h-[220px] opacity-20 md:opacity-100 pointer-events-none mix-blend-multiply">
-           <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M100 220 L100 130" class="text-brand-orange tree-path" />
-            <path d="M100 170 Q70 150 60 110" class="text-brand-orange tree-path" style="transition-delay: 0.2s" />
-            <circle cx="60" cy="110" r="6" fill="#FFD600" stroke="none" class="tree-leaf leaf-1" />
-            <path d="M100 150 Q130 130 140 100" class="text-brand-orange tree-path" style="transition-delay: 0.3s" />
-            <circle cx="140" cy="100" r="8" fill="#FF6A00" stroke="none" class="tree-leaf leaf-2" />
-            <path d="M100 130 L100 70" class="text-brand-orange tree-path" style="transition-delay: 0.4s" />
-            <circle cx="100" cy="70" r="10" fill="#FF6A00" stroke="none" class="tree-leaf leaf-3" />
-          </svg>
-        </div>
+      <div class="bg-white border border-brand-border rounded-2xl p-6">
+        You face hesitation, ghosting, or price pushback.
       </div>
-
-      <div onclick="prefillService('Strategy')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">02. DIRECTION</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="compass" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">The Strategy</h4>
-          <p class="text-sm text-neutral-500">We create a roadmap. Where you are now, and how we get you to the next level.</p>
-        </div>
-      </div>
-
-      <div onclick="prefillService('Messaging')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">03. VOICE</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="message-square-quote" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">The Message</h4>
-          <p class="text-sm text-neutral-500">Words matter. We write the copy that makes customers trust you instantly.</p>
-        </div>
-      </div>
-
-      <div onclick="prefillService('Visual Identity')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">04. LOOKS</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="palette" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">The Identity</h4>
-          <p class="text-sm text-neutral-500">Logos, colors, and fonts. A premium look that sets you apart from competitors.</p>
-        </div>
-      </div>
-
-      <div onclick="prefillService('Launch Assets')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">05. MARKETING</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="rocket" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">The Launch</h4>
-          <p class="text-sm text-neutral-500">Social media graphics, decks, and ads to help you sell from day one.</p>
-        </div>
-      </div>
-
-      <div onclick="prefillService('Guidelines')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">06. CONSISTENCY</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="book-open" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">The Guide</h4>
-          <p class="text-sm text-neutral-500">A simple rulebook for your team. So your brand never looks messy again.</p>
-        </div>
-      </div>
-
-      <div onclick="prefillService('Full Brand System')" class="md:col-span-3 group relative bg-[#0a0a0a] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between overflow-hidden shadow-2xl cursor-pointer hover:scale-[1.01] transition-transform duration-300">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500/20 blur-[80px] rounded-full pointer-events-none"></div>
-
-        <div class="relative z-10 md:w-1/2">
-           <div class="inline-flex items-center gap-2 bg-[#FFD600] text-black px-3 py-1 rounded-md text-xs font-bold mb-3 uppercase tracking-wide">
-             <i data-lucide="zap" class="w-3 h-3 fill-black"></i> Best Value
-           </div>
-           <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">The Complete Brand</h3>
-           <p class="text-neutral-400">We do it all. Strategy, Identity, and Website in one seamless project. Ready in 4-6 weeks.</p>
-        </div>
-        
-        <div class="mt-8 md:mt-0 flex gap-3 relative z-10">
-           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300">B</div>
-           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300 delay-75">R</div>
-           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300 delay-100">N</div>
-           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300 delay-150">D</div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <section id="pricing" class="py-20 px-4 md:px-6 bg-white border-t border-brand-border mt-12">
-    <div class="max-w-6xl mx-auto">
-      
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-bold mb-4">How We Work</h2>
-        <p class="text-neutral-500">Flexible options. Pick the one that fits your stage of growth.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start mb-20">
-        
-        <div class="border border-brand-border rounded-2xl p-8 flex flex-col hover:border-brand-orange/50 transition-colors bg-neutral-50/50">
-          <div class="mb-4">
-            <span class="bg-white border border-brand-border text-neutral-600 px-3 py-1 rounded-full text-xs font-bold uppercase">The Starter</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2">The Sprint</h3>
-          <p class="text-neutral-500 text-sm mb-6 h-10">For new businesses. Get a professional logo and basic style guide fast.</p>
-          <div class="text-2xl font-bold mb-6 text-neutral-800">One-Time Fee</div>
-          
-          <ul class="space-y-3 mb-8 flex-1">
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Market Research</b></li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Core Logo Design</b></li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Basic Brand Guide</b></li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Ready in 1 Week</b></li>
-          </ul>
-          <button onclick="prefillService('The Sprint')" class="w-full py-3 border border-neutral-300 bg-white rounded-lg font-semibold hover:border-neutral-900 hover:bg-neutral-50 transition-colors">Start a Sprint</button>
-        </div>
-
-        <div class="relative bg-neutral-900 text-white rounded-2xl p-8 flex flex-col shadow-2xl transform md:-translate-y-4 z-10">
-          <div class="absolute top-0 right-0 bg-brand-orange text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">MOST POPULAR</div>
-          <div class="mb-4">
-            <span class="bg-neutral-800 text-brand-orange px-3 py-1 rounded-full text-xs font-bold uppercase">The Professional</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2">The System</h3>
-          <p class="text-neutral-400 text-sm mb-6 h-10">For growing teams. A complete brand overhaul, strategy, and website.</p>
-          <div class="text-2xl font-bold mb-6">Custom Quote</div>
-          
-          <ul class="space-y-3 mb-8 flex-1">
-            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Full Strategy & Voice</b></li>
-            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Complete Visual Identity</b></li>
-            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Website Design (5 Pages)</b></li>
-            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Launch Assets</b></li>
-          </ul>
-          <button onclick="prefillService('The System')" class="w-full py-3 bg-brand-orange rounded-lg font-semibold hover:bg-orange-600 transition-colors text-white">Get a Quote</button>
-        </div>
-
-        <div class="border border-brand-border rounded-2xl p-8 flex flex-col hover:border-brand-orange/50 transition-colors bg-neutral-50/50">
-          <div class="mb-4">
-            <span class="bg-white border border-brand-border text-neutral-600 px-3 py-1 rounded-full text-xs font-bold uppercase">The Partner</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2">Retainer</h3>
-          <p class="text-neutral-500 text-sm mb-6 h-10">Like having your own design team. We handle everything, every month.</p>
-          <div class="text-2xl font-bold mb-6 text-neutral-800">Monthly Fee</div>
-          
-          <ul class="space-y-3 mb-8 flex-1">
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Priority Support</b></li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Unlimited Design Tasks</b></li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Direct Slack Access</b></li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Marketing Updates</b></li>
-          </ul>
-          <button onclick="prefillService('Retainer')" class="w-full py-3 border border-neutral-300 bg-white rounded-lg font-semibold hover:border-neutral-900 hover:bg-neutral-50 transition-colors">Apply for Slot</button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <section id="contact" class="py-24 px-4 md:px-6 bg-[#FAFAFA]">
-    <div class="max-w-xl mx-auto">
-      
-      <div class="text-center mb-10">
-        <h2 class="text-3xl font-bold mb-3">Let's Talk</h2>
-        <p class="text-neutral-500">Fill this out. I'll reply within 24 hours.</p>
-      </div>
-
-      <div id="successMessage" class="hidden bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
-        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i>
-        </div>
-        <h3 class="text-2xl font-bold text-green-800 mb-2">Request Sent!</h3>
-        <p class="text-green-700 mb-6">Thanks for reaching out. I'll get back to you soon.</p>
-        <button id="resetFormBtn" class="text-sm font-semibold text-green-800 underline">Send another message</button>
-      </div>
-
-      <div id="formContainer" class="bg-white border border-brand-border rounded-2xl p-8 shadow-card">
-        
-        <form id="contactForm" 
-              action="https://formsubmit.co/ea0da421e8e6e82457be40792262eeed" 
-              method="POST" 
-              class="flex flex-col gap-5">
-            
-            <input type="hidden" name="_subject" value="New Project Request from PENNIO.DESIGN" />
-            <input type="hidden" name="_captcha" value="false" />
-            <input type="hidden" name="_next" id="nextUrl" value="" />
-
-            <div>
-                <label for="name" class="block text-sm font-semibold text-neutral-700 mb-2">Name</label>
-                <input type="text" id="name" name="name" placeholder="Paul Oyatowo" required 
-                       class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all">
-            </div>
-
-            <div>
-                <label for="email" class="block text-sm font-semibold text-neutral-700 mb-2">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="paul@example.com" required 
-                       class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all">
-            </div>
-
-            <div>
-                <label for="service" class="block text-sm font-semibold text-neutral-700 mb-2">What do you need?</label>
-                <div class="relative">
-                    <select name="service" id="service" required class="w-full px-4 py-3 rounded-lg border border-neutral-200 bg-white appearance-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all">
-                        <option value="" disabled selected>Select an option...</option>
-                        
-                        <optgroup label="Packages">
-                            <option value="The Sprint">The Sprint (Quick Launch)</option>
-                            <option value="The System">The System (Complete Brand)</option>
-                            <option value="Retainer">Retainer (Monthly Support)</option>
-                        </optgroup>
-
-                        <optgroup label="Services">
-                            <option value="Discovery">01. Discovery Session</option>
-                            <option value="Visual Identity">04. Visual Identity Only</option>
-                            <option value="Launch Assets">05. Marketing Assets</option>
-                        </optgroup>
-
-                        <optgroup label="Other">
-                            <option value="Other">Just a Question</option>
-                        </optgroup>
-                    </select>
-                    <i data-lucide="chevron-down" class="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i>
-                </div>
-            </div>
-
-            <div>
-                <label for="message" class="block text-sm font-semibold text-neutral-700 mb-2">Project Details</label>
-                <textarea name="message" id="message" rows="4" placeholder="Tell me about your business and what you want to achieve..." required 
-                          class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all resize-none"></textarea>
-            </div>
-
-            <button type="submit" id="submitBtn" class="w-full py-4 bg-brand-orange text-white font-bold rounded-lg hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2">
-                Send Request
-            </button>
-        </form>
+      <div class="bg-white border border-brand-border rounded-2xl p-6">
+        Your brand doesn’t match your ambition or pricing.
       </div>
     </div>
   </section>
 
-  <a href="#contact" class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-neutral-900 text-white px-5 py-4 rounded-full shadow-2xl hover:bg-brand-orange transition-all hover:scale-105 group">
-    <i data-lucide="message-square" class="w-5 h-5"></i>
-    <span class="font-medium pr-1">Start Project</span>
-  </a>
+  <!-- SOLUTION -->
+  <section class="py-20 px-6 bg-white border-t border-brand-border">
+    <div class="max-w-5xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-4">
+        The Brand-to-Revenue Sprint™
+      </h2>
+      <p class="text-neutral-500 max-w-2xl mx-auto mb-10">
+        A 30-day, founder-led brand overhaul designed to increase trust,
+        pricing power, and conversion speed.
+      </p>
 
-  <footer class="bg-white border-t border-brand-border py-12 text-center">
-    <div class="max-w-6xl mx-auto px-6">
-        <p class="font-bold text-lg mb-2 tracking-tight">PENNIO<span class="text-brand-orange">.DESIGN</span></p>
-        <p class="text-sm text-neutral-500">&copy; 2025 PENNIO.DESIGN. Nigeria.</p>
-        
-        <div class="flex justify-center gap-6 mt-6">
-            <a href="https://instagram.com/pennio.design" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
-                <i data-lucide="instagram" class="w-5 h-5"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/pauloyatowo" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
-                <i data-lucide="linkedin" class="w-5 h-5"></i>
-            </a>
-            <a href="https://twitter.com/penniodesign" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
-                <i data-lucide="twitter" class="w-5 h-5"></i>
-            </a>
-        </div>
+      <div class="grid md:grid-cols-4 gap-6 text-sm">
+        <div class="border border-brand-border rounded-xl p-6">Discovery & Clarity</div>
+        <div class="border border-brand-border rounded-xl p-6">Positioning Strategy</div>
+        <div class="border border-brand-border rounded-xl p-6">Visual Identity</div>
+        <div class="border border-brand-border rounded-xl p-6">Launch-Ready Assets</div>
+      </div>
     </div>
-  </footer>
+  </section>
+
+  <!-- WHAT YOU GET -->
+  <section class="py-20 px-6 max-w-5xl mx-auto">
+    <h2 class="text-3xl font-bold mb-10 text-center">
+      What You Get in 30 Days
+    </h2>
+
+    <ul class="space-y-4 max-w-xl mx-auto text-neutral-700">
+      <li>✔ Brand positioning & offer clarity</li>
+      <li>✔ Logo & visual identity system</li>
+      <li>✔ Conversion-focused brand guide</li>
+      <li>✔ Website hero, socials & pitch assets</li>
+    </ul>
+  </section>
+
+  <!-- INVESTMENT -->
+  <section class="py-20 px-6 bg-neutral-900 text-white text-center">
+    <h2 class="text-3xl font-bold mb-4">Investment</h2>
+    <p class="text-4xl font-bold mb-2">₦1.2M / $1,200</p>
+    <p class="text-neutral-400 mb-6">
+      One-time. Pays for itself with one client.
+    </p>
+
+    <p class="max-w-xl mx-auto text-sm text-neutral-300">
+      If you don’t feel more confident selling your offer after 30 days,
+      we keep working until you do.
+    </p>
+  </section>
+
+  <!-- APPLY -->
+  <section id="apply" class="py-24 px-6 bg-[#FAFAFA]">
+    <div class="max-w-xl mx-auto bg-white border border-brand-border rounded-2xl p-8 shadow-card">
+      <h2 class="text-2xl font-bold mb-2 text-center">
+        Apply for the Sprint
+      </h2>
+      <p class="text-sm text-neutral-500 text-center mb-8">
+        This is a fit check — not everyone is accepted.
+      </p>
+
+      <form
+        action="https://formsubmit.co/ea0da421e8e6e82457be40792262eeed"
+        method="POST"
+        class="flex flex-col gap-5"
+      >
+        <input type="hidden" name="_subject" value="Sprint Application – PENNIO.DESIGN" />
+        <input type="hidden" name="_captcha" value="false" />
+
+        <input required name="name" placeholder="Name"
+          class="px-4 py-3 rounded-lg border border-neutral-200" />
+
+        <input required name="email" type="email" placeholder="Email"
+          class="px-4 py-3 rounded-lg border border-neutral-200" />
+
+        <input required name="business" placeholder="What do you sell?"
+          class="px-4 py-3 rounded-lg border border-neutral-200" />
+
+        <select required name="revenue"
+          class="px-4 py-3 rounded-lg border border-neutral-200">
+          <option value="">Monthly revenue?</option>
+          <option>₦0–500k</option>
+          <option>₦500k–2M</option>
+          <option>₦2M+</option>
+        </select>
+
+        <textarea required name="problem" rows="3"
+          placeholder="What’s broken in your brand right now?"
+          class="px-4 py-3 rounded-lg border border-neutral-200"></textarea>
+
+        <button class="py-4 bg-brand-orange text-white font-bold rounded-lg hover:bg-orange-600">
+          Submit Application
+        </button>
+      </form>
+    </div>
+  </section>
 
   <script>
     lucide.createIcons();
-
-    // 1. Prefill Service
-    function prefillService(serviceName) {
-        const select = document.getElementById('service');
-        const contactSection = document.getElementById('contact');
-        if(select && contactSection) {
-            select.value = serviceName;
-            
-            // Fallback: If exact match fails, try partial match
-            if (select.value === "") {
-                const options = Array.from(select.querySelectorAll('option'));
-                const match = options.find(opt => opt.value.includes(serviceName));
-                if (match) select.value = match.value;
-            }
-            
-            contactSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
-
-    // 2. Set Redirect URL on Load
-    document.addEventListener("DOMContentLoaded", function() {
-        const nextUrlInput = document.getElementById('nextUrl');
-        if (nextUrlInput) {
-            const baseUrl = window.location.origin + window.location.pathname;
-            nextUrlInput.value = baseUrl + "?success=true";
-        }
-
-        // 3. Check for Success Flag
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('success')) {
-            const formContainer = document.getElementById('formContainer');
-            const successMessage = document.getElementById('successMessage');
-            
-            if(formContainer && successMessage) {
-                formContainer.style.display = 'none';
-                successMessage.classList.remove('hidden');
-                document.getElementById('contact').scrollIntoView();
-            }
-        }
-    });
-
-    // 4. Reset Button Logic
-    const resetBtn = document.getElementById('resetFormBtn');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', function() {
-            const baseUrl = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, baseUrl);
-            
-            document.getElementById('successMessage').classList.add('hidden');
-            document.getElementById('formContainer').style.display = 'block';
-            document.getElementById('contactForm').reset();
-        });
-    }
   </script>
+
 </body>
 </html>
