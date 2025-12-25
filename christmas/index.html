@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Pennio: The Christmas Upgrade</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/theme/simple.min.css">
+    
+    <!-- Fonts: Inter for that clean Swiss/Pennio look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --pennio-black: #111111;
+            --pennio-grey: #666666;
+            --pennio-light: #f4f4f4;
+            --xmas-red: #D90429; /* A sharp, modern red for the season */
+        }
+
+        body {
+            background-color: #ffffff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .reveal {
+            font-family: 'Inter', sans-serif;
+            color: var(--pennio-black);
+        }
+
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            text-transform: none;
+            letter-spacing: -0.03em;
+            color: var(--pennio-black);
+            margin-bottom: 0.5em;
+        }
+        
+        .reveal h1 { font-size: 2.5em; line-height: 1.1; }
+        .reveal h2 { font-size: 1.8em; line-height: 1.2; }
+        .reveal h3 { font-size: 1.2em; font-weight: 600; color: var(--pennio-grey); }
+
+        .reveal p {
+            font-weight: 300;
+            font-size: 1em;
+            line-height: 1.5;
+            color: var(--pennio-grey);
+        }
+
+        .reveal ul {
+            display: block;
+            margin: 0 auto;
+            width: 80%;
+            list-style-type: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        .reveal ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+        }
+
+        .reveal ul li::before {
+            content: "→";
+            color: var(--xmas-red);
+            margin-right: 15px;
+            font-weight: 900;
+        }
+
+        /* Clear default link styles */
+        .reveal a {
+            text-decoration: none;
+            border: none;
+            box-shadow: none;
+        }
+        .reveal a:hover {
+            box-shadow: none;
+            border: none;
+        }
+
+        /* Utility Classes */
+        .text-left { text-align: left; }
+        .text-center { text-align: center; }
+        .highlight { color: var(--xmas-red); }
+        .strikethrough { text-decoration: line-through; opacity: 0.5; }
+        .tiny-text { font-size: 0.6em !important; text-transform: uppercase; letter-spacing: 2px; color: var(--pennio-grey); }
+        
+        .box {
+            border: 2px solid var(--pennio-black);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .reveal .btn {
+            display: inline-block;
+            background: var(--pennio-black);
+            color: white;
+            padding: 15px 30px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: 30px;
+            border: none;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+        
+        .reveal .btn:hover {
+            background: var(--xmas-red);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: none;
+        }
+
+        /* Progress bar override */
+        .reveal .progress span {
+            background-color: var(--xmas-red);
+        }
+
+        /* Slide specific adjustments for mobile portrait */
+        .slide-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .logo-mark {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-weight: 900;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="reveal">
+    <div class="slides">
+
+        <!-- SLIDE 1: The Hook -->
+        <section>
+            <div class="logo-mark">PENNIO.DESIGN</div>
+            <div class="slide-content text-left">
+                <p class="tiny-text">Christmas Wishlist</p>
+                <h2 class="strikethrough">A Silent Night</h2>
+                <h2 class="strikethrough">A New Watch</h2>
+                <h1>A Brand That<br><span class="highlight">Prints Money.</span></h1>
+                <p style="margin-top: 40px;">Stop asking Santa for clients.<br>Build the certainty that attracts them.</p>
+            </div>
+        </section>
+
+        <!-- SLIDE 2: The Problem (Ghost of Past) -->
+        <section>
+            <div class="logo-mark">THE GHOST OF REVENUE PAST</div>
+            <div class="slide-content text-left">
+                <h2>The Silence.</h2>
+                <p>You send the proposal. They love your work.</p>
+                <div class="box">
+                    <p style="color: black; font-weight: 600;">"How much is it?"</p>
+                </div>
+                <p style="margin-top:20px;">You tell them the price.</p>
+                <p>And then... <span class="highlight">they disappear.</span></p>
+                <br>
+                <h3>Don't let your 2025 revenue vanish like your 2024 leads.</h3>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: The Solution -->
+        <section>
+            <div class="logo-mark">THE GIFT</div>
+            <div class="slide-content text-left">
+                <p class="tiny-text">The 30-Day Brand Upgrade</p>
+                <h1>Wrap Up Your<br>New Authority.</h1>
+                <p>We don't just "design." We build the asset that makes saying "No" to you feel stupid.</p>
+                
+                <ul style="margin-top: 40px;">
+                    <li><b>One-Liner Pitch</b> (In 48 Hours)</li>
+                    <li><b>Visual Identity</b> (No DIY look)</li>
+                    <li><b>Launch Scripts</b> (Exact words)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: The Outcome -->
+        <section>
+            <div class="logo-mark">THE OUTCOME</div>
+            <div class="slide-content text-center">
+                <h2>People don't buy "Trust".<br>They buy <span class="highlight">Certainty.</span></h2>
+                <br>
+                <div style="background: #f4f4f4; padding: 30px;">
+                    <h3 style="color:black; margin:0;">Value: ₦1,050,000+</h3>
+                    <p style="margin: 10px 0;">Investment: ₦750,000</p>
+                </div>
+                <br>
+                <p>Double your prices in Jan.<br>Without changing your service.</p>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: CTA -->
+        <section>
+            <div class="logo-mark">PENNIO.DESIGN</div>
+            <div class="slide-content text-center">
+                <h1>New Year.<br>New Rules.</h1>
+                <p>Start 2025 as the Market Leader.</p>
+                
+                <p style="font-size: 0.8em; margin-top: 20px;">Limited to 3 Clients / Month.</p>
+                
+                <a href="#" class="btn">APPLY FOR JANUARY</a>
+                
+                <p class="tiny-text" style="margin-top: 50px;">Love it or leave it guarantee included.</p>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.0.4/reveal.min.js"></script>
+<script>
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        center: true,
+        hash: true,
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+        
+        // Force 3:4 Aspect Ratio (e.g. 600x800)
+        width: 600,
+        height: 800,
+        margin: 0.1,
+        minScale: 0.2,
+        maxScale: 2.0
+    });
+</script>
+
+</body>
+</html>
