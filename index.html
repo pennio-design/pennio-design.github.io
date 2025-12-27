@@ -357,7 +357,10 @@
           <i data-lucide="check" class="w-6 h-6"></i>
         </div>
         <h3 class="font-bold text-lg">Received.</h3>
-        <p class="text-sm text-neutral-500">I'll review this and email you shortly.</p>
+        <p class="text-sm text-neutral-500 mb-6">I'll review this and email you shortly.</p>
+        <button type="button" id="resetBtn" class="text-xs text-neutral-400 hover:text-neutral-600 underline">
+          Start a new application
+        </button>
       </div>
     </div>
   </section>
@@ -371,6 +374,7 @@
     const form = document.getElementById('applyForm');
     const success = document.getElementById('successMessage');
     const btn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
     const originalBtnText = btn.innerHTML;
 
     form.addEventListener('submit', function(e) {
@@ -388,12 +392,21 @@
       .then(data => {
         form.classList.add('hidden');
         success.classList.remove('hidden');
+        form.reset(); // Clear the form so next submission is clean
       })
       .catch(error => {
         alert('Error. Please email directly.');
         btn.disabled = false;
         btn.innerHTML = originalBtnText;
       });
+    });
+
+    // Reset view logic
+    resetBtn.addEventListener('click', function() {
+      success.classList.add('hidden');
+      form.classList.remove('hidden');
+      btn.disabled = false;
+      btn.innerHTML = originalBtnText;
     });
   </script>
 </body>
