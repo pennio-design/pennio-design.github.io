@@ -4,13 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PENNIO — Clarity Sprint (Beta)</title>
-  <meta name="description" content="Fix your positioning and sales clarity in 2 weeks.">
+  <meta name="description" content="In 30 days, explain your offer clearly and justify your price confidently.">
 
+  <!-- Fonts: Inter for pure readability -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <script>
@@ -31,158 +35,257 @@
   </script>
 </head>
 
-<body class="bg-[#FAFAFA] text-neutral-900 antialiased selection:bg-brand-500 selection:text-white">
+<body class="bg-white text-neutral-900 antialiased selection:bg-neutral-900 selection:text-white">
 
   <!-- NAV -->
   <nav class="fixed top-0 w-full bg-white/95 border-b border-neutral-200 z-50">
-    <div class="max-w-2xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="max-w-3xl mx-auto px-6 h-16 flex items-center justify-between">
       <div class="font-bold tracking-tight text-lg">
-        PENNIO<span class="text-brand-500 text-xs align-top">®</span> <span class="text-neutral-400 font-normal text-sm ml-2">Beta Sprint</span>
+        PENNIO<span class="text-brand-500 text-xs align-top">®</span> <span class="text-neutral-400 font-normal text-sm ml-2">Beta</span>
       </div>
-      <a href="#apply" class="text-sm font-semibold text-neutral-900 hover:text-brand-600 underline decoration-2 decoration-brand-500/30 hover:decoration-brand-500 transition-all">
+      <a href="#apply" class="text-sm font-semibold text-neutral-900 hover:text-brand-600 border-b border-neutral-900 hover:border-brand-600 transition-colors">
         Apply for Beta
       </a>
     </div>
   </nav>
 
   <!-- HERO -->
-  <section class="pt-32 pb-16 px-6 max-w-2xl mx-auto">
-    <div class="mb-8 inline-block bg-brand-50 border border-brand-100 px-3 py-1 rounded text-xs font-bold text-brand-600 uppercase tracking-wide">
-      Beta Program: 5 Spots Only
-    </div>
-
-    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 text-neutral-900 leading-tight">
-      You’re losing deals because prospects don’t clearly understand your value.
+  <section class="pt-36 pb-20 px-6 max-w-3xl mx-auto">
+    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-8 text-neutral-900 leading-tight">
+      Prospects don’t buy because they don’t get it.
     </h1>
 
-    <div class="prose prose-lg text-neutral-600 mb-10">
-      <p>Not because you’re bad at what you do.<br>
-      Not because your price is wrong.<br>
-      But because your offer, positioning, and explanation aren’t sharp enough.</p>
-      
-      <p class="font-semibold text-neutral-900">I help service businesses fix that — fast.</p>
-    </div>
-
-    <a href="#apply" class="inline-flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white font-bold rounded-lg hover:bg-brand-600 transition-colors">
-      Apply for Clarity Sprint
-      <i data-lucide="arrow-down" class="w-4 h-4"></i>
-    </a>
-  </section>
-
-  <!-- WHO IS THIS FOR (DISQUALIFICATION) -->
-  <section class="py-16 px-6 bg-white border-y border-neutral-200">
-    <div class="max-w-2xl mx-auto">
-      <h2 class="text-sm font-bold text-neutral-400 uppercase tracking-widest mb-6">Who This Is For</h2>
-      
-      <div class="bg-neutral-50 p-6 rounded-lg border-l-4 border-brand-500 mb-6">
-        <h3 class="font-bold text-neutral-900 mb-4">This is ONLY for you if:</h3>
-        <ul class="space-y-3 text-sm text-neutral-700">
-          <li class="flex gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-500"></i> You sell a service (design, consulting, marketing).</li>
-          <li class="flex gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-500"></i> You get inquiries but struggle to close confidently.</li>
-          <li class="flex gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-500"></i> You often find yourself justifying or defending your price.</li>
-          <li class="flex gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-500"></i> Your monthly revenue is under ₦5m.</li>
-          <li class="flex gap-3"><i data-lucide="check" class="w-4 h-4 text-brand-500"></i> <strong>You are the one doing the selling.</strong></li>
-        </ul>
-      </div>
-
-      <p class="text-sm text-neutral-500 italic">
-        If you want ads, funnels, or "growth hacks" — this is not for you. Close this page.
-      </p>
-    </div>
-  </section>
-
-  <!-- THE REAL PROBLEM -->
-  <section class="py-16 px-6 max-w-2xl mx-auto">
-    <h2 class="text-2xl font-bold mb-6">Most businesses don’t have a selling problem. They have a clarity problem.</h2>
-    
-    <div class="space-y-4 mb-8">
-      <div class="p-4 bg-white border border-neutral-200 rounded shadow-sm">
-        <p class="text-neutral-600 font-medium">"So what exactly do you do?"</p>
-      </div>
-      <div class="p-4 bg-white border border-neutral-200 rounded shadow-sm">
-        <p class="text-neutral-600 font-medium">"Why does this cost this much?"</p>
-      </div>
-      <div class="p-4 bg-white border border-neutral-200 rounded shadow-sm">
-        <p class="text-neutral-600 font-medium">"How is this different from [Cheaper Option]?"</p>
-      </div>
-    </div>
-
-    <p class="text-neutral-600">
-      When you can’t answer those cleanly, sales stall — even if your work is world-class.
+    <p class="text-lg md:text-xl text-neutral-600 mb-8 leading-relaxed">
+      If people struggle to explain what you do, trust your pricing, or say yes without thinking, your positioning isn’t clear yet.
     </p>
+
+    <div class="bg-neutral-50 border-l-4 border-brand-500 p-6 mb-10 rounded-r-lg">
+      <p class="font-medium text-neutral-900">
+        In 30 days, you’ll be able to explain your offer clearly, justify your price confidently, and become the obvious choice — without rambling, discounting, or over-selling.
+      </p>
+    </div>
+
+    <!-- Champion Call-Out -->
+    <div class="mb-10 text-sm text-neutral-500">
+      <p class="font-bold text-neutral-900 uppercase tracking-wide text-xs mb-2">This is for:</p>
+      <ul class="space-y-1">
+        <li class="flex gap-2 items-center"><i data-lucide="check" class="w-3 h-3 text-brand-500"></i> Founders who do good work but struggle to sell it.</li>
+        <li class="flex gap-2 items-center"><i data-lucide="check" class="w-3 h-3 text-brand-500"></i> Solo operators tired of tweaking messaging with no result.</li>
+      </ul>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-4">
+      <a href="#apply" class="inline-flex justify-center items-center px-6 py-4 bg-neutral-900 text-white font-bold rounded hover:bg-brand-600 transition-colors">
+        Start the 30-Day Upgrade
+      </a>
+      <a href="#comparison" class="inline-flex justify-center items-center px-6 py-4 bg-white border border-neutral-300 text-neutral-900 font-medium rounded hover:bg-neutral-50 transition-colors">
+        See how it works
+      </a>
+    </div>
   </section>
 
-  <!-- THE SOLUTION -->
-  <section class="py-16 px-6 bg-neutral-900 text-white">
-    <div class="max-w-2xl mx-auto">
-      <div class="inline-block px-2 py-1 bg-brand-600 text-white text-xs font-bold rounded mb-4">THE OFFER</div>
-      <h2 class="text-3xl font-bold mb-6">Brand & Sales Clarity Sprint (2 Weeks)</h2>
+  <!-- COMPARISON (THE FRAME) -->
+  <section id="comparison" class="py-20 px-6 border-t border-neutral-100">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold mb-10 text-center">Why you are stuck</h2>
       
-      <p class="text-neutral-300 mb-8 text-lg">
-        A focused sprint to clarify your positioning, fix how you explain your value, and build one core sales asset you can actually use.
-      </p>
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+        <!-- Doing Nothing -->
+        <div class="p-6 border border-neutral-200 rounded-lg">
+          <h3 class="font-bold text-neutral-400 uppercase text-xs tracking-widest mb-3">Option 1: Do Nothing</h3>
+          <ul class="space-y-3 text-sm text-neutral-600">
+            <li class="flex gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400"></i> Messaging stays messy.</li>
+            <li class="flex gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400"></i> Sales calls stall.</li>
+            <li class="flex gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400"></i> Prospects hesitate.</li>
+          </ul>
+        </div>
 
-      <div class="grid gap-6">
-        <div class="flex gap-4">
-          <div class="w-8 h-8 rounded bg-neutral-800 flex items-center justify-center font-bold text-brand-500">1</div>
-          <div>
-            <h4 class="font-bold">Clear Positioning Statement</h4>
-            <p class="text-sm text-neutral-400 mt-1">Who you serve, what you solve, and why you’re different — in plain language.</p>
-          </div>
+        <!-- Agencies -->
+        <div class="p-6 border border-neutral-200 rounded-lg">
+          <h3 class="font-bold text-neutral-400 uppercase text-xs tracking-widest mb-3">Option 2: Agencies</h3>
+          <ul class="space-y-3 text-sm text-neutral-600">
+            <li class="flex gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400"></i> Big decks, big invoices.</li>
+            <li class="flex gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400"></i> Strategy without clarity.</li>
+            <li class="flex gap-2"><i data-lucide="x" class="w-4 h-4 text-red-400"></i> Sounds good but doesn’t sell.</li>
+          </ul>
         </div>
-        <div class="flex gap-4">
-          <div class="w-8 h-8 rounded bg-neutral-800 flex items-center justify-center font-bold text-brand-500">2</div>
-          <div>
-            <h4 class="font-bold">Pricing Explanation Framework</h4>
-            <p class="text-sm text-neutral-400 mt-1">How to explain your price without apologizing or rambling.</p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="w-8 h-8 rounded bg-neutral-800 flex items-center justify-center font-bold text-brand-500">3</div>
-          <div>
-            <h4 class="font-bold">One Core Sales Asset</h4>
-            <p class="text-sm text-neutral-400 mt-1">A sales page copy OR pitch deck structure that communicates your value clearly.</p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <div class="w-8 h-8 rounded bg-neutral-800 flex items-center justify-center font-bold text-brand-500">4</div>
-          <div>
-            <h4 class="font-bold">Recorded Walkthrough</h4>
-            <p class="text-sm text-neutral-400 mt-1">A Loom video explaining exactly how to use these assets in real conversations.</p>
-          </div>
+        
+        <!-- Tactics -->
+        <div class="p-6 border border-neutral-200 rounded-lg md:col-span-2">
+          <h3 class="font-bold text-neutral-400 uppercase text-xs tracking-widest mb-3">Option 3: More Marketing Tactics</h3>
+          <p class="text-sm text-neutral-600">
+            More activity + more spend = Confusion amplified. Leads get colder, not warmer.
+          </p>
         </div>
       </div>
-      
-      <div class="mt-10 p-4 bg-neutral-800 rounded border border-neutral-700 text-sm text-neutral-400 text-center">
-        This is not a rebrand. This is not strategy theatre. This is clarity you can sell with.
+
+      <!-- THE SPRINT (Winner) -->
+      <div class="p-8 bg-neutral-900 text-white rounded-xl shadow-xl">
+        <h3 class="font-bold text-brand-500 uppercase text-xs tracking-widest mb-4">Option 4: The Clarity Sprint</h3>
+        <div class="grid md:grid-cols-3 gap-6 text-sm mb-8">
+          <div>
+            <strong class="block text-white mb-1">Clear Positioning</strong>
+            <span class="text-neutral-400">In plain language.</span>
+          </div>
+          <div>
+            <strong class="block text-white mb-1">Pricing Logic</strong>
+            <span class="text-neutral-400">You can actually explain.</span>
+          </div>
+          <div>
+            <strong class="block text-white mb-1">One Sales Asset</strong>
+            <span class="text-neutral-400">That does the talking.</span>
+          </div>
+        </div>
+        <a href="#apply" class="font-bold border-b border-brand-500 text-white hover:text-brand-500 pb-0.5 transition-colors">
+          Start the 30-Day Upgrade &rarr;
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- WHY BETA & PRICE -->
-  <section class="py-16 px-6 max-w-2xl mx-auto border-b border-neutral-200">
+  <!-- PROCESS -->
+  <section class="py-20 px-6 max-w-3xl mx-auto">
+    <h2 class="text-2xl font-bold mb-12">The 30-Day Process</h2>
+    
+    <div class="space-y-12 relative border-l border-neutral-200 ml-3 pl-8 md:pl-12 py-2">
+      
+      <!-- Week 1 -->
+      <div class="relative">
+        <div class="absolute -left-[41px] md:-left-[57px] top-1 w-5 h-5 bg-neutral-900 rounded-full border-4 border-white"></div>
+        <h3 class="font-bold text-lg mb-2">Week 1 — Diagnose Confusion</h3>
+        <p class="text-neutral-600 mb-4 text-sm">Identify exactly what’s unclear and why it’s costing you sales. We analyze who you're really selling to and where pricing resistance comes from.</p>
+        <div class="bg-neutral-50 inline-block px-3 py-1 rounded text-xs font-semibold text-neutral-700">Outcome: Clear understanding of the problem</div>
+      </div>
+
+      <!-- Week 2 -->
+      <div class="relative">
+        <div class="absolute -left-[41px] md:-left-[57px] top-1 w-5 h-5 bg-neutral-900 rounded-full border-4 border-white"></div>
+        <h3 class="font-bold text-lg mb-2">Week 2 — Define Your Position</h3>
+        <p class="text-neutral-600 mb-4 text-sm">We define your best-fit customer, the real alternative you compete against, and the one thing you do better than anyone else.</p>
+        <div class="bg-neutral-50 inline-block px-3 py-1 rounded text-xs font-semibold text-neutral-700">Outcome: A positioning statement you can actually use</div>
+      </div>
+
+      <!-- Week 3 -->
+      <div class="relative">
+        <div class="absolute -left-[41px] md:-left-[57px] top-1 w-5 h-5 bg-neutral-900 rounded-full border-4 border-white"></div>
+        <h3 class="font-bold text-lg mb-2">Week 3 — Clarify Pricing & Messaging</h3>
+        <p class="text-neutral-600 mb-4 text-sm">We build simple pricing logic and plain-language messaging that explains your value.</p>
+        <div class="bg-neutral-50 inline-block px-3 py-1 rounded text-xs font-semibold text-neutral-700">Outcome: You stop rambling, prospects stop hesitating</div>
+      </div>
+
+      <!-- Week 4 -->
+      <div class="relative">
+        <div class="absolute -left-[41px] md:-left-[57px] top-1 w-5 h-5 bg-neutral-900 rounded-full border-4 border-white"></div>
+        <h3 class="font-bold text-lg mb-2">Week 4 — Turn Clarity into a Sales Asset</h3>
+        <p class="text-neutral-600 mb-4 text-sm">We create one core sales asset (page, deck, or one-pager) and reusable language for all communications.</p>
+        <div class="bg-neutral-50 inline-block px-3 py-1 rounded text-xs font-semibold text-neutral-700">Outcome: Selling stops depending on your mood</div>
+      </div>
+
+    </div>
+
+    <div class="mt-12 p-6 bg-neutral-50 rounded border border-neutral-200 text-center">
+      <p class="text-sm font-medium text-neutral-500 uppercase tracking-widest mb-2">What this is NOT</p>
+      <p class="text-neutral-900 font-medium">Not a rebrand. Not months of workshops. Not execution-heavy.</p>
+    </div>
+  </section>
+
+  <!-- DELIVERABLES -->
+  <section class="py-20 px-6 bg-neutral-900 text-white">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold mb-10">Tangible Deliverables</h2>
+      
+      <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div>
+          <h4 class="font-bold text-lg mb-2 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-brand-500"></i> Positioning Summary</h4>
+          <p class="text-sm text-neutral-400">1–2 pages defining who you serve, the problem, and your difference.</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-lg mb-2 flex items-center gap-2"><i data-lucide="dollar-sign" class="w-5 h-5 text-brand-500"></i> Pricing Framework</h4>
+          <p class="text-sm text-neutral-400">How to explain your price without apologizing.</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-lg mb-2 flex items-center gap-2"><i data-lucide="monitor" class="w-5 h-5 text-brand-500"></i> Core Sales Asset</h4>
+          <p class="text-sm text-neutral-400">Sales page, pitch deck, or one-pager.</p>
+        </div>
+        <div>
+          <h4 class="font-bold text-lg mb-2 flex items-center gap-2"><i data-lucide="book" class="w-5 h-5 text-brand-500"></i> Messaging Playbook</h4>
+          <p class="text-sm text-neutral-400">Key phrases, objection-handling, and what NOT to say.</p>
+        </div>
+      </div>
+
+      <div class="p-4 border border-white/20 rounded bg-white/5 text-center">
+        <p class="text-sm font-medium text-brand-500 uppercase tracking-widest mb-1">Brutal Truth</p>
+        <p class="text-neutral-300">This sprint won’t make you confident. It makes you clear. <strong class="text-white">Confidence follows clarity.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY BETA -->
+  <section class="py-20 px-6 max-w-3xl mx-auto border-b border-neutral-200">
     <div class="grid md:grid-cols-2 gap-10">
       <div>
-        <h3 class="font-bold mb-4">Why Beta?</h3>
-        <p class="text-sm text-neutral-600 mb-4">
-          This is a new service format. You get reduced pricing and my direct involvement. I get real-world feedback and proof. That's the trade.
-        </p>
+        <h3 class="font-bold text-lg mb-4">Why Beta?</h3>
+        <ul class="space-y-2 text-sm text-neutral-600">
+          <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-500"></i> Direct access to me, not a junior strategist.</li>
+          <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-500"></i> Limited to 5 clients (Focus > Volume).</li>
+          <li class="flex gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-500"></i> Process designed for real outcomes, not fluff.</li>
+        </ul>
       </div>
       <div>
-        <h3 class="font-bold mb-4">The Investment</h3>
-        <div class="text-4xl font-extrabold text-neutral-900 mb-2">₦200,000</div>
-        <p class="text-xs text-neutral-500">Paid upfront. Limited to 5 clients.</p>
+        <h3 class="font-bold text-lg mb-4">Who is this NOT for?</h3>
+        <ul class="space-y-2 text-sm text-neutral-600">
+          <li class="flex gap-2"><i data-lucide="x" class="w-4 h-4 text-neutral-400"></i> People looking for templates.</li>
+          <li class="flex gap-2"><i data-lucide="x" class="w-4 h-4 text-neutral-400"></i> People wanting execution done for them.</li>
+          <li class="flex gap-2"><i data-lucide="x" class="w-4 h-4 text-neutral-400"></i> People who need motivation.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- OBJECTIONS -->
+  <section class="py-20 px-6 bg-neutral-50">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold mb-10 text-center">Questions & Objections</h2>
+      
+      <div class="space-y-6">
+        <div class="bg-white p-6 rounded border border-neutral-200">
+          <h4 class="font-bold text-sm mb-2">"No case studies yet?"</h4>
+          <p class="text-sm text-neutral-600">That’s why it’s a beta. Lower risk, direct access, high involvement.</p>
+        </div>
+        <div class="bg-white p-6 rounded border border-neutral-200">
+          <h4 class="font-bold text-sm mb-2">"Why 30 days?"</h4>
+          <p class="text-sm text-neutral-600">Fast clarity beats long overthinking processes. Speed forces decisions.</p>
+        </div>
+        <div class="bg-white p-6 rounded border border-neutral-200">
+          <h4 class="font-bold text-sm mb-2">"Can’t I figure this out myself?"</h4>
+          <p class="text-sm text-neutral-600">If you could, you already would have. This sprint compresses thinking and removes blind spots.</p>
+        </div>
+        <div class="bg-white p-6 rounded border border-neutral-200">
+          <h4 class="font-bold text-sm mb-2">"Is this branding or marketing?"</h4>
+          <p class="text-sm text-neutral-600">Neither. This is positioning and messaging clarity — the foundation both depend on.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- APPLICATION FORM (THE FILTER) -->
   <section id="apply" class="py-20 px-6 max-w-xl mx-auto">
-    <h2 class="text-2xl font-bold mb-8 text-center">Apply for the Beta Sprint</h2>
+    <div class="text-center mb-10">
+      <h2 class="text-2xl font-bold mb-4">Apply for the Beta Sprint</h2>
+      <p class="text-neutral-500 text-sm">We only accept applicants who fit the profile below.</p>
+    </div>
     
-    <div class="bg-white border border-neutral-200 rounded-xl p-8 shadow-lg">
+    <div class="bg-white border border-neutral-200 rounded-xl p-8 shadow-2xl">
+      <div class="mb-6 pb-6 border-b border-neutral-100">
+        <p class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-3">Prerequisites</p>
+        <ul class="space-y-2 text-sm font-medium text-neutral-800">
+          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> Founder doing sales yourself</li>
+          <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i> Monthly revenue under ₦5m</li>
+        </ul>
+      </div>
+
       <form id="applyForm" method="POST" class="flex flex-col gap-5">
-        <input type="hidden" name="_subject" value="Beta Sprint Application">
+        <input type="hidden" name="_subject" value="Beta Clarity Application">
         <input type="hidden" name="_captcha" value="false">
 
         <!-- Name & Email -->
@@ -200,35 +303,35 @@
         <!-- Filter 1: Service Type -->
         <div>
           <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">What do you sell?</label>
-          <input required name="service_type" placeholder="e.g. Graphic Design, Legal Consulting..." class="w-full px-3 py-2 border border-neutral-300 rounded focus:ring-2 focus:ring-brand-500 outline-none">
+          <input required name="service_type" placeholder="e.g. Legal Consulting..." class="w-full px-3 py-2 border border-neutral-300 rounded focus:ring-2 focus:ring-brand-500 outline-none">
         </div>
 
-        <!-- Filter 2: Revenue (Strict Filter) -->
+        <!-- Filter 2: Revenue -->
         <div>
           <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Current Monthly Revenue</label>
-          <select required name="revenue" class="w-full px-3 py-2 border border-neutral-300 rounded focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+          <select required name="revenue" class="w-full px-3 py-2 border border-neutral-300 rounded focus:ring-2 focus:ring-brand-500 outline-none bg-white text-sm">
             <option value="">Select range...</option>
             <option value="pre_revenue">Pre-revenue (₦0)</option>
             <option value="under_5m">₦100k - ₦5m (Ideal for Beta)</option>
-            <option value="over_5m">Over ₦5m (This beta might be too small for you)</option>
+            <option value="over_5m">Over ₦5m (Too big for this beta)</option>
           </select>
         </div>
 
         <!-- Filter 3: Sales Role -->
         <div>
           <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Who handles sales calls?</label>
-          <select required name="sales_role" class="w-full px-3 py-2 border border-neutral-300 rounded focus:ring-2 focus:ring-brand-500 outline-none bg-white">
+          <select required name="sales_role" class="w-full px-3 py-2 border border-neutral-300 rounded focus:ring-2 focus:ring-brand-500 outline-none bg-white text-sm">
             <option value="">Select...</option>
             <option value="founder">Me (The Founder)</option>
             <option value="team">A Sales Team</option>
           </select>
         </div>
 
-        <!-- REPLACED: The Essay Question with "Click to Select" -->
+        <!-- Filter 4: Frustration -->
         <div>
           <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Primary Frustration</label>
           <div class="relative">
-            <select required name="primary_issue" class="w-full px-3 py-2 border border-neutral-300 rounded focus:ring-2 focus:ring-brand-500 outline-none bg-white appearance-none">
+            <select required name="primary_issue" class="w-full px-3 py-2 border border-neutral-300 rounded focus:ring-2 focus:ring-brand-500 outline-none bg-white text-sm appearance-none">
               <option value="">Select the main issue...</option>
               <option value="clarity">"People don't understand what I do"</option>
               <option value="price">"They ghost when I send the price"</option>
@@ -295,6 +398,3 @@
   </script>
 </body>
 </html>
-
-
-
