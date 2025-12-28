@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PENNIO — 30-Day Value Clarity Sprint</title>
-  <meta name="description" content="I help service businesses stop losing deals by fixing how their value is communicated.">
+  <title>PENNIO — The Value Argument Overhaul</title>
+  <meta name="description" content="Stop losing deals to cheaper competitors. A done-for-you positioning sprint for service businesses.">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -45,39 +45,32 @@
   </script>
   
   <style>
-    /* Utility for hiding scrollbar in progress bar */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
-    /* Smooth transition for accordion content */
-    details > summary { list-style: none; }
-    details > summary::-webkit-details-marker { display: none; }
-    
-    /* Animation classes triggered by JS */
     .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
     .reveal-on-scroll.visible { opacity: 1; transform: translateY(0); }
+    
+    /* Smooth toggle transition */
+    #content-before, #content-after { transition: opacity 0.3s ease; }
   </style>
 </head>
 
-<body class="bg-white text-neutral-900 antialiased selection:bg-neutral-900 selection:text-white relative">
+<body class="bg-white text-neutral-900 antialiased selection:bg-brand-500 selection:text-white relative">
 
-  <!-- SINGLE CLEAN NAVBAR -->
-  <nav id="main-nav" class="fixed top-0 w-full bg-white/90 backdrop-blur-md border-b border-neutral-200 z-50 transition-all duration-300">
-    <div class="max-w-3xl mx-auto px-6 h-16 flex items-center justify-between">
+  <!-- NAVBAR -->
+  <nav id="main-nav" class="fixed top-0 w-full bg-white/95 backdrop-blur-md border-b border-neutral-200 z-50">
+    <div class="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
       <div class="font-bold tracking-tight text-lg flex items-center gap-2">
-        <a href="#" class="flex items-center gap-1">
-            PENNIO<span class="text-brand-500 text-xs align-top">®</span> 
+        <a href="#" class="flex items-center gap-1 text-neutral-900">
+            PENNIO<span class="text-brand-600">.</span> 
         </a>
-        <span class="bg-neutral-100 text-neutral-500 text-[10px] uppercase font-bold px-2 py-0.5 rounded">Beta</span>
       </div>
       
       <div class="flex items-center gap-6">
           <div class="hidden md:flex gap-6 text-sm font-medium text-neutral-500">
-            <a href="#problem" class="hover:text-neutral-900 transition-colors">The Problem</a>
-            <a href="#process" class="hover:text-neutral-900 transition-colors">The Process</a>
-            <a href="#beta" class="hover:text-neutral-900 transition-colors">Pricing</a>
+            <a href="#problem" class="hover:text-neutral-900 transition-colors">Why You Lose</a>
+            <a href="#process" class="hover:text-neutral-900 transition-colors">The Protocol</a>
+            <a href="#beta" class="hover:text-neutral-900 transition-colors">The Offer</a>
           </div>
-          <a href="#apply" class="text-sm font-bold bg-neutral-900 text-white px-4 py-2 rounded hover:bg-brand-600 transition-all">
+          <a href="#apply" class="text-sm font-bold bg-neutral-900 text-white px-5 py-2.5 rounded-lg hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20">
             Apply Now
           </a>
       </div>
@@ -85,368 +78,299 @@
   </nav>
 
   <!-- HERO -->
-  <section id="hero" class="pt-40 pb-20 px-6 max-w-3xl mx-auto reveal-on-scroll">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-100 text-red-600 text-xs font-bold mb-8 animate-pulse-slow">
-      <span class="w-2 h-2 rounded-full bg-red-500"></span>
-      Only 3 spots available
+  <section id="hero" class="pt-44 pb-24 px-6 max-w-4xl mx-auto reveal-on-scroll">
+    <!-- Scarcity Badge -->
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 text-neutral-600 text-xs font-bold mb-8">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+      </span>
+      Beta Cohort: 2 of 3 spots claimed
     </div>
 
-    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-8 text-neutral-900 leading-[1.1]">
-      Make it easy for buyers to choose you — <span class="text-neutral-400">and justify your price.</span>
+    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 text-neutral-900 leading-[1.05]">
+      Stop losing deals to <br class="hidden md:block" /> <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-brand-500">cheaper competitors.</span>
     </h1>
 
-    <p class="text-lg md:text-xl text-neutral-600 mb-10 leading-relaxed max-w-2xl">
-      I help service businesses fix value communication so buyers stop hesitating, comparing, or pushing back on price.
+    <p class="text-xl md:text-2xl text-neutral-600 mb-10 leading-relaxed max-w-2xl">
+      We install a <strong>Sales Argument</strong> that justifies your premium price so you can close more deals without "educating" the client. 
+      <br><span class="text-sm text-neutral-400 font-medium mt-2 block">(Done-For-You in 30 Days.)</span>
     </p>
 
     <div class="flex flex-col sm:flex-row gap-4">
-      <a href="#apply" class="inline-flex justify-center items-center px-8 py-4 bg-neutral-900 text-white font-bold rounded-lg hover:bg-brand-600 hover:scale-[1.02] transition-all shadow-lg hover:shadow-brand-500/20">
-        Start the 30-Day Sprint
+      <a href="#apply" class="inline-flex justify-center items-center px-8 py-4 bg-neutral-900 text-white font-bold rounded-lg hover:bg-brand-600 hover:scale-[1.02] transition-all shadow-xl hover:shadow-brand-500/30 text-lg">
+        Get The Pricing & Protocol
       </a>
-      <a href="#problem" class="inline-flex justify-center items-center px-8 py-4 bg-white border border-neutral-300 text-neutral-700 font-bold rounded-lg hover:bg-neutral-50 transition-all">
-        How it works
-      </a>
+      <p class="sm:hidden text-center text-xs text-neutral-400 mt-2">No calls. Just the application.</p>
     </div>
-  </section>
-
-  <!-- PROBLEM (Animated Cards) -->
-  <section id="problem" class="py-24 px-6 border-t border-neutral-100 bg-neutral-50/50">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="text-2xl font-bold mb-6 reveal-on-scroll">The problem isn’t your work. <br>It’s how the value is understood.</h2>
-      <p class="text-neutral-600 mb-10 reveal-on-scroll delay-100">
-        Most service businesses don’t lose deals because they’re bad. They lose deals because buyers feel uncertain, confused, or unsafe choosing them.
-      </p>
-
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="p-6 bg-white rounded-xl border border-neutral-200 shadow-sm hover:shadow-md transition-shadow reveal-on-scroll delay-100 group">
-          <div class="mb-4 w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform"><i data-lucide="clock" class="w-5 h-5"></i></div>
-          <h3 class="font-bold text-sm mb-2">The Stall</h3>
-          <p class="text-sm text-neutral-600">Buyers say “let me think about it” and never return.</p>
-        </div>
-        <div class="p-6 bg-white rounded-xl border border-neutral-200 shadow-sm hover:shadow-md transition-shadow reveal-on-scroll delay-200 group">
-          <div class="mb-4 w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform"><i data-lucide="arrow-down-up" class="w-5 h-5"></i></div>
-          <h3 class="font-bold text-sm mb-2">The Comparison</h3>
-          <p class="text-sm text-neutral-600">They compare you to cheaper options because they don't see the difference.</p>
-        </div>
-        <div class="p-6 bg-white rounded-xl border border-neutral-200 shadow-sm hover:shadow-md transition-shadow reveal-on-scroll delay-300 group">
-          <div class="mb-4 w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center text-red-500 group-hover:scale-110 transition-transform"><i data-lucide="help-circle" class="w-5 h-5"></i></div>
-          <h3 class="font-bold text-sm mb-2">The Doubt</h3>
-          <p class="text-sm text-neutral-600">They question your price because the value isn't obvious.</p>
-        </div>
+    
+    <div class="mt-12 pt-8 border-t border-neutral-100 flex flex-col md:flex-row gap-6 text-sm text-neutral-500">
+      <div class="flex items-center gap-2">
+        <i data-lucide="check-circle-2" class="w-5 h-5 text-green-600"></i>
+        <span>100% Risk-Free Guarantee</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <i data-lucide="zap" class="w-5 h-5 text-yellow-500"></i>
+        <span>Deployment Ready in 7 Days</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <i data-lucide="shield" class="w-5 h-5 text-blue-600"></i>
+        <span>No "Workshops". We do the work.</span>
       </div>
     </div>
   </section>
 
-  <!-- INTERACTIVE BEFORE / AFTER -->
-  <section id="before-after" class="py-24 px-6 bg-neutral-900 text-white reveal-on-scroll">
+  <!-- THE SHIFT (Interactive) -->
+  <section id="problem" class="py-24 px-6 bg-neutral-900 text-white">
     <div class="max-w-4xl mx-auto">
-      <div class="text-center mb-10">
-        <h2 class="text-2xl font-bold mb-4">The Shift</h2>
-        <p class="text-neutral-400 text-sm">Flip the switch to see the transformation.</p>
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4 text-white">The Shift</h2>
+        <p class="text-neutral-400">Flip the switch to see the difference.</p>
       </div>
 
-      <!-- Interactive Toggle -->
-      <div class="flex justify-center mb-10">
-        <div class="bg-neutral-800 p-1 rounded-full flex relative">
-          <button onclick="setComparison('before')" id="btn-before" class="px-6 py-2 rounded-full text-sm font-bold transition-all bg-neutral-700 text-white shadow-md">Before</button>
-          <button onclick="setComparison('after')" id="btn-after" class="px-6 py-2 rounded-full text-sm font-bold transition-all text-neutral-400 hover:text-white">After</button>
+      <div class="flex justify-center mb-12">
+        <div class="bg-neutral-800 p-1.5 rounded-full flex relative border border-neutral-700">
+          <button onclick="setComparison('before')" id="btn-before" class="px-8 py-2.5 rounded-full text-sm font-bold transition-all bg-neutral-600 text-white shadow-md relative z-10">The Old Way</button>
+          <button onclick="setComparison('after')" id="btn-after" class="px-8 py-2.5 rounded-full text-sm font-bold transition-all text-neutral-400 hover:text-white relative z-10">The New Way</button>
         </div>
       </div>
-      
-      <!-- Content Container -->
-      <div class="bg-neutral-800/50 border border-neutral-700 rounded-2xl p-8 md:p-12 transition-all duration-500" id="comparison-card">
+
+      <div class="bg-neutral-800/50 border border-neutral-700 rounded-2xl p-8 md:p-12 transition-all duration-500 min-h-[300px] flex items-center" id="comparison-card">
+        
         <!-- Before State -->
-        <div id="content-before" class="block">
-          <div class="flex items-center gap-3 mb-6 text-red-400 font-bold uppercase tracking-widest text-xs">
+        <div id="content-before" class="block w-full">
+          <div class="flex items-center gap-3 mb-8 text-red-400 font-bold uppercase tracking-widest text-xs">
             <i data-lucide="alert-circle" class="w-4 h-4"></i> Current Reality
           </div>
-          <ul class="space-y-6 text-lg text-neutral-300">
-            <li class="flex gap-4 items-start opacity-70"><i data-lucide="x" class="w-6 h-6 text-neutral-500 mt-1"></i> "Can you send more info?" (Unsure)</li>
-            <li class="flex gap-4 items-start opacity-70"><i data-lucide="x" class="w-6 h-6 text-neutral-500 mt-1"></i> "Why is it this expensive?" (Doubt)</li>
-            <li class="flex gap-4 items-start opacity-70"><i data-lucide="x" class="w-6 h-6 text-neutral-500 mt-1"></i> Sales cycles drag on for weeks.</li>
-          </ul>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-6">
+                <div class="opacity-60">
+                    <p class="text-xs text-neutral-500 uppercase font-bold mb-1">Your Pitch</p>
+                    <p class="text-lg">"We help companies grow..." (Vague)</p>
+                </div>
+                <div class="opacity-60">
+                    <p class="text-xs text-neutral-500 uppercase font-bold mb-1">Client Reaction</p>
+                    <p class="text-lg text-red-300">"Why is it so expensive?"</p>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div class="opacity-60">
+                    <p class="text-xs text-neutral-500 uppercase font-bold mb-1">The Process</p>
+                    <p class="text-lg">You chase them for weeks.</p>
+                </div>
+                <div class="opacity-60">
+                    <p class="text-xs text-neutral-500 uppercase font-bold mb-1">The Outcome</p>
+                    <p class="text-lg">You compete on <span class="underline decoration-red-500/50">Price</span>.</p>
+                </div>
+            </div>
+          </div>
         </div>
 
         <!-- After State -->
-        <div id="content-after" class="hidden">
-          <div class="flex items-center gap-3 mb-6 text-green-400 font-bold uppercase tracking-widest text-xs">
-            <i data-lucide="sparkles" class="w-4 h-4"></i> Future State
+        <div id="content-after" class="hidden w-full">
+          <div class="flex items-center gap-3 mb-8 text-green-400 font-bold uppercase tracking-widest text-xs">
+            <i data-lucide="sparkles" class="w-4 h-4"></i> The PENNIO Protocol
           </div>
-          <ul class="space-y-6 text-lg text-white font-medium">
-            <li class="flex gap-4 items-start"><i data-lucide="check-circle" class="w-6 h-6 text-green-400 mt-1"></i> "I get it perfectly." (Confidence)</li>
-            <li class="flex gap-4 items-start"><i data-lucide="check-circle" class="w-6 h-6 text-green-400 mt-1"></i> "How soon can we start?" (Urgency)</li>
-            <li class="flex gap-4 items-start"><i data-lucide="check-circle" class="w-6 h-6 text-green-400 mt-1"></i> Price feels justified by value.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- COMPARISON TABLE -->
-  <section id="comparison" class="py-24 px-6 reveal-on-scroll">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="text-2xl font-bold mb-4">Your real competition isn’t another agency.</h2>
-      <p class="text-neutral-600 mb-10">
-        It’s the buyer doing nothing — sticking with confusion because it feels safer than risk.
-      </p>
-
-      <div class="border border-neutral-200 rounded-xl overflow-hidden shadow-sm">
-        <div class="grid grid-cols-2 bg-neutral-50 border-b border-neutral-200 p-5 font-bold text-sm">
-          <div class="text-neutral-500">Doing Nothing</div>
-          <div class="text-brand-600 flex items-center gap-2">Working With Me <span class="bg-brand-100 text-brand-700 text-[10px] px-1.5 py-0.5 rounded">Sprint</span></div>
-        </div>
-        <div class="grid grid-cols-2 border-b border-neutral-100 p-5 text-sm hover:bg-neutral-50 transition-colors">
-          <div class="text-neutral-500">Buyers hesitate</div>
-          <div class="font-bold text-neutral-900">Buyers decide</div>
-        </div>
-        <div class="grid grid-cols-2 border-b border-neutral-100 p-5 text-sm hover:bg-neutral-50 transition-colors">
-          <div class="text-neutral-500">Price objections continue</div>
-          <div class="font-bold text-neutral-900">Price is easier to justify</div>
-        </div>
-        <div class="grid grid-cols-2 p-5 text-sm hover:bg-neutral-50 transition-colors">
-          <div class="text-neutral-500">Deals keep slipping</div>
-          <div class="font-bold text-neutral-900">Clarity compounds over time</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROCESS (Stepper) -->
-  <section id="process" class="py-24 px-6 bg-neutral-50">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="text-2xl font-bold mb-6 reveal-on-scroll">The 30-Day Protocol</h2>
-      <p class="text-neutral-600 mb-12">Not a rebrand. Not a workshop. A focused intervention.</p>
-
-      <div class="space-y-8 relative border-l-2 border-neutral-200 ml-4 pl-8 md:pl-10">
-        
-        <div class="relative reveal-on-scroll delay-100">
-          <div class="absolute -left-[41px] md:-left-[49px] top-0 w-6 h-6 bg-white border-4 border-neutral-300 rounded-full"></div>
-          <h4 class="font-bold text-neutral-900">1. Diagnose the confusion</h4>
-          <p class="text-sm text-neutral-600 mt-2">Identify exactly where buyers lose trust, clarity, or confidence in your current process.</p>
-        </div>
-
-        <div class="relative reveal-on-scroll delay-200">
-          <div class="absolute -left-[41px] md:-left-[49px] top-0 w-6 h-6 bg-white border-4 border-neutral-300 rounded-full"></div>
-          <h4 class="font-bold text-neutral-900">2. Define your differentiated value</h4>
-          <p class="text-sm text-neutral-600 mt-2">Clarify what makes you the right choice — not just a different one.</p>
-        </div>
-
-        <div class="relative reveal-on-scroll delay-300">
-          <div class="absolute -left-[41px] md:-left-[49px] top-0 w-6 h-6 bg-white border-4 border-neutral-300 rounded-full"></div>
-          <h4 class="font-bold text-neutral-900">3. Translate value into buyer language</h4>
-          <p class="text-sm text-neutral-600 mt-2">Turn internal thinking into messages buyers instantly understand. No jargon.</p>
-        </div>
-
-        <div class="relative reveal-on-scroll delay-400">
-          <div class="absolute -left-[41px] md:-left-[49px] top-0 w-6 h-6 bg-brand-500 border-4 border-brand-100 rounded-full shadow-lg shadow-brand-500/50"></div>
-          <h4 class="font-bold text-brand-600">4. Apply it to real touchpoints</h4>
-          <p class="text-sm text-neutral-600 mt-2">We rebuild your website messaging, pitch deck, or sales one-pager.</p>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-6">
+                <div>
+                    <p class="text-xs text-neutral-500 uppercase font-bold mb-1">Your Pitch</p>
+                    <p class="text-lg font-bold text-white">"We solve [Specific Expensive Pain]."</p>
+                </div>
+                <div>
+                    <p class="text-xs text-neutral-500 uppercase font-bold mb-1">Client Reaction</p>
+                    <p class="text-lg font-bold text-green-400">"How soon can we start?"</p>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <p class="text-xs text-neutral-500 uppercase font-bold mb-1">The Process</p>
+                    <p class="text-lg font-bold text-white">They qualify themselves.</p>
+                </div>
+                <div>
+                    <p class="text-xs text-neutral-500 uppercase font-bold mb-1">The Outcome</p>
+                    <p class="text-lg font-bold text-white">You compete on <span class="underline decoration-brand-500">Value</span>.</p>
+                </div>
+            </div>
+          </div>
         </div>
 
       </div>
     </div>
   </section>
 
-  <!-- DELIVERABLES -->
-  <section class="py-24 px-6 border-b border-neutral-200 reveal-on-scroll">
+  <!-- PROCESS -->
+  <section id="process" class="py-24 px-6 reveal-on-scroll">
     <div class="max-w-3xl mx-auto">
-      <h2 class="text-2xl font-bold mb-10">Tangible Deliverables</h2>
-      <ul class="grid md:grid-cols-2 gap-4">
-        <li class="flex gap-4 p-5 bg-white border border-neutral-200 rounded-xl shadow-sm hover:border-brand-500 transition-colors group">
-          <i data-lucide="message-square" class="w-6 h-6 text-brand-500 group-hover:scale-110 transition-transform"></i> 
-          <span class="text-sm font-medium">Clear value narrative buyers repeat</span>
-        </li>
-        <li class="flex gap-4 p-5 bg-white border border-neutral-200 rounded-xl shadow-sm hover:border-brand-500 transition-colors group">
-          <i data-lucide="target" class="w-6 h-6 text-brand-500 group-hover:scale-110 transition-transform"></i> 
-          <span class="text-sm font-medium">Positioning away from "cheap"</span>
-        </li>
-        <li class="flex gap-4 p-5 bg-white border border-neutral-200 rounded-xl shadow-sm hover:border-brand-500 transition-colors group">
-          <i data-lucide="file-text" class="w-6 h-6 text-brand-500 group-hover:scale-110 transition-transform"></i> 
-          <span class="text-sm font-medium">One Core Sales Asset (Page or Deck)</span>
-        </li>
-        <li class="flex gap-4 p-5 bg-white border border-neutral-200 rounded-xl shadow-sm hover:border-brand-500 transition-colors group">
-          <i data-lucide="compass" class="w-6 h-6 text-brand-500 group-hover:scale-110 transition-transform"></i> 
-          <span class="text-sm font-medium">Strategic direction for marketing</span>
-        </li>
-      </ul>
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold mb-4">We do the heavy lifting.</h2>
+        <p class="text-neutral-500">This isn't a workshop where I give you homework. It's an installation.</p>
+      </div>
+
+      <div class="space-y-6">
+        <div class="flex gap-6 p-6 rounded-2xl border border-neutral-200 hover:border-brand-500 transition-all bg-white shadow-sm hover:shadow-md group">
+          <div class="text-4xl font-black text-neutral-100 group-hover:text-brand-100 transition-colors">01</div>
+          <div>
+            <h3 class="text-lg font-bold mb-2">The Extraction (Day 1)</h3>
+            <p class="text-neutral-600 text-sm">We get on a 60-minute call. I extract your expertise, your best case studies, and your "secret sauce." You dump your brain. I do the structuring.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-6 p-6 rounded-2xl border border-neutral-200 hover:border-brand-500 transition-all bg-white shadow-sm hover:shadow-md group">
+          <div class="text-4xl font-black text-neutral-100 group-hover:text-brand-100 transition-colors">02</div>
+          <div>
+            <h3 class="text-lg font-bold mb-2">The Argument Build (Day 2-7)</h3>
+            <p class="text-neutral-600 text-sm">I write the narrative. I define the category. I build the "Why Us" logic that makes competitors irrelevant. You get a deployment-ready Sales Deck in one week.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-6 p-6 rounded-2xl border border-neutral-200 hover:border-brand-500 transition-all bg-white shadow-sm hover:shadow-md group">
+          <div class="text-4xl font-black text-neutral-100 group-hover:text-brand-100 transition-colors">03</div>
+          <div>
+            <h3 class="text-lg font-bold mb-2">The Asset Deployment (Day 30)</h3>
+            <p class="text-neutral-600 text-sm">We overhaul your core sales page or proposal template. You get a high-converting asset that speaks the new language. We don't stop until it converts.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- BETA OFFER -->
-  <section id="beta" class="py-24 px-6 bg-neutral-50 reveal-on-scroll">
-    <div class="max-w-3xl mx-auto text-center">
-      <div class="inline-block bg-brand-100 text-brand-700 text-xs font-bold px-3 py-1 rounded mb-4 animate-pulse">BETA PRICING ACTIVE</div>
-      <h2 class="text-4xl font-extrabold mb-4">30 Days. ₦300,000.</h2>
-      <p class="text-neutral-600 mb-8 max-w-xl mx-auto">
-        Standard pricing is ₦750k. This is a beta cohort. You get reduced pricing and direct access to me. In exchange, I get your feedback.
-      </p>
+  <!-- OFFER & PRICING -->
+  <section id="beta" class="py-24 px-6 bg-neutral-900 text-white reveal-on-scroll relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-brand-600/20 blur-3xl rounded-full pointer-events-none"></div>
+
+    <div class="max-w-3xl mx-auto text-center relative z-10">
+      <div class="inline-block bg-brand-600 text-white text-xs font-bold px-3 py-1 rounded mb-6 uppercase tracking-wider">
+        Beta Offer: Limited Availability
+      </div>
       
-      <!-- Guarantee Badge -->
-      <div class="bg-white p-5 border border-neutral-200 rounded-xl inline-block text-left max-w-md mx-auto mb-10 shadow-md">
-        <div class="flex gap-4">
-          <div class="bg-green-100 p-2 rounded-full h-fit"><i data-lucide="shield-check" class="w-6 h-6 text-green-600 shrink-0"></i></div>
-          <div class="text-sm">
-            <strong class="block text-neutral-900 mb-1">The "Work Until It Works" Guarantee</strong>
-            <span class="text-neutral-500 leading-relaxed">If you don’t feel more confident selling your offer after 30 days, we continue working until you do. No extra cost.</span>
+      <h2 class="text-4xl md:text-6xl font-extrabold mb-6">
+        30 Days. <span class="text-brand-500">₦300,000.</span>
+      </h2>
+      
+      <p class="text-neutral-300 mb-10 max-w-xl mx-auto text-lg">
+        Standard pricing is ₦750k. You get 60% off because I need 3 case studies for this new specific protocol.
+      </p>
+
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-8 max-w-2xl mx-auto mb-10 text-left">
+        <h3 class="font-bold text-xl mb-4 flex items-center gap-2">
+          <i data-lucide="gift" class="text-brand-500"></i> What You Get:
+        </h3>
+        <ul class="grid md:grid-cols-2 gap-4 text-sm text-neutral-300">
+          <li class="flex gap-2"><i data-lucide="check" class="text-green-500 w-4 h-4"></i> Value Argument Strategy</li>
+          <li class="flex gap-2"><i data-lucide="check" class="text-green-500 w-4 h-4"></i> The "Anti-Commodity" Pitch Deck</li>
+          <li class="flex gap-2"><i data-lucide="check" class="text-green-500 w-4 h-4"></i> Sales Page Copy Rewrite</li>
+          <li class="flex gap-2"><i data-lucide="check" class="text-green-500 w-4 h-4"></i> Proposal Template Refine</li>
+        </ul>
+      </div>
+      
+      <!-- Risk Reversal -->
+      <div class="bg-white text-neutral-900 p-6 rounded-xl inline-block max-w-lg mx-auto shadow-2xl">
+        <div class="flex gap-4 items-start text-left">
+          <div class="bg-neutral-900 p-3 rounded-full text-white shrink-0">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <strong class="block text-lg mb-1">The "Work Until It Works" Guarantee</strong>
+            <p class="text-sm text-neutral-600 leading-snug">
+              If you don't feel <strong>100% confident</strong> that this new positioning justifies your price, we keep working for free until you do. No time limits. No extra cost.
+            </p>
           </div>
         </div>
       </div>
+
     </div>
   </section>
 
-  <!-- APPLICATION FORM (Conditional Logic) -->
+  <!-- APPLICATION FORM -->
   <section id="apply" class="py-24 px-6 max-w-xl mx-auto">
-    <h2 class="text-2xl font-bold mb-2 text-center">Apply for the Beta</h2>
-    <p class="text-center text-neutral-500 text-sm mb-10">Only 3 spots available.</p>
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold mb-2">Claim Your Spot</h2>
+      <p class="text-neutral-500">I review every application personally.</p>
+    </div>
     
     <div class="bg-white border border-neutral-200 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
-      <!-- Decor -->
-      <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 to-yellow-500"></div>
+      <div class="absolute top-0 left-0 w-full h-1 bg-brand-600"></div>
 
       <form id="applyForm" method="POST" class="flex flex-col gap-5">
-        <input type="hidden" name="_subject" value="Beta Application">
+        <input type="hidden" name="_subject" value="New PENNIO Beta Application">
         <input type="hidden" name="_captcha" value="false">
-
+        <input type="hidden" name="_template" value="table">
+        
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Name</label>
-            <input required name="name" class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+            <input required name="name" type="text" class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
           </div>
           <div>
             <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Email</label>
-            <input required name="email" type="email" class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+            <input required name="email" type="email" class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">What do you sell?</label>
-          <input required name="service_type" placeholder="e.g. Legal Consulting..." class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+          <input required name="offering" placeholder="e.g. High-end Legal Consulting" class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
         </div>
 
-        <!-- Conditional Field: Revenue -->
-        <div class="relative">
-          <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Current Monthly Revenue</label>
-          <select required name="revenue" id="revenue-select" class="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none appearance-none transition-all">
-            <option value="">Select range...</option>
-            <option value="pre_revenue">Pre-revenue (₦0)</option>
-            <option value="under_5m">₦100k - ₦5m (Ideal for Beta)</option>
-            <option value="over_5m">Over ₦5m</option>
+        <div>
+          <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Monthly Revenue</label>
+          <select required name="revenue" id="revenue-select" class="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+            <option value="">Select...</option>
+            <option value="pre">Pre-Revenue (Not a fit)</option>
+            <option value="fit">₦100k - ₦5m (Perfect Fit)</option>
+            <option value="high">Over ₦5m</option>
           </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-500 top-6">
-            <i data-lucide="chevron-down" class="w-4 h-4"></i>
-          </div>
-          <!-- Warning Message Container -->
-          <div id="revenue-warning" class="hidden mt-2 text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-100">
-            Note: If you're doing >₦5m, this beta might be too basic for your needs. We can still talk, but expect a custom scope.
+          <div id="revenue-warning" class="hidden mt-2 text-xs text-red-600 bg-red-50 p-2 rounded">
+            This beta is designed for businesses already generating revenue.
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Primary Frustration</label>
-          <div class="relative">
-            <select required name="primary_issue" class="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none appearance-none transition-all">
-              <option value="">Select the main issue...</option>
-              <option value="clarity">"People don't understand what I do"</option>
-              <option value="price">"They ghost when I send the price"</option>
-              <option value="comparison">"I get compared to cheaper options"</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-neutral-500">
-              <i data-lucide="chevron-down" class="w-4 h-4"></i>
-            </div>
-          </div>
+          <label class="block text-xs font-bold text-neutral-500 uppercase mb-1">Biggest Sales Pain?</label>
+          <select required name="pain_point" class="w-full px-4 py-3 bg-white border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none">
+            <option value="">Select...</option>
+            <option value="price">"Too Expensive" / Price pushback</option>
+            <option value="ghosting">Ghosting after proposal</option>
+            <option value="competitor">Losing to cheap competitors</option>
+          </select>
         </div>
 
-        <button id="submitBtn" class="w-full py-4 bg-neutral-900 text-white font-bold rounded-lg hover:bg-brand-600 transition-all shadow-lg hover:shadow-xl translate-y-0 hover:-translate-y-1">
+        <button id="submitBtn" type="submit" class="w-full py-4 bg-neutral-900 text-white font-bold rounded-lg hover:bg-brand-600 transition-all shadow-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed">
           Submit Application
         </button>
       </form>
 
       <div id="successMessage" class="hidden text-center py-10">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4 animate-bounce">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
           <i data-lucide="check" class="w-8 h-8"></i>
         </div>
         <h3 class="font-bold text-xl mb-2">Application Received.</h3>
-        <p class="text-sm text-neutral-500 mb-6">I'll review this and email you within 24 hours.</p>
-        <button type="button" id="resetBtn" class="text-xs text-neutral-400 hover:text-neutral-600 underline">
-          Start a new application
-        </button>
+        <p class="text-sm text-neutral-500">I'll review this and email you within 24 hours.</p>
+        <button id="resetForm" class="text-xs text-neutral-400 mt-4 underline hover:text-neutral-600">Send another</button>
       </div>
+
     </div>
   </section>
 
-  <!-- FAQ ACCORDION -->
-  <section class="py-24 px-6 border-t border-neutral-100">
-    <div class="max-w-2xl mx-auto">
-      <h2 class="text-xl font-bold mb-8 text-center">Common Questions</h2>
-      <div class="space-y-4">
-        
-        <details class="group bg-white border border-neutral-200 rounded-lg p-4 cursor-pointer open:ring-1 open:ring-brand-500 transition-all">
-          <summary class="font-semibold text-sm flex justify-between items-center text-neutral-800">
-            Is this just branding?
-            <span class="transition group-open:rotate-180"><i data-lucide="chevron-down" class="w-4 h-4"></i></span>
-          </summary>
-          <div class="text-sm text-neutral-600 mt-3 leading-relaxed">
-            No. Branding is just the vehicle. Decision clarity is the outcome. We focus on the logic that makes people buy.
-          </div>
-        </details>
-
-        <details class="group bg-white border border-neutral-200 rounded-lg p-4 cursor-pointer open:ring-1 open:ring-brand-500 transition-all">
-          <summary class="font-semibold text-sm flex justify-between items-center text-neutral-800">
-            What if I already have a logo?
-            <span class="transition group-open:rotate-180"><i data-lucide="chevron-down" class="w-4 h-4"></i></span>
-          </summary>
-          <div class="text-sm text-neutral-600 mt-3 leading-relaxed">
-            Great. We won't change it unless it's hurting you. We focus on why your current assets aren't converting sales.
-          </div>
-        </details>
-
-        <details class="group bg-white border border-neutral-200 rounded-lg p-4 cursor-pointer open:ring-1 open:ring-brand-500 transition-all">
-          <summary class="font-semibold text-sm flex justify-between items-center text-neutral-800">
-            What if I’m not ready to scale?
-            <span class="transition group-open:rotate-180"><i data-lucide="chevron-down" class="w-4 h-4"></i></span>
-          </summary>
-          <div class="text-sm text-neutral-600 mt-3 leading-relaxed">
-            This works best *before* you scale. Scaling confusion just leads to faster failure. Fix the foundation first.
-          </div>
-        </details>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- STICKY MICRO-URGENCY (Bottom) -->
-  <div id="sticky-bar" class="fixed bottom-0 w-full bg-neutral-900 text-white p-4 z-50 transform translate-y-full transition-transform duration-500 flex justify-between items-center border-t border-neutral-800">
-    <div class="text-xs md:text-sm font-medium">
-      <span class="w-2 h-2 bg-red-500 rounded-full inline-block mr-2 animate-pulse"></span>
-      Only 3 spots available
-    </div>
-    <a href="#apply" class="text-xs bg-white text-neutral-900 font-bold px-4 py-2 rounded hover:bg-brand-500 hover:text-white transition-colors">
-      Claim Spot
-    </a>
-  </div>
-
-  <!-- EXIT INTENT MODAL (Hidden by default) -->
-  <div id="exit-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
-    <div class="bg-white p-8 rounded-2xl max-w-sm w-full shadow-2xl relative transform scale-95 transition-transform duration-300" id="exit-content">
-      <button id="close-modal" class="absolute top-4 right-4 text-neutral-400 hover:text-neutral-900"><i data-lucide="x" class="w-5 h-5"></i></button>
-      <h3 class="text-xl font-bold mb-2">Wait! Don't leave empty-handed.</h3>
-      <p class="text-sm text-neutral-600 mb-6">Even if you don't apply, you need clarity. If you leave now, nothing changes.</p>
-      <a href="#problem" onclick="document.getElementById('exit-modal').classList.add('hidden')" class="block w-full py-3 bg-brand-500 text-white font-bold text-center rounded-lg hover:bg-brand-600">
-        See why you're losing deals
-      </a>
-    </div>
-  </div>
-
-  <footer class="py-10 text-center text-xs text-neutral-400 border-t border-neutral-100">
-    <p>&copy; 2025 PENNIO — Brand Designer focused on value communication.</p>
-    <p class="mt-1">Oyo, Nigeria.</p>
+  <footer class="py-10 text-center text-xs text-neutral-400 bg-neutral-900 border-t border-neutral-800">
+    <p>&copy; 2025 PENNIO. Value Engineering for Service Businesses.</p>
   </footer>
 
   <script>
-    // 1. Initialize Lucide Icons
     lucide.createIcons();
 
-    // 2. Interactive Before/After Toggle
+    // Scroll Animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el));
+
+    // Toggle Logic
     function setComparison(state) {
       const beforeBtn = document.getElementById('btn-before');
       const afterBtn = document.getElementById('btn-after');
@@ -455,9 +379,9 @@
       const card = document.getElementById('comparison-card');
 
       if (state === 'before') {
-        beforeBtn.classList.add('bg-neutral-700', 'text-white', 'shadow-md');
+        beforeBtn.classList.add('bg-neutral-600', 'text-white', 'shadow-md');
         beforeBtn.classList.remove('text-neutral-400');
-        afterBtn.classList.remove('bg-neutral-700', 'text-white', 'shadow-md');
+        afterBtn.classList.remove('bg-brand-600', 'text-white', 'shadow-md');
         afterBtn.classList.add('text-neutral-400');
         
         contentBefore.classList.remove('hidden');
@@ -466,117 +390,67 @@
       } else {
         afterBtn.classList.add('bg-brand-600', 'text-white', 'shadow-md');
         afterBtn.classList.remove('text-neutral-400');
-        beforeBtn.classList.remove('bg-neutral-700', 'text-white', 'shadow-md');
+        beforeBtn.classList.remove('bg-neutral-600', 'text-white', 'shadow-md');
         beforeBtn.classList.add('text-neutral-400');
 
         contentBefore.classList.add('hidden');
         contentAfter.classList.remove('hidden');
-        card.classList.add('border-brand-500'); // Visual flare for "After"
+        card.classList.add('border-brand-500'); 
       }
-      lucide.createIcons(); // Re-render icons in hidden divs
+      lucide.createIcons();
     }
 
-    // 3. Conditional Form Logic
+    // Revenue Warning Logic
     const revenueSelect = document.getElementById('revenue-select');
     const revenueWarning = document.getElementById('revenue-warning');
-
+    
     revenueSelect.addEventListener('change', (e) => {
-      if (e.target.value === 'over_5m') {
-        revenueWarning.classList.remove('hidden');
-      } else {
-        revenueWarning.classList.add('hidden');
-      }
-    });
-
-    // 4. Sticky Bar Logic
-    const stickyBar = document.getElementById('sticky-bar');
-    const hero = document.getElementById('hero');
-    const applySection = document.getElementById('apply');
-
-    window.addEventListener('scroll', () => {
-      // Sticky Bottom Bar Logic
-      const applyRect = applySection.getBoundingClientRect();
-      // Check if the Apply section is visible in the viewport
-      const isApplyVisible = applyRect.top < window.innerHeight;
-      // Check if we are past the hero section
-      const pastHero = window.scrollY > hero.offsetHeight;
-
-      // Show bar ONLY if we are past hero AND the apply form is NOT yet visible
-      if (pastHero && !isApplyVisible) {
-        stickyBar.classList.remove('translate-y-full');
-      } else {
-        stickyBar.classList.add('translate-y-full');
-      }
-    });
-
-    // 5. Scroll Animations (Fade In Up)
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
+        if (e.target.value === 'pre') {
+            revenueWarning.classList.remove('hidden');
+        } else {
+            revenueWarning.classList.add('hidden');
         }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el));
-
-    // 6. Exit Intent (Simple Mouseout)
-    let exitIntentShown = false;
-    document.addEventListener('mouseleave', (e) => {
-      if (e.clientY < 0 && !exitIntentShown) {
-        const modal = document.getElementById('exit-modal');
-        const content = document.getElementById('exit-content');
-        modal.classList.remove('hidden');
-        // Small delay for fade in
-        setTimeout(() => {
-          modal.classList.remove('opacity-0');
-          content.classList.remove('scale-95');
-        }, 10);
-        exitIntentShown = true;
-      }
     });
 
-    document.getElementById('close-modal').addEventListener('click', () => {
-      document.getElementById('exit-modal').classList.add('hidden');
-    });
-
-    // 7. Form Handling
+    // Form Handling
     const form = document.getElementById('applyForm');
     const success = document.getElementById('successMessage');
     const btn = document.getElementById('submitBtn');
-    const resetBtn = document.getElementById('resetBtn');
     const originalBtnText = btn.innerHTML;
+    const resetFormBtn = document.getElementById('resetForm');
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       btn.disabled = true;
-      btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Sending...';
+      btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin inline mr-2"></i> Sending...';
       lucide.createIcons();
       
       const formData = new FormData(form);
+      
+      // FIXED: Sending as FormData instead of JSON for better reliability
       fetch("https://formsubmit.co/ajax/ea0da421e8e6e82457be40792262eeed", {
         method: "POST",
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(formData))
+        body: formData
       })
       .then(response => response.json())
       .then(data => {
         form.classList.add('hidden');
         success.classList.remove('hidden');
         form.reset();
+        btn.disabled = false;
+        btn.innerHTML = originalBtnText;
       })
       .catch(error => {
-        alert('Error. Please email directly.');
+        console.error('Error:', error);
+        alert('There was an error sending your application. Please email directly.');
         btn.disabled = false;
         btn.innerHTML = originalBtnText;
       });
     });
 
-    resetBtn.addEventListener('click', function() {
-      success.classList.add('hidden');
-      form.classList.remove('hidden');
-      btn.disabled = false;
-      btn.innerHTML = originalBtnText;
+    resetFormBtn.addEventListener('click', function() {
+        success.classList.add('hidden');
+        form.classList.remove('hidden');
     });
   </script>
 </body>
