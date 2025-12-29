@@ -49,6 +49,7 @@
             'grow-bar': 'growBar 1.5s ease-out forwards',
             'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             'float': 'float 6s ease-in-out infinite',
+            'float-delayed': 'float 6s ease-in-out 3s infinite',
             'shimmer': 'shimmer 2s linear infinite',
           },
           keyframes: {
@@ -62,7 +63,7 @@
             },
             float: {
                 '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-10px)' },
+                '50%': { transform: 'translateY(-20px)' },
             },
             shimmer: {
                 '0%': { backgroundPosition: '-1000px 0' },
@@ -78,23 +79,6 @@
     .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
     .reveal-on-scroll.visible { opacity: 1; transform: translateY(0); }
     
-    /* Sleek Underline */
-    .highlight-text {
-        position: relative;
-        display: inline-block;
-    }
-    .highlight-text::after {
-        content: '';
-        position: absolute;
-        bottom: 4px;
-        left: 0;
-        width: 100%;
-        height: 12px;
-        background-color: rgba(249, 115, 22, 0.2); /* Brand Orange Transparent */
-        z-index: -1;
-        transform: skewX(-12deg);
-    }
-
     /* Accordion Styles */
     details > summary {
       list-style: none;
@@ -106,8 +90,13 @@
     /* Grid Background Pattern */
     .bg-grid-pattern {
         background-size: 40px 40px;
-        background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
-                          linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+    }
+    .bg-grid-pattern-dark {
+        background-size: 40px 40px;
+        background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                          linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
     }
   </style>
 </head>
@@ -116,7 +105,7 @@
 
   <!-- NAVBAR -->
   <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-xl border-b border-neutral-200 z-50 transition-all duration-300">
-    <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
       <div class="font-extrabold tracking-tight text-xl flex items-center gap-2">
         <a href="#" class="flex items-center gap-1 text-neutral-900 tracking-tight">
             PENNIO<span class="text-brand-600">.</span>
@@ -137,30 +126,82 @@
   </nav>
 
   <!-- HERO SECTION -->
-  <section class="pt-40 pb-28 px-6 max-w-5xl mx-auto text-center reveal-on-scroll">
-    <h1 class="text-5xl md:text-7xl font-extrabold text-neutral-900 mb-8 leading-[1.05] tracking-tight">
-      Your Service is Premium. <br />
-      <span class="highlight-text">Does Your Digital Presence Prove It?</span>
-    </h1>
+  <section class="pt-32 pb-24 px-6 max-w-6xl mx-auto min-h-[90vh] flex items-center relative overflow-hidden">
+    <!-- Background Texture -->
+    <div class="absolute inset-0 bg-grid-pattern opacity-60 -z-20 pointer-events-none"></div>
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-100/50 rounded-full blur-[120px] -z-10 opacity-50"></div>
+    
+    <div class="grid lg:grid-cols-2 gap-16 items-center w-full">
+        <!-- Left: Copy -->
+        <div class="text-left space-y-8 reveal-on-scroll">
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-neutral-900 leading-[1.05] tracking-tight">
+              Your Service is Premium. <br />
+              <span class="text-brand-600">But Does Your Site Prove It?</span>
+            </h1>
 
-    <p class="text-lg md:text-xl text-neutral-600 mb-10 leading-relaxed max-w-2xl mx-auto">
-      I don't just design "pretty" brands. I engineer the <strong>Strategic Context</strong>—Visuals, Positioning, & Funnels—that makes your premium pricing the only logical choice.
-    </p>
+            <p class="text-lg lg:text-xl text-neutral-600 leading-relaxed max-w-lg">
+              I don't just design "pretty" brands. I engineer the <strong>Strategic Context</strong>—Visuals, Positioning, & Funnels—that makes your premium pricing the only logical choice.
+            </p>
 
-    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-      <a href="#gap" class="inline-flex justify-center items-center px-8 py-4 bg-neutral-900 text-white font-bold text-base rounded-xl hover:bg-brand-600 hover:scale-[1.02] transition-all shadow-xl hover:shadow-brand-500/20 transform hover:-translate-y-1">
-        See The "Trust Gap"
-      </a>
-      <a href="#protocol" class="inline-flex justify-center items-center px-8 py-4 bg-white border border-neutral-200 text-neutral-700 font-bold text-base rounded-xl hover:bg-neutral-50 transition-all transform hover:-translate-y-1">
-        The 30-Day System
-      </a>
+            <div class="flex flex-col sm:flex-row gap-4 pt-4">
+              <a href="#gap" class="inline-flex justify-center items-center px-8 py-4 bg-neutral-900 text-white font-bold text-base rounded-xl hover:bg-brand-600 hover:scale-[1.02] transition-all shadow-xl hover:shadow-brand-500/20 transform hover:-translate-y-1">
+                See The "Trust Gap"
+              </a>
+              <a href="#protocol" class="inline-flex justify-center items-center px-8 py-4 bg-white border border-neutral-200 text-neutral-700 font-bold text-base rounded-xl hover:bg-neutral-50 transition-all transform hover:-translate-y-1">
+                The 30-Day System
+              </a>
+            </div>
+        </div>
+
+        <!-- Right: Visual "Authority Stack" -->
+        <div class="relative h-[500px] w-full flex items-center justify-center reveal-on-scroll delay-100 hidden lg:flex">
+            <!-- The Stack Container -->
+            <div class="relative w-80 h-96">
+                <!-- Shadow/Base -->
+                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-4 bg-black/20 blur-xl rounded-full"></div>
+
+                <!-- Layer 1: Strategy (Bottom) -->
+                <div class="absolute bottom-10 left-0 right-0 h-24 bg-white border border-neutral-200 rounded-2xl shadow-lg flex items-center p-6 gap-4 transform transition-all hover:scale-105 hover:shadow-xl hover:border-neutral-300 z-10 animate-float-delayed">
+                    <div class="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center text-neutral-400">
+                        <i data-lucide="brain-circuit" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-1">Layer 1</div>
+                        <div class="font-bold text-neutral-800 text-lg">Strategic Logic</div>
+                    </div>
+                </div>
+
+                <!-- Layer 2: Visuals (Middle) -->
+                <div class="absolute bottom-28 -left-4 -right-4 h-24 bg-white border border-neutral-200 rounded-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] flex items-center p-6 gap-4 transform transition-all hover:scale-105 hover:border-brand-200 z-20 animate-float">
+                    <div class="w-12 h-12 bg-brand-50 rounded-full flex items-center justify-center text-brand-500">
+                        <i data-lucide="palette" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-brand-500 uppercase tracking-widest mb-1">Layer 2</div>
+                        <div class="font-bold text-neutral-800 text-lg">Visual Authority</div>
+                    </div>
+                </div>
+
+                <!-- Layer 3: Conversion (Top) -->
+                <div class="absolute bottom-48 left-2 right-2 h-28 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl flex items-center p-6 gap-4 transform transition-all hover:-translate-y-2 z-30">
+                    <div class="w-12 h-12 bg-brand-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-brand-500/50">
+                        <i data-lucide="zap" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-brand-500 uppercase tracking-widest mb-1">Result</div>
+                        <div class="font-bold text-white text-xl">Pricing Power</div>
+                        <div class="text-xs text-neutral-400 mt-1">High-Converting Asset</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
   </section>
 
   <!-- THE TRUST GAP (Improved Visual) -->
   <section id="gap" class="py-24 px-6 bg-neutral-950 text-white reveal-on-scroll relative overflow-hidden">
     <!-- Grid Background -->
-    <div class="absolute inset-0 bg-grid-pattern opacity-30 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-grid-pattern-dark opacity-30 pointer-events-none"></div>
     
     <!-- Ambient Glow -->
     <div class="absolute top-0 right-0 w-96 h-96 bg-brand-600/20 rounded-full blur-[100px] pointer-events-none animate-pulse-slow"></div>
@@ -342,7 +383,7 @@
   <!-- FAQ SECTION (Research Based) -->
   <section class="py-24 px-6 reveal-on-scroll bg-neutral-50">
     <div class="max-w-3xl mx-auto">
-        <h2 class="text-3xl font-extrabold mb-10 text-center tracking-tight">FAQ</h2>
+        <h2 class="text-3xl font-extrabold mb-10 text-center tracking-tight">Strategy FAQ</h2>
         
         <div class="space-y-4">
             <!-- Q1: Context/Positioning -->
