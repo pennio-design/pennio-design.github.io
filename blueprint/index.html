@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PENNIO OS v2026 | Mission Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #334155; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; }
+        
+        /* Chart Container Styling - Mandatory Strictness */
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            height: 300px; 
+            max-height: 400px; 
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 350px; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animation */
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Navigation Active State */
+        .nav-item.active { background-color: #e2e8f0; border-left: 4px solid #2563eb; color: #0f172a; }
+    </style>
+    <!-- Chosen Palette: "Agency Slate" - Background: #f1f5f9 (Slate 100), Primary Text: #334155 (Slate 700), Accent: #2563eb (Blue 600), Success: #059669 (Emerald 600). Designed for long-term viewing comfort and professional clarity. -->
+    
+    <!-- Application Structure Plan: 
+         - Layout: Sidebar navigation (Desktop) / Hamburger (Mobile) + Main Content Area. 
+         - Core Views:
+           1. Mission Control (Dashboard): High-level stats, quick access to active projects.
+           2. Active Ops (Phantom Project 1): Interactive checklist and input tracking for the current sprint.
+           3. S.I.T.E. Pipeline: Reference material for the workflow phases.
+           4. Toolbox: Copy-paste prompts and stack details.
+           5. Financials: Roadmap chart and pricing models.
+         - Rationale: Separating "Active Ops" focuses the user on the immediate 48h goal (Phantom Project) while keeping the long-term reference material (Pipeline/Financials) accessible but distinct. 
+    -->
+
+    <!-- Visualization & Content Choices:
+         - Financial Roadmap: Chart.js Bar Chart. Goal: Visualizing the quarterly ladder to $10k. Interaction: Tooltips.
+         - Project Checklist: Interactive HTML checkbox list. Goal: Tracking progress on Phantom Project 1.
+         - Copy Blocks: Code blocks with JS copy functionality. Goal: Quick access to Agent prompts.
+    -->
+    
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="h-[100dvh] flex overflow-hidden text-slate-700 bg-slate-50">
+
+    <!-- Mobile Header -->
+    <header class="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 z-30 fixed w-full top-0 left-0 h-16">
+        <div class="flex items-center gap-2">
+            <span class="text-xl">🪐</span>
+            <span class="font-bold text-slate-900 tracking-tight">PENNIO OS</span>
+        </div>
+        <button id="mobile-menu-btn" class="p-2 text-slate-600 focus:outline-none text-2xl">☰</button>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 w-64 bg-white border-r border-slate-200 flex flex-col z-40 transition-transform duration-300 shadow-xl md:shadow-none">
+        <div class="p-6 border-b border-slate-100 flex items-center justify-between md:block">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🪐</span>
+                <div>
+                    <h1 class="font-bold text-slate-900 tracking-tight text-lg leading-none">PENNIO OS</h1>
+                    <span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">v2026.1.1</span>
+                </div>
+            </div>
+            <button id="close-sidebar" class="md:hidden text-slate-400 text-xl">✕</button>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1">
+            <div class="px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Command Center</div>
+            <button onclick="router('dashboard')" class="nav-item w-full text-left px-6 py-3 text-sm font-medium hover:bg-slate-50 transition-colors flex items-center gap-3 active" id="btn-dashboard">
+                <span>⚡</span> Mission Control
+            </button>
+            <button onclick="router('phantom')" class="nav-item w-full text-left px-6 py-3 text-sm font-medium hover:bg-slate-50 transition-colors flex items-center gap-3" id="btn-phantom">
+                <span>🕵️</span> Active: Phantom 1
+                <span class="ml-auto bg-amber-100 text-amber-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">WIP</span>
+            </button>
+
+            <div class="mt-6 px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Knowledge Base</div>
+            <button onclick="router('pipeline')" class="nav-item w-full text-left px-6 py-3 text-sm font-medium hover:bg-slate-50 transition-colors flex items-center gap-3" id="btn-pipeline">
+                <span>🏗️</span> S.I.T.E. Pipeline
+            </button>
+            <button onclick="router('toolbox')" class="nav-item w-full text-left px-6 py-3 text-sm font-medium hover:bg-slate-50 transition-colors flex items-center gap-3" id="btn-toolbox">
+                <span>🤖</span> Prompt Toolbox
+            </button>
+
+            <div class="mt-6 px-4 mb-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">Strategy</div>
+            <button onclick="router('financials')" class="nav-item w-full text-left px-6 py-3 text-sm font-medium hover:bg-slate-50 transition-colors flex items-center gap-3" id="btn-financials">
+                <span>💰</span> $10k Roadmap
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-slate-100 bg-slate-50">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">PO</div>
+                <div>
+                    <div class="text-sm font-bold text-slate-900">Paul Oyatowo</div>
+                    <div class="text-xs text-slate-500">Operator</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden mt-16 md:mt-0 relative">
+        <div id="content-area" class="flex-1 overflow-y-auto p-4 md:p-8 pb-32">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+    </main>
+
+    <script>
+        // --- Data State ---
+        const state = {
+            phantom: {
+                targetName: "",
+                targetUrl: "",
+                scores: { visual: 1, mobile: 1, clarity: 1 },
+                checklist: {
+                    selected: false,
+                    screenshots: false,
+                    brief: false,
+                    visuals: false,
+                    code: false,
+                    deploy: false
+                }
+            },
+            revenue: {
+                current: 0,
+                target: 10000
+            }
+        };
+
+        const staticData = {
+            roadmap: {
+                labels: ['Q1: Resurrection', 'Q2: MVP Builder', 'Q3: Retainers', 'Q4: Scale'],
+                data: [2000, 3000, 2500, 2500],
+                descriptions: [
+                    "Fix ugly local sites. Fast 48h turnaround.",
+                    "React/Firebase Apps for Founders.",
+                    "Convert clients to Growth Shield.",
+                    "High ticket funnels ($1k+ each)."
+                ]
+            },
+            pipeline: [
+                { id: 'S', title: 'Strategy', icon: '🧠', desc: 'Define spec & Schema', tools: 'Gemini 3 Deep Think' },
+                { id: 'I', title: 'Interface', icon: '🎨', desc: 'Visuals & Components', tools: 'Nano Banana' },
+                { id: 'T', title: 'Text', icon: '✍️', desc: 'Copy & SEO Injection', tools: 'Gemini 3 Pro' },
+                { id: 'E', title: 'Engine', icon: '⚙️', desc: 'Backend & Hosting', tools: 'Firebase' }
+            ],
+            prompts: [
+                {
+                    title: "System Prompt",
+                    context: "Workspace Settings",
+                    content: `You are the PENNIO Principal Architect.
+1. ALWAYS read the spec.md before writing code.
+2. IF a user request is vague, ask 3 clarifying questions before starting.
+3. PREFER functional components and Tailwind CSS.
+4. SECURITY FIRST: Never allow Firestore writes without Auth checks.
+5. FILE STRUCTURE: Keep components small, separated by feature.`
+                },
+                {
+                    title: "DNS Troubleshooter",
+                    context: "Chat Input",
+                    content: `ACT AS: Senior DevOps Engineer.
+TARGET: [Domain Name]
+ACTION:
+1. Run nslookup and dig to check A-Records.
+2. Verify if they match Firebase IP (199.36.158.100).
+3. Check SSL status via curl -I.
+4. REPORT: Is it Propagation, Configuration Error, or Cloudflare Conflict? Give me the exact fix.`
+                },
+                {
+                    title: "Phantom 1: Nano Banana Design",
+                    context: "Image Generation",
+                    content: `Redesign the homepage of a Lagos-based premium corporate law firm. Style: minimal, confident, dark-on-light, NYC boutique aesthetic. Sections: Hero, Credibility Strip, Practice Areas, Why Us, Partners, CTA.`
+                }
+            ]
+        };
+
+        // --- Render Functions ---
+
+        function renderDashboard() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto space-y-8">
+                    <!-- Header -->
+                    <div>
+                        <h2 class="text-3xl font-bold text-slate-900">Mission Control</h2>
+                        <p class="text-slate-500 mt-1">System Operational. Day 1 of 365.</p>
+                    </div>
+
+                    <!-- Top KPI Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Annual Target</span>
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-bold">2026</span>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-bold text-slate-900">$10,000</span>
+                                <span class="text-sm text-green-600 font-medium">~₦16M</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full mt-4 overflow-hidden">
+                                <div class="bg-blue-600 h-full w-[1%]"></div>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2">0% Complete</p>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Required Velocity</span>
+                                <span class="text-xl">🏃‍♂️</span>
+                            </div>
+                            <div class="text-4xl font-bold text-slate-900">$40<span class="text-lg text-slate-400 font-normal">/day</span></div>
+                            <p class="text-sm text-slate-500 mt-2">Based on 250 working days</p>
+                        </div>
+
+                        <div class="bg-slate-900 text-white p-6 rounded-xl border border-slate-800 shadow-sm relative overflow-hidden group cursor-pointer" onclick="router('phantom')">
+                            <div class="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 text-9xl group-hover:scale-110 transition-transform">🕵️</div>
+                            <div class="flex items-center justify-between mb-4 relative z-10">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Sprint</span>
+                                <span class="bg-amber-500 text-white text-xs px-2 py-1 rounded font-bold animate-pulse">LIVE</span>
+                            </div>
+                            <div class="relative z-10">
+                                <h3 class="text-xl font-bold">Phantom Project 1</h3>
+                                <p class="text-slate-400 text-sm mt-1">Corporate Trust Build</p>
+                                <div class="mt-4 inline-flex items-center text-sm text-blue-400 font-medium group-hover:text-blue-300">
+                                    Continue Execution &rarr;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                            <h3 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                <span>🏗️</span> Pipeline Shortcuts
+                            </h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="router('pipeline')" class="p-3 bg-slate-50 hover:bg-blue-50 hover:text-blue-700 text-slate-600 rounded text-sm font-medium border border-slate-100 transition-colors text-left">
+                                    Strategy (Gemini)
+                                </button>
+                                <button onclick="router('pipeline')" class="p-3 bg-slate-50 hover:bg-blue-50 hover:text-blue-700 text-slate-600 rounded text-sm font-medium border border-slate-100 transition-colors text-left">
+                                    Interface (Banana)
+                                </button>
+                                <button onclick="router('toolbox')" class="p-3 bg-slate-50 hover:bg-blue-50 hover:text-blue-700 text-slate-600 rounded text-sm font-medium border border-slate-100 transition-colors text-left">
+                                    DNS Fixer
+                                </button>
+                                <button onclick="router('financials')" class="p-3 bg-slate-50 hover:bg-blue-50 hover:text-blue-700 text-slate-600 rounded text-sm font-medium border border-slate-100 transition-colors text-left">
+                                    Send Invoice
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-slate-900 mb-2">System Status</h3>
+                                <ul class="space-y-3">
+                                    <li class="flex justify-between text-sm border-b border-slate-50 pb-2">
+                                        <span class="text-slate-500">Antigravity</span>
+                                        <span class="text-green-600 font-medium">Manager Mode Active</span>
+                                    </li>
+                                    <li class="flex justify-between text-sm border-b border-slate-50 pb-2">
+                                        <span class="text-slate-500">Firebase</span>
+                                        <span class="text-green-600 font-medium">Connected</span>
+                                    </li>
+                                    <li class="flex justify-between text-sm">
+                                        <span class="text-slate-500">Domain Registrar</span>
+                                        <span class="text-slate-400">Namecheap / WhoGoHost</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPhantom() {
+            const content = document.getElementById('content-area');
+            const pData = state.phantom;
+            
+            content.innerHTML = `
+                <div class="fade-in max-w-4xl mx-auto pb-20">
+                    <div class="flex items-center justify-between mb-8 border-b border-slate-200 pb-6">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-2xl">🕵️</span>
+                                <h2 class="text-3xl font-bold text-slate-900">Phantom Project 1</h2>
+                            </div>
+                            <p class="text-slate-500">The Corporate Trust Build (Lagos Law/Energy)</p>
+                        </div>
+                        <span class="bg-amber-100 text-amber-800 text-sm font-bold px-3 py-1 rounded-full">Phase 1: Selection</span>
+                    </div>
+
+                    <!-- Step 1: Target Acquisition -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold">1</div>
+                            <h3 class="text-xl font-bold text-slate-900">Target Acquisition</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Target Firm Name</label>
+                                <input type="text" id="target-name" value="${pData.targetName}" onchange="updatePhantomState('targetName', this.value)" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Oyatowo & Co">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Target URL</label>
+                                <div class="flex">
+                                    <input type="text" id="target-url" value="${pData.targetUrl}" onchange="updatePhantomState('targetUrl', this.value)" class="w-full p-2 border border-slate-300 rounded-l focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://...">
+                                    <a href="${pData.targetUrl || '#'}" target="_blank" class="bg-slate-100 border border-l-0 border-slate-300 px-3 py-2 rounded-r hover:bg-slate-200 flex items-center justify-center text-slate-600">↗</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                            <p class="text-xs font-bold text-slate-500 uppercase mb-3">Audit Score (1-5)</p>
+                            <div class="flex gap-4">
+                                <div class="flex-1">
+                                    <label class="text-xs text-slate-600 block mb-1">Visual Age</label>
+                                    <input type="range" min="1" max="5" value="${pData.scores.visual}" class="w-full accent-blue-600" oninput="updatePhantomState('scores.visual', this.value)">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-xs text-slate-600 block mb-1">Mobile</label>
+                                    <input type="range" min="1" max="5" value="${pData.scores.mobile}" class="w-full accent-blue-600" oninput="updatePhantomState('scores.mobile', this.value)">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-xs text-slate-600 block mb-1">Clarity</label>
+                                    <input type="range" min="1" max="5" value="${pData.scores.clarity}" class="w-full accent-blue-600" oninput="updatePhantomState('scores.clarity', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Execution Checklist -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="p-6 border-b border-slate-100">
+                            <h3 class="font-bold text-slate-900">Execution Log</h3>
+                        </div>
+                        <div class="divide-y divide-slate-100">
+                            ${renderChecklistItem('Target Selected', 'checklist.selected', 'Paste URL above')}
+                            ${renderChecklistItem('Screenshots Captured', 'checklist.screenshots', 'Save as PB1_before_home.png')}
+                            ${renderChecklistItem('Positioning Brief', 'checklist.brief', 'Define Audience, Hook, CTA')}
+                            ${renderChecklistItem('Visual Direction', 'checklist.visuals', 'Generate with Nano Banana')}
+                            ${renderChecklistItem('Codebase Init', 'checklist.code', 'React + Tailwind + Firebase')}
+                            ${renderChecklistItem('Deployment', 'checklist.deploy', 'Live on Firebase Hosting')}
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-blue-50 border border-blue-200 p-4 rounded-lg flex items-start gap-3">
+                        <span class="text-xl">💡</span>
+                        <div class="text-sm text-blue-800">
+                            <strong>Next Action:</strong> Once you have the URL, switch to the <strong>Pipeline</strong> tab to grab the "Nano Banana Design" prompt for the visual direction phase.
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChecklistItem(label, keyPath, subtext) {
+            const keys = keyPath.split('.');
+            const isChecked = state.phantom[keys[0]][keys[1]];
+            
+            return `
+                <div class="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors cursor-pointer" onclick="togglePhantomCheck('${keys[0]}', '${keys[1]}')">
+                    <div class="w-6 h-6 rounded border ${isChecked ? 'bg-green-500 border-green-500' : 'border-slate-300 bg-white'} flex items-center justify-center transition-colors">
+                        ${isChecked ? '<span class="text-white font-bold text-sm">✓</span>' : ''}
+                    </div>
+                    <div class="${isChecked ? 'opacity-50 line-through' : ''}">
+                        <div class="font-medium text-slate-900">${label}</div>
+                        <div class="text-xs text-slate-500">${subtext}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPipeline() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto">
+                    <div class="mb-8">
+                        <h2 class="text-3xl font-bold text-slate-900">S.I.T.E. Pipeline</h2>
+                        <p class="text-slate-500 mt-1">Standard Operating Procedure for Production.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+                        ${staticData.pipeline.map(p => `
+                            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                <div class="text-3xl mb-3">${p.icon}</div>
+                                <h3 class="font-bold text-slate-900 mb-1">${p.title}</h3>
+                                <p class="text-xs text-slate-500 mb-2">${p.desc}</p>
+                                <div class="text-[10px] uppercase font-bold text-blue-600 bg-blue-50 inline-block px-2 py-1 rounded">
+                                    ${p.tools}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="p-6 bg-slate-50 border-b border-slate-200">
+                            <h3 class="font-bold text-slate-900">Detailed Workflow</h3>
+                        </div>
+                        <div class="p-6 space-y-8">
+                            <!-- Strategy -->
+                            <div class="relative pl-8 border-l-2 border-slate-200 pb-8">
+                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-blue-600"></div>
+                                <h4 class="font-bold text-lg text-slate-800 mb-2">1. Strategy (The Blueprint)</h4>
+                                <p class="text-sm text-slate-600 mb-4">Goal: Define specs to prevent scope creep. Deliverable: spec.md</p>
+                                <div class="bg-slate-900 rounded p-4 group relative">
+                                    <code class="text-green-400 font-mono text-xs block whitespace-pre-wrap">Act as a Solutions Architect. Digest these files and generate a Project Blueprint. Output a JSON containing: User Persona, Core User Journey, Tech Stack (React/Firebase), and prioritized Feature List.</code>
+                                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity" onclick="copyText(this)">Copy</button>
+                                </div>
+                            </div>
+
+                            <!-- Interface -->
+                            <div class="relative pl-8 border-l-2 border-slate-200 pb-8">
+                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-blue-600"></div>
+                                <h4 class="font-bold text-lg text-slate-800 mb-2">2. Interface (The Visuals)</h4>
+                                <p class="text-sm text-slate-600 mb-4">Goal: High-fidelity UI without Figma. Tools: Nano Banana.</p>
+                                <div class="bg-slate-900 rounded p-4 group relative">
+                                    <code class="text-green-400 font-mono text-xs block whitespace-pre-wrap">High-fidelity landing page for a [Niche] brand, using [Brand Colors]. Modern, minimalist, hero section with 3D elements.</code>
+                                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity" onclick="copyText(this)">Copy</button>
+                                </div>
+                            </div>
+
+                            <!-- Engine -->
+                            <div class="relative pl-8 border-l-2 border-slate-200">
+                                <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-2 border-blue-600"></div>
+                                <h4 class="font-bold text-lg text-slate-800 mb-2">4. Engine (The Structure)</h4>
+                                <p class="text-sm text-slate-600 mb-4">Goal: Serverless backend & Deployment.</p>
+                                <div class="bg-slate-900 rounded p-4 group relative">
+                                    <code class="text-green-400 font-mono text-xs block whitespace-pre-wrap">Initialize Firebase. Enable Firestore, Auth, and Storage. Write firebaseConfig.js. Read spec.md and design the Firestore JSON schema.</code>
+                                    <button class="absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity" onclick="copyText(this)">Copy</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderToolbox() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto">
+                    <div class="mb-8">
+                        <h2 class="text-3xl font-bold text-slate-900">Prompt Toolbox</h2>
+                        <p class="text-slate-500 mt-1">Copy-paste intelligence for Agents.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-6">
+                        ${staticData.prompts.map(prompt => `
+                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 class="font-bold text-slate-900">${prompt.title}</h3>
+                                        <span class="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-500">Location: ${prompt.context}</span>
+                                    </div>
+                                    <button onclick="copyText(this, \`${prompt.content.replace(/`/g, '\\`')}\`)" class="flex items-center gap-2 bg-blue-50 text-blue-600 px-3 py-1.5 rounded text-sm font-medium hover:bg-blue-100 transition-colors">
+                                        <span>📋</span> Copy
+                                    </button>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded border border-slate-200 overflow-x-auto">
+                                    <pre class="text-sm font-mono text-slate-700 whitespace-pre-wrap">${prompt.content}</pre>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFinancials() {
+            const content = document.getElementById('content-area');
+            content.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto pb-20">
+                    <div class="mb-8">
+                        <h2 class="text-3xl font-bold text-slate-900">$10k Roadmap</h2>
+                        <p class="text-slate-500 mt-1">Quarterly revenue targets and pricing strategy.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+                        <!-- Chart -->
+                        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <h3 class="font-bold text-slate-900 mb-6">2026 Revenue Projection</h3>
+                            <div class="chart-container">
+                                <canvas id="roadmapChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Legend/Details -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                            <h3 class="font-bold text-slate-900 mb-4">Quarterly Focus</h3>
+                            <div class="space-y-4">
+                                ${staticData.roadmap.labels.map((label, i) => `
+                                    <div class="border-l-2 border-blue-500 pl-4">
+                                        <div class="font-bold text-sm text-slate-800">${label}</div>
+                                        <div class="text-xs text-slate-500 mt-1">${staticData.roadmap.descriptions[i]}</div>
+                                        <div class="text-xs font-bold text-blue-600 mt-1">$${staticData.roadmap.data[i]} Goal</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-slate-900 mb-6">Pricing Models (The Growth Shield)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Sentry -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-900 text-lg">The Sentry</h4>
+                            <div class="text-2xl font-bold text-slate-800 mt-2">₦35,000<span class="text-sm font-normal text-slate-500">/mo</span></div>
+                            <p class="text-sm text-slate-500 mt-4 mb-6">Basic Protection. Best for static sites.</p>
+                            <ul class="space-y-2 text-sm text-slate-600 mb-6">
+                                <li>✓ Uptime Monitoring</li>
+                                <li>✓ Security Patches</li>
+                                <li>✓ Weekly Backups</li>
+                            </ul>
+                        </div>
+
+                        <!-- Builder -->
+                        <div class="bg-white p-6 rounded-xl border-2 border-blue-500 shadow-md relative">
+                            <div class="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">POPULAR</div>
+                            <h4 class="font-bold text-slate-900 text-lg">The Builder</h4>
+                            <div class="text-2xl font-bold text-slate-800 mt-2">₦85,000<span class="text-sm font-normal text-slate-500">/mo</span></div>
+                            <p class="text-sm text-slate-500 mt-4 mb-6">Growth & Updates. Best for active businesses.</p>
+                            <ul class="space-y-2 text-sm text-slate-600 mb-6">
+                                <li>✓ Everything in Sentry</li>
+                                <li>✓ 4 Hrs Content Updates</li>
+                                <li>✓ Monthly Report</li>
+                            </ul>
+                        </div>
+
+                        <!-- Partner -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <h4 class="font-bold text-slate-900 text-lg">The Partner</h4>
+                            <div class="text-2xl font-bold text-slate-800 mt-2">₦180,000<span class="text-sm font-normal text-slate-500">/mo</span></div>
+                            <p class="text-sm text-slate-500 mt-4 mb-6">Strategy & Scale. Best for aggressive brands.</p>
+                            <ul class="space-y-2 text-sm text-slate-600 mb-6">
+                                <li>✓ Everything in Builder</li>
+                                <li>✓ A/B Testing</li>
+                                <li>✓ Strategy Call</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            initChart();
+        }
+
+        // --- Logic & Helpers ---
+
+        function router(view) {
+            // UI Updates
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const btn = document.getElementById('btn-' + view);
+            if(btn) btn.classList.add('active');
+
+            // Render
+            switch(view) {
+                case 'dashboard': renderDashboard(); break;
+                case 'phantom': renderPhantom(); break;
+                case 'pipeline': renderPipeline(); break;
+                case 'toolbox': renderToolbox(); break;
+                case 'financials': renderFinancials(); break;
+                default: renderDashboard();
+            }
+
+            // Mobile menu close
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function updatePhantomState(path, value) {
+            if (path.includes('.')) {
+                const [p, k] = path.split('.');
+                state.phantom[p][k] = value;
+            } else {
+                state.phantom[path] = value;
+            }
+        }
+
+        function togglePhantomCheck(category, key) {
+            state.phantom[category][key] = !state.phantom[category][key];
+            renderPhantom(); // Re-render to show check state
+        }
+
+        function copyText(btn, text) {
+            const content = text || btn.previousElementSibling.innerText;
+            navigator.clipboard.writeText(content);
+            const original = btn.innerHTML;
+            btn.innerHTML = '✓';
+            btn.classList.add('text-green-600');
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.classList.remove('text-green-600');
+            }, 2000);
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('roadmapChart');
+            if(!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: staticData.roadmap.labels,
+                    datasets: [{
+                        label: 'Revenue Target ($)',
+                        data: staticData.roadmap.data,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4
+                    }, {
+                        label: 'Cumulative ($)',
+                        data: [2000, 5000, 7500, 10000],
+                        type: 'line',
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDashboard();
+
+            // Mobile Menu Logic
+            const btn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const closeBtn = document.getElementById('close-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            }
+
+            btn.addEventListener('click', toggleSidebar);
+            closeBtn.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+        });
+
+    </script>
+</body>
+</html>
