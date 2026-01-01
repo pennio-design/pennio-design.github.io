@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PENNIO Internal OS v2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #334155; }
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto; height: 350px; max-height: 400px; }
+        .nav-item.active { background-color: #e2e8f0; color: #0f172a; border-right: 3px solid #3b82f6; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Custom scrollbar for prompt blocks */
+        .prompt-block::-webkit-scrollbar { width: 8px; height: 8px; }
+        .prompt-block::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .prompt-block::-webkit-scrollbar-track { background: #f1f5f9; }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals & Professional Slate. Background: #f8f9fa (off-white), Text: #334155 (Slate 700), Accents: #3b82f6 (Blue 500) for actions. -->
+    <!-- Application Structure Plan: Dashboard layout. Sidebar for module navigation (Mission Control, Stack, Pipeline, Prompts, Ops, Roadmap). Content area dynamically updates. Chosen for "Mission Control" feel suitable for an Agency OS. S.I.T.E. pipeline uses an accordion/tab interaction to manage dense information. -->
+    <!-- Visualization & Content Choices: 
+         1. Financial Roadmap -> Goal: Visualize quarterly targets -> Viz: Bar Chart (Chart.js) -> Interaction: Hover for values -> Library: Chart.js (No SVG).
+         2. S.I.T.E. Pipeline -> Goal: Step-by-step guide -> Viz: Interactive Cards -> Interaction: Click to expand details/prompts -> Method: HTML/JS DOM manipulation.
+         3. Agent Prompts -> Goal: Usability -> Viz: Code blocks -> Interaction: Copy to Clipboard button -> Method: JS Clipboard API. 
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="h-screen flex overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col flex-shrink-0 z-20">
+        <div class="p-6 border-b border-gray-100">
+            <h1 class="text-xl font-bold tracking-tight text-slate-800">PENNIO <span class="text-blue-600">OS</span></h1>
+            <p class="text-xs text-slate-500 mt-1">v2026.1 | Operator: Paul</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-4 space-y-1">
+            <button onclick="router('dashboard')" id="nav-dashboard" class="nav-item w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center gap-3">
+                <span>⚡</span> Mission Control
+            </button>
+            <button onclick="router('stack')" id="nav-stack" class="nav-item w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center gap-3">
+                <span>🛠️</span> The Tech Stack
+            </button>
+            <button onclick="router('pipeline')" id="nav-pipeline" class="nav-item w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center gap-3">
+                <span>🏗️</span> S.I.T.E. Pipeline
+            </button>
+            <button onclick="router('prompts')" id="nav-prompts" class="nav-item w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center gap-3">
+                <span>🤖</span> Agent Prompts
+            </button>
+            <button onclick="router('ops')" id="nav-ops" class="nav-item w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center gap-3">
+                <span>💼</span> Business Ops
+            </button>
+            <button onclick="router('roadmap')" id="nav-roadmap" class="nav-item w-full text-left px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center gap-3">
+                <span>💰</span> $10k Roadmap
+            </button>
+        </nav>
+        <div class="p-4 border-t border-gray-100">
+            <div class="flex items-center gap-2 text-xs font-medium text-green-600 bg-green-50 px-3 py-2 rounded-lg border border-green-100">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                SYSTEM ONLINE
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#f8f9fa]">
+        
+        <!-- Mobile Header -->
+        <header class="md:hidden bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center">
+            <h1 class="font-bold text-slate-800">PENNIO OS</h1>
+            <button onclick="toggleMobileMenu()" class="text-slate-600 focus:outline-none text-2xl">☰</button>
+        </header>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleMobileMenu()">
+            <div class="absolute right-0 top-0 w-64 h-full bg-white shadow-xl flex flex-col p-4" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-bold">Menu</h2>
+                    <button onclick="toggleMobileMenu()" class="text-xl">✕</button>
+                </div>
+                <nav class="space-y-2">
+                    <button onclick="mobileNav('dashboard')" class="block w-full text-left py-2 px-3 rounded hover:bg-gray-100">Mission Control</button>
+                    <button onclick="mobileNav('stack')" class="block w-full text-left py-2 px-3 rounded hover:bg-gray-100">The Stack</button>
+                    <button onclick="mobileNav('pipeline')" class="block w-full text-left py-2 px-3 rounded hover:bg-gray-100">S.I.T.E. Pipeline</button>
+                    <button onclick="mobileNav('prompts')" class="block w-full text-left py-2 px-3 rounded hover:bg-gray-100">Agent Prompts</button>
+                    <button onclick="mobileNav('ops')" class="block w-full text-left py-2 px-3 rounded hover:bg-gray-100">Business Ops</button>
+                    <button onclick="mobileNav('roadmap')" class="block w-full text-left py-2 px-3 rounded hover:bg-gray-100">$10k Roadmap</button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div id="content-container" class="flex-1 overflow-y-auto p-4 md:p-8">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+
+    </main>
+
+    <script>
+        // --- Data Store (Source Material) ---
+        const osData = {
+            mission: {
+                revenueGoal: "$10,000",
+                revenueNaira: "₦16,000,000+",
+                dailyRate: "$40/day",
+                philosophy: "Agent-First. We manage; AI executes."
+            },
+            stack: {
+                engine: [
+                    { title: "IDE", val: "Google Antigravity", desc: "VS Code Fork with Agent capabilities" },
+                    { title: "Mode", val: "Manager View", desc: "Do not code manually unless necessary" }
+                ],
+                models: [
+                    { role: "Architect", name: "Gemini 3 Deep Think", desc: "Planning & Reasoning" },
+                    { role: "Builder", name: "Gemini 3 Pro", desc: "Coding & Execution" },
+                    { role: "Creative", name: "Nano Banana", desc: "UI Assets & Visuals" }
+                ],
+                infra: [
+                    { label: "Frontend", val: "React + Tailwind CSS" },
+                    { label: "Backend", val: "Firebase (Auth, Firestore, Functions)" },
+                    { label: "Hosting", val: "Firebase Hosting" },
+                    { label: "Domains", val: "Namecheap (.com) / WhoGoHost (.ng)" }
+                ]
+            },
+            pipeline: [
+                {
+                    id: "phase1",
+                    stage: "S",
+                    name: "Strategy",
+                    icon: "🧠",
+                    goal: "Define specs to prevent scope creep.",
+                    input: "Client voice notes, briefs, emails.",
+                    command: `Act as a Solutions Architect. Digest these files and generate a **Project Blueprint**. Output a JSON containing: User Persona, Core User Journey, Tech Stack (React/Firebase), and a prioritized Feature List for MVP. Then, use Deep Think to critique this plan for scalability.`,
+                    deliverable: "spec.md (The Project Bible)"
+                },
+                {
+                    id: "phase2",
+                    stage: "I",
+                    name: "Interface",
+                    icon: "🎨",
+                    goal: "High-fidelity UI without opening Figma.",
+                    input: "Brand colors, Niche.",
+                    command: `High-fidelity landing page for a [Niche] brand, using [Brand Colors]. Modern, minimalist, hero section with 3D elements.`,
+                    subCommand: `Recreate this UI pixel-perfectly using React and Tailwind CSS. Split the Hero, Features, and Footer into separate components in the /components folder.`,
+                    deliverable: "React Components + Tailwind"
+                },
+                {
+                    id: "phase3",
+                    stage: "T",
+                    name: "Text",
+                    icon: "✍️",
+                    goal: "Psychology-driven copy, not placeholders.",
+                    input: "spec.md context.",
+                    command: `Go through LandingPage.tsx. Replace all placeholder text with persuasive copy targeting [User Persona]. Use 'Naija-smart' professional tone. Focus on benefits, not features.`,
+                    subCommand: `Generate a metadata object including title, description, and OpenGraph tags optimized for [Keywords].`,
+                    deliverable: "Production-ready Copy & SEO"
+                },
+                {
+                    id: "phase4",
+                    stage: "E",
+                    name: "Engine",
+                    icon: "⚙️",
+                    goal: "Serverless backend & Deployment.",
+                    input: "Infrastructure setup.",
+                    command: `Initialize Firebase. Enable Firestore, Auth, and Storage. Write firebaseConfig.js.`,
+                    subCommand: `Read spec.md. Design the Firestore JSON schema. Generate a script to seed the DB with 10 dummy users.`,
+                    audit: `Analyze my firestore.rules. Simulate a hack where a user tries to delete another user's data.`,
+                    deliverable: "Deployed URL + Secure DB"
+                }
+            ],
+            prompts: [
+                {
+                    title: "System Prompt (Workspace Settings)",
+                    desc: "Paste this into Antigravity Custom Instructions.",
+                    code: `You are the PENNIO Principal Architect.
+1. ALWAYS read the \`spec.md\` before writing code.
+2. IF a user request is vague, ask 3 clarifying questions before starting.
+3. PREFER functional components and Tailwind CSS.
+4. SECURITY FIRST: Never allow Firestore writes without Auth checks.
+5. FILE STRUCTURE: Keep components small, separated by feature.`
+                },
+                {
+                    title: "DNS Troubleshooter",
+                    desc: "Use when a client says 'The site is down'.",
+                    code: `ACT AS: Senior DevOps Engineer.
+TARGET: [Domain Name]
+ACTION:
+1. Run \`nslookup\` and \`dig\` to check A-Records.
+2. Verify if they match Firebase IP (199.36.158.100).
+3. Check SSL status via \`curl -I\`.
+4. REPORT: Is it Propagation, Configuration Error, or Cloudflare Conflict? Give me the exact fix.`
+                }
+            ],
+            ops: {
+                pricing: {
+                    setup: "₦50,000",
+                    retainers: [
+                        { name: "The Sentry", price: "₦35,000/mo", features: ["Uptime Monitoring", "Security Patches", "Weekly Backups"] },
+                        { name: "The Builder", price: "₦85,000/mo", features: ["Sentry Features", "4hrs Content Updates", "Monthly Report"], popular: true },
+                        { name: "The Partner", price: "₦180,000/mo", features: ["Builder Features", "A/B Testing", "Strategy Call"] }
+                    ]
+                }
+            }
+        };
+
+        // --- View Rendering Functions ---
+
+        function renderDashboard() {
+            const container = document.getElementById('content-container');
+            container.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto">
+                    <div class="mb-8">
+                        <h2 class="text-3xl font-bold text-slate-800">Mission Control</h2>
+                        <p class="text-slate-500 mt-2">Welcome back, Paul. Here is your operational status for 2026.</p>
+                    </div>
+
+                    <!-- Top Metrics Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                            <div class="text-sm font-medium text-slate-400 uppercase tracking-wider">Annual Target</div>
+                            <div class="mt-2 text-3xl font-bold text-slate-900">${osData.mission.revenueGoal}</div>
+                            <div class="text-sm text-green-600 font-medium mt-1">~${osData.mission.revenueNaira}</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                            <div class="text-sm font-medium text-slate-400 uppercase tracking-wider">Required Velocity</div>
+                            <div class="mt-2 text-3xl font-bold text-slate-900">${osData.mission.dailyRate}</div>
+                            <div class="text-sm text-slate-500 mt-1">Based on 250 working days</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                            <div class="text-sm font-medium text-slate-400 uppercase tracking-wider">Operating Mode</div>
+                            <div class="mt-2 text-xl font-bold text-blue-600">Agent-First</div>
+                            <div class="text-sm text-slate-500 mt-1">"We manage; AI executes."</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions & Pipeline Summary -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Pipeline Shortcuts -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <span>🏗️</span> Active Pipeline
+                            </h3>
+                            <p class="text-sm text-slate-500 mb-6">Access the S.I.T.E. production phases.</p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button onclick="router('pipeline', 'phase1')" class="p-4 bg-slate-50 rounded-lg text-left hover:bg-blue-50 hover:text-blue-700 transition-colors border border-slate-200">
+                                    <span class="block text-xl mb-1">🧠</span>
+                                    <span class="font-bold text-sm">Strategy</span>
+                                </button>
+                                <button onclick="router('pipeline', 'phase2')" class="p-4 bg-slate-50 rounded-lg text-left hover:bg-blue-50 hover:text-blue-700 transition-colors border border-slate-200">
+                                    <span class="block text-xl mb-1">🎨</span>
+                                    <span class="font-bold text-sm">Interface</span>
+                                </button>
+                                <button onclick="router('pipeline', 'phase3')" class="p-4 bg-slate-50 rounded-lg text-left hover:bg-blue-50 hover:text-blue-700 transition-colors border border-slate-200">
+                                    <span class="block text-xl mb-1">✍️</span>
+                                    <span class="font-bold text-sm">Text</span>
+                                </button>
+                                <button onclick="router('pipeline', 'phase4')" class="p-4 bg-slate-50 rounded-lg text-left hover:bg-blue-50 hover:text-blue-700 transition-colors border border-slate-200">
+                                    <span class="block text-xl mb-1">⚙️</span>
+                                    <span class="font-bold text-sm">Engine</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- System Status -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                    <span>🤖</span> Core Engine Status
+                                </h3>
+                                <ul class="space-y-3">
+                                    <li class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                                        <span class="text-slate-600">IDE (Antigravity)</span>
+                                        <span class="text-green-600 font-medium">Ready</span>
+                                    </li>
+                                    <li class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                                        <span class="text-slate-600">Model (Gemini 3 Deep Think)</span>
+                                        <span class="text-green-600 font-medium">Active</span>
+                                    </li>
+                                    <li class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                                        <span class="text-slate-600">Model (Nano Banana)</span>
+                                        <span class="text-green-600 font-medium">Active</span>
+                                    </li>
+                                    <li class="flex justify-between items-center text-sm">
+                                        <span class="text-slate-600">Infra (Firebase)</span>
+                                        <span class="text-green-600 font-medium">Connected</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <button onclick="router('prompts')" class="mt-6 w-full py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm font-medium">
+                                Access Prompt Library
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStack() {
+            const container = document.getElementById('content-container');
+            container.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto">
+                     <div class="mb-8 border-b border-slate-200 pb-4">
+                        <h2 class="text-3xl font-bold text-slate-800">🛠️ The Tech Stack</h2>
+                        <p class="text-slate-500 mt-2">Module 1: Your arsenal for rapid deployment.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Core Engine -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="bg-slate-50 px-6 py-4 border-b border-gray-200">
+                                <h3 class="font-bold text-slate-700">The Core Engine</h3>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                ${osData.stack.engine.map(item => `
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-400 uppercase">${item.title}</div>
+                                        <div class="text-lg font-medium text-slate-800">${item.val}</div>
+                                        <div class="text-sm text-slate-500">${item.desc}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Infrastructure -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="bg-slate-50 px-6 py-4 border-b border-gray-200">
+                                <h3 class="font-bold text-slate-700">Infrastructure</h3>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <ul class="space-y-3">
+                                    ${osData.stack.infra.map(item => `
+                                        <li class="flex flex-col sm:flex-row sm:justify-between sm:items-center p-2 rounded hover:bg-slate-50">
+                                            <span class="font-medium text-slate-600">${item.label}</span>
+                                            <span class="text-sm text-blue-600 font-mono bg-blue-50 px-2 py-1 rounded">${item.val}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Models Table -->
+                    <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                         <div class="bg-slate-50 px-6 py-4 border-b border-gray-200">
+                            <h3 class="font-bold text-slate-700">AI Model Assignment</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Function</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    ${osData.stack.models.map(model => `
+                                        <tr>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${model.role}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600">${model.name}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${model.desc}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPipeline() {
+            const container = document.getElementById('content-container');
+            container.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto">
+                    <div class="mb-8 border-b border-slate-200 pb-4">
+                        <h2 class="text-3xl font-bold text-slate-800">⚡ S.I.T.E. Production Pipeline</h2>
+                        <p class="text-slate-500 mt-2">Module 2: From Idea to Invoice in 48 hours. Click a phase to execute.</p>
+                    </div>
+
+                    <div class="space-y-6">
+                        ${osData.pipeline.map((phase, index) => `
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden group">
+                                <div class="p-6 cursor-pointer bg-white hover:bg-slate-50 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-4" onclick="togglePipelineDetails('${phase.id}')">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold border border-blue-200">
+                                            ${phase.stage}
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-bold text-slate-800">${phase.name}</h3>
+                                            <p class="text-sm text-slate-500">${phase.goal}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-slate-400 text-sm">
+                                        <span>Click to Expand</span>
+                                        <span>▼</span>
+                                    </div>
+                                </div>
+                                
+                                <div id="${phase.id}-details" class="hidden border-t border-gray-100 bg-slate-50 p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        
+                                        <!-- Inputs -->
+                                        <div class="col-span-1">
+                                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Inputs</h4>
+                                            <div class="bg-white p-3 rounded border border-gray-200 text-sm text-slate-700">
+                                                ${phase.input}
+                                            </div>
+                                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mt-4 mb-2">Deliverable</h4>
+                                            <div class="bg-green-50 p-3 rounded border border-green-200 text-sm text-green-800 font-medium">
+                                                ✓ ${phase.deliverable}
+                                            </div>
+                                        </div>
+
+                                        <!-- Commands -->
+                                        <div class="col-span-1 lg:col-span-2">
+                                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Agent Commands (Copy & Paste)</h4>
+                                            
+                                            <div class="space-y-3">
+                                                <div class="relative group">
+                                                    <div class="bg-slate-800 text-slate-200 p-4 rounded text-sm font-mono prompt-block overflow-x-auto">
+                                                        > ${phase.command}
+                                                    </div>
+                                                    <button onclick="copyToClipboard(this, \`${phase.command}\`)" class="absolute top-2 right-2 bg-slate-700 hover:bg-slate-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">Copy</button>
+                                                </div>
+
+                                                ${phase.subCommand ? `
+                                                <div class="relative group">
+                                                    <div class="bg-slate-800 text-slate-200 p-4 rounded text-sm font-mono prompt-block overflow-x-auto">
+                                                        > ${phase.subCommand}
+                                                    </div>
+                                                     <button onclick="copyToClipboard(this, \`${phase.subCommand}\`)" class="absolute top-2 right-2 bg-slate-700 hover:bg-slate-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">Copy</button>
+                                                </div>` : ''}
+
+                                                ${phase.audit ? `
+                                                <div class="relative group mt-4">
+                                                    <div class="text-xs font-bold text-red-500 mb-1">SECURITY AUDIT</div>
+                                                    <div class="bg-red-50 text-red-900 border border-red-200 p-4 rounded text-sm font-mono prompt-block overflow-x-auto">
+                                                        > ${phase.audit}
+                                                    </div>
+                                                     <button onclick="copyToClipboard(this, \`${phase.audit}\`)" class="absolute top-2 right-2 bg-red-200 hover:bg-red-300 text-red-900 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">Copy</button>
+                                                </div>` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPrompts() {
+            const container = document.getElementById('content-container');
+            container.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto">
+                     <div class="mb-8 border-b border-slate-200 pb-4">
+                        <h2 class="text-3xl font-bold text-slate-800">🤖 Agent Prompt Library</h2>
+                        <p class="text-slate-500 mt-2">Module 3: Pre-engineered instructions for maximum reliability.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-8">
+                        ${osData.prompts.map(prompt => `
+                            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-slate-800">${prompt.title}</h3>
+                                        <p class="text-sm text-slate-500">${prompt.desc}</p>
+                                    </div>
+                                    <button onclick="copyToClipboard(this, \`${prompt.code.replace(/`/g, '\\`')}\`)" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors flex items-center gap-2">
+                                        <span>📋</span> Copy Prompt
+                                    </button>
+                                </div>
+                                <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                                    <pre class="text-slate-300 font-mono text-sm whitespace-pre-wrap">${prompt.code}</pre>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderOps() {
+            const container = document.getElementById('content-container');
+            container.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto">
+                    <div class="mb-8 border-b border-slate-200 pb-4">
+                        <h2 class="text-3xl font-bold text-slate-800">💼 Business Operations</h2>
+                        <p class="text-slate-500 mt-2">Module 4: Pricing, Handover, and Retention.</p>
+                    </div>
+
+                    <!-- Domain Strategy -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div>
+                            <h3 class="font-bold text-blue-900 text-lg">Domain Setup Strategy</h3>
+                            <p class="text-blue-700 text-sm">Charge a fixed configuration fee to cover costs + time.</p>
+                        </div>
+                        <div class="bg-white px-6 py-3 rounded-lg shadow-sm border border-blue-100 text-center">
+                            <div class="text-xs text-slate-500 uppercase tracking-wide">Setup Fee</div>
+                            <div class="text-2xl font-bold text-slate-800">${osData.ops.pricing.setup}</div>
+                        </div>
+                    </div>
+
+                    <!-- Growth Shield Pricing -->
+                    <h3 class="text-xl font-bold text-slate-800 mb-6">🛡️ The Growth Shield (Retainers)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                        ${osData.ops.pricing.retainers.map(plan => `
+                            <div class="bg-white rounded-xl shadow-sm border ${plan.popular ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'} p-6 relative flex flex-col">
+                                ${plan.popular ? '<div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Most Popular</div>' : ''}
+                                <div class="mb-4">
+                                    <h4 class="text-lg font-bold text-slate-800">${plan.name}</h4>
+                                    <div class="text-2xl font-bold text-slate-900 mt-2">${plan.price}</div>
+                                </div>
+                                <ul class="space-y-3 mb-6 flex-1">
+                                    ${plan.features.map(feat => `
+                                        <li class="flex items-center gap-2 text-sm text-slate-600">
+                                            <span class="text-green-500">✓</span> ${feat}
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                                <button class="w-full py-2 rounded-lg font-medium text-sm transition-colors ${plan.popular ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}">
+                                    Select Plan
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Handover Protocol -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-6 cursor-pointer hover:bg-slate-50 border-b border-gray-100 flex justify-between items-center" onclick="document.getElementById('email-template').classList.toggle('hidden')">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">📧 Official Handover Protocol</h3>
+                                <p class="text-sm text-slate-500">Email template to deliver credentials and upsell retainer.</p>
+                            </div>
+                            <span class="text-slate-400">▼</span>
+                        </div>
+                        <div id="email-template" class="hidden p-6 bg-slate-50">
+                            <div class="bg-white border border-gray-200 p-6 rounded shadow-sm font-mono text-sm text-slate-700 whitespace-pre-wrap">
+Subject: 🚀 [OFFICIAL HANDOVER] Your site is live + Admin Credentials ([Client Brand])
+
+Dear [Client Name],
+
+[Client Brand] is officially live!
+View it here: [Insert Domain Link]
+
+1. Access Credentials:
+* Admin Login: [Link]
+* Username: [Email]
+* Temp Password: [Password]
+
+2. Infrastructure:
+We deployed on Google Cloud (Firebase) for 99.9% uptime. Your Global CDN and Enterprise SSL are active.
+
+3. Training:
+Attached is your Walkthrough Artifact showing how to edit content.
+
+4. Next Steps:
+I will monitor the site for 7 days. To ensure it stays secure and fast continuously, please review the attached "Growth Shield" maintenance packages.
+
+Best,
+Paul, PENNIO.
+                            </div>
+                             <button onclick="copyToClipboard(this, document.querySelector('#email-template div').innerText)" class="mt-4 bg-white border border-gray-300 text-slate-700 px-4 py-2 rounded hover:bg-gray-50 text-sm font-medium">
+                                Copy Email Template
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRoadmap() {
+            const container = document.getElementById('content-container');
+            container.innerHTML = `
+                <div class="fade-in max-w-5xl mx-auto">
+                    <div class="mb-8 border-b border-slate-200 pb-4">
+                        <h2 class="text-3xl font-bold text-slate-800">💰 $10k Roadmap (2026)</h2>
+                        <p class="text-slate-500 mt-2">Module 5: Financial targets broken down by quarter.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Chart Section -->
+                        <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                            <h3 class="font-bold text-slate-700 mb-6">Revenue Projection</h3>
+                            <div class="chart-container">
+                                <canvas id="roadmapChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Strategy List -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                            <h3 class="font-bold text-slate-700 mb-6">Quarterly Focus</h3>
+                            <div class="space-y-6">
+                                <div class="relative pl-6 border-l-2 border-slate-200">
+                                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-2 border-white"></div>
+                                    <h4 class="font-bold text-slate-800 text-sm">Q1: "The Resurrection"</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Goal: $2,000</p>
+                                    <p class="text-sm text-slate-600 mt-2">Fix ugly local sites. Fast 48h turnaround.</p>
+                                </div>
+                                <div class="relative pl-6 border-l-2 border-slate-200">
+                                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 border-2 border-white"></div>
+                                    <h4 class="font-bold text-slate-800 text-sm">Q2: "MVP Builder"</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Goal: $3,000</p>
+                                    <p class="text-sm text-slate-600 mt-2">React/Firebase Apps for Founders.</p>
+                                </div>
+                                <div class="relative pl-6 border-l-2 border-slate-200">
+                                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 border-2 border-white"></div>
+                                    <h4 class="font-bold text-slate-800 text-sm">Q3: "Retainer Stack"</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Goal: $2,500</p>
+                                    <p class="text-sm text-slate-600 mt-2">Convert clients to Growth Shield.</p>
+                                </div>
+                                <div class="relative pl-6 border-l-2 border-slate-200">
+                                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-300 border-2 border-white"></div>
+                                    <h4 class="font-bold text-slate-800 text-sm">Q4: "Scale"</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Goal: $2,500</p>
+                                    <p class="text-sm text-slate-600 mt-2">High ticket funnels ($1k+ each).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Initialize Chart
+            setTimeout(() => {
+                const ctx = document.getElementById('roadmapChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Q1 (Jan-Mar)', 'Q2 (Apr-Jun)', 'Q3 (Jul-Sep)', 'Q4 (Oct-Dec)'],
+                        datasets: [{
+                            label: 'Revenue Goal ($)',
+                            data: [2000, 3000, 2500, 2500],
+                            backgroundColor: [
+                                'rgba(59, 130, 246, 0.8)',
+                                'rgba(99, 102, 241, 0.8)',
+                                'rgba(139, 92, 246, 0.8)',
+                                'rgba(168, 85, 247, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgb(59, 130, 246)',
+                                'rgb(99, 102, 241)',
+                                'rgb(139, 92, 246)',
+                                'rgb(168, 85, 247)'
+                            ],
+                            borderWidth: 1,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Cumulative ($)',
+                            data: [2000, 5000, 7500, 10000],
+                            type: 'line',
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { font: { family: "'Inter', sans-serif" } }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: '#f1f5f9' },
+                                ticks: { font: { family: "'Inter', sans-serif" } }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { family: "'Inter', sans-serif" } }
+                            }
+                        }
+                    }
+                });
+            }, 100);
+        }
+
+        // --- Core Application Logic ---
+
+        function router(view, subParam = null) {
+            // Update Navigation State
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'bg-slate-100', 'border-r-4', 'border-blue-500'));
+            const navItem = document.getElementById('nav-' + view);
+            if(navItem) navItem.classList.add('active');
+
+            // Render View
+            switch(view) {
+                case 'dashboard': renderDashboard(); break;
+                case 'stack': renderStack(); break;
+                case 'pipeline': 
+                    renderPipeline(); 
+                    if(subParam) {
+                        setTimeout(() => togglePipelineDetails(subParam), 100);
+                    }
+                    break;
+                case 'prompts': renderPrompts(); break;
+                case 'ops': renderOps(); break;
+                case 'roadmap': renderRoadmap(); break;
+                default: renderDashboard();
+            }
+
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (!mobileMenu.classList.contains('hidden')) toggleMobileMenu();
+        }
+
+        function togglePipelineDetails(id) {
+            const el = document.getElementById(id + '-details');
+            if(el) {
+                // Toggle current
+                el.classList.toggle('hidden');
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        function mobileNav(view) {
+            router(view);
+        }
+
+        function copyToClipboard(btn, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = 'Copied!';
+                btn.classList.add('bg-green-600', 'text-white');
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('bg-green-600', 'text-white');
+                }, 2000);
+            });
+        }
+
+        // --- Initialization ---
+        window.addEventListener('DOMContentLoaded', () => {
+            router('dashboard');
+        });
+
+    </script>
+</body>
+</html>
