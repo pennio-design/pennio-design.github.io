@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotlight Kids - Brand Guidelines</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Brand Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Varela+Round&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['Quicksand', 'sans-serif'],
+                        body: ['Varela Round', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#2C3E50',
+                            text: '#5D6D7E',
+                            sun: '#FFEFD5', // Soft Sunshine
+                            sunDark: '#FAD7A0',
+                            sky: '#A8D8EA', // Calm Sky
+                            skyDark: '#5DADE2',
+                            lavender: '#AA96DA', // Lavender
+                            lavenderDark: '#8E44AD',
+                            blush: '#FCBAD3', // Blush
+                            cream: '#FDFBF7', // Background
+                            white: '#FFFFFF'
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+                    },
+                    borderRadius: {
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                        'blob': '60% 40% 30% 70% / 60% 30% 70% 40%'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FDFBF7; }
+        ::-webkit-scrollbar-thumb { background: #E0E0E0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #AA96DA; }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(170, 150, 218, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #AA96DA;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Mobile Menu Transition */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+        }
+        .menu-open { transform: translateX(0) !important; }
+        .menu-closed { transform: translateX(-100%) !important; }
+    </style>
+</head>
+<body class="bg-brand-cream text-brand-text font-body antialiased selection:bg-brand-lavender selection:text-white">
+
+    <!-- Mobile Header -->
+    <div class="lg:hidden fixed top-0 w-full bg-white/90 backdrop-blur-md border-b border-gray-100 z-50 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2 text-brand-lavender font-heading font-bold text-xl">
+            <div class="w-8 h-8 rounded-full bg-brand-lavender text-white flex items-center justify-center shadow-sm">
+                <i class="fas fa-sun text-sm"></i>
+            </div>
+            <span>Spotlight<span class="text-brand-text">Kids</span></span>
+        </div>
+        <button onclick="toggleMenu()" class="text-brand-dark text-2xl focus:outline-none">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <div class="flex min-h-screen pt-16 lg:pt-0">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="mobile-menu" class="fixed lg:sticky top-0 left-0 w-80 h-screen bg-white border-r border-gray-100 z-40 transform -translate-x-full lg:translate-x-0 overflow-y-auto menu-closed lg:menu-open shadow-2xl lg:shadow-none transition-transform duration-300">
+            <div class="p-8 lg:p-12">
+                <!-- Close Button (Mobile) -->
+                <button onclick="toggleMenu()" class="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-brand-dark p-2">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+
+                <div class="hidden lg:flex items-center gap-3 mb-12 text-brand-lavender font-heading font-bold text-2xl">
+                    <div class="w-10 h-10 rounded-full bg-brand-lavender text-white flex items-center justify-center shadow-sm">
+                        <i class="fas fa-sun text-lg"></i>
+                    </div>
+                    <span>Spotlight<span class="text-brand-text">Kids</span></span>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="#cover" onclick="closeMenu()" class="block px-4 py-3 rounded-xl text-base font-bold text-brand-dark bg-brand-cream transition-colors">1. Cover</a>
+                    <a href="#intro" onclick="closeMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-gray-500 hover:text-brand-lavender hover:bg-gray-50 transition-colors">2. Introduction</a>
+                    <a href="#logo" onclick="closeMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-gray-500 hover:text-brand-lavender hover:bg-gray-50 transition-colors">3. Logo Identity</a>
+                    <a href="#color" onclick="closeMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-gray-500 hover:text-brand-lavender hover:bg-gray-50 transition-colors">4. Color Palette</a>
+                    <a href="#typography" onclick="closeMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-gray-500 hover:text-brand-lavender hover:bg-gray-50 transition-colors">5. Typography</a>
+                    <a href="#ui" onclick="closeMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-gray-500 hover:text-brand-lavender hover:bg-gray-50 transition-colors">6. UI Components</a>
+                    <a href="#ai-writer" onclick="closeMenu()" class="block px-4 py-3 rounded-xl text-base font-bold text-brand-lavender bg-brand-lavender/10 border border-brand-lavender/20 transition-colors flex justify-between items-center mt-4">
+                        <span>Magic Copywriter</span>
+                        <i class="fas fa-sparkles text-sm"></i>
+                    </a>
+                </nav>
+
+                <div class="mt-12 p-6 bg-brand-sun/30 rounded-2xl">
+                    <p class="text-xs text-brand-dark/70 font-bold mb-2">Design Status</p>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-xs font-heading font-bold">Web V1.0</span>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-xs text-gray-400">
+                    &copy; 2025 Spotlight Kids<br>
+                    Designed by PENNIO Design
+                </div>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile menu -->
+        <div id="menu-overlay" onclick="toggleMenu()" class="fixed inset-0 bg-black/20 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
+
+        <!-- Main Content -->
+        <main class="flex-1 w-full max-w-full overflow-x-hidden">
+            
+            <!-- SECTION 0: COVER -->
+            <section id="cover" class="min-h-[80vh] lg:min-h-screen flex flex-col justify-center px-6 py-20 lg:p-24 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 lg:w-[600px] lg:h-[600px] bg-brand-lavender/10 rounded-full blur-3xl -z-10 translate-x-1/3 -translate-y-1/3"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 lg:w-[500px] lg:h-[500px] bg-brand-sun/20 rounded-full blur-3xl -z-10 -translate-x-1/3 translate-y-1/3"></div>
+
+                <div class="max-w-4xl mx-auto w-full">
+                    <div class="flex items-center gap-4 mb-8 lg:mb-16 animate-float">
+                        <div class="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-brand-lavender text-white flex items-center justify-center shadow-lg text-3xl lg:text-4xl">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <div class="leading-none">
+                            <div class="font-heading font-bold text-4xl lg:text-5xl text-brand-dark tracking-tight">spotlight</div>
+                            <div class="font-body font-bold text-3xl lg:text-4xl text-brand-lavender tracking-wide">kids</div>
+                        </div>
+                    </div>
+                    
+                    <h1 class="text-5xl lg:text-8xl font-heading font-bold text-brand-dark mb-8 lg:mb-12 leading-tight">
+                        Brand Identity <br>
+                        <span class="text-brand-lavender">Guidelines</span>
+                    </h1>
+                    
+                    <div class="h-2 w-20 lg:w-32 bg-brand-sun rounded-full mb-8 lg:mb-12"></div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-12 text-lg lg:text-xl text-brand-text">
+                        <div>
+                            <p class="uppercase tracking-widest text-xs lg:text-sm font-bold text-brand-lavender mb-1">Prepared For</p>
+                            <p class="font-bold text-brand-dark">Ms. Tife</p>
+                        </div>
+                        <div>
+                            <p class="uppercase tracking-widest text-xs lg:text-sm font-bold text-brand-lavender mb-1">Version</p>
+                            <p class="font-bold text-brand-dark">1.0 Web</p>
+                        </div>
+                         <div>
+                            <p class="uppercase tracking-widest text-xs lg:text-sm font-bold text-brand-lavender mb-1">Date</p>
+                            <p class="font-bold text-brand-dark">December 2025</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 1: INTRODUCTION -->
+            <section id="intro" class="py-20 px-6 lg:p-24 relative">
+                <div class="absolute top-[-40px] right-[-40px] w-64 h-64 bg-brand-sky/20 rounded-full blur-3xl -z-10 animate-float"></div>
+                
+                <div class="max-w-6xl mx-auto w-full">
+                    <span class="text-brand-lavender font-heading font-bold tracking-widest text-sm lg:text-xl uppercase mb-6 lg:mb-8 block">The Brand Philosophy</span>
+                    <h2 class="text-4xl lg:text-7xl font-heading font-bold text-brand-dark mb-12 lg:mb-16 leading-tight">
+                        A safe space for <br>
+                        <span class="relative inline-block">
+                            little minds
+                            <svg class="absolute w-full h-2 lg:h-4 -bottom-1 lg:-bottom-2 left-0 text-brand-blush" viewBox="0 0 100 10" preserveAspectRatio="none">
+                                <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="3" fill="none" />
+                            </svg>
+                        </span> to shine.
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-start">
+                        <div class="prose prose-lg lg:prose-2xl text-brand-text">
+                            <p class="leading-relaxed mb-6">
+                                Spotlight Kids was born from a simple observation: children deserve content that inspires them, not over-stimulates them.
+                            </p>
+                            <p class="leading-relaxed">
+                                Our visual identity reflects this core promise. It is the "anti-chaos." We use organic shapes, soft pastels, and gentle typography to create a digital environment that feels like a calm, educational hug.
+                            </p>
+                        </div>
+                        <div class="bg-white p-8 lg:p-12 rounded-[2rem] lg:rounded-[2.5rem] shadow-soft border border-gray-100">
+                            <h3 class="font-heading font-bold text-2xl lg:text-3xl text-brand-dark mb-6 lg:mb-8">Brand Keywords</h3>
+                            <div class="flex flex-wrap gap-3 lg:gap-4">
+                                <span class="px-4 lg:px-8 py-2 lg:py-4 bg-brand-sky/20 text-brand-skyDark rounded-full text-sm lg:text-lg font-bold">Calm</span>
+                                <span class="px-4 lg:px-8 py-2 lg:py-4 bg-brand-sun/40 text-brand-dark rounded-full text-sm lg:text-lg font-bold">Educational</span>
+                                <span class="px-4 lg:px-8 py-2 lg:py-4 bg-brand-lavender/20 text-brand-lavenderDark rounded-full text-sm lg:text-lg font-bold">Safe</span>
+                                <span class="px-4 lg:px-8 py-2 lg:py-4 bg-brand-blush/20 text-brand-dark rounded-full text-sm lg:text-lg font-bold">Nurturing</span>
+                                <span class="px-4 lg:px-8 py-2 lg:py-4 bg-gray-100 text-gray-500 rounded-full text-sm lg:text-lg font-bold">Inclusive</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: LOGO -->
+            <section id="logo" class="py-20 px-6 lg:p-24 bg-white/50">
+                <div class="max-w-6xl mx-auto w-full">
+                    <div class="flex items-center gap-4 lg:gap-8 mb-12 lg:mb-16">
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                        <h2 class="font-heading font-bold text-2xl lg:text-4xl text-brand-dark">02. Logo Identity</h2>
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                    </div>
+
+                    <div class="bg-white rounded-[2rem] lg:rounded-[3rem] p-8 lg:p-16 shadow-soft border border-gray-100 text-center relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-30"></div>
+                        
+                        <!-- Main Logo Construction -->
+                        <div class="relative z-10 flex flex-col items-center justify-center py-8 lg:py-12">
+                            <div class="flex flex-col lg:flex-row items-center gap-4 lg:gap-6 transform transition-transform duration-500 group-hover:scale-105">
+                                <!-- Icon Construction -->
+                                <div class="relative w-24 h-24 lg:w-36 lg:h-36">
+                                    <div class="absolute inset-0 bg-brand-lavender rounded-full opacity-20 animate-pulse"></div>
+                                    <div class="absolute inset-0 flex items-center justify-center bg-brand-lavender text-white rounded-full shadow-lg text-5xl lg:text-7xl">
+                                        <i class="fas fa-sun"></i> 
+                                    </div>
+                                </div>
+                                
+                                <!-- Wordmark -->
+                                <div class="text-center lg:text-left leading-none lg:ml-4">
+                                    <div class="font-heading font-bold text-5xl lg:text-7xl text-brand-dark tracking-tight">spotlight</div>
+                                    <div class="font-body font-bold text-4xl lg:text-6xl text-brand-lavender tracking-wide">kids</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logo Rationale -->
+                        <div class="mt-8 lg:mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 border-t border-gray-100 pt-8 lg:pt-12 relative z-10">
+                            <div class="text-left bg-gray-50/50 p-6 lg:p-8 rounded-3xl">
+                                <div class="w-10 h-10 lg:w-14 lg:h-14 bg-brand-sun/50 rounded-full flex items-center justify-center mb-4 lg:mb-6 text-brand-dark text-lg lg:text-xl">
+                                    <i class="fas fa-sun"></i>
+                                </div>
+                                <h4 class="font-heading font-bold text-xl lg:text-2xl text-brand-dark mb-2 lg:mb-3">The Gentle Sun</h4>
+                                <p class="text-sm lg:text-lg leading-relaxed text-brand-text">The sun represents the "Spotlight"—not as a harsh beam, but as a warm, nurturing light that helps children grow naturally without over-stimulation.</p>
+                            </div>
+                            <div class="text-left bg-gray-50/50 p-6 lg:p-8 rounded-3xl">
+                                <div class="w-10 h-10 lg:w-14 lg:h-14 bg-brand-sky/50 rounded-full flex items-center justify-center mb-4 lg:mb-6 text-brand-dark text-lg lg:text-xl">
+                                    <i class="fas fa-shapes"></i>
+                                </div>
+                                <h4 class="font-heading font-bold text-xl lg:text-2xl text-brand-dark mb-2 lg:mb-3">Soft Geometry</h4>
+                                <p class="text-sm lg:text-lg leading-relaxed text-brand-text">We use strictly rounded typography (`Quicksand`) and soft circular icons to eliminate sharp edges. This visual softness signals a digital "safe space."</p>
+                            </div>
+                        </div>
+
+                        <!-- Usage Rules -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-8 lg:mt-12 text-left relative z-10">
+                            <div class="bg-gray-50 p-6 lg:p-8 rounded-3xl">
+                                <p class="font-heading font-bold text-lg lg:text-xl text-brand-dark mb-2 lg:mb-3">Clear Space</p>
+                                <p class="text-sm lg:text-base text-brand-text">Maintain 50% of the icon's height around the logo at all times.</p>
+                            </div>
+                            <div class="bg-brand-dark p-6 lg:p-8 rounded-3xl">
+                                <p class="font-heading font-bold text-lg lg:text-xl text-white mb-2 lg:mb-3">Dark Mode</p>
+                                <div class="flex items-center gap-2 lg:gap-3 mt-4">
+                                    <div class="w-6 h-6 lg:w-8 lg:h-8 bg-brand-lavender rounded-full flex items-center justify-center text-white text-[10px] lg:text-xs"><i class="fas fa-sun"></i></div>
+                                    <span class="font-heading font-bold text-white text-base lg:text-lg">spotlight<span class="text-brand-lavender">kids</span></span>
+                                </div>
+                            </div>
+                            <div class="bg-brand-lavender p-6 lg:p-8 rounded-3xl">
+                                <p class="font-heading font-bold text-lg lg:text-xl text-white mb-2 lg:mb-3">Monochrome</p>
+                                <div class="flex items-center gap-2 lg:gap-3 mt-4 text-white">
+                                    <div class="w-6 h-6 lg:w-8 lg:h-8 bg-white/20 rounded-full flex items-center justify-center text-white text-[10px] lg:text-xs"><i class="fas fa-sun"></i></div>
+                                    <span class="font-heading font-bold text-white text-base lg:text-lg">spotlightkids</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: COLOR -->
+            <section id="color" class="py-20 px-6 lg:p-24">
+                <div class="max-w-6xl mx-auto w-full">
+                    <div class="flex items-center gap-4 lg:gap-8 mb-12 lg:mb-16">
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                        <h2 class="font-heading font-bold text-2xl lg:text-4xl text-brand-dark">03. Color Palette</h2>
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                    </div>
+
+                    <p class="mb-12 lg:mb-16 max-w-4xl text-lg lg:text-2xl text-brand-text leading-relaxed">
+                        Our "Pastel Dreams" palette is designed to be low-contrast and soothing. We avoid pure black (`#000000`) in favor of deep charcoal (`#2C3E50`) to reduce visual strain.
+                    </p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 lg:gap-6 mb-12">
+                        <!-- Color Card 1 -->
+                        <div class="group cursor-pointer" onclick="copyColor('#FFEFD5', 'msg-1')">
+                            <div class="h-32 lg:h-56 rounded-2xl lg:rounded-3xl bg-brand-sun shadow-sm border border-gray-100 relative flex items-end p-4 lg:p-8">
+                                <span class="bg-white/90 px-2 lg:px-3 py-1 rounded text-xs lg:text-sm font-bold text-brand-dark opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-4 left-4">Copy</span>
+                            </div>
+                            <div class="mt-4">
+                                <p class="font-heading font-bold text-lg lg:text-2xl text-brand-dark">Soft Sunshine</p>
+                                <p class="text-sm lg:text-lg font-mono text-gray-400">#FFEFD5</p>
+                            </div>
+                            <div id="msg-1" class="hidden text-sm text-green-500 mt-1 font-bold">Copied!</div>
+                        </div>
+
+                        <!-- Color Card 2 -->
+                        <div class="group cursor-pointer" onclick="copyColor('#A8D8EA', 'msg-2')">
+                            <div class="h-32 lg:h-56 rounded-2xl lg:rounded-3xl bg-brand-sky shadow-sm border border-gray-100 relative flex items-end p-4 lg:p-8">
+                                <span class="bg-white/90 px-2 lg:px-3 py-1 rounded text-xs lg:text-sm font-bold text-brand-dark opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-4 left-4">Copy</span>
+                            </div>
+                            <div class="mt-4">
+                                <p class="font-heading font-bold text-lg lg:text-2xl text-brand-dark">Calm Sky</p>
+                                <p class="text-sm lg:text-lg font-mono text-gray-400">#A8D8EA</p>
+                            </div>
+                            <div id="msg-2" class="hidden text-sm text-green-500 mt-1 font-bold">Copied!</div>
+                        </div>
+
+                        <!-- Color Card 3 -->
+                        <div class="group cursor-pointer" onclick="copyColor('#AA96DA', 'msg-3')">
+                            <div class="h-32 lg:h-56 rounded-2xl lg:rounded-3xl bg-brand-lavender shadow-sm border border-gray-100 relative flex items-end p-4 lg:p-8">
+                                <div class="absolute top-4 right-4 w-4 h-4 bg-white rounded-full shadow-sm" title="Primary Brand Color"></div>
+                                <span class="bg-white/90 px-2 lg:px-3 py-1 rounded text-xs lg:text-sm font-bold text-brand-dark opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-4 left-4">Copy</span>
+                            </div>
+                            <div class="mt-4">
+                                <p class="font-heading font-bold text-lg lg:text-2xl text-brand-dark">Lavender (Primary)</p>
+                                <p class="text-sm lg:text-lg font-mono text-gray-400">#AA96DA</p>
+                            </div>
+                            <div id="msg-3" class="hidden text-sm text-green-500 mt-1 font-bold">Copied!</div>
+                        </div>
+
+                        <!-- Color Card 4 -->
+                        <div class="group cursor-pointer" onclick="copyColor('#FCBAD3', 'msg-4')">
+                            <div class="h-32 lg:h-56 rounded-2xl lg:rounded-3xl bg-brand-blush shadow-sm border border-gray-100 relative flex items-end p-4 lg:p-8">
+                                <span class="bg-white/90 px-2 lg:px-3 py-1 rounded text-xs lg:text-sm font-bold text-brand-dark opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-4 left-4">Copy</span>
+                            </div>
+                            <div class="mt-4">
+                                <p class="font-heading font-bold text-lg lg:text-2xl text-brand-dark">Blush</p>
+                                <p class="text-sm lg:text-lg font-mono text-gray-400">#FCBAD3</p>
+                            </div>
+                            <div id="msg-4" class="hidden text-sm text-green-500 mt-1 font-bold">Copied!</div>
+                        </div>
+
+                        <!-- Color Card 5 -->
+                        <div class="group cursor-pointer" onclick="copyColor('#2C3E50', 'msg-5')">
+                            <div class="h-32 lg:h-56 rounded-2xl lg:rounded-3xl bg-brand-dark shadow-sm border border-gray-100 relative flex items-end p-4 lg:p-8">
+                                <span class="bg-white/90 px-2 lg:px-3 py-1 rounded text-xs lg:text-sm font-bold text-brand-dark opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-4 left-4">Copy</span>
+                            </div>
+                            <div class="mt-4">
+                                <p class="font-heading font-bold text-lg lg:text-2xl text-brand-dark">Story Dark</p>
+                                <p class="text-sm lg:text-lg font-mono text-gray-400">#2C3E50</p>
+                            </div>
+                            <div id="msg-5" class="hidden text-sm text-green-500 mt-1 font-bold">Copied!</div>
+                        </div>
+                    </div>
+
+                    <!-- Gradient Usage -->
+                    <div class="mt-8 lg:mt-16 bg-gradient-to-r from-brand-sky via-brand-lavender to-brand-blush h-16 lg:h-24 rounded-2xl w-full opacity-80"></div>
+                    <p class="text-sm lg:text-lg text-center mt-4 text-gray-400">Official Brand Gradient (Use sparingly for backgrounds)</p>
+                </div>
+            </section>
+
+            <!-- SECTION 4: TYPOGRAPHY -->
+            <section id="typography" class="py-20 px-6 lg:p-24 bg-white/50">
+                <div class="max-w-6xl mx-auto w-full">
+                    <div class="flex items-center gap-4 lg:gap-8 mb-12 lg:mb-16">
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                        <h2 class="font-heading font-bold text-2xl lg:text-4xl text-brand-dark">04. Typography</h2>
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+                        <!-- Heading Font -->
+                        <div>
+                            <div class="flex justify-between items-end mb-6 lg:mb-8 border-b border-gray-200 pb-4 lg:pb-6">
+                                <h3 class="font-heading font-bold text-5xl lg:text-7xl text-brand-dark">Aa</h3>
+                                <span class="text-xl lg:text-2xl text-gray-400 font-heading">Quicksand</span>
+                            </div>
+                            <p class="text-lg lg:text-xl mb-8 lg:mb-12 text-brand-text leading-relaxed">A geometric sans-serif with rounded terminals. Approachable and clean. Used for all headings and large text.</p>
+                            
+                            <div class="space-y-6 lg:space-y-8">
+                                <div>
+                                    <p class="text-xs lg:text-sm text-gray-400 mb-2 uppercase tracking-wide">Heading 1 (Bold)</p>
+                                    <p class="font-heading font-bold text-3xl lg:text-5xl text-brand-dark">Learning made gentle.</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs lg:text-sm text-gray-400 mb-2 uppercase tracking-wide">Heading 2 (SemiBold)</p>
+                                    <p class="font-heading font-semibold text-2xl lg:text-4xl text-brand-dark">Learning made gentle.</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs lg:text-sm text-gray-400 mb-2 uppercase tracking-wide">Heading 3 (Regular)</p>
+                                    <p class="font-heading font-normal text-xl lg:text-3xl text-brand-dark">Learning made gentle.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Body Font -->
+                        <div>
+                            <div class="flex justify-between items-end mb-6 lg:mb-8 border-b border-gray-200 pb-4 lg:pb-6">
+                                <h3 class="font-body font-normal text-5xl lg:text-7xl text-brand-dark">Aa</h3>
+                                <span class="text-xl lg:text-2xl text-gray-400 font-body">Varela Round</span>
+                            </div>
+                            <p class="text-lg lg:text-xl mb-8 lg:mb-12 text-brand-text leading-relaxed">A rounded sans-serif that blends perfectly with Quicksand. Used for body text, buttons, and UI elements.</p>
+                            
+                            <div class="space-y-6 lg:space-y-8">
+                                <div>
+                                    <p class="text-xs lg:text-sm text-gray-400 mb-2 uppercase tracking-wide">Body Text</p>
+                                    <p class="font-body text-base lg:text-2xl text-brand-text leading-relaxed">
+                                        Spotlight Kids was created to give children a safe space to learn through fun, meaningful, and age-appropriate entertainment.
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-xs lg:text-sm text-gray-400 mb-2 uppercase tracking-wide">Button Text</p>
+                                    <button class="bg-brand-lavender text-white px-6 lg:px-8 py-2 lg:py-3 rounded-full font-body font-bold text-base lg:text-lg">Start Watching</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: UI COMPONENTS -->
+            <section id="ui" class="py-20 px-6 lg:p-24">
+                <div class="max-w-6xl mx-auto w-full">
+                    <div class="flex items-center gap-4 lg:gap-8 mb-12 lg:mb-16">
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                        <h2 class="font-heading font-bold text-2xl lg:text-4xl text-brand-dark">05. UI Components</h2>
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                    </div>
+
+                    <div class="bg-brand-cream border border-brand-sun rounded-[2rem] lg:rounded-[3rem] p-8 lg:p-24 relative overflow-hidden">
+                        
+                        <!-- Decorative BG -->
+                        <div class="absolute top-0 right-0 w-full h-full opacity-50 pointer-events-none">
+                             <div class="absolute top-20 left-20 w-8 h-8 bg-brand-sky rounded-full"></div>
+                             <div class="absolute top-40 right-40 w-12 h-12 bg-brand-blush rounded-full opacity-50"></div>
+                             <div class="absolute bottom-20 left-1/3 w-10 h-10 bg-brand-sun rounded-full"></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 relative z-10">
+                            
+                            <!-- Buttons -->
+                            <div class="space-y-8 lg:space-y-12">
+                                <h3 class="font-heading font-bold text-2xl lg:text-3xl text-brand-dark">Buttons</h3>
+                                <div class="flex flex-wrap gap-4 lg:gap-6">
+                                    <button class="bg-brand-lavender hover:bg-brand-lavenderDark text-white px-8 lg:px-12 py-3 lg:py-5 rounded-full font-body font-bold text-lg lg:text-xl shadow-soft">
+                                        Primary Action
+                                    </button>
+                                    <button class="bg-white border-2 border-brand-lavender text-brand-lavender hover:bg-brand-lavender hover:text-white px-8 lg:px-12 py-3 lg:py-5 rounded-full font-body font-bold text-lg lg:text-xl">
+                                        Secondary
+                                    </button>
+                                </div>
+                                <div class="flex flex-wrap gap-4 lg:gap-6">
+                                     <button class="bg-brand-sun text-brand-dark px-6 lg:px-10 py-3 lg:py-4 rounded-2xl font-body font-bold text-base lg:text-lg shadow-sm flex items-center gap-3">
+                                        <i class="fas fa-play text-sm"></i> Play
+                                    </button>
+                                    <button class="bg-brand-sky text-brand-dark px-6 lg:px-10 py-3 lg:py-4 rounded-2xl font-body font-bold text-base lg:text-lg shadow-sm">
+                                        Tag
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Cards -->
+                            <div class="space-y-8 lg:space-y-12">
+                                <h3 class="font-heading font-bold text-2xl lg:text-3xl text-brand-dark">Content Cards</h3>
+                                <!-- Card Example -->
+                                <div class="bg-white p-4 lg:p-6 rounded-[2rem] lg:rounded-[2.5rem] shadow-soft border border-white max-w-sm hover:scale-[1.02] transition-transform cursor-pointer">
+                                    <div class="h-40 lg:h-56 bg-brand-sky/30 rounded-[1.5rem] lg:rounded-[2rem] mb-4 lg:mb-6 flex items-center justify-center relative overflow-hidden group">
+                                         <div class="absolute inset-0 bg-gradient-to-t from-brand-sky to-transparent opacity-20"></div>
+                                         <i class="fas fa-shapes text-5xl lg:text-7xl text-brand-skyDark opacity-80"></i>
+                                         <div class="absolute bottom-4 right-4 bg-white/90 px-2 lg:px-3 py-1 lg:py-1.5 rounded-xl text-[10px] lg:text-xs font-bold text-brand-dark shadow-sm">
+                                            12:00
+                                         </div>
+                                    </div>
+                                    <div class="px-2 lg:px-3 pb-2 lg:pb-3">
+                                        <h4 class="font-heading font-bold text-xl lg:text-2xl text-brand-dark mb-2">Jade's Day Out</h4>
+                                        <p class="text-sm lg:text-base text-gray-400 mb-4 line-clamp-2">Join Jade as she learns about kindness and sharing in the park.</p>
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex -space-x-3">
+                                                <div class="w-6 h-6 lg:w-8 lg:h-8 rounded-full bg-brand-blush border-2 border-white"></div>
+                                                <div class="w-6 h-6 lg:w-8 lg:h-8 rounded-full bg-brand-sun border-2 border-white"></div>
+                                            </div>
+                                            <i class="fas fa-heart text-lg lg:text-xl text-brand-blush"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input Fields -->
+                             <div class="space-y-8 lg:space-y-12 lg:col-span-2">
+                                <h3 class="font-heading font-bold text-2xl lg:text-3xl text-brand-dark">Forms & Inputs</h3>
+                                <div class="max-w-xl">
+                                    <label class="block text-base lg:text-lg font-bold text-brand-text mb-2 lg:mb-4 pl-4">Parent's Email</label>
+                                    <div class="relative">
+                                        <input type="email" placeholder="hello@example.com" class="w-full bg-white border-2 border-brand-sun/50 focus:border-brand-lavender text-brand-dark rounded-3xl py-4 lg:py-5 px-6 lg:px-10 outline-none transition-colors placeholder-gray-300 font-body text-lg lg:text-xl">
+                                        <div class="absolute right-6 lg:right-8 top-5 lg:top-6 text-green-400 text-xl lg:text-2xl">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm lg:text-base text-gray-400 mt-2 lg:mt-4 pl-4">We'll send a magic link to sign in.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: MAGIC COPYWRITER -->
+            <section id="ai-writer" class="py-20 px-6 lg:p-24 bg-brand-lavender/5">
+                 <div class="max-w-6xl mx-auto w-full">
+                    <div class="flex items-center gap-4 lg:gap-8 mb-12">
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                        <h2 class="font-heading font-bold text-2xl lg:text-4xl text-brand-dark flex items-center gap-3">
+                            <i class="fas fa-sparkles text-brand-lavender"></i> Magic Copywriter
+                        </h2>
+                        <div class="h-px bg-gray-200 flex-1"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+                        
+                        <!-- Input Side -->
+                        <div class="lg:col-span-5" id="ai-writer-input-area">
+                            <h3 class="font-heading font-bold text-2xl lg:text-3xl text-brand-dark mb-4 lg:mb-6">Need a brand voice?</h3>
+                            <p class="text-lg lg:text-xl text-brand-text mb-6 lg:mb-8 leading-relaxed">
+                                Not sure how to sound "safe" and "gentle"? Type your rough ideas here, and our Magic Star will rewrite them in the Spotlight Kids voice instantly.
+                            </p>
+                            
+                            <div class="bg-white p-2 rounded-[2rem] lg:rounded-[2.5rem] shadow-soft border border-gray-100">
+                                <textarea id="user-input" class="w-full h-40 lg:h-48 rounded-[1.5rem] lg:rounded-[2rem] p-6 lg:p-8 text-lg lg:text-xl font-body text-brand-dark placeholder-gray-300 outline-none resize-none" placeholder="e.g., We have a new video about space. It is fun and educational. Watch it now!"></textarea>
+                                <div class="flex flex-col lg:flex-row justify-between items-center px-4 pb-4 mt-2 gap-4 lg:gap-0">
+                                    <span class="text-sm text-gray-400 lg:pl-4">Powered by Gemini AI</span>
+                                    <button onclick="generateBrandCopy()" class="w-full lg:w-auto bg-brand-lavender hover:bg-brand-lavenderDark text-white px-8 lg:px-10 py-3 lg:py-4 rounded-full font-body font-bold text-lg shadow-md transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2">
+                                        <i class="fas fa-magic"></i> Make it Gentle ✨
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Output Side -->
+                        <div class="lg:col-span-7">
+                            <!-- Placeholder / Loading State -->
+                            <div id="ai-loading" class="hidden h-full min-h-[300px] lg:min-h-[400px] flex flex-col items-center justify-center bg-brand-cream border-2 border-dashed border-brand-lavender/30 rounded-[2rem] lg:rounded-[3rem]">
+                                <div class="spinner mb-6"></div>
+                                <p class="font-heading font-bold text-xl lg:text-2xl text-brand-lavender animate-pulse">Consulting the stars...</p>
+                            </div>
+
+                            <!-- Result State -->
+                            <div id="ai-output" class="h-full min-h-[300px] lg:min-h-[400px]">
+                                <div class="bg-white p-8 lg:p-12 rounded-[2rem] lg:rounded-[3rem] shadow-soft border border-brand-sun relative overflow-hidden h-full flex flex-col justify-center">
+                                    <!-- Decor -->
+                                    <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-sky via-brand-lavender to-brand-blush"></div>
+                                    <div class="absolute top-6 right-6 lg:top-10 lg:right-10 text-4xl lg:text-6xl text-brand-sun opacity-50"><i class="fas fa-quote-right"></i></div>
+                                    
+                                    <div class="relative z-10">
+                                        <p class="text-xs lg:text-sm font-bold text-brand-lavender uppercase tracking-widest mb-4 lg:mb-6">Brand Voice Result</p>
+                                        <p id="ai-result-text" class="font-body text-2xl lg:text-3xl text-brand-dark leading-relaxed">
+                                            "Let's blast off on a gentle journey to the stars! 🚀 Join Jade and friends for a calm, educational adventure in space. Perfect for curious little minds."
+                                        </p>
+                                    </div>
+
+                                    <div class="mt-8 lg:mt-12 flex gap-4">
+                                        <button onclick="copyToClipboard()" class="text-brand-text hover:text-brand-lavender font-bold flex items-center gap-2 transition-colors">
+                                            <i class="far fa-copy"></i> Copy Text
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                 </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('menu-overlay');
+            
+            if (menu.classList.contains('menu-closed')) {
+                menu.classList.remove('menu-closed');
+                menu.classList.add('menu-open');
+                overlay.classList.remove('hidden');
+            } else {
+                menu.classList.remove('menu-open');
+                menu.classList.add('menu-closed');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function closeMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('menu-overlay');
+            menu.classList.remove('menu-open');
+            menu.classList.add('menu-closed');
+            overlay.classList.add('hidden');
+        }
+
+        function copyColor(color, msgId) {
+            navigator.clipboard.writeText(color).then(() => {
+                const msg = document.getElementById(msgId);
+                msg.classList.remove('hidden');
+                msg.classList.add('clipboard-msg');
+                setTimeout(() => {
+                    msg.classList.remove('clipboard-msg');
+                    msg.classList.add('hidden');
+                }, 2000);
+            });
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('ai-result-text').innerText;
+            navigator.clipboard.writeText(text);
+            alert('Copied to clipboard!');
+        }
+
+        async function generateBrandCopy() {
+            const apiKey = ""; // API Key injected by environment
+            const userText = document.getElementById('user-input').value;
+            const outputDiv = document.getElementById('ai-output');
+            const loadingDiv = document.getElementById('ai-loading');
+            const resultText = document.getElementById('ai-result-text');
+
+            if (!userText) {
+                alert("Please type something for the magic star to rewrite!");
+                return;
+            }
+
+            // Show loading
+            loadingDiv.classList.remove('hidden');
+            outputDiv.classList.add('hidden');
+
+            const prompt = `You are the brand voice guardian for "Spotlight Kids".
+            Our Brand Philosophy: A safe space for little minds to shine. We are calm, educational, safe, nurturing, and inclusive. We avoid over-stimulation.
+            Task: Rewrite the following text to sound soft, gentle, and nurturing, suitable for a young child or a caring parent. Use our "Varela Round" voice—simple, warm, and inviting. Keep it concise.
+            Text to rewrite: "${userText}"`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                if (!response.ok) throw new Error('API request failed');
+
+                const data = await response.json();
+                const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text || "The stars are a bit cloudy today. Please try again.";
+
+                resultText.innerText = generatedText;
+                outputDiv.classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+                resultText.innerText = "Oops! The magic star is sleeping. Please check your connection and try again.";
+                outputDiv.classList.remove('hidden');
+            } finally {
+                loadingDiv.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
