@@ -1,0 +1,364 @@
+import React, { useState, useEffect } from 'react';
+import { Clapperboard, Star, ArrowRight, Share2, Ticket, Camera, Sparkles, Film, RotateCcw } from 'lucide-react';
+
+// --- STATIC DATA ---
+const questions = [
+  {
+    id: 'scale',
+    text: "Who is your brand's biggest rival in the market?",
+    options: [
+      { label: "The dusty, boring industry giant (we are the rebels).", value: 20, type: "scale" },
+      { label: "A chaotic mess of startups (we are the standard).", value: 80, type: "scale" },
+      { label: "Everyone. We want world domination.", value: 100, type: "scale" }
+    ]
+  },
+  {
+    id: 'reality',
+    text: "If we looked at your brand's Instagram, what's the vibe?",
+    options: [
+      { label: "Raw, unfiltered, behind-the-scenes truth.", value: 10, type: "reality" },
+      { label: "Curated, aesthetic, and aspirational.", value: 60, type: "reality" },
+      { label: "Neon, 3D, surreal, and magical.", value: 90, type: "reality" }
+    ]
+  },
+  {
+    id: 'emotion',
+    text: "When a customer interacts with your brand, how should they feel?",
+    options: [
+      { label: "Relieved. Like they just laughed with a friend.", value: 20, type: "emotion" },
+      { label: "Empowered. Like they can conquer the world.", value: 50, type: "emotion" },
+      { label: "Adrenaline. Urgency. Intensity.", value: 90, type: "emotion" }
+    ]
+  },
+  {
+    id: 'protagonist',
+    text: "What is your brand's role in the customer's life?",
+    options: [
+      { label: "The Sidekick. We help them figure it out together.", value: 80, type: "protagonist" },
+      { label: "The Weapon. They use us to get the job done.", value: 20, type: "protagonist" },
+      { label: "The Guru. We teach them a new way of living.", value: 50, type: "protagonist" }
+    ]
+  },
+  {
+    id: 'pacing',
+    text: "How often do you drop new features, products, or content?",
+    options: [
+      { label: "Constantly. If you blink, you miss it.", value: 90, type: "pacing" },
+      { label: "Seasonally. We like a good rhythm.", value: 50, type: "pacing" },
+      { label: "Rarely. We build things that last forever.", value: 10, type: "pacing" }
+    ]
+  }
+];
+
+// --- HELPER LOGIC ---
+const getResult = (scores, brandName) => {
+  const s = scores;
+  if (s.scale < 40 && s.reality < 40) return {
+    genre: "The Cult Documentary",
+    title: "THE UNVARNISHED TRUTH",
+    logline: `${brandName || 'Your Brand'} doesn't sell dreams. We sell the cold, hard, beautiful facts.`,
+    strategy: "Build Authority. Avoid fluff. Win on radical transparency.",
+    icon: <Camera size={40} />
+  };
+  if (s.emotion > 70 && s.pacing > 70) return {
+    genre: "High-Voltage Thriller",
+    title: "VELOCITY",
+    logline: `In a world that moves too slow, ${brandName || 'Your Brand'} is the accelerator.`,
+    strategy: "Build Hype. Focus on speed, performance, and 'drops'.",
+    icon: <Sparkles size={40} />
+  };
+  if (s.emotion < 40 && s.protagonist > 60) return {
+    genre: "Buddy Comedy",
+    title: "SIDE BY SIDE",
+    logline: `Life is hard. ${brandName || 'Your Brand'} makes it easier (and way more fun).`,
+    strategy: "Build Community. Use humor to lower defenses. Be approachable.",
+    icon: <Film size={40} />
+  };
+  if (s.scale > 70 && s.reality > 70) return {
+    genre: "Sci-Fi Epic",
+    title: "BEYOND TOMORROW",
+    logline: `The future isn't coming. ${brandName || 'Your Brand'} is already building it.`,
+    strategy: "Build Vision. Sell the 'what if'. High production value is mandatory.",
+    icon: <Star size={40} />
+  };
+  return {
+    genre: "The Oscar Drama",
+    title: "THE LEGACY",
+    logline: `Quality is a story that never gets old.`,
+    strategy: "Build Prestige. Focus on craftsmanship, heritage, and trust.",
+    icon: <Ticket size={40} />
+  };
+};
+
+// --- SUB-COMPONENTS (Defined Outside App to Fix Focus Issue) ---
+
+const IntroScreen = ({ brandName, setBrandName, setStep }) => (
+  <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 animate-fade-in px-4">
+    <div className="bg-orange-500 p-4 rounded-full shadow-[0_0_40px_rgba(249,115,22,0.4)] ring-4 ring-orange-500/20">
+      <Clapperboard size={48} className="text-white" />
+    </div>
+    <div className="space-y-6 max-w-2xl">
+      <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-tight">
+        IF YOUR BRAND <br/>WAS A <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">MOVIE</span>...
+      </h1>
+      <p className="text-neutral-400 text-lg md:text-xl font-light">
+        Would it be a summer blockbuster or an indie darling? 
+        Answer 5 questions to generate your <strong className="text-white font-semibold">Strategic Movie Poster</strong>.
+      </p>
+    </div>
+    
+    <div className="w-full max-w-md space-y-4">
+      <div className="relative group">
+          <input 
+          type="text" 
+          placeholder="Enter your Brand Name..." 
+          className="w-full bg-neutral-900 border border-neutral-800 p-5 rounded-xl text-white placeholder-neutral-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 text-center text-xl font-bold transition-all"
+          value={brandName}
+          onChange={(e) => setBrandName(e.target.value)}
+          autoFocus
+          />
+          <div className="absolute inset-0 rounded-xl bg-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+      </div>
+      
+      <button 
+        disabled={!brandName}
+        onClick={() => setStep('quiz')}
+        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-5 rounded-xl text-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg shadow-orange-500/20"
+      >
+        START CASTING <ArrowRight size={24} />
+      </button>
+    </div>
+    <div className="text-xs text-neutral-600 font-mono tracking-widest pt-8">POWERED BY PENNIO</div>
+  </div>
+);
+
+const QuizScreen = ({ brandName, currentQIndex, handleAnswer }) => {
+  const q = questions[currentQIndex];
+  // Replace template string in text dynamically if needed, though most are static
+  const questionText = q.id === 'emotion' 
+    ? `When a customer interacts with ${brandName || 'your brand'}, how should they feel?`
+    : q.text;
+
+  return (
+    <div className="max-w-2xl mx-auto min-h-[60vh] flex flex-col justify-center animate-fade-in px-4">
+      <div className="flex justify-between items-center mb-10 text-xs font-mono text-orange-500 tracking-widest border-b border-neutral-800 pb-4">
+        <span>SCENE {currentQIndex + 1} / {questions.length}</span>
+        <span>{brandName.toUpperCase()} PRODUCTION</span>
+      </div>
+
+      <h2 className="text-3xl md:text-4xl font-bold text-white mb-12 leading-tight">
+        {questionText}
+      </h2>
+
+      <div className="space-y-4">
+        {q.options.map((opt, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleAnswer(opt.value, q.type)}
+            className="w-full text-left p-6 bg-neutral-900 border border-neutral-800 rounded-xl hover:border-orange-500 hover:bg-neutral-800/80 transition-all group flex items-center justify-between"
+          >
+            <span className="text-lg text-neutral-300 group-hover:text-white font-medium">{opt.label}</span>
+            <ArrowRight className="text-neutral-600 group-hover:text-orange-500 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" size={20} />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ResultScreen = ({ scores, brandName, resetQuiz }) => {
+  const res = getResult(scores, brandName);
+  
+  const copyToClipboard = () => {
+    const text = `🎬 My Brand Movie Genre: ${res.genre}\n🍿 Title: ${res.title}\n\nDiscover your brand strategy at pennio.design`;
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    alert("Copied to clipboard! Ready to share.");
+  };
+
+  const handleProduce = () => {
+    const subject = `Production Request: ${res.title}`;
+    const body = `Hey Paul,\n\nI just ran the Brand Cinema Strategy and here is my result:\n\n🎬 Genre: ${res.genre}\n🍿 Title: ${res.title}\n📝 Logline: "${res.logline}"\n✨ Strategy: ${res.strategy}\n\nI'm ready to produce this. Let's talk.`;
+    
+    // Using mailto to "draft" the message with context
+    window.location.href = `mailto:paul@pennio.design?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto animate-fade-in pb-12 px-4">
+      <div className="text-center mb-10">
+        <h3 className="text-orange-500 font-mono text-xs uppercase tracking-[0.2em] mb-3">WORLD PREMIERE</h3>
+        <h2 className="text-3xl md:text-4xl font-bold text-white">Your Brand Strategy</h2>
+      </div>
+
+      {/* THE TICKET / POSTER CARD */}
+      <div className="bg-neutral-900 rounded-3xl overflow-hidden shadow-2xl border border-neutral-800 md:flex relative group">
+        
+        {/* Shine Effect */}
+        <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-orange-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+
+        {/* Left Side: The Visual */}
+        <div className="bg-neutral-950 p-10 md:w-2/5 flex flex-col justify-between items-center text-center border-b md:border-b-0 md:border-r border-neutral-800 border-dashed relative overflow-hidden">
+           {/* Abstract Background Elements */}
+          <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-orange-600 via-transparent to-transparent"></div>
+          
+          <div className="relative z-10 text-orange-500 mb-6 bg-orange-500/10 p-6 rounded-full">
+            {res.icon}
+          </div>
+          <div className="relative z-10 w-full">
+            <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-2">GENRE</div>
+            <div className="text-2xl font-black text-white uppercase tracking-tight">{res.genre}</div>
+            <div className="w-12 h-1 bg-orange-500 mx-auto mt-4 rounded-full"></div>
+          </div>
+          <div className="mt-8 relative z-10 w-full pt-8 border-t border-neutral-800/50">
+            <div className="text-[10px] text-neutral-600 uppercase tracking-widest mb-1">STARRING</div>
+            <div className="font-bold text-white text-lg">{brandName || 'YOUR BRAND'}</div>
+          </div>
+        </div>
+
+        {/* Right Side: The Strategy */}
+        <div className="p-10 md:w-3/5 flex flex-col justify-center bg-neutral-900 relative z-10">
+          <div className="mb-8">
+            <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Now Showing</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black text-white uppercase mb-6 leading-[0.9] tracking-tight">{res.title}</h1>
+          <p className="text-xl text-neutral-400 italic border-l-4 border-orange-500 pl-6 mb-10 font-light">
+            "{res.logline}"
+          </p>
+          
+          <div className="bg-black/30 p-6 rounded-xl border border-neutral-800 mb-10">
+            <div className="text-xs text-orange-500 font-bold uppercase mb-2 tracking-wider flex items-center gap-2">
+              <Sparkles size={12} /> Director's Note
+            </div>
+            <p className="text-base text-neutral-300 font-medium">{res.strategy}</p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <button 
+              onClick={copyToClipboard}
+              className="flex-1 bg-neutral-800 hover:bg-neutral-700 text-white py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors border border-neutral-700 hover:border-neutral-600"
+            >
+              <Share2 size={18} /> SHARE POSTER
+            </button>
+            <button 
+              onClick={handleProduce}
+              className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-lg shadow-orange-500/20"
+            >
+              PRODUCE THIS <ArrowRight size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-16 text-center space-y-4">
+          <p className="text-neutral-500 text-sm">Not happy with the script?</p>
+          <button 
+              onClick={resetQuiz}
+              className="text-orange-500 hover:text-orange-400 text-sm font-bold flex items-center justify-center gap-2 mx-auto transition-colors"
+          >
+              <RotateCcw size={14} /> RECAST THE MOVIE
+          </button>
+      </div>
+
+    </div>
+  );
+};
+
+const LoadingScreen = () => (
+  <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8">
+    <div className="relative">
+      <div className="w-16 h-16 border-4 border-neutral-800 border-t-orange-500 rounded-full animate-spin"></div>
+      <div className="absolute inset-0 flex items-center justify-center text-orange-500">
+          <Film size={24} />
+      </div>
+    </div>
+    <div className="text-center space-y-2">
+      <h2 className="text-2xl font-bold text-white tracking-widest animate-pulse">DEVELOPING FILM...</h2>
+      <p className="text-neutral-500 text-sm font-mono">Analyzing plot points and character arcs</p>
+    </div>
+  </div>
+);
+
+// --- MAIN APP COMPONENT ---
+
+const App = () => {
+  const [step, setStep] = useState('intro'); // intro, quiz, processing, result
+  const [brandName, setBrandName] = useState('');
+  const [currentQIndex, setCurrentQIndex] = useState(0);
+  const [scores, setScores] = useState({
+    scale: 50,      // Indie (0) -> Blockbuster (100)
+    reality: 50,    // Realism (0) -> Fantasy (100)
+    emotion: 50,    // Comedy (0) -> Thriller (100)
+    protagonist: 50,// Hero (0) -> Buddy (100)
+    pacing: 50      // Timeless (0) -> Fast (100)
+  });
+
+  // Load Inter font
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }, []);
+
+  const handleAnswer = (value, type) => {
+    setScores(prev => ({ ...prev, [type]: value }));
+    if (currentQIndex < questions.length - 1) {
+      setCurrentQIndex(currentQIndex + 1);
+    } else {
+      setStep('processing');
+      setTimeout(() => setStep('result'), 1500);
+    }
+  };
+
+  const resetQuiz = () => {
+    setStep('intro');
+    setScores({scale:50, reality:50, emotion:50, protagonist:50, pacing:50});
+    setCurrentQIndex(0);
+  };
+
+  return (
+    <div className="min-h-screen bg-neutral-950 text-white font-sans selection:bg-orange-500 selection:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+      {/* Top Nav (Subtle) */}
+      <nav className="p-6 md:p-8 flex justify-between items-center border-b border-white/5">
+        <div className="text-xl font-bold tracking-tight text-white flex items-center gap-1">
+          PENNIO<span className="text-orange-500">.</span>
+        </div>
+        <div className="text-xs font-mono text-neutral-500 hidden md:block tracking-widest">
+          BRAND STRATEGY WORKSHOP v1.0
+        </div>
+      </nav>
+
+      <main className="container mx-auto py-12 md:py-20">
+        {step === 'intro' && (
+          <IntroScreen 
+            brandName={brandName} 
+            setBrandName={setBrandName} 
+            setStep={setStep} 
+          />
+        )}
+        {step === 'quiz' && (
+          <QuizScreen 
+            brandName={brandName} 
+            currentQIndex={currentQIndex} 
+            handleAnswer={handleAnswer} 
+          />
+        )}
+        {step === 'processing' && <LoadingScreen />}
+        {step === 'result' && (
+          <ResultScreen 
+            scores={scores} 
+            brandName={brandName} 
+            resetQuiz={resetQuiz} 
+          />
+        )}
+      </main>
+    </div>
+  );
+};
+
+export default App;
