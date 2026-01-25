@@ -1,509 +1,730 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PENNIO.DESIGN – The System</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- Google Fonts: Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          colors: {
-            brand: {
-              orange: '#FF6A00',
-              dark: '#0a0a0a',
-              gray: '#f5f5f5',
-              border: '#e5e5e5'
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PENNIO — Your Service Is Excellent. Your Website Makes It Look Mediocre.</title>
+    <meta name="description" content="Most service businesses lose qualified prospects because their website fails to prove their value. We fix that.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 900: '#1a1a1a',
+                        },
+                        neutral: {
+                            50: '#fafafa', 100: '#f5f5f5', 200: '#e5e5e5', 300: '#d4d4d4', 400: '#a3a3a3', 500: '#737373', 600: '#525252', 700: '#404040', 800: '#262626', 900: '#171717', 950: '#0a0a0a',
+                        }
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
             }
-          },
-          boxShadow: {
-            'card': '0 2px 8px rgba(0,0,0,0.04)',
-            'card-hover': '0 12px 24px rgba(0,0,0,0.06)'
-          }
         }
-      }
-    }
-  </script>
+    </script>
 
-  <style>
-    /* ----------------------------------
-       TREE ANIMATION 
-       ---------------------------------- */
-    .tree-path {
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      transition: stroke-dashoffset 1.2s ease-out;
-    }
-    .group:hover .tree-path { stroke-dashoffset: 0; }
-    
-    .tree-leaf {
-      transform: scale(0);
-      transform-origin: center;
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .group:hover .tree-leaf { transform: scale(1); }
-    .leaf-1 { transition-delay: 0.8s; }
-    .leaf-2 { transition-delay: 0.9s; }
-    .leaf-3 { transition-delay: 1.0s; }
-
-    /* ----------------------------------
-       BENTO GRID LOGIC
-       ---------------------------------- */
-    .bento-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-    
-    /* Desktop: 3 Columns */
-    @media (min-width: 768px) {
-      .bento-grid {
-        grid-template-columns: repeat(3, 1fr);
-        grid-auto-rows: 280px;
-      }
-      .md\:col-span-2 { grid-column: span 2; }
-      .md\:col-span-3 { grid-column: span 3; }
-    }
-  </style>
+    <!-- React Runtime -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
+<body class="bg-white text-neutral-900 antialiased selection:bg-brand-500 selection:text-white font-sans">
+    <div id="root"></div>
 
-<body class="bg-[#FAFAFA] text-neutral-900 font-sans antialiased">
-
-  <!-- NAVIGATION -->
-  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-brand-border z-50">
-    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="#" class="font-bold text-lg tracking-tight">PENNIO<span class="text-brand-orange">.DESIGN</span></a>
-      <div class="hidden md:flex gap-8 text-sm font-medium text-neutral-600">
-        <a href="#process" class="hover:text-brand-orange transition-colors">The System</a>
-        <a href="#pricing" class="hover:text-brand-orange transition-colors">Pricing</a>
-      </div>
-      <a href="#contact" class="px-4 py-2 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-brand-orange transition-colors">Book a Call</a>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <section class="pt-32 pb-16 px-6 text-center max-w-4xl mx-auto">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-100 text-orange-700 text-xs font-semibold mb-6 uppercase tracking-wider">
-      <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
-      Accepting Q1 Projects
-    </div>
-    <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-neutral-900">
-      Building Brands that <br class="hidden md:block" />
-      <span class="text-brand-orange">Speak, Sell & Stay.</span>
-    </h1>
-    <p class="text-lg text-neutral-500 max-w-2xl mx-auto leading-relaxed">
-      A linear system to clarify your message, design your identity, and grow your business without the stress.
-    </p>
-  </section>
-
-  <!-- ==============================================
-       1. THE PROCESS (Bento Grid)
-       ============================================== -->
-  <section id="process" class="py-10 px-4 md:px-6 max-w-6xl mx-auto">
-    <div class="mb-8 flex items-end justify-between">
-      <div>
-        <h2 class="text-2xl font-bold">What We're BYLDing</h2>
-        <p class="text-neutral-500 mt-1">Six pillars. One cohesive system.</p>
-      </div>
-    </div>
-
-    <div class="bento-grid">
-      <!-- 01. ROOT -->
-      <div onclick="prefillService('BYLT.Root')" class="md:col-span-2 group relative bg-white border border-brand-border rounded-2xl p-8 flex flex-col md:flex-row justify-between overflow-hidden cursor-pointer hover:border-brand-orange hover:shadow-card-hover transition-all duration-300">
-        <div class="relative z-10 flex flex-col justify-between h-full">
-          <div>
-            <span class="text-brand-orange font-mono text-xs font-bold mb-2 block">01. FOUNDATION</span>
-            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 border border-orange-100 group-hover:scale-105 transition-transform">
-              <i data-lucide="sprout" class="text-brand-orange"></i>
-            </div>
-            <h3 class="text-2xl font-bold mb-2">BYLT.Root</h3>
-            <p class="text-neutral-500 max-w-sm text-sm leading-relaxed">
-              We define your "Why." Core values, purpose, and clarity before we design a single pixel.
-            </p>
-          </div>
-          <div class="mt-6 flex items-center text-sm font-semibold text-brand-orange opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all">
-            Start Phase One <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
-          </div>
-        </div>
-        <!-- Tree Animation -->
-        <div class="absolute right-[-20px] bottom-[-20px] md:right-0 md:bottom-0 w-[220px] h-[220px] opacity-20 md:opacity-100 pointer-events-none mix-blend-multiply">
-           <svg width="100%" height="100%" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M100 220 L100 130" class="text-brand-orange tree-path" />
-            <path d="M100 170 Q70 150 60 110" class="text-brand-orange tree-path" style="transition-delay: 0.2s" />
-            <circle cx="60" cy="110" r="6" fill="#FFD600" stroke="none" class="tree-leaf leaf-1" />
-            <path d="M100 150 Q130 130 140 100" class="text-brand-orange tree-path" style="transition-delay: 0.3s" />
-            <circle cx="140" cy="100" r="8" fill="#FF6A00" stroke="none" class="tree-leaf leaf-2" />
-            <path d="M100 130 L100 70" class="text-brand-orange tree-path" style="transition-delay: 0.4s" />
-            <circle cx="100" cy="70" r="10" fill="#FF6A00" stroke="none" class="tree-leaf leaf-3" />
-          </svg>
-        </div>
-      </div>
-
-      <!-- 02. MAP -->
-      <div onclick="prefillService('BYLT.Map')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">02. STRATEGY</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="map" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">BYLT.Map</h4>
-          <p class="text-sm text-neutral-500">Your roadmap to market dominance.</p>
-        </div>
-      </div>
-
-      <!-- 03. VOICE -->
-      <div onclick="prefillService('BYLT.Voice')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">03. MESSAGING</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="megaphone" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">BYLT.Voice</h4>
-          <p class="text-sm text-neutral-500">Words that convert strangers.</p>
-        </div>
-      </div>
-
-      <!-- 04. FRAME -->
-      <div onclick="prefillService('BYLT.Frame')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">04. VISUALS</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="palette" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">BYLT.Frame</h4>
-          <p class="text-sm text-neutral-500">Logos and colors that stick.</p>
-        </div>
-      </div>
-
-      <!-- 05. ECHO -->
-      <div onclick="prefillService('BYLT.Echo')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">05. MARKETING</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="radio" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">BYLT.Echo</h4>
-          <p class="text-sm text-neutral-500">Campaigns to launch loud.</p>
-        </div>
-      </div>
-
-      <!-- 06. FOCUS -->
-      <div onclick="prefillService('BYLT.Focus')" class="group bg-white border border-brand-border rounded-2xl p-6 flex flex-col justify-between hover:border-brand-orange/40 hover:shadow-card-hover transition-all cursor-pointer">
-        <div>
-          <span class="text-neutral-400 font-mono text-xs font-bold mb-3 block group-hover:text-brand-orange">06. OPERATIONS</span>
-          <div class="flex items-start justify-between mb-4">
-            <i data-lucide="settings-2" class="w-8 h-8 text-neutral-400 group-hover:text-brand-orange transition-colors"></i>
-          </div>
-          <h4 class="text-lg font-bold mb-1">BYLT.Focus</h4>
-          <p class="text-sm text-neutral-500">Systems to run effortlessly.</p>
-        </div>
-      </div>
-
-      <!-- 07. BYLT4U (Full Width) -->
-      <div onclick="prefillService('BYLT4U Package')" class="md:col-span-3 group relative bg-[#0a0a0a] rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between overflow-hidden shadow-2xl cursor-pointer hover:scale-[1.01] transition-transform duration-300">
-        <!-- Glow Effect -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-orange-500/20 blur-[80px] rounded-full pointer-events-none"></div>
-
-        <div class="relative z-10 md:w-1/2">
-           <div class="inline-flex items-center gap-2 bg-[#FFD600] text-black px-3 py-1 rounded-md text-xs font-bold mb-3 uppercase tracking-wide">
-             <i data-lucide="zap" class="w-3 h-3 fill-black"></i> Most Popular
-           </div>
-           <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">BYLT4U System</h3>
-           <p class="text-neutral-400">The "Done-For-You" Package. All six pillars, one seamless project. From strategy to website launch in 4-6 weeks.</p>
-        </div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
         
-        <!-- Animated Visual -->
-        <div class="mt-8 md:mt-0 flex gap-3 relative z-10">
-           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300">B</div>
-           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300 delay-75">Y</div>
-           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300 delay-100">L</div>
-           <div class="w-12 h-12 rounded-lg bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-bold text-lg group-hover:text-brand-orange group-hover:border-brand-orange transition-all duration-300 delay-150">T</div>
-        </div>
-     </div>
+        // --- CONFIGURATION ---
+        const FORMSUBMIT_KEY = "ea0da421e8e6e82457be40792262eeed";
 
-    </div>
-  </section>
-
-  <!-- ==============================================
-       2. TRANSPARENT PRICING
-       ============================================== -->
-  <section id="pricing" class="py-20 px-4 md:px-6 bg-white border-t border-brand-border mt-12">
-    <div class="max-w-6xl mx-auto">
-      
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-bold mb-4">Transparent Investment</h2>
-        <p class="text-neutral-500">Choose a complete package or pick individual pillars.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start mb-20">
-        
-        <!-- PLAN 1: STRATEGY TRIO -->
-        <div class="border border-brand-border rounded-2xl p-8 flex flex-col hover:border-brand-orange/50 transition-colors bg-neutral-50/50">
-          <div class="mb-4">
-            <span class="bg-white border border-brand-border text-neutral-600 px-3 py-1 rounded-full text-xs font-bold uppercase">Strategy Core</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2">BYLT.Strategy</h3>
-          <p class="text-neutral-500 text-sm mb-6 h-10">For brands that need clarity & messaging.</p>
-          <div class="text-3xl font-bold mb-6">&#8358;300,000</div>
-          
-          <ul class="space-y-3 mb-8 flex-1">
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>01. Root:</b> Values & Purpose</li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>02. Map:</b> Positioning</li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>03. Voice:</b> Messaging Guide</li>
-          </ul>
-          <button onclick="prefillService('BYLT.Strategy Package')" class="w-full py-3 border border-neutral-300 bg-white rounded-lg font-semibold hover:border-neutral-900 hover:bg-neutral-50 transition-colors">Book Strategy</button>
-        </div>
-
-        <!-- PLAN 2: IDENTITY (Popular) -->
-        <div class="relative bg-neutral-900 text-white rounded-2xl p-8 flex flex-col shadow-2xl transform md:-translate-y-4 z-10">
-          <div class="absolute top-0 right-0 bg-brand-orange text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">POPULAR</div>
-          <div class="mb-4">
-            <span class="bg-neutral-800 text-brand-orange px-3 py-1 rounded-full text-xs font-bold uppercase">Visual Identity</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2">BYLT.Frame</h3>
-          <p class="text-neutral-400 text-sm mb-6 h-10">A complete visual overhaul. Logo, colors, and type.</p>
-          <div class="text-4xl font-bold mb-6">&#8358;450,000</div>
-          
-          <ul class="space-y-3 mb-8 flex-1">
-            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>04. Frame:</b> Full Logo Suite</li>
-            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>04. Frame:</b> Pattern & Assets</li>
-            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Bonus:</b> Social Avatars</li>
-            <li class="flex gap-3 text-sm text-neutral-300"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Output:</b> Brand Guidelines PDF</li>
-          </ul>
-          <button onclick="prefillService('BYLT.Frame')" class="w-full py-3 bg-brand-orange rounded-lg font-semibold hover:bg-orange-600 transition-colors text-white">Get Started</button>
-        </div>
-
-        <!-- PLAN 3: FULL SYSTEM -->
-        <div class="border border-brand-border rounded-2xl p-8 flex flex-col hover:border-brand-orange/50 transition-colors bg-neutral-50/50">
-          <div class="mb-4">
-            <span class="bg-white border border-brand-border text-neutral-600 px-3 py-1 rounded-full text-xs font-bold uppercase">The Full Stack</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2">BYLT4U System</h3>
-          <p class="text-neutral-500 text-sm mb-6 h-10">Strategy, Design, Website, and Launch. Done for you.</p>
-          <div class="text-3xl font-bold mb-6">&#8358;1.5M <span class="text-sm font-normal text-neutral-400">+</span></div>
-          
-          <ul class="space-y-3 mb-8 flex-1">
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Includes Steps 01 - 04</b></li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>05. Echo:</b> Launch Kit</li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>06. Focus:</b> Website (5 Pages)</li>
-            <li class="flex gap-3 text-sm text-neutral-700"><i data-lucide="check" class="w-5 h-5 text-brand-orange"></i> <b>Bonus:</b> 1 Month Support</li>
-          </ul>
-          <button onclick="prefillService('BYLT4U Package')" class="w-full py-3 border border-neutral-300 bg-white rounded-lg font-semibold hover:border-neutral-900 hover:bg-neutral-50 transition-colors">Request Quote</button>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ==============================================
-       3. CONTACT SECTION (Updated ID + Iframe Fix)
-       ============================================== -->
-  <section id="contact" class="py-24 px-4 md:px-6 bg-[#FAFAFA]">
-    <div class="max-w-xl mx-auto">
-      
-      <div class="text-center mb-10">
-        <h2 class="text-3xl font-bold mb-3">Let's Build Together</h2>
-        <p class="text-neutral-500">Select a package below to start your project.</p>
-      </div>
-
-      <!-- SUCCESS MESSAGE (Hidden by default) -->
-      <div id="successMessage" class="hidden bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
-        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <i data-lucide="check-circle" class="w-8 h-8 text-green-600"></i>
-        </div>
-        <h3 class="text-2xl font-bold text-green-800 mb-2">Message Sent!</h3>
-        <p class="text-green-700 mb-6">Thanks for reaching out. I'll get back to you within 24 hours.</p>
-        <button id="refreshForm" class="text-sm font-semibold text-green-800 underline">Send another message</button>
-      </div>
-
-      <!-- FORM -->
-      <div id="formContainer" class="bg-white border border-brand-border rounded-2xl p-8 shadow-card">
-        
-        <!-- HIDDEN IFRAME to catch submission (Prevents mobile freezing) -->
-        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-
-        <!-- FORM TARGETS THE IFRAME -->
-        <form id="contactForm" 
-              action="https://formsubmit.co/91dd305c9a1f9afd33dc0ca5b60f1311" 
-              method="POST" 
-              target="hidden_iframe"
-              class="flex flex-col gap-5">
-            
-            <!-- Honeypot & Config -->
-            <input type="hidden" name="_subject" value="New Project Request from PENNIO.DESIGN" />
-            <input type="hidden" name="_captcha" value="false" />
-
-            <!-- Name -->
-            <div>
-                <label for="name" class="block text-sm font-semibold text-neutral-700 mb-2">Name</label>
-                <input type="text" id="name" name="name" placeholder="Paul Oyatowo" required 
-                       class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all">
-            </div>
-
-            <!-- Email -->
-            <div>
-                <label for="email" class="block text-sm font-semibold text-neutral-700 mb-2">Email</label>
-                <input type="email" id="email" name="email" placeholder="paul@pennio.design" required 
-                       class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all">
-            </div>
-
-            <!-- SMART PRICING SELECTOR -->
-            <div>
-                <label for="service" class="block text-sm font-semibold text-neutral-700 mb-2">Choose your Investment</label>
-                <div class="relative">
-                    <select name="service" id="service" required class="w-full px-4 py-3 rounded-lg border border-neutral-200 bg-white appearance-none focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all">
-                        <option value="" disabled selected>Select an option...</option>
-                        
-                        <optgroup label="Popular Packages">
-                            <option value="Clarity Session">Clarity Session (&#8358;75,000)</option>
-                            <option value="BYLT.Frame">BYLT.Frame Identity (&#8358;450,000)</option>
-                            <option value="BYLT4U Package">BYLT4U Full System (&#8358;1.5M+)</option>
-                        </optgroup>
-
-                        <optgroup label="Single Pillars">
-                            <option value="BYLT.Root">01. Root (Foundation) — &#8358;100,000</option>
-                            <option value="BYLT.Map">02. Map (Strategy) — &#8358;100,000</option>
-                            <option value="BYLT.Voice">03. Voice (Messaging) — &#8358;100,000</option>
-                            <option value="BYLT.Echo">05. Echo (Marketing Kit) — &#8358;150,000</option>
-                            <option value="BYLT.Focus">06. Focus (Ops Setup) — &#8358;100,000</option>
-                        </optgroup>
-
-                        <optgroup label="Custom">
-                            <option value="Other">Other Inquiry</option>
-                        </optgroup>
-                    </select>
-                    <!-- Chevron -->
-                    <i data-lucide="chevron-down" class="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"></i>
-                </div>
-            </div>
-
-            <!-- Message -->
-            <div>
-                <label for="message" class="block text-sm font-semibold text-neutral-700 mb-2">Project Details</label>
-                <textarea name="message" id="message" rows="4" placeholder="Tell me about your business and goals..." required 
-                          class="w-full px-4 py-3 rounded-lg border border-neutral-200 focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none transition-all resize-none"></textarea>
-            </div>
-
-            <!-- Submit -->
-            <button type="submit" id="submitBtn" class="w-full py-4 bg-brand-orange text-white font-bold rounded-lg hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                Send Request
-            </button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sticky FAB -->
-  <a href="#contact" class="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-neutral-900 text-white px-5 py-4 rounded-full shadow-2xl hover:bg-brand-orange transition-all hover:scale-105 group">
-    <i data-lucide="message-square" class="w-5 h-5"></i>
-    <span class="font-medium pr-1">Let's Talk</span>
-  </a>
-
-  <!-- FOOTER -->
-  <footer class="bg-white border-t border-brand-border py-12 text-center">
-    <div class="max-w-6xl mx-auto px-6">
-        <p class="font-bold text-lg mb-2 tracking-tight">PENNIO<span class="text-brand-orange">.DESIGN</span></p>
-        <p class="text-sm text-neutral-500">&copy; 2025 PENNIO.DESIGN. Lagos, Nigeria.</p>
-        
-        <!-- Social Links (Fixed) -->
-        <div class="flex justify-center gap-6 mt-6">
-            <a href="https://instagram.com/pennio.design" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
-                <i data-lucide="instagram" class="w-5 h-5"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/pauloyatowo" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
-                <i data-lucide="linkedin" class="w-5 h-5"></i>
-            </a>
-            <a href="https://twitter.com/penniodesign" target="_blank" rel="noopener noreferrer" class="text-neutral-400 hover:text-brand-orange transition-colors">
-                <i data-lucide="twitter" class="w-5 h-5"></i>
-            </a>
-        </div>
-    </div>
-  </footer>
-
-  <script>
-    // Initialize Icons
-    lucide.createIcons();
-
-    // Interaction Logic
-    function prefillService(serviceName) {
-        const select = document.getElementById('service');
-        const contactSection = document.getElementById('contact');
-
-        if(select && contactSection) {
-            select.value = serviceName;
-            
-            // Fuzzy search if exact value not found
-            if (select.value === "") {
-                const options = Array.from(select.querySelectorAll('option'));
-                const match = options.find(opt => opt.value.includes(serviceName));
-                if (match) select.value = match.value;
-            }
-            contactSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
-
-    // IFRAME SUBMISSION LOGIC (The Fix)
-    const form = document.getElementById('contactForm');
-    const iframe = document.getElementById('hidden_iframe');
-    const formContainer = document.getElementById('formContainer');
-    const successMessage = document.getElementById('successMessage');
-    const submitBtn = document.getElementById('submitBtn');
-    const refreshBtn = document.getElementById('refreshForm');
-    let isSubmitting = false;
-
-    if (form) {
-        // When form is submitted...
-        form.addEventListener('submit', function() {
-            isSubmitting = true;
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = 'Sending...';
-            submitBtn.disabled = true;
-            // The form submits naturally to the hidden iframe
-        });
-    }
-
-    if (iframe) {
-        // Listen for the iframe to finish loading (which happens after FormSubmit replies)
-        iframe.onload = function() {
-            if (isSubmitting) {
-                // Show Success
-                formContainer.style.display = 'none';
-                successMessage.classList.remove('hidden');
-                successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                form.reset();
-                
-                // Reset State
-                isSubmitting = false;
-                submitBtn.innerHTML = 'Send Request';
-                submitBtn.disabled = false;
-            }
+        // --- ICONS (Embedded for Stability) ---
+        const icons = {
+            clapperboard: <path d="M20.2 6 3 11l-.9-2.4c-.5-1.1-.2-2.4 1-3.2.3-.2.7-.3 1.1-.3l9.6-3.2c1.2-.4 2.5.2 3.2 1.3l3.2 2.8z M1.6 12.4l1.2 4.2c.3 1 1.4 1.5 2.3 1.1l15.3-5.2c1-.3 1.5-1.4 1.1-2.3l-1.2-4.2-18.7 6.4z" />,
+            "arrow-right": <path d="M5 12h14M12 5l7 7-7 7" />,
+            "share-2": <><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></>,
+            ticket: <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />,
+            camera: <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3" />,
+            sparkles: <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />,
+            film: <rect width="18" height="18" x="3" y="3" rx="2" /><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4" />,
+            "rotate-ccw": <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5" />,
+            "message-square": <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
+            "layout-template": <rect width="18" height="18" x="3" y="3" rx="2" /><path d="M3 9h18M9 21V9" />,
+            "shield-check": <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4" />,
+            "check-circle": <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01" />,
+            "x-circle": <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6" />,
+            "alert-triangle": <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/>,
+            "shield-alert": <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>,
+            "chevron-down": <path d="m6 9 6 6 6-6"/>,
+            quote: <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/>,
+            "arrow-up-right": <path d="M7 7h10v10"/><path d="M7 17 17 7"/>,
+            check: <path d="M20 6 9 17l-5-5"/>,
+            zap: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>,
+            "loader-2": <path d="M21 12a9 9 0 1 1-6.219-8.56" />,
+            star: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
         };
-    }
 
-    // Refresh Form Logic
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            successMessage.classList.add('hidden');
-            formContainer.style.display = 'block';
-        });
-    }
+        const Icon = ({ name, size = 24, className }) => {
+            const content = icons[name];
+            if (!content) return null;
+            return (
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width={size} 
+                    height={size} 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    className={className}
+                >
+                    {content}
+                </svg>
+            );
+        };
 
-    // IMPORTANT: Check for first-time activation
-    // If you have NEVER used this email with FormSubmit, the very first email will
-    // trigger an "Activate" email. If you don't click that link in your inbox,
-    // future submissions won't work.
-  </script>
+        // --- SHARED COMPONENTS ---
+
+        const Nav = ({ setView, currentView, scrollToApply }) => (
+            <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-xl border-b border-neutral-200 z-50 transition-all duration-300">
+                <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+                    <div 
+                        className="font-semibold tracking-tight text-xl flex items-center gap-2 cursor-pointer"
+                        onClick={() => setView('landing')}
+                    >
+                        <span className="flex items-center gap-1 text-neutral-900 tracking-tight">
+                            PENNIO<span className="text-brand-600">.</span>
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-8">
+                        <div className="hidden md:flex gap-8 text-sm font-medium text-neutral-500">
+                            <button onClick={() => setView('landing')} className="hover:text-neutral-900 transition-colors">The Problem</button>
+                            <button onClick={() => setView('landing')} className="hover:text-neutral-900 transition-colors">Services</button>
+                            <button onClick={() => setView('landing')} className="hover:text-neutral-900 transition-colors">Outcomes</button>
+                        </div>
+                        <button 
+                            onClick={() => {
+                                if(currentView === 'landing') {
+                                    scrollToApply();
+                                } else {
+                                    setView('cinema');
+                                }
+                            }}
+                            className={`text-xs font-medium px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-neutral-200 hover:-translate-y-0.5 ${
+                                currentView === 'cinema' 
+                                ? 'bg-neutral-100 text-neutral-900 border border-neutral-200' 
+                                : 'bg-neutral-900 text-white hover:bg-brand-600'
+                            }`}
+                        >
+                            Free Diagnosis
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        );
+
+        // --- CINEMA TOOL ---
+        const CinemaTool = ({ setView, setPreFillData }) => {
+            const [step, setStep] = useState('intro');
+            const [brandName, setBrandName] = useState('');
+            const [currentQIndex, setCurrentQIndex] = useState(0);
+            const [scores, setScores] = useState({ scale: 50, reality: 50, emotion: 50, protagonist: 50, pacing: 50 });
+
+            const questions = [
+                {
+                    id: 'scale',
+                    text: "Who is your brand's biggest rival in the market?",
+                    options: [
+                        { label: "The dusty, boring industry giant (we are the rebels).", value: 20, type: "scale" },
+                        { label: "A chaotic mess of startups (we are the standard).", value: 80, type: "scale" },
+                        { label: "Everyone. We want world domination.", value: 100, type: "scale" }
+                    ]
+                },
+                {
+                    id: 'reality',
+                    text: "If we looked at your brand's Instagram, what's the vibe?",
+                    options: [
+                        { label: "Raw, unfiltered, behind-the-scenes truth.", value: 10, type: "reality" },
+                        { label: "Curated, aesthetic, and aspirational.", value: 60, type: "reality" },
+                        { label: "Neon, 3D, surreal, and magical.", value: 90, type: "reality" }
+                    ]
+                },
+                {
+                    id: 'emotion',
+                    text: "When a customer interacts with your brand, how should they feel?",
+                    options: [
+                        { label: "Relieved. Like they just laughed with a friend.", value: 20, type: "emotion" },
+                        { label: "Empowered. Like they can conquer the world.", value: 50, type: "emotion" },
+                        { label: "Adrenaline. Urgency. Intensity.", value: 90, type: "emotion" }
+                    ]
+                },
+                {
+                    id: 'protagonist',
+                    text: "What is your brand's role in the customer's life?",
+                    options: [
+                        { label: "The Sidekick. We help them figure it out together.", value: 80, type: "protagonist" },
+                        { label: "The Weapon. They use us to get the job done.", value: 20, type: "protagonist" },
+                        { label: "The Guru. We teach them a new way of living.", value: 50, type: "protagonist" }
+                    ]
+                },
+                {
+                    id: 'pacing',
+                    text: "How often do you drop new features, products, or content?",
+                    options: [
+                        { label: "Constantly. If you blink, you miss it.", value: 90, type: "pacing" },
+                        { label: "Seasonally. We like a good rhythm.", value: 50, type: "pacing" },
+                        { label: "Rarely. We build things that last forever.", value: 10, type: "pacing" }
+                    ]
+                }
+            ];
+
+            const getResult = () => {
+                const s = scores;
+                if (s.scale < 40 && s.reality < 40) return {
+                    genre: "The Cult Documentary",
+                    title: "THE UNVARNISHED TRUTH",
+                    logline: `${brandName || 'Your Brand'} doesn't sell dreams. We sell the cold, hard, beautiful facts.`,
+                    strategy: "Build Authority. Avoid fluff. Win on radical transparency.",
+                    icon: 'camera'
+                };
+                if (s.emotion > 70 && s.pacing > 70) return {
+                    genre: "High-Voltage Thriller",
+                    title: "VELOCITY",
+                    logline: `In a world that moves too slow, ${brandName || 'Your Brand'} is the accelerator.`,
+                    strategy: "Build Hype. Focus on speed, performance, and 'drops'.",
+                    icon: 'sparkles'
+                };
+                if (s.emotion < 40 && s.protagonist > 60) return {
+                    genre: "Buddy Comedy",
+                    title: "SIDE BY SIDE",
+                    logline: `Life is hard. ${brandName || 'Your Brand'} makes it easier (and way more fun).`,
+                    strategy: "Build Community. Use humor to lower defenses. Be approachable.",
+                    icon: 'film'
+                };
+                if (s.scale > 70 && s.reality > 70) return {
+                    genre: "Sci-Fi Epic",
+                    title: "BEYOND TOMORROW",
+                    logline: `The future isn't coming. ${brandName || 'Your Brand'} is already building it.`,
+                    strategy: "Build Vision. Sell the 'what if'. High production value is mandatory.",
+                    icon: 'star'
+                };
+                return {
+                    genre: "The Oscar Drama",
+                    title: "THE LEGACY",
+                    logline: `Quality is a story that never gets old.`,
+                    strategy: "Build Prestige. Focus on craftsmanship, heritage, and trust.",
+                    icon: 'ticket'
+                };
+            };
+
+            const handleAnswer = (value, type) => {
+                setScores(prev => ({ ...prev, [type]: value }));
+                if (currentQIndex < questions.length - 1) {
+                    setCurrentQIndex(currentQIndex + 1);
+                } else {
+                    setStep('processing');
+                    setTimeout(() => setStep('result'), 1500);
+                }
+            };
+
+            const copyToClipboard = () => {
+                const res = getResult();
+                const text = `🎬 My Brand Movie Genre: ${res.genre}\n🍿 Title: ${res.title}\n\nDiscover your brand strategy at pennio.design`;
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert("Copied to clipboard!");
+            };
+
+            const handleProduce = () => {
+                const res = getResult();
+                setPreFillData({
+                    message: `I just ran the Brand Cinema Strategy. I want to build this:\n\n🎬 Genre: ${res.genre}\n🍿 Title: ${res.title}\n📝 Logline: "${res.logline}"\n✨ Strategy: ${res.strategy}`
+                });
+                setView('landing');
+            };
+
+            if (step === 'intro') return (
+                <div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-8 animate-fade-in-up px-4 pt-20">
+                    <div className="bg-brand-500 p-4 rounded-full shadow-[0_0_40px_rgba(249,115,22,0.4)] ring-4 ring-brand-500/20">
+                        <Icon name="clapperboard" size={48} className="text-white" />
+                    </div>
+                    <div className="space-y-6 max-w-2xl">
+                        <h1 className="text-4xl md:text-6xl font-black text-neutral-900 tracking-tighter leading-tight">
+                            IF YOUR BRAND <br/>WAS A <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-500 to-brand-600">MOVIE</span>...
+                        </h1>
+                        <p className="text-neutral-500 text-lg md:text-xl font-normal">
+                            Would it be a summer blockbuster or an indie darling? 
+                            Answer 5 questions to generate your <strong className="text-neutral-900 font-semibold">Strategic Movie Poster</strong>.
+                        </p>
+                    </div>
+                    <div className="w-full max-w-md space-y-4">
+                        <div className="relative group">
+                            <input 
+                                type="text" 
+                                placeholder="Enter your Brand Name..." 
+                                className="w-full bg-white border border-neutral-200 p-5 rounded-xl text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 text-center text-xl font-bold transition-all shadow-sm"
+                                value={brandName}
+                                onChange={(e) => setBrandName(e.target.value)}
+                                autoFocus
+                            />
+                        </div>
+                        <button 
+                            disabled={!brandName}
+                            onClick={() => setStep('quiz')}
+                            className="w-full bg-neutral-900 hover:bg-brand-600 text-white font-bold py-5 rounded-xl text-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-lg"
+                        >
+                            START CASTING <Icon name="arrow-right" size={24} />
+                        </button>
+                    </div>
+                    <div className="text-xs text-neutral-500 font-mono tracking-widest pt-8">POWERED BY PENNIO.DESIGN</div>
+                </div>
+            );
+
+            if (step === 'quiz') {
+                const q = questions[currentQIndex];
+                return (
+                    <div className="max-w-2xl mx-auto min-h-[80vh] flex flex-col justify-center animate-fade-in-up px-4 pt-20">
+                        <div className="flex justify-between items-center mb-10 text-xs font-mono text-brand-600 tracking-widest border-b border-neutral-200 pb-4">
+                            <span>SCENE {currentQIndex + 1} / {questions.length}</span>
+                            <span>{brandName.toUpperCase()} PRODUCTION</span>
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-12 leading-tight">{q.text}</h2>
+                        <div className="space-y-4">
+                            {q.options.map((opt, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => handleAnswer(opt.value, q.type)}
+                                    className="w-full text-left p-6 bg-white border border-neutral-200 rounded-xl hover:border-brand-500 hover:shadow-lg transition-all group flex items-center justify-between"
+                                >
+                                    <span className="text-lg text-neutral-600 group-hover:text-neutral-900 font-medium">{opt.label}</span>
+                                    <Icon name="arrow-right" size={20} className="text-neutral-300 group-hover:text-brand-500 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-x-1" />
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            if (step === 'processing') return (
+                <div className="flex flex-col items-center justify-center min-h-[80vh] space-y-8 pt-20">
+                    <div className="relative">
+                        <div className="w-16 h-16 border-4 border-neutral-200 border-t-brand-500 rounded-full animate-spin"></div>
+                        <div className="absolute inset-0 flex items-center justify-center text-brand-500"><Icon name="film" size={24} /></div>
+                    </div>
+                    <div className="text-center space-y-2">
+                        <h2 className="text-2xl font-bold text-neutral-900 tracking-widest animate-pulse">DEVELOPING FILM...</h2>
+                    </div>
+                </div>
+            );
+
+            const res = getResult();
+            return (
+                <div className="max-w-5xl mx-auto animate-fade-in-up pb-12 px-4 pt-24">
+                    <div className="text-center mb-10">
+                        <h3 className="text-brand-600 font-mono text-xs uppercase tracking-[0.2em] mb-3">WORLD PREMIERE</h3>
+                        <h2 className="text-3xl md:text-4xl font-bold text-neutral-900">Your Brand Strategy</h2>
+                    </div>
+                    <div className="bg-neutral-900 rounded-3xl overflow-hidden shadow-2xl border border-neutral-800 md:flex relative group text-white">
+                        <div className="bg-neutral-950 p-10 md:w-2/5 flex flex-col justify-between items-center text-center border-b md:border-b-0 md:border-r border-neutral-800 border-dashed relative overflow-hidden">
+                            <div className="relative z-10 text-brand-500 mb-6 bg-brand-500/10 p-6 rounded-full"><Icon name={res.icon} size={40} /></div>
+                            <div className="relative z-10 w-full">
+                                <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-2">GENRE</div>
+                                <div className="text-2xl font-black text-white uppercase tracking-tight">{res.genre}</div>
+                                <div className="w-12 h-1 bg-brand-500 mx-auto mt-4 rounded-full"></div>
+                            </div>
+                            <div className="mt-8 relative z-10 w-full pt-8 border-t border-neutral-800/50">
+                                <div className="text-[10px] text-neutral-600 uppercase tracking-widest mb-1">STARRING</div>
+                                <div className="font-bold text-white text-lg">{brandName || 'YOUR BRAND'}</div>
+                            </div>
+                        </div>
+                        <div className="p-10 md:w-3/5 flex flex-col justify-center bg-neutral-900 relative z-10">
+                            <div className="mb-8"><span className="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Now Showing</span></div>
+                            <h1 className="text-4xl md:text-5xl font-black text-white uppercase mb-6 leading-[0.9] tracking-tight">{res.title}</h1>
+                            <p className="text-xl text-neutral-400 italic border-l-4 border-brand-500 pl-6 mb-10 font-light">"{res.logline}"</p>
+                            <div className="bg-black/30 p-6 rounded-xl border border-neutral-800 mb-10">
+                                <div className="text-xs text-brand-500 font-bold uppercase mb-2 tracking-wider flex items-center gap-2"><Icon name="sparkles" size={12} /> Director's Note</div>
+                                <p className="text-base text-neutral-300 font-medium">{res.strategy}</p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                <button onClick={copyToClipboard} className="flex-1 bg-neutral-800 hover:bg-neutral-700 text-white py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors border border-neutral-700 hover:border-neutral-600"><Icon name="share-2" size={18} /> SHARE POSTER</button>
+                                <button onClick={handleProduce} className="flex-1 bg-brand-500 hover:bg-brand-600 text-white py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-lg shadow-brand-500/20">PRODUCE THIS <Icon name="arrow-right" size={18} /></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-16 text-center space-y-4">
+                        <button onClick={() => {setStep('intro'); setScores({scale:50, reality:50, emotion:50, protagonist:50, pacing:50}); setCurrentQIndex(0);}} className="text-brand-600 hover:text-brand-500 text-sm font-bold flex items-center justify-center gap-2 mx-auto transition-colors"><Icon name="rotate-ccw" size={14} /> RECAST THE MOVIE</button>
+                    </div>
+                </div>
+            );
+        };
+
+        // ==========================================
+        // COMPONENT: LandingPage.tsx
+        // ==========================================
+        const LandingPage = ({ setView, applyRef, preFillData }) => {
+            const [formStatus, setFormStatus] = useState('idle'); // idle, submitting, success, error
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                setFormStatus('submitting');
+                const formData = new FormData(e.target);
+                
+                // Real submission to FormSubmit.co using the key from guide.md
+                fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_KEY}`, {
+                    method: "POST",
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData))
+                })
+                .then(response => response.json())
+                .then(data => {
+                    setFormStatus('success');
+                    e.target.reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    setFormStatus('error');
+                });
+            };
+
+            return (
+                <div className="font-sans text-neutral-900">
+                    {/* HERO SECTION */}
+                    <section className="pt-32 pb-24 px-6 max-w-6xl mx-auto min-h-[90vh] flex items-center relative overflow-hidden">
+                        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.05)_1px,transparent_1px)] bg-[size:40px_40px] opacity-60 -z-20 pointer-events-none"></div>
+                        <div className="grid lg:grid-cols-2 gap-16 items-center w-full">
+                            <div className="text-left space-y-8 animate-fade-in-up">
+                                <h1 className="text-5xl lg:text-7xl font-semibold text-neutral-900 leading-[1.05] tracking-tight">
+                                    Your Service Is Excellent. <br />
+                                    Your Website Makes It Look <span className="text-brand-600">Mediocre.</span> <br/>
+                                    Let's Fix That.
+                                </h1>
+                                <p className="text-lg lg:text-xl text-neutral-600 leading-relaxed max-w-lg font-normal">
+                                    Most service businesses lose 60-70% of qualified prospects before the first call—not because their service is bad, but because their website fails three critical tests: <strong className="font-semibold text-neutral-900">Clarity, Credibility, and Conviction.</strong>
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                                    <button onClick={() => { if(applyRef.current) applyRef.current.scrollIntoView({ behavior: 'smooth' }); }} className="inline-flex justify-center items-center px-8 py-4 bg-neutral-900 text-white font-medium text-base rounded-xl hover:bg-brand-600 hover:scale-[1.02] transition-all shadow-xl hover:shadow-brand-500/20 transform hover:-translate-y-1">
+                                        Show Me What's Broken
+                                    </button>
+                                    <button onClick={() => setView('cinema')} className="inline-flex justify-center items-center px-8 py-4 bg-white border border-neutral-200 text-neutral-700 font-medium text-base rounded-xl hover:bg-neutral-50 transition-all transform hover:-translate-y-1">
+                                        Strategy Game (New)
+                                    </button>
+                                </div>
+                                <div className="pt-6 border-t border-neutral-100 mt-6">
+                                    <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-3">Trusted By Experts</p>
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex items-center gap-3 text-sm text-neutral-600">
+                                            <div className="flex -space-x-2">
+                                                <div className="w-6 h-6 rounded-full bg-neutral-200 border border-white flex items-center justify-center text-[10px] font-bold">IO</div>
+                                                <div className="w-6 h-6 rounded-full bg-brand-100 border border-white flex items-center justify-center text-[10px] font-bold text-brand-600">RA</div>
+                                            </div>
+                                            <p>"Paul rebuilt our positioning in 48 hours. We closed 2 deals the following week."</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="relative h-[500px] w-full flex items-center justify-center hidden lg:flex">
+                                <div className="relative w-80 h-96">
+                                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-4 bg-black/20 blur-xl rounded-full"></div>
+                                    <div className="absolute bottom-10 left-0 right-0 h-24 bg-white border border-neutral-200 rounded-2xl shadow-lg flex items-center p-6 gap-4 transform transition-all hover:scale-105 z-10">
+                                        <div className="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center text-neutral-400"><Icon name="message-square" size={24} /></div>
+                                        <div><div className="text-xs font-medium text-neutral-400 uppercase tracking-widest mb-1">Clarity</div><div className="font-semibold text-neutral-800 text-lg">What You Do</div></div>
+                                    </div>
+                                    <div className="absolute bottom-28 -left-4 -right-4 h-24 bg-white border border-neutral-200 rounded-2xl shadow-lg flex items-center p-6 gap-4 transform transition-all hover:scale-105 z-20">
+                                        <div className="w-12 h-12 bg-brand-50 rounded-full flex items-center justify-center text-brand-500"><Icon name="shield-check" size={24} /></div>
+                                        <div><div className="text-xs font-medium text-brand-500 uppercase tracking-widest mb-1">Credibility</div><div className="font-semibold text-neutral-800 text-lg">Why Trust You</div></div>
+                                    </div>
+                                    <div className="absolute bottom-48 left-2 right-2 h-28 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl flex items-center p-6 gap-4 transform transition-all hover:-translate-y-2 z-30">
+                                        <div className="w-12 h-12 bg-brand-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-brand-500/50"><Icon name="zap" size={24} /></div>
+                                        <div><div className="text-xs font-medium text-brand-500 uppercase tracking-widest mb-1">Conviction</div><div className="font-semibold text-white text-xl">Why Pay Premium</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* THE PROBLEM */}
+                    <section className="py-24 px-6 bg-neutral-950 text-white relative overflow-hidden">
+                        <div className="max-w-6xl mx-auto relative z-10">
+                            <div className="grid md:grid-cols-2 gap-16 items-center">
+                                <div>
+                                    <h2 className="text-3xl md:text-4xl font-semibold mb-8 tracking-tight">The Three Reasons Prospects Don't Buy</h2>
+                                    <div className="space-y-8">
+                                        <div className="flex gap-4">
+                                            <div className="w-8 h-8 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center font-bold text-sm shrink-0 mt-1">1</div>
+                                            <div><h3 className="text-xl font-bold text-white mb-2">Confusion = Instant Disqualification</h3><p className="text-neutral-400 leading-relaxed font-normal">When prospects can't figure out what makes you different in 8 seconds, they leave.</p></div>
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <div className="w-8 h-8 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center font-bold text-sm shrink-0 mt-1">2</div>
+                                            <div><h3 className="text-xl font-bold text-white mb-2">Expertise Doesn't Translate</h3><p className="text-neutral-400 leading-relaxed font-normal">Your website reads like a corporate brochure from 2012. You get judged like a commodity.</p></div>
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <div className="w-8 h-8 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center font-bold text-sm shrink-0 mt-1">3</div>
+                                            <div><h3 className="text-xl font-bold text-white mb-2">No Trust = No Sale</h3><p className="text-neutral-400 leading-relaxed font-normal">Trust is the only thing that justifies premium pricing.</p></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Visual Gap Chart */}
+                                <div className="bg-neutral-900/80 p-10 border border-neutral-800 rounded-2xl h-auto flex flex-col items-center justify-center relative shadow-2xl backdrop-blur-md">
+                                    <div className="flex items-end gap-4 sm:gap-12 h-64 w-full max-w-md relative">
+                                        <div className="flex-1 flex flex-col items-center h-full justify-end group">
+                                            <div className="text-brand-500 font-semibold text-xl mb-2">10/10</div>
+                                            <div className="w-full bg-gradient-to-t from-brand-700 to-brand-500 rounded-t-xl shadow-[0_0_30px_rgba(234,88,12,0.3)] h-full"></div>
+                                            <div className="text-white font-medium text-base text-center mt-4 border-t border-brand-500 pt-2 w-full">What You<br/>Deliver</div>
+                                        </div>
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center z-20 w-40 text-center">
+                                            <div className="bg-red-500/10 border border-red-500/50 backdrop-blur-sm p-3 rounded-lg animate-pulse">
+                                                <p className="text-red-500 font-semibold text-xs leading-tight">This Gap Costs<br/>You Money</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 flex flex-col items-center h-full justify-end group">
+                                            <div className="text-neutral-500 font-semibold text-xl mb-2">3/10</div>
+                                            <div className="w-full bg-neutral-800 rounded-t-xl h-1/3"></div>
+                                            <div className="text-neutral-500 font-medium text-base text-center mt-4 border-t border-neutral-700 pt-2 w-full">What Your<br/>Site Says</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* SERVICES SECTION */}
+                    <section id="services" className="py-24 px-6 bg-neutral-50">
+                        <div className="max-w-7xl mx-auto">
+                            <div className="text-center mb-16">
+                                <h2 className="text-3xl md:text-4xl font-semibold mb-4 tracking-tight">Four Stages. Clear Outcomes.</h2>
+                            </div>
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {/* Stage 1 */}
+                                <div className="bg-white p-6 border border-neutral-200 rounded-2xl hover:border-brand-500 hover:shadow-xl transition-all flex flex-col group">
+                                    <div className="mb-4"><span className="text-xs font-medium text-white bg-neutral-900 px-2 py-1 rounded uppercase tracking-wider">Stage 1</span></div>
+                                    <h3 className="text-lg font-bold mb-1 uppercase tracking-tight">Diagnosis</h3>
+                                    <div className="text-2xl font-semibold text-neutral-900 mb-6">Free</div>
+                                    <ul className="text-sm text-neutral-600 space-y-3 mb-8 flex-grow font-normal">
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-600 mt-0.5" /> Live site audit</li>
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-600 mt-0.5" /> 3-5 critical fixes</li>
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-600 mt-0.5" /> Action roadmap</li>
+                                    </ul>
+                                    <button onClick={() => { if(applyRef.current) applyRef.current.scrollIntoView({ behavior: 'smooth' }); }} className="w-full py-3 border border-neutral-900 text-neutral-900 font-medium text-center rounded-lg hover:bg-neutral-900 hover:text-white transition-colors">Book Free Diagnosis</button>
+                                </div>
+                                {/* Stage 2 */}
+                                <div className="bg-white p-6 border border-neutral-200 rounded-2xl hover:border-brand-500 hover:shadow-xl transition-all flex flex-col group">
+                                    <div className="mb-4"><span className="text-xs font-medium text-brand-600 bg-brand-50 px-2 py-1 rounded uppercase tracking-wider">Stage 2</span></div>
+                                    <h3 className="text-lg font-bold mb-1 uppercase tracking-tight">Messaging</h3>
+                                    <div className="text-2xl font-semibold text-neutral-900 mb-6">See Pricing</div>
+                                    <ul className="text-sm text-neutral-600 space-y-3 mb-8 flex-grow font-normal">
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-600 mt-0.5" /> Positioning doc</li>
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-600 mt-0.5" /> Client avatar</li>
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-600 mt-0.5" /> Hero copy</li>
+                                    </ul>
+                                </div>
+                                {/* Stage 3 */}
+                                <div className="bg-white p-6 border border-neutral-200 rounded-2xl hover:border-brand-500 hover:shadow-xl transition-all flex flex-col group">
+                                    <div className="mb-4"><span className="text-xs font-medium text-brand-600 bg-brand-50 px-2 py-1 rounded uppercase tracking-wider">Stage 3</span></div>
+                                    <h3 className="text-lg font-bold mb-1 uppercase tracking-tight">Sales Page</h3>
+                                    <div className="text-2xl font-semibold text-neutral-900 mb-6">See Pricing</div>
+                                    <ul className="text-sm text-neutral-600 space-y-3 mb-8 flex-grow font-normal">
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-600 mt-0.5" /> Wireframe</li>
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-600 mt-0.5" /> Full copy</li>
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-600 mt-0.5" /> CTA strategy</li>
+                                    </ul>
+                                </div>
+                                {/* Stage 4 */}
+                                <div className="bg-neutral-900 text-white p-6 border border-neutral-900 rounded-2xl shadow-xl hover:-translate-y-2 transition-transform flex flex-col">
+                                    <div className="mb-4"><span className="text-xs font-medium text-white bg-brand-600 px-2 py-1 rounded uppercase tracking-wider">Stage 4</span></div>
+                                    <h3 className="text-lg font-bold mb-1 uppercase tracking-tight">Full Build</h3>
+                                    <div className="text-2xl font-semibold text-white mb-6">See Pricing</div>
+                                    <ul className="text-sm text-neutral-300 space-y-3 mb-8 flex-grow font-normal">
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-500 mt-0.5" /> Design + build</li>
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-500 mt-0.5" /> Mobile-first</li>
+                                        <li className="flex items-start gap-2"><Icon name="check" size={16} className="text-brand-500 mt-0.5" /> 2 revisions</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {/* SOCIAL PROOF */}
+                            <div className="mt-20 grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                                <div className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm flex flex-col">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-600">IO</div>
+                                        <div>
+                                            <div className="font-bold text-neutral-900 text-sm">Isaac Oni</div>
+                                            <div className="text-xs text-neutral-500">Founder, Brilla.NG</div>
+                                        </div>
+                                    </div>
+                                    <p className="text-neutral-600 italic text-sm leading-relaxed mb-4">
+                                        "Paul rebuilt our positioning in 48 hours. The clarity he brought to our offer was the missing link we didn't know we needed."
+                                    </p>
+                                    <a href="https://brilla.ng" target="_blank" className="text-xs font-bold text-brand-600 hover:text-brand-700 mt-auto flex items-center gap-1">
+                                        View Live Project <Icon name="arrow-up-right" size={14} />
+                                    </a>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-xl border border-neutral-200 shadow-sm flex flex-col">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center text-xs font-bold">RA</div>
+                                        <div>
+                                            <div className="font-bold text-neutral-900 text-sm">Richard Adeoye</div>
+                                            <div className="text-xs text-neutral-500">RichieReachDigitals</div>
+                                        </div>
+                                    </div>
+                                    <p className="text-neutral-600 italic text-sm leading-relaxed mb-4">
+                                        "We closed 2 deals the following week—both at our new premium price. The return on investment was immediate."
+                                    </p>
+                                    <div className="mt-auto space-y-3">
+                                        <a href="https://pennio-design.github.io/richiereachdigitals" target="_blank" className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+                                            View Live Project <Icon name="arrow-up-right" size={14} />
+                                        </a>
+                                        {/* Screenshot Proof */}
+                                        <div className="rounded-lg overflow-hidden border border-neutral-100 shadow-sm">
+                                            <img src="Screenshot_20260124-203731.jpg" alt="RichieReachDigitals Transformation" className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* APPLY SECTION */}
+                    <section ref={applyRef} id="apply" className="py-24 px-6 bg-neutral-950 text-white relative overflow-hidden">
+                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-brand-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+                        <div className="max-w-xl mx-auto relative z-10">
+                            <div className="text-center mb-10">
+                                <h2 className="text-3xl font-semibold mb-2 tracking-tight">Book Free Diagnosis</h2>
+                                <p className="text-neutral-500">45 minutes. I show you what's broken. No pitch.</p>
+                            </div>
+                            <div className="bg-white text-neutral-900 p-8 shadow-2xl rounded-2xl border-t-4 border-brand-600 relative">
+                                {formStatus === 'success' ? (
+                                    <div className="text-center py-10">
+                                        <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
+                                            <Icon name="check" size={32} />
+                                        </div>
+                                        <h3 className="font-semibold text-xl mb-2">Request Received.</h3>
+                                        <p className="text-sm text-neutral-500 mb-4">I will review your details and send a calendar link shortly.</p>
+                                        <button onClick={() => setFormStatus('idle')} className="text-xs text-neutral-400 hover:text-neutral-600 underline">Send another request</button>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                                        <input type="hidden" name="_subject" value="New Diagnosis Request — PENNIO" />
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-xs font-medium text-neutral-500 uppercase mb-1">Name</label>
+                                                <input required name="name" className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-medium text-neutral-500 uppercase mb-1">Email</label>
+                                                <input required name="email" type="email" className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-neutral-500 uppercase mb-1">Website (if any)</label>
+                                            <input name="website" placeholder="www.yoursite.com" className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-xs font-medium text-neutral-500 uppercase mb-1">Biggest problem right now?</label>
+                                            {preFillData ? (
+                                                <textarea 
+                                                    name="message" 
+                                                    rows="6"
+                                                    className="w-full px-4 py-3 bg-brand-50 border border-brand-200 rounded-lg focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors font-mono text-sm"
+                                                    defaultValue={preFillData.message}
+                                                ></textarea>
+                                            ) : (
+                                                <select required name="problem" className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors">
+                                                    <option value="">Select...</option>
+                                                    <option value="unclear">Don't know what to say</option>
+                                                    <option value="price">Always compared on price</option>
+                                                    <option value="unprofessional">Site looks amateur</option>
+                                                    <option value="leads">Not enough qualified leads</option>
+                                                </select>
+                                            )}
+                                        </div>
+                                        <button 
+                                            type="submit" 
+                                            disabled={formStatus === 'submitting'}
+                                            className="w-full py-4 bg-neutral-900 text-white font-medium rounded-lg hover:bg-brand-600 transition-all shadow-lg text-lg mt-2 transform hover:-translate-y-1 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                        >
+                                            {formStatus === 'submitting' ? <><Icon name="loader-2" className="animate-spin" /> Sending...</> : (preFillData ? "Submit Production Request" : "Send For Review")}
+                                        </button>
+                                        <p className="text-xs text-center text-neutral-400">Calendar link sent within 24hrs</p>
+                                    </form>
+                                )}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* FOOTER */}
+                    <footer className="py-12 bg-black border-t border-neutral-900 text-neutral-400 text-sm">
+                        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div><span className="font-medium text-white tracking-tight">PENNIO<span className="text-brand-600">.</span></span><p className="mt-2 text-xs text-neutral-600">&copy; 2026 PENNIO</p></div>
+                            <div className="flex gap-6">
+                                <a href="https://instagram.com/pennio.design" target="_blank" className="hover:text-white transition-colors">Instagram</a>
+                                <a href="https://x.com/penniodesign" target="_blank" className="hover:text-white transition-colors">Twitter</a>
+                                <a href="https://linkedin.com/in/pauloyatowo" target="_blank" className="hover:text-white transition-colors">Paul</a>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        };
+
+        // ==========================================
+        // COMPONENT: App.tsx
+        // ==========================================
+        const App = () => {
+            const [view, setView] = useState('landing'); 
+            const [preFillData, setPreFillData] = useState(null);
+            const applyRef = useRef(null);
+
+            useEffect(() => {
+                if (preFillData && view === 'landing' && applyRef.current) {
+                    setTimeout(() => {
+                        applyRef.current.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                }
+            }, [preFillData, view]);
+
+            return (
+                <div>
+                    <Nav setView={(v) => { setView(v); setPreFillData(null); }} currentView={view} scrollToApply={() => applyRef.current?.scrollIntoView({ behavior: 'smooth' })} />
+                    {view === 'landing' ? (
+                        <LandingPage setView={setView} applyRef={applyRef} preFillData={preFillData} />
+                    ) : (
+                        <CinemaTool setView={setView} setPreFillData={setPreFillData} />
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
