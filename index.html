@@ -1,635 +1,329 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PENNIO — Clear Offers. Clear Outcomes.</title>
-  <meta name="description" content="Your Service Is Excellent. Your Website Makes It Look Mediocre. Let's Fix That.">
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PENNIO.DESIGN | Premium Strategy & Design</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { 
-            sans: ['Inter', 'sans-serif'],
-          },
           colors: {
             brand: {
-              50: '#fff7ed',
-              100: '#ffedd5',
-              500: '#f97316', 
-              600: '#ea580c',
-              900: '#1a1a1a', // Rich Black
+              50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74',
+              400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c',
+              800: '#9a3412', 900: '#7c2d12',
             },
-            neutral: {
-                50: '#fafafa',
-                100: '#f5f5f5',
-                200: '#e5e5e5',
-                300: '#d4d4d4',
-                400: '#a3a3a3',
-                500: '#737373',
-                600: '#525252',
-                700: '#404040',
-                800: '#262626',
-                900: '#171717',
-                950: '#0a0a0a',
-            }
           },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
           animation: {
-            'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-            'grow-bar': 'growBar 1.5s ease-out forwards',
-            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards',
             'float': 'float 6s ease-in-out infinite',
-            'float-delayed': 'float 6s ease-in-out 3s infinite',
-            'shimmer': 'shimmer 2s linear infinite',
           },
           keyframes: {
             fadeInUp: {
-              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '0%': { opacity: '0', transform: 'translateY(24px)' },
               '100%': { opacity: '1', transform: 'translateY(0)' },
             },
-            growBar: {
-                '0%': { height: '0%' },
-                '100%': { height: 'var(--target-height)' }
-            },
             float: {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-20px)' },
-            },
-            shimmer: {
-                '0%': { backgroundPosition: '-1000px 0' },
-                '100%': { backgroundPosition: '1000px 0' }
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-16px)' },
             }
           }
         }
       }
     }
   </script>
-
   <style>
-    .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+    body { background-color: #ffffff; color: #171717; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+    .hover-lift { transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.4s cubic-bezier(0.19, 1, 0.22, 1); }
+    .hover-lift:hover { transform: translateY(-4px); }
+    .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); }
     .reveal-on-scroll.visible { opacity: 1; transform: translateY(0); }
-
-    details > summary { list-style: none; }
-    details > summary::-webkit-details-marker { display: none; }
-
-    .bg-grid-pattern {
-        background-size: 40px 40px;
-        background-image: linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
-                          linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
-    }
-    .bg-grid-pattern-dark {
-        background-size: 40px 40px;
-        background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
-                          linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
-    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
   </style>
 </head>
+<body class="antialiased">
 
-<body class="bg-white text-neutral-900 antialiased selection:bg-brand-500 selection:text-white relative font-sans font-normal">
-
-  <!-- NAVBAR -->
-  <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-xl border-b border-neutral-200 z-50 transition-all duration-300">
+  <!-- NAVIGATION -->
+  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-xl border-b border-neutral-100 z-50">
     <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-      <div class="font-semibold tracking-tight text-xl flex items-center gap-2">
-        <a href="#" class="flex items-center gap-1 text-neutral-900 tracking-tight">
-            PENNIO<span class="text-brand-600">.</span>
-        </a>
+      <div class="font-bold tracking-tighter text-2xl flex items-center gap-1 cursor-pointer">
+        PENNIO<span class="text-brand-600">.</span>DESIGN
       </div>
-
-      <div class="flex items-center gap-8">
-          <div class="hidden md:flex gap-8 text-sm font-medium text-neutral-500">
-            <a href="#problem" class="hover:text-neutral-900 transition-colors">The Problem</a>
-            <a href="#services" class="hover:text-neutral-900 transition-colors">Services</a>
-            <a href="#faq" class="hover:text-neutral-900 transition-colors">FAQ</a>
-          </div>
-          <a href="#apply" class="text-xs font-medium bg-neutral-900 text-white px-5 py-2.5 rounded-lg hover:bg-brand-600 transition-all shadow-lg shadow-neutral-200 hover:-translate-y-0.5">
-            Free Diagnosis
-          </a>
+      <div class="flex items-center gap-6">
+        <div class="hidden md:flex gap-8 text-sm font-medium text-neutral-500 uppercase tracking-widest">
+          <a href="#framework" class="hover:text-neutral-900 transition-colors">Framework</a>
+          <a href="#process" class="hover:text-neutral-900 transition-colors">Process</a>
+        </div>
+        <a href="#apply" class="bg-neutral-900 text-white text-[10px] font-black px-6 py-3 rounded-xl hover:bg-brand-600 transition-all shadow-xl active:scale-95 tracking-[0.1em]">
+          FREE DIAGNOSIS
+        </a>
       </div>
     </div>
   </nav>
 
   <!-- HERO SECTION -->
-  <section class="pt-32 pb-24 px-6 max-w-6xl mx-auto min-h-[90vh] flex items-center relative overflow-hidden">
-    <div class="absolute inset-0 bg-grid-pattern opacity-60 -z-20 pointer-events-none"></div>
-    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-100/50 rounded-full blur-[120px] -z-10 opacity-50"></div>
-
-    <div class="grid lg:grid-cols-2 gap-16 items-center w-full">
-        <!-- Left: Copy -->
-        <div class="text-left space-y-8 reveal-on-scroll">
-            <h1 class="text-5xl lg:text-7xl font-semibold text-neutral-900 leading-[1.05] tracking-tight">
-              Your Service Is Excellent. <br />
-              Your Website Makes It Look <span class="text-brand-600">Mediocre.</span> <br/>
-              Let's Fix That.
-            </h1>
-
-            <p class="text-lg lg:text-xl text-neutral-600 leading-relaxed max-w-lg font-normal">
-              Most service businesses lose 60-70% of qualified prospects before the first call—not because their service is bad, but because their website fails three critical tests: <strong class="font-semibold text-neutral-900">Clarity, Credibility, and Conviction.</strong>
-            </p>
-            
-            <p class="text-neutral-600 leading-relaxed max-w-lg font-normal">
-                PENNIO rebuilds your messaging from the ground up so prospects think "This is exactly what I need" instead of "I'll just Google alternatives."
-            <!-- Social Proof / Trust -->
-            <div class="pt-6 border-t border-neutral-100 mt-6">
-                <p class="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-4">Trusted By Experts</p>
-                <div class="flex flex-col gap-4">
-                    <!-- Isaac -->
-                    <div class="flex items-start gap-3 text-sm text-neutral-600">
-                        <div class="w-8 h-8 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center text-[10px] font-bold shrink-0 text-neutral-500">IO</div>
-                        <div>
-                            <p class="italic">"Paul rebuilt our positioning in 48 hours. The clarity is unmatched."</p>
-                            <div class="text-xs text-brand-600 font-bold mt-1">Isaac Oni <span class="text-neutral-300 font-normal">|</span> Brilla.NG</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Richard -->
-                    <div class="flex items-start gap-3 text-sm text-neutral-600">
-                        <div class="w-8 h-8 rounded-full bg-brand-50 border border-brand-100 flex items-center justify-center text-[10px] font-bold shrink-0 text-brand-600">RA</div>
-                        <div>
-                            <p class="italic">"We closed 2 deals the following week at our new premium price."</p>
-                            <div class="text-xs text-brand-600 font-bold mt-1">Richard Adeoye <span class="text-neutral-300 font-normal">|</span> RichieReachDigitals</div>
-                        </div>
-                    </div>
+  <section class="pt-40 pb-24 px-6 max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16 overflow-hidden">
+    <div class="flex-1 space-y-10 animate-fade-in-up">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-brand-50 text-brand-700 text-[10px] font-bold tracking-[0.15em] uppercase rounded-full border border-brand-100">
+        Strategy First Design
+      </div>
+      <h1 class="text-5xl lg:text-7xl font-semibold leading-[1.05] tracking-tight">
+        Premium Services <br />
+        Deserve Premium <span class="text-brand-600 italic">Perception.</span>
+      </h1>
+      <p class="text-xl text-neutral-600 leading-relaxed max-w-lg font-normal">
+        We help elite founders bridge the gap between their actual expertise and their digital credibility using the 3-pillar framework.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-5">
+        <a href="#apply" class="px-10 py-5 bg-neutral-900 text-white font-bold rounded-xl hover:bg-brand-600 hover-lift shadow-lg shadow-neutral-200 active:scale-95 transition-all text-center">
+          Analyze My Messaging
+        </a>
+      </div>
+    </div>
+    <div class="flex-1 relative hidden lg:flex justify-center">
+        <div class="w-80 h-[480px] relative animate-float">
+            <div class="absolute inset-0 bg-neutral-900 rounded-[2.5rem] shadow-2xl overflow-hidden p-8 flex flex-col gap-6 border-[12px] border-neutral-50">
+                <div class="w-14 h-14 bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-lg"><i data-lucide="zap"></i></div>
+                <div class="space-y-3">
+                    <div class="h-4 w-5/6 bg-neutral-700 rounded-full"></div>
+                    <div class="h-4 w-3/4 bg-neutral-700 rounded-full"></div>
+                    <div class="h-4 w-1/2 bg-neutral-800 rounded-full"></div>
                 </div>
+                <div class="mt-auto h-40 bg-neutral-800 rounded-2xl border border-neutral-700/50"></div>
             </div>
-        </div>
-
-        <!-- Right: Visual "Authority Stack" -->
-        <div class="relative h-[500px] w-full flex items-center justify-center reveal-on-scroll delay-100 hidden lg:flex">
-            <!-- The Stack Container -->
-            <div class="relative w-80 h-96">
-                <!-- Shadow/Base -->
-                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-4 bg-black/20 blur-xl rounded-full"></div>
-
-                <!-- Layer 1 -->
-                <div class="absolute bottom-10 left-0 right-0 h-24 bg-white border border-neutral-200 rounded-2xl shadow-lg flex items-center p-6 gap-4 transform transition-all hover:scale-105 z-10 animate-float-delayed">
-                    <div class="w-12 h-12 bg-neutral-100 rounded-full flex items-center justify-center text-neutral-400">
-                        <i data-lucide="message-square" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs font-medium text-neutral-400 uppercase tracking-widest mb-1">Clarity</div>
-                        <div class="font-semibold text-neutral-800 text-lg">What You Do</div>
-                    </div>
-                </div>
-
-                <!-- Layer 2 -->
-                <div class="absolute bottom-28 -left-4 -right-4 h-24 bg-white border border-neutral-200 rounded-2xl shadow-lg flex items-center p-6 gap-4 transform transition-all hover:scale-105 z-20 animate-float">
-                    <div class="w-12 h-12 bg-brand-50 rounded-full flex items-center justify-center text-brand-500">
-                        <i data-lucide="shield-check" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs font-medium text-brand-500 uppercase tracking-widest mb-1">Credibility</div>
-                        <div class="font-semibold text-neutral-800 text-lg">Why Trust You</div>
-                    </div>
-                </div>
-
-                <!-- Layer 3 -->
-                <div class="absolute bottom-48 left-2 right-2 h-28 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl flex items-center p-6 gap-4 transform transition-all hover:-translate-y-2 z-30">
-                    <div class="w-12 h-12 bg-brand-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-brand-500/50">
-                        <i data-lucide="zap" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs font-medium text-brand-500 uppercase tracking-widest mb-1">Conviction</div>
-                        <div class="font-semibold text-white text-xl">Why Pay Premium</div>
-                    </div>
+            <div class="absolute -right-16 top-16 bg-white p-6 rounded-2xl shadow-xl border border-neutral-100 flex items-center gap-4 w-72 translate-x-4 hover-lift">
+                <div class="w-12 h-12 bg-green-50 text-green-600 rounded-full flex items-center justify-center"><i data-lucide="check"></i></div>
+                <div>
+                  <div class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Conversion Impact</div>
+                  <div class="text-xl font-black text-neutral-900">+42.8%</div>
                 </div>
             </div>
         </div>
     </div>
   </section>
 
-  <!-- THE PROBLEM SECTION -->
-  <section id="problem" class="py-24 px-6 bg-neutral-950 text-white reveal-on-scroll relative overflow-hidden">
-    <!-- Grid Background -->
-    <div class="absolute inset-0 bg-grid-pattern-dark opacity-30 pointer-events-none"></div>
-
-    <div class="max-w-6xl mx-auto relative z-10">
-      <div class="grid md:grid-cols-2 gap-16 items-center">
-        <div>
-          <h2 class="text-3xl md:text-4xl font-semibold mb-8 tracking-tight">The Three Reasons Prospects Don't Buy <span class="text-neutral-500">(Even When They Need What You Sell)</span></h2>
-          
-          <div class="space-y-8">
-              <div class="flex gap-4">
-                  <div class="w-8 h-8 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center font-bold text-sm shrink-0 mt-1">1</div>
-                  <div>
-                      <h3 class="text-xl font-bold text-white mb-2">Confusion = Instant Disqualification</h3>
-                      <p class="text-neutral-400 leading-relaxed font-normal">
-                        Your homepage says "innovative solutions" and "client-centric approach." So does everyone else. When prospects can't figure out what makes you different in 8 seconds, they leave.
-                      </p>
-                  </div>
-              </div>
-
-              <div class="flex gap-4">
-                  <div class="w-8 h-8 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center font-bold text-sm shrink-0 mt-1">2</div>
-                  <div>
-                      <h3 class="text-xl font-bold text-white mb-2">Your Expertise Doesn't Translate Online</h3>
-                      <p class="text-neutral-400 leading-relaxed font-normal">
-                        You're brilliant in real life. But your website reads like a corporate brochure from 2012. Wall-of-text descriptions. Generic stock photos. Result? You get judged like a commodity.
-                      </p>
-                  </div>
-              </div>
-
-              <div class="flex gap-4">
-                  <div class="w-8 h-8 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center font-bold text-sm shrink-0 mt-1">3</div>
-                  <div>
-                      <h3 class="text-xl font-bold text-white mb-2">No Trust = No Sale At Your Price</h3>
-                      <p class="text-neutral-400 leading-relaxed font-normal">
-                        Why pay you $10K when your website looks like you spent $500 on it? Every typo and vague promise erodes trust. And trust is the only thing that justifies premium pricing.
-                      </p>
-                  </div>
-              </div>
-          </div>
+  <!-- PILLARS SECTION -->
+  <section id="framework" class="bg-neutral-950 py-32 px-6 text-white overflow-hidden relative">
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-brand-600/10 blur-[160px] rounded-full pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-24 items-center">
+      <div class="space-y-16 reveal-on-scroll">
+        <div class="space-y-4">
+          <h2 class="text-4xl lg:text-5xl font-semibold tracking-tight">The 3-Pillar Framework</h2>
+          <p class="text-neutral-400 text-lg max-w-md">Our methodology for high-ticket service positioning.</p>
         </div>
-
-        <!-- The Visual Gap Chart -->
-        <div class="bg-neutral-900/80 p-10 border border-neutral-800 rounded-2xl h-auto flex flex-col items-center justify-center relative shadow-2xl backdrop-blur-md">
-            
-            <div class="flex items-end gap-4 sm:gap-12 h-64 w-full max-w-md relative">
-                
-                <!-- Bar 1: Deliver -->
-                <div class="flex-1 flex flex-col items-center h-full justify-end group">
-                    <div class="text-brand-500 font-semibold text-xl mb-2 opacity-0 animate-fade-in-up" style="animation-delay: 0.8s;">10/10</div>
-                    <div class="w-full bg-gradient-to-t from-brand-700 to-brand-500 rounded-t-xl shadow-[0_0_30px_rgba(234,88,12,0.3)] relative" 
-                         style="height: 0; animation: growBar 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; --target-height: 100%;">
-                    </div>
-                    <div class="text-white font-medium text-base text-center mt-4 border-t border-brand-500 pt-2 w-full">What You<br>Deliver</div>
-                </div>
-
-                <!-- The Gap Message -->
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center z-20 w-40 text-center">
-                    <div class="bg-red-500/10 border border-red-500/50 backdrop-blur-sm p-3 rounded-lg animate-pulse-slow">
-                        <p class="text-red-500 font-semibold text-xs leading-tight">This is why prospects pick your competitor</p>
-                    </div>
-                    <!-- Connector Line -->
-                    <div class="h-24 w-px border-l border-dashed border-red-500/30 mt-2"></div>
-                </div>
-
-                <!-- Bar 2: Communicate -->
-                <div class="flex-1 flex flex-col items-center h-full justify-end group">
-                    <div class="text-neutral-500 font-semibold text-xl mb-2 opacity-0 animate-fade-in-up" style="animation-delay: 1.2s;">3/10</div>
-                    <div class="w-full bg-neutral-800 rounded-t-xl relative" 
-                         style="height: 0; animation: growBar 1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards; --target-height: 30%;">
-                    </div>
-                    <div class="text-neutral-500 font-medium text-base text-center mt-4 border-t border-neutral-700 pt-2 w-full">What Your Site<br>Communicates</div>
-                </div>
-
+        <div class="space-y-12">
+          <div class="flex gap-8 group">
+            <div class="w-14 h-14 bg-neutral-900 border border-neutral-800 rounded-2xl flex items-center justify-center text-brand-500 group-hover:bg-brand-600 group-hover:text-white transition-all duration-500"><i data-lucide="message-square" size="28"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3 tracking-tight">01. Clarity</h3>
+              <p class="text-neutral-400 leading-relaxed font-normal max-w-sm">If your prospect can't articulate your value in one sentence, you haven't explained it yet.</p>
             </div>
+          </div>
+          <div class="flex gap-8 group">
+            <div class="w-14 h-14 bg-neutral-900 border border-neutral-800 rounded-2xl flex items-center justify-center text-brand-500 group-hover:bg-brand-600 group-hover:text-white transition-all duration-500"><i data-lucide="shield-check" size="28"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3 tracking-tight">02. Credibility</h3>
+              <p class="text-neutral-400 leading-relaxed font-normal max-w-sm">Authority is earned through precision. We replace generic claims with undeniable proof of expertise.</p>
+            </div>
+          </div>
+          <div class="flex gap-8 group">
+            <div class="w-14 h-14 bg-neutral-900 border border-neutral-800 rounded-2xl flex items-center justify-center text-brand-500 group-hover:bg-brand-600 group-hover:text-white transition-all duration-500"><i data-lucide="zap" size="28"></i></div>
+            <div>
+              <h3 class="text-xl font-bold mb-3 tracking-tight">03. Conviction</h3>
+              <p class="text-neutral-400 leading-relaxed font-normal max-w-sm">We don't sell features. We sell the inevitable outcome your clients are searching for.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-neutral-900/40 p-16 rounded-[3rem] border border-neutral-800 backdrop-blur-xl reveal-on-scroll">
+        <div class="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] mb-12 text-center">The Perception Benchmark</div>
+        <div class="flex items-end gap-16 h-72 relative">
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="text-3xl font-black mb-6 group-hover:text-brand-500 transition-colors">10/10</div>
+            <div class="w-full bg-brand-500 h-full rounded-t-3xl shadow-[0_0_60px_rgba(249,115,22,0.15)] transition-all duration-700"></div>
+            <div class="text-[10px] font-bold uppercase tracking-widest mt-8 text-neutral-500 whitespace-nowrap">Actual Value</div>
+          </div>
+          <div class="flex-1 flex flex-col items-center group">
+            <div class="text-3xl font-black mb-6 group-hover:text-white transition-colors">3/10</div>
+            <div class="w-full bg-neutral-800 h-[35%] rounded-t-3xl transition-all duration-700"></div>
+            <div class="text-[10px] font-bold uppercase tracking-widest mt-8 text-neutral-500 whitespace-nowrap">Market Perception</div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- THE SERVICES -->
-  <section id="services" class="py-24 px-6 reveal-on-scroll bg-neutral-50">
-    <div class="max-w-7xl mx-auto">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-semibold mb-4 tracking-tight">Four Stages. One Goal: <br><span class="text-brand-600">Make Your Website Sell As Well As You Do.</span></h2>
+  <!-- PROCESS SECTION -->
+  <section id="process" class="py-32 px-6 bg-neutral-50">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-20 space-y-4 reveal-on-scroll">
+        <h2 class="text-4xl font-bold tracking-tight">Structured Implementation</h2>
+        <p class="text-neutral-500 text-lg">Systematic scaling for high-ticket service brands.</p>
       </div>
-
-      <!-- Service Grid -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        <!-- Stage 1: DIAGNOSIS -->
-        <div class="bg-white p-6 border border-neutral-200 rounded-2xl hover:border-brand-500 hover:shadow-xl transition-all flex flex-col group">
-          <div class="mb-4">
-            <span class="text-xs font-medium text-white bg-neutral-900 px-2 py-1 rounded uppercase tracking-wider">Stage 1</span>
-          </div>
-          <h3 class="text-lg font-bold mb-1 uppercase tracking-tight">Diagnosis</h3>
-          <p class="text-sm text-neutral-400 mb-4 font-normal italic">"What's Actually Broken?"</p>
-          <div class="text-2xl font-semibold text-neutral-900 mb-6">Free <span class="text-xs font-normal text-neutral-500">/ 45-60 min</span></div>
-          
-          <ul class="text-sm text-neutral-600 space-y-3 mb-8 flex-grow font-normal">
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-600 mt-0.5"></i> Screen-share walkthrough</li>
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-600 mt-0.5"></i> The exact 3-5 conversion killers</li>
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-600 mt-0.5"></i> Verbal roadmap: what to fix & why</li>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="bg-white p-10 rounded-3xl border border-neutral-100 shadow-sm transition-all hover-lift reveal-on-scroll" style="transition-delay: 100ms;">
+          <div class="text-[11px] font-black uppercase text-brand-600 tracking-[0.25em] mb-6">Phase 01</div>
+          <h3 class="text-2xl font-black mb-8 leading-tight">Diagnosis</h3>
+          <ul class="space-y-4 mb-12 flex-grow">
+            <li class="text-sm text-neutral-500 flex items-center gap-3"><div class="w-1.5 h-1.5 bg-brand-500 rounded-full"></div> Messaging Audit</li>
+            <li class="text-sm text-neutral-500 flex items-center gap-3"><div class="w-1.5 h-1.5 bg-brand-500 rounded-full"></div> Conversion Map</li>
           </ul>
-          <div class="text-xs text-neutral-400 mb-4"><strong>Outcome:</strong> You'll know precisely why deals aren't closing.</div>
-          <a href="#apply" class="w-full py-3 border border-neutral-900 text-neutral-900 font-medium text-center rounded-lg hover:bg-neutral-900 hover:text-white transition-colors">Book Free Diagnosis</a>
         </div>
-
-        <!-- Stage 2: MESSAGE ENGINEERING -->
-        <div class="bg-white p-6 border border-neutral-200 rounded-2xl hover:border-brand-500 hover:shadow-xl transition-all flex flex-col group">
-          <div class="mb-4">
-            <span class="text-xs font-medium text-brand-600 bg-brand-50 px-2 py-1 rounded uppercase tracking-wider">Stage 2</span>
-          </div>
-          <h3 class="text-lg font-bold mb-1 uppercase tracking-tight">Message Engineering</h3>
-          <p class="text-sm text-neutral-400 mb-4 font-normal italic">"What Should I Actually Say?"</p>
-          <div class="text-2xl font-semibold text-neutral-900 mb-6">₦150,000</div>
-          
-          <ul class="text-sm text-neutral-600 space-y-3 mb-8 flex-grow font-normal">
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-600 mt-0.5"></i> 1-page positioning document</li>
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-600 mt-0.5"></i> Ideal client avatar definition</li>
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-600 mt-0.5"></i> Homepage hero copy that converts</li>
-          </ul>
-          <div class="text-xs text-neutral-400 mb-4"><strong>Outcome:</strong> Crystal-clear positioning you can use everywhere.</div>
-          <a href="#apply" class="w-full py-3 bg-white border border-neutral-200 text-neutral-600 font-medium text-center rounded-lg hover:border-brand-500 hover:text-brand-600 transition-colors">Start With Messaging</a>
-        </div>
-
-        <!-- Stage 3: SALES PAGE BLUEPRINT -->
-        <div class="bg-white p-6 border border-neutral-200 rounded-2xl hover:border-brand-500 hover:shadow-xl transition-all flex flex-col group">
-          <div class="mb-4">
-            <span class="text-xs font-medium text-brand-600 bg-brand-50 px-2 py-1 rounded uppercase tracking-wider">Stage 3</span>
-          </div>
-          <h3 class="text-lg font-bold mb-1 uppercase tracking-tight">Sales Page Blueprint</h3>
-          <p class="text-sm text-neutral-400 mb-4 font-normal italic">"How Do I Structure My Offer?"</p>
-          <div class="text-2xl font-semibold text-neutral-900 mb-6">₦460,000</div>
-          
-          <ul class="text-sm text-neutral-600 space-y-3 mb-8 flex-grow font-normal">
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-600 mt-0.5"></i> Full sales page wireframe</li>
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-600 mt-0.5"></i> Conversion-optimized copy</li>
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-600 mt-0.5"></i> Strategic CTA placement</li>
-          </ul>
-          <div class="text-xs text-neutral-400 mb-4"><strong>Outcome:</strong> A page that walks prospects from skeptical to sold.</div>
-          <a href="#apply" class="w-full py-3 bg-white border border-neutral-200 text-neutral-600 font-medium text-center rounded-lg hover:border-brand-500 hover:text-brand-600 transition-colors">Build My Sales Page</a>
-        </div>
-
-        <!-- Stage 4: FULL WEBSITE BUILD -->
-        <div class="bg-neutral-900 text-white p-6 border border-neutral-900 rounded-2xl shadow-xl hover:-translate-y-2 transition-transform flex flex-col">
-          <div class="mb-4">
-            <span class="text-xs font-medium text-white bg-brand-600 px-2 py-1 rounded uppercase tracking-wider">Stage 4</span>
-          </div>
-          <h3 class="text-lg font-bold mb-1 uppercase tracking-tight">Full Website Build</h3>
-          <p class="text-sm text-neutral-400 mb-4 font-normal italic">"Make It Look As Good As It Reads"</p>
-          <div class="text-2xl font-semibold text-white mb-6">₦980,000</div>
-          
-          <ul class="text-sm text-neutral-300 space-y-3 mb-8 flex-grow font-normal">
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-500 mt-0.5"></i> Professional mobile-first site</li>
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-500 mt-0.5"></i> Built on Webflow/Framer/WordPress</li>
-            <li class="flex items-start gap-2"><i data-lucide="check" class="w-4 h-4 text-brand-500 mt-0.5"></i> Includes all previous stages</li>
-          </ul>
-          <div class="text-xs text-neutral-500 mb-4"><strong>Outcome:</strong> A website that closes deals while you sleep.</div>
-          <a href="#apply" class="w-full py-3 bg-brand-600 text-white font-medium text-center rounded-lg hover:bg-brand-500 transition-colors">Get The Full Package</a>
-        </div>
-
-      </div>
-
-      <!-- Social Proof (Micro) - SPLIT -->
-      <div class="max-w-4xl mx-auto mt-20">
-          <h3 class="text-center text-sm font-bold text-neutral-400 uppercase tracking-widest mb-8">Recent Client Transformations</h3>
-          
-          <div class="grid md:grid-cols-2 gap-8">
-              <!-- Testimonial 1 -->
-              <div class="bg-white p-6 rounded-xl border border-neutral-100 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
-                  <div class="flex items-center gap-3 mb-4">
-                      <div class="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-600">IO</div>
-                      <div>
-                          <div class="font-bold text-neutral-900 text-sm">Isaac Oni</div>
-                          <div class="text-xs text-neutral-500">Founder, Brilla.NG</div>
-                      </div>
-                  </div>
-                  <p class="text-neutral-600 italic text-sm leading-relaxed mb-6">
-                      "Paul rebuilt our positioning in 48 hours. The clarity he brought to our offer was the missing link we didn't know we needed."
-                  </p>
-                  <div class="mt-auto pt-4 border-t border-neutral-50">
-                      <a href="https://brilla.ng" target="_blank" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 group">
-                          View Live Project <i data-lucide="arrow-up-right" class="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
-                      </a>
-                  </div>
-              </div>
-
-              <!-- Testimonial 2 -->
-              <div class="bg-white p-6 rounded-xl border border-neutral-100 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
-                  <div class="flex items-center gap-3 mb-4">
-                      <div class="w-10 h-10 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center text-xs font-bold">RA</div>
-                      <div>
-                          <div class="font-bold text-neutral-900 text-sm">Richard Adeoye</div>
-                          <div class="text-xs text-neutral-500">RichieReachDigitals</div>
-                      </div>
-                  </div>
-                  <p class="text-neutral-600 italic text-sm leading-relaxed mb-6">
-                      "We closed 2 deals the following week—both at our new premium price. The return on investment was immediate."
-                  </p>
-                  <div class="mt-auto pt-4 border-t border-neutral-50">
-                      <a href="https://pennio-design.github.io/richiereachdigitals" target="_blank" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 group">
-                          View Live Project <i data-lucide="arrow-up-right" class="w-3 h-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"></i>
-                      </a>
-                  </div>
-              </div>
-          </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- WHO IS THIS FOR -->
-  <section class="py-20 px-6 reveal-on-scroll border-t border-neutral-100">
-    <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
-        <div>
-            <h3 class="text-xs font-medium mb-4 uppercase tracking-widest text-brand-600">Qualification</h3>
-            <h2 class="text-3xl font-semibold mb-4 tracking-tight">This Works For You If...</h2>
-            <ul class="space-y-4 mt-6 font-normal">
-                <li class="flex items-start gap-3">
-                    <i data-lucide="check-circle-2" class="w-6 h-6 text-neutral-900 shrink-0"></i>
-                    <p class="text-neutral-600">You sell services $5K+ (coaching, consulting, agencies).</p>
-                </li>
-                <li class="flex items-start gap-3">
-                    <i data-lucide="check-circle-2" class="w-6 h-6 text-neutral-900 shrink-0"></i>
-                    <p class="text-neutral-600">Your clients need to <strong>understand</strong> your offer before they buy.</p>
-                </li>
-                <li class="flex items-start gap-3">
-                    <i data-lucide="check-circle-2" class="w-6 h-6 text-neutral-900 shrink-0"></i>
-                    <p class="text-neutral-600">You're losing deals to competitors with worse service but better websites.</p>
-                </li>
-                <li class="flex items-start gap-3">
-                    <i data-lucide="check-circle-2" class="w-6 h-6 text-neutral-900 shrink-0"></i>
-                    <p class="text-neutral-600">You're tired of hearing "I need to think about it."</p>
-                </li>
+        <div class="bg-white p-10 rounded-3xl border border-neutral-100 shadow-sm transition-all hover-lift reveal-on-scroll" style="transition-delay: 200ms;">
+            <div class="text-[11px] font-black uppercase text-brand-600 tracking-[0.25em] mb-6">Phase 02</div>
+            <h3 class="text-2xl font-black mb-8 leading-tight">Positioning</h3>
+            <ul class="space-y-4 mb-12 flex-grow">
+              <li class="text-sm text-neutral-500 flex items-center gap-3"><div class="w-1.5 h-1.5 bg-brand-500 rounded-full"></div> Value Architecture</li>
+              <li class="text-sm text-neutral-500 flex items-center gap-3"><div class="w-1.5 h-1.5 bg-brand-500 rounded-full"></div> Copy Ecosystem</li>
             </ul>
         </div>
-
-        <div class="bg-neutral-100 p-8 rounded-2xl border border-neutral-200">
-            <h3 class="text-lg font-semibold mb-4 text-neutral-900 flex items-center gap-2">
-                <i data-lucide="x-circle" class="w-5 h-5 text-neutral-500"></i> NOT A Fit If:
-            </h3>
-            <ul class="space-y-3 font-normal">
-                <li class="text-neutral-500 text-sm flex items-center gap-2"><span class="text-red-400">✗</span> You need a logo (try 99designs)</li>
-                <li class="text-neutral-500 text-sm flex items-center gap-2"><span class="text-red-400">✗</span> You want the cheapest option (try Fiverr)</li>
-                <li class="text-neutral-500 text-sm flex items-center gap-2"><span class="text-red-400">✗</span> You're not ready to charge what you're worth</li>
-                <li class="text-neutral-500 text-sm flex items-center gap-2"><span class="text-red-400">✗</span> You're looking for SEO or paid ads help</li>
+        <div class="bg-white p-10 rounded-3xl border border-neutral-100 shadow-sm transition-all hover-lift reveal-on-scroll" style="transition-delay: 300ms;">
+            <div class="text-[11px] font-black uppercase text-brand-600 tracking-[0.25em] mb-6">Phase 03</div>
+            <h3 class="text-2xl font-black mb-8 leading-tight">Visual Identity</h3>
+            <ul class="space-y-4 mb-12 flex-grow">
+              <li class="text-sm text-neutral-500 flex items-center gap-3"><div class="w-1.5 h-1.5 bg-brand-500 rounded-full"></div> Brand Language</li>
+              <li class="text-sm text-neutral-500 flex items-center gap-3"><div class="w-1.5 h-1.5 bg-brand-500 rounded-full"></div> Authority Assets</li>
             </ul>
-            <div class="mt-8 pt-6 border-t border-neutral-200">
-                 <p class="font-normal text-neutral-900 text-sm">
-                    <span class="text-brand-600 font-bold">Guarantee:</span> Walk away from the free audit with <strong>at least 3 actionable fixes</strong>—or we don't proceed to paid work. No hard feelings.
-                </p>
-            </div>
         </div>
-    </div>
-  </section>
-
-  <!-- FAQ SECTION -->
-  <section id="faq" class="py-20 px-6 bg-white reveal-on-scroll">
-      <div class="max-w-3xl mx-auto">
-          <h2 class="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
-          <div class="space-y-4">
-              <!-- Q1 -->
-              <details class="group border border-neutral-200 rounded-lg open:bg-neutral-50">
-                  <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 text-neutral-900">
-                      <span>Do I need to know what I want?</span>
-                      <span class="transition group-open:rotate-180">
-                          <i data-lucide="chevron-down" class="w-5 h-5 text-neutral-400"></i>
-                      </span>
-                  </summary>
-                  <div class="text-neutral-600 text-sm mt-2 p-4 pt-0 leading-relaxed">
-                      No. Most clients come to me confused. That's what the audit fixes.
-                  </div>
-              </details>
-              
-              <!-- Q2 -->
-              <details class="group border border-neutral-200 rounded-lg open:bg-neutral-50">
-                  <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 text-neutral-900">
-                      <span>What if I already have a website?</span>
-                      <span class="transition group-open:rotate-180">
-                          <i data-lucide="chevron-down" class="w-5 h-5 text-neutral-400"></i>
-                      </span>
-                  </summary>
-                  <div class="text-neutral-600 text-sm mt-2 p-4 pt-0 leading-relaxed">
-                      Perfect. We'll audit it and either improve it or rebuild it—depending on what's salvageable.
-                  </div>
-              </details>
-
-              <!-- Q3 -->
-              <details class="group border border-neutral-200 rounded-lg open:bg-neutral-50">
-                  <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 text-neutral-900">
-                      <span>Do you write the copy or just tell me what to say?</span>
-                      <span class="transition group-open:rotate-180">
-                          <i data-lucide="chevron-down" class="w-5 h-5 text-neutral-400"></i>
-                      </span>
-                  </summary>
-                  <div class="text-neutral-600 text-sm mt-2 p-4 pt-0 leading-relaxed">
-                      I write everything. You approve it.
-                  </div>
-              </details>
-          </div>
+        <div class="bg-white p-10 rounded-3xl border border-neutral-100 shadow-sm transition-all hover-lift reveal-on-scroll" style="transition-delay: 400ms;">
+            <div class="text-[11px] font-black uppercase text-brand-600 tracking-[0.25em] mb-6">Phase 04</div>
+            <h3 class="text-2xl font-black mb-8 leading-tight">Authority Ecosystem</h3>
+            <ul class="space-y-4 mb-12 flex-grow">
+              <li class="text-sm text-neutral-500 flex items-center gap-3"><div class="w-1.5 h-1.5 bg-brand-500 rounded-full"></div> High-Velocity Platform</li>
+              <li class="text-sm text-neutral-500 flex items-center gap-3"><div class="w-1.5 h-1.5 bg-brand-500 rounded-full"></div> Integrated Lead Stack</li>
+            </ul>
+        </div>
       </div>
+    </div>
   </section>
 
   <!-- APPLY SECTION -->
-  <section id="apply" class="py-24 px-6 bg-neutral-950 text-white relative overflow-hidden">
-    <!-- Glow Effect -->
-    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-brand-600/10 blur-[100px] rounded-full pointer-events-none"></div>
+  <section id="apply" class="py-32 px-6 bg-neutral-950 text-white relative overflow-hidden">
+    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-brand-600/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-    <div class="max-w-xl mx-auto relative z-10">
-      <div class="text-center mb-10">
-        <h2 class="text-3xl font-semibold mb-2 tracking-tight">Book Your Free Website Diagnosis <br><span class="text-neutral-500 text-xl font-normal">(No Pitch. Just Fixes.)</span></h2>
-        <p class="text-neutral-400 font-normal mt-4 leading-relaxed">
-            45-minute screen-share where I show you exactly what's costing you deals. You'll leave with a prioritized action plan—whether you hire me or not.
+    <div class="max-w-2xl mx-auto relative z-10 text-center">
+      <div class="mb-12 space-y-4 reveal-on-scroll">
+        <h2 class="text-4xl lg:text-5xl font-black tracking-tighter uppercase italic leading-none">
+          Book Your Free Website <span class="text-brand-500">Diagnosis</span>
+        </h2>
+        <div class="text-neutral-500 text-xl font-normal">(No Pitch. Just Fixes.)</div>
+        <p class="text-neutral-400 font-normal mt-6 leading-relaxed text-lg">
+          45-minute screen-share where I show you exactly what's costing you deals. You'll leave with a prioritized action plan—whether you hire me or not.
         </p>
       </div>
-
-      <div class="bg-white text-neutral-900 p-8 shadow-2xl rounded-2xl border-t-4 border-brand-600 relative">
-        <form id="applyForm" method="POST" class="flex flex-col gap-6">
+      
+      <div class="bg-white text-neutral-900 p-8 lg:p-12 shadow-2xl rounded-[3rem] border-t-[8px] border-brand-600 relative text-left reveal-on-scroll">
+        <form id="applyForm" class="space-y-8">
             <input type="hidden" name="_subject" value="New Audit Request (PENNIO)">
-
-            <div class="grid grid-cols-2 gap-4">
+            
+            <div class="grid md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-xs font-medium text-neutral-500 uppercase mb-1">Name</label>
-                    <input required name="name" class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors font-normal">
+                    <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Name</label>
+                    <input required name="name" class="w-full px-5 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all font-medium">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-neutral-500 uppercase mb-1">Email</label>
-                    <input required name="email" type="email" class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors font-normal">
+                    <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Email</label>
+                    <input required name="email" type="email" class="w-full px-5 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all font-medium">
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-neutral-500 uppercase mb-1">Current Website (If any)</label>
-                <input name="website" placeholder="www..." class="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-colors font-normal">
+                <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Current Website (If any)</label>
+                <input name="website" placeholder="www..." class="w-full px-5 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all font-medium">
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-neutral-500 uppercase mb-1">What's your biggest problem right now?</label>
-                <div class="space-y-2 mt-2">
-                    <label class="flex items-center gap-3 p-3 border border-neutral-200 rounded-lg cursor-pointer hover:bg-neutral-50 transition-colors">
-                        <input type="radio" name="goal" value="homepage_copy" class="accent-brand-600" required>
-                        <span class="text-sm text-neutral-700">I don't know what to say on my homepage</span>
+                <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">What's your biggest problem right now?</label>
+                <div class="grid gap-3 mt-4">
+                    <label class="flex items-center gap-4 p-5 border border-neutral-100 bg-neutral-50/50 rounded-2xl cursor-pointer hover:bg-neutral-50 transition-colors">
+                        <input type="radio" name="goal" value="homepage_copy" class="w-5 h-5 accent-brand-600" required>
+                        <span class="text-sm font-semibold text-neutral-700">I don't know what to say on my homepage</span>
                     </label>
-                    <label class="flex items-center gap-3 p-3 border border-neutral-200 rounded-lg cursor-pointer hover:bg-neutral-50 transition-colors">
-                        <input type="radio" name="goal" value="price_comparison" class="accent-brand-600">
-                        <span class="text-sm text-neutral-700">Prospects always compare me on price</span>
+                    <label class="flex items-center gap-4 p-5 border border-neutral-100 bg-neutral-50/50 rounded-2xl cursor-pointer hover:bg-neutral-50 transition-colors">
+                        <input type="radio" name="goal" value="price_comparison" class="w-5 h-5 accent-brand-600">
+                        <span class="text-sm font-semibold text-neutral-700">Prospects always compare me on price</span>
                     </label>
-                    <label class="flex items-center gap-3 p-3 border border-neutral-200 rounded-lg cursor-pointer hover:bg-neutral-50 transition-colors">
-                        <input type="radio" name="goal" value="unprofessional_site" class="accent-brand-600">
-                        <span class="text-sm text-neutral-700">My website looks unprofessional</span>
+                    <label class="flex items-center gap-4 p-5 border border-neutral-100 bg-neutral-50/50 rounded-2xl cursor-pointer hover:bg-neutral-50 transition-colors">
+                        <input type="radio" name="goal" value="unprofessional_site" class="w-5 h-5 accent-brand-600">
+                        <span class="text-sm font-semibold text-neutral-700">My website looks unprofessional</span>
                     </label>
-                    <label class="flex items-center gap-3 p-3 border border-neutral-200 rounded-lg cursor-pointer hover:bg-neutral-50 transition-colors">
-                        <input type="radio" name="goal" value="lead_quality" class="accent-brand-600">
-                        <span class="text-sm text-neutral-700">I'm not getting enough qualified leads</span>
+                    <label class="flex items-center gap-4 p-5 border border-neutral-100 bg-neutral-50/50 rounded-2xl cursor-pointer hover:bg-neutral-50 transition-colors">
+                        <input type="radio" name="goal" value="lead_quality" class="w-5 h-5 accent-brand-600">
+                        <span class="text-sm font-semibold text-neutral-700">I'm not getting enough qualified leads</span>
                     </label>
                 </div>
             </div>
 
-            <button id="submitBtn" type="submit" class="w-full py-4 bg-neutral-900 text-white font-medium rounded-lg hover:bg-brand-600 transition-all shadow-lg text-lg mt-2 transform hover:-translate-y-1 hover:shadow-xl">
-                Send My Website For Review
+            <button id="submitBtn" type="submit" class="w-full py-6 bg-neutral-900 text-white font-black text-xl rounded-2xl hover:bg-brand-600 transition-all shadow-xl mt-4 flex items-center justify-center gap-3 active:scale-95">
+                SEND MY WEBSITE FOR REVIEW
             </button>
+            <div class="text-center mt-6">
+                <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-[0.3em] italic">3 Diagnosis Slots Available For This Week</span>
+            </div>
         </form>
 
-        <div id="successMessage" class="hidden text-center py-10">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
-              <i data-lucide="check" class="w-8 h-8"></i>
+        <div id="successMessage" class="hidden text-center py-16 space-y-8">
+            <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                <i data-lucide="check" size="48"></i>
             </div>
-            <h3 class="font-semibold text-xl mb-2">Request Received.</h3>
-            <p class="text-sm text-neutral-500 mb-6 font-normal">I will review your details and send a calendar link shortly.</p>
+            <div class="space-y-4">
+              <h3 class="text-3xl font-black uppercase tracking-tighter italic leading-none">Request Received</h3>
+              <p class="text-neutral-500 font-medium leading-relaxed max-w-sm mx-auto">I'll review your platform details personally. Expect a calendar link in your inbox shortly.</p>
+            </div>
+            <button onclick="window.location.reload()" class="px-8 py-4 border-2 border-neutral-100 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-neutral-50 transition-colors mx-auto">
+                Back to Top
+            </button>
         </div>
       </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="py-12 bg-black border-t border-neutral-900 text-neutral-400 text-sm font-normal">
-    <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div>
-            <span class="font-medium text-white tracking-tight">PENNIO<span class="text-brand-600">.</span></span>
-            <p class="mt-2 text-xs text-neutral-600">&copy; 2026 PENNIO. Clear Offers. Clear Outcomes.</p>
-        </div>
-
-        <div class="flex gap-6">
-            <a href="https://instagram.com/pennio.design" target="_blank" class="hover:text-white transition-colors flex items-center gap-2 group">
-                <i data-lucide="instagram" class="w-4 h-4 group-hover:text-brand-500 transition-colors"></i> pennio.design
-            </a>
-            <a href="https://x.com/penniodesign" target="_blank" class="hover:text-white transition-colors flex items-center gap-2 group">
-                <i data-lucide="twitter" class="w-4 h-4 group-hover:text-brand-500 transition-colors"></i> penniodesign
-            </a>
-            <a href="https://linkedin.com/in/pauloyatowo" target="_blank" class="hover:text-white transition-colors flex items-center gap-2 group">
-                <i data-lucide="linkedin" class="w-4 h-4 group-hover:text-brand-500 transition-colors"></i> Paul
-            </a>
-        </div>
+  <footer class="py-16 px-6 border-t border-neutral-100 text-neutral-400">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+      <div class="text-2xl font-black tracking-tighter text-neutral-900">PENNIO<span class="text-brand-600">.</span>DESIGN</div>
+      <div class="flex gap-12 text-xs font-bold uppercase tracking-widest text-neutral-500">
+        <a href="#framework" class="hover:text-brand-600 transition-colors">Framework</a>
+        <a href="#process" class="hover:text-brand-600 transition-colors">Process</a>
+        <a href="#apply" class="hover:text-brand-600 transition-colors">Diagnosis</a>
+      </div>
+      <div class="text-[10px] font-bold uppercase tracking-[0.2em]">&copy; 2026 THE PENNIO AGENCY</div>
     </div>
   </footer>
 
   <script>
     lucide.createIcons();
 
-    // Scroll Animation
+    // Scroll Reveal Logic
+    const observerOptions = { threshold: 0.1 };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
         }
       });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el));
+    }, observerOptions);
 
-    // Form Handler
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+
+    // Form Handling
     const form = document.getElementById('applyForm');
     const success = document.getElementById('successMessage');
     const btn = document.getElementById('submitBtn');
-    const originalBtnText = btn.innerHTML;
+    const originalBtnContent = btn.innerHTML;
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       btn.disabled = true;
-      btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin inline mr-2"></i> Processing...';
-      lucide.createIcons();
+      btn.innerHTML = '<span class="animate-spin inline-block w-6 h-6 border-2 border-white border-t-transparent rounded-full mr-2"></span> ANALYZING...';
 
       const formData = new FormData(form);
 
@@ -646,12 +340,13 @@
         form.classList.add('hidden');
         success.classList.remove('hidden');
         form.reset();
+        lucide.createIcons(); // Refresh icons for success state
       })
       .catch(error => {
         console.error('Error:', error);
-        alert('Error sending application. Please try again.');
+        alert('Error sending application. Please email hello@pennio.design directly.');
         btn.disabled = false;
-        btn.innerHTML = originalBtnText;
+        btn.innerHTML = originalBtnContent;
       });
     });
   </script>
