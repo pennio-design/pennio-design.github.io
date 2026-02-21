@@ -3,351 +3,556 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PENNIO.DESIGN | Premium Strategy & Design</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <title>PENNIO | Brand Architecture for Vision-Driven Founders</title>
   
+  <!-- Premium Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Utilities (Retained for possible React component use) -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
             brand: {
-              50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74',
-              400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c',
-              800: '#9a3412', 900: '#7c2d12',
-            },
-          },
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          animation: {
-            'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards',
-            'float-slow': 'float 8s ease-in-out infinite',
-            'float-medium': 'float 5s ease-in-out infinite',
-            'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-          },
-          keyframes: {
-            fadeInUp: {
-              '0%': { opacity: '0', transform: 'translateY(24px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            float: {
-              '0%, 100%': { transform: 'translateY(0)' },
-              '50%': { transform: 'translateY(-20px)' },
+              50: '#fff7ed',
+              100: '#ffedd5',
+              500: '#D4722A',
+              600: '#E8844A',
+              900: '#080808',
             }
           }
         }
       }
     }
   </script>
-  <style>
-    body { background-color: #ffffff; color: #171717; font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
-    
-    /* Utilities */
-    .hover-lift { transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1), box-shadow 0.4s cubic-bezier(0.19, 1, 0.22, 1); }
-    .hover-lift:hover { transform: translateY(-4px); }
-    
-    /* Scroll Reveal */
-    .reveal-on-scroll { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); }
-    .reveal-on-scroll.visible { opacity: 1; transform: translateY(0); }
-    
-    /* Custom Illustration Animations */
-    .illustration-spot { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .group:hover .illustration-spot { transform: scale(1.15) rotate(-3deg); }
-    
-    .hero-illustration { filter: drop-shadow(0 25px 50px rgba(249, 115, 22, 0.15)); }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #f1f1f1; }
-    ::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
-    
-    .view-hidden { display: none; }
-  </style>
+  <!-- ESM Imports for React Environment -->
+  <script type="importmap">
+  {
+    "imports": {
+      "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+      "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+      "react/": "https://esm.sh/react@^19.2.3/",
+      "react": "https://esm.sh/react@^19.2.3",
+      "@google/genai": "https://esm.sh/@google/genai@^1.38.0"
+    }
+  }
+  </script>
+  
+  <!-- Global Styles (Now points to your updated index.css file) -->
+  <link rel="stylesheet" href="/index.css">
 </head>
-<body class="antialiased">
+<body>
 
-  <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-xl border-b border-neutral-100 z-50">
-    <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-      <div class="font-bold tracking-tighter text-2xl flex items-center gap-1 cursor-pointer" onclick="switchView('landing')">
-        PENNIO<span class="text-brand-600">.</span>DESIGN
+  <!-- React Mount Point (Hidden by default, used if you write React components later) -->
+  <div id="root"></div>
+
+  <!-- Scroll progress -->
+  <div class="scroll-line" id="scrollLine"></div>
+
+  <!-- ─── NAV ─────────────────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo" onclick="switchView('landing')">PENNIO<span>.</span>DESIGN</div>
+      <div class="nav-links">
+        <button class="nav-link" onclick="switchView('landing'); scrollToEl('framework')">Framework</button>
+        <button class="nav-link" onclick="switchView('strategy')">Brand Sim</button>
+        <a href="https://pennio-design.github.io/portfolio.pdf" target="_blank" class="nav-link">Portfolio</a>
+        <a href="#apply" onclick="switchView('landing')" class="nav-cta">Free Diagnosis</a>
       </div>
-      <div class="flex items-center gap-6">
-        <div class="hidden md:flex gap-8 text-sm font-medium text-neutral-500 uppercase tracking-widest">
-          <button onclick="switchView('landing')" class="hover:text-neutral-900 transition-colors">Framework</button>
-          <button onclick="switchView('strategy')" class="hover:text-neutral-900 transition-colors">Strategy Sim</button>
-          <a href="https://pennio-design.github.io/portfolio.pdf" target="_blank" class="hover:text-neutral-900 transition-colors">Portfolio</a>
-        </div>
-        <a href="#apply" onclick="switchView('landing')" class="bg-neutral-900 text-white text-[10px] font-black px-6 py-3 rounded-xl hover:bg-brand-600 transition-all shadow-xl active:scale-95 tracking-[0.1em]">
-          FREE DIAGNOSIS
-        </a>
-      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
 
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-menu-link" onclick="closeMenu(); switchView('landing'); scrollToEl('framework')">Framework</button>
+    <button class="mobile-menu-link" onclick="closeMenu(); switchView('strategy')">Brand Sim</button>
+    <a href="https://pennio-design.github.io/portfolio.pdf" target="_blank" class="mobile-menu-link" onclick="closeMenu()">Portfolio</a>
+    <a href="#apply" class="mobile-menu-cta" onclick="closeMenu(); switchView('landing')">Free Diagnosis</a>
+  </div>
+
+  <!-- ═══════════════════ LANDING VIEW ═══════════════════════════════════ -->
   <div id="landingView">
-    <section class="pt-40 pb-24 px-6 max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16 overflow-hidden">
-      <div class="flex-1 space-y-10 animate-fade-in-up relative z-10">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-brand-50 text-brand-700 text-[10px] font-bold tracking-[0.15em] uppercase rounded-full border border-brand-100">
-          Strategy First Design
-        </div>
-        <h1 class="text-5xl lg:text-7xl font-semibold leading-[1.05] tracking-tight">
-          Premium Services <br />
-          Deserve Premium <span class="text-brand-600 italic">Perception.</span>
+
+    <!-- ─── HERO ───────────────────────────────────────────────────────── -->
+    <section id="hero">
+      <div class="hero-left">
+        <div class="hero-eyebrow">Meaning-First Brand Architecture</div>
+        <h1 class="hero-h1">
+          Your brand<br>isn't the problem.<br>
+          <em>Your positioning is.</em>
         </h1>
-        <p class="text-xl text-neutral-600 leading-relaxed max-w-lg font-normal">
-          We help elite founders bridge the gap between their actual expertise and their digital credibility using the 3-pillar framework.
+        <p class="hero-sub">
+          We build brand architecture for vision-driven founders — the strategic layer that determines whether your company is remembered or ignored. Design comes last.
         </p>
-        <div class="flex flex-col sm:flex-row gap-5">
-          <button onclick="switchView('strategy')" class="px-10 py-5 bg-neutral-900 text-white font-bold rounded-xl hover:bg-brand-600 hover-lift shadow-lg shadow-neutral-200 active:scale-95 transition-all text-center">
-            Start Strategy Sim
-          </button>
-          <a href="#apply" class="px-10 py-5 bg-white border border-neutral-200 text-neutral-800 font-bold rounded-xl hover:bg-neutral-50 hover-lift active:scale-95 transition-all text-center">
-            Analyze My Messaging
-          </a>
+        <div class="hero-actions">
+          <button class="btn-primary" onclick="switchView('strategy')">Run Brand Sim →</button>
+          <a href="#apply" class="btn-secondary">Get Free Diagnosis</a>
         </div>
       </div>
-      <div class="flex-1 relative hidden lg:flex justify-center items-center">
-          <img 
-            src="assets/images/illustrations/hero-strategy.svg" 
-            alt="Strategic Digital Design Illustration" 
-            class="w-full max-w-md h-auto object-contain animate-float-slow hero-illustration relative z-10"
-          >
-          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand-100/50 blur-[80px] rounded-full pointer-events-none -z-10 animate-pulse-slow"></div>
-      </div>
-    </section>
 
-    <section id="framework" class="bg-neutral-950 py-32 px-6 text-white overflow-hidden relative">
-      <div class="absolute top-0 right-0 w-1/2 h-full bg-brand-600/10 blur-[160px] rounded-full pointer-events-none"></div>
-      <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-24 items-center relative z-10">
-        
-        <div class="space-y-20 reveal-on-scroll">
-          <div class="space-y-4 text-center lg:text-left">
-            <h2 class="text-4xl lg:text-5xl font-semibold tracking-tight">The 3-Pillar Framework</h2>
-            <p class="text-neutral-400 text-lg max-w-md mx-auto lg:mx-0">Our methodology for high-ticket service positioning.</p>
+      <!-- ─── BRAND SIGNAL SCANNER ──────────── -->
+      <div class="hero-right">
+        <div class="scanner-card" id="scannerCard">
+          <div class="scanner-header">
+            <div class="scanner-dots">
+              <div class="scanner-dot r"></div>
+              <div class="scanner-dot y"></div>
+              <div class="scanner-dot g"></div>
+            </div>
+            <div class="scanner-title">Brand Architecture Scan · Live Audit</div>
           </div>
-
-          <div class="space-y-16">
-            <div class="flex flex-col lg:flex-row gap-8 lg:gap-6 group items-center lg:items-start text-center lg:text-left">
-              <div class="relative flex-shrink-0">
-                  <div class="absolute inset-0 bg-brand-500/20 blur-[40px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <img src="assets/images/illustrations/pillar-clarity.svg" alt="Clarity Illustration" class="w-48 h-48 lg:w-24 lg:h-24 object-contain illustration-spot relative z-10 drop-shadow-2xl">
+          <div class="scanner-body">
+            <div class="scanner-label">Scanning brand signals</div>
+            <div class="signal-row" id="sig1">
+              <div class="signal-name">
+                <div class="signal-icon fail">✕</div>
+                Positioning Clarity
               </div>
-              <div>
-                <h3 class="text-2xl font-bold mb-4 tracking-tight group-hover:text-brand-500 transition-colors">01. Clarity</h3>
-                <p class="text-neutral-400 leading-relaxed font-normal max-w-sm mx-auto lg:mx-0 text-lg">If your prospect can't articulate your value in one sentence, you haven't explained it yet.</p>
-              </div>
+              <span class="signal-status fail">Unclear</span>
             </div>
-
-            <div class="flex flex-col lg:flex-row gap-8 lg:gap-6 group items-center lg:items-start text-center lg:text-left">
-              <div class="relative flex-shrink-0">
-                  <div class="absolute inset-0 bg-brand-500/20 blur-[40px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <img src="assets/images/illustrations/pillar-credibility.svg" alt="Credibility Illustration" class="w-48 h-48 lg:w-24 lg:h-24 object-contain illustration-spot relative z-10 drop-shadow-2xl">
+            <div class="signal-row" id="sig2">
+              <div class="signal-name">
+                <div class="signal-icon fail">✕</div>
+                Messaging Architecture
               </div>
-              <div>
-                <h3 class="text-2xl font-bold mb-4 tracking-tight group-hover:text-brand-500 transition-colors">02. Credibility</h3>
-                <p class="text-neutral-400 leading-relaxed font-normal max-w-sm mx-auto lg:mx-0 text-lg">Authority is earned through precision. We replace generic claims with undeniable proof of expertise.</p>
+              <span class="signal-status fail">Generic</span>
+            </div>
+            <div class="signal-row" id="sig3">
+              <div class="signal-name">
+                <div class="signal-icon warn">!</div>
+                Visual Identity System
               </div>
+              <span class="signal-status warn">Inconsistent</span>
             </div>
-
-            <div class="flex flex-col lg:flex-row gap-8 lg:gap-6 group items-center lg:items-start text-center lg:text-left">
-               <div class="relative flex-shrink-0">
-                  <div class="absolute inset-0 bg-brand-500/20 blur-[40px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <img src="assets/images/illustrations/pillar-conviction.svg" alt="Conviction Illustration" class="w-48 h-48 lg:w-24 lg:h-24 object-contain illustration-spot relative z-10 drop-shadow-2xl">
-               </div>
-              <div>
-                <h3 class="text-2xl font-bold mb-4 tracking-tight group-hover:text-brand-500 transition-colors">03. Conviction</h3>
-                <p class="text-neutral-400 leading-relaxed font-normal max-w-sm mx-auto lg:mx-0 text-lg">We don't sell features. We sell the inevitable outcome your clients are searching for.</p>
+            <div class="signal-row" id="sig4">
+              <div class="signal-name">
+                <div class="signal-icon fail">✕</div>
+                Authority Signals
               </div>
+              <span class="signal-status fail">Missing</span>
             </div>
-          </div>
-        </div>
-
-        <div class="bg-neutral-900/40 p-16 rounded-[3rem] border border-neutral-800 backdrop-blur-xl reveal-on-scroll animate-float-medium hidden lg:block">
-          <div class="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.2em] mb-12 text-center">The Perception Benchmark</div>
-          <div class="flex items-end gap-16 h-72 relative">
-            <div class="flex-1 flex flex-col items-center group">
-              <div class="text-3xl font-black mb-6 group-hover:text-brand-500 transition-colors">10/10</div>
-              <div class="w-full bg-brand-500 h-full rounded-t-3xl shadow-[0_0_60px_rgba(249,115,22,0.25)] transition-all duration-700 group-hover:shadow-[0_0_80px_rgba(249,115,22,0.4)]"></div>
-              <div class="text-[10px] font-bold uppercase tracking-widest mt-8 text-neutral-500 whitespace-nowrap">Actual Value</div>
+            <div class="signal-row" id="sig5">
+              <div class="signal-name">
+                <div class="signal-icon warn">!</div>
+                Conversion Flow Logic
+              </div>
+              <span class="signal-status warn">Weak</span>
             </div>
-            <div class="flex-1 flex flex-col items-center group">
-              <div class="text-3xl font-black mb-6 group-hover:text-white transition-colors">3/10</div>
-              <div class="w-full bg-neutral-800 h-[35%] rounded-t-3xl transition-all duration-700 group-hover:bg-neutral-700"></div>
-              <div class="text-[10px] font-bold uppercase tracking-widest mt-8 text-neutral-500 whitespace-nowrap">Market Perception</div>
+            <div class="scanner-footer" id="scannerFooter">
+              <div class="scanner-verdict">5 critical gaps detected</div>
+              <div class="scanner-count">₦ losing</div>
             </div>
           </div>
         </div>
-
       </div>
     </section>
 
-    <section id="apply" class="py-32 px-6 bg-neutral-950 text-white relative overflow-hidden">
-       <img src="assets/images/illustrations/bg-abstract-apply.svg" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-overlay pointer-events-none">
-      
-      <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-brand-600/20 blur-[120px] rounded-full pointer-events-none"></div>
+    <!-- ─── PROBLEM SECTION ────────────────────────────────────────────── -->
+    <section id="problem">
+      <div class="section-max">
+        <div class="reveal">
+          <div class="section-label">The Distinction</div>
+          <h2 class="section-h2">Decorators vs. <em>Architects</em></h2>
+          <p class="section-body">Most design work fixes the surface. Brand architecture fixes the structure beneath it. Here's what separates the two.</p>
+        </div>
+        <div class="problem-grid reveal reveal-d1">
+          <div class="problem-col bad">
+            <div class="problem-col-label">What decorators do</div>
+            <ul class="problem-items">
+              <li class="problem-item">Build a logo before defining what the brand means</li>
+              <li class="problem-item">Choose colors before establishing a market position</li>
+              <li class="problem-item">Write copy that describes features, not transformation</li>
+              <li class="problem-item">Deliver files — not systems, not strategy, not direction</li>
+              <li class="problem-item">Optimize for aesthetics that the founder likes, not outcomes that clients buy</li>
+            </ul>
+          </div>
+          <div class="problem-col good">
+            <div class="problem-col-label">What architects build</div>
+            <ul class="problem-items">
+              <li class="problem-item">Positioning thesis established before any visual decision</li>
+              <li class="problem-item">Messaging framework that makes value undeniable in one sentence</li>
+              <li class="problem-item">Visual system that carries cultural weight and compounds over time</li>
+              <li class="problem-item">Brand architecture that scales from pitch deck to market category</li>
+              <li class="problem-item">Proof layer that replaces claims with case-backed conviction</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
 
-      <div class="max-w-2xl mx-auto relative z-10 text-center">
-        <div class="mb-12 space-y-4 reveal-on-scroll">
-          <h2 class="text-4xl lg:text-5xl font-black tracking-tighter uppercase italic leading-none">
-            Book Your Free Website <span class="text-brand-500">Diagnosis</span>
-          </h2>
-          <div class="text-neutral-500 text-xl font-normal">(No Pitch. Just Fixes.)</div>
-          <p class="text-neutral-400 font-normal mt-6 leading-relaxed text-lg">
-            45-minute screen-share where I show you exactly what's costing you deals. You'll leave with a prioritized action plan—whether you hire me or not.
-          </p>
+    <!-- ─── FRAMEWORK ──────────────────────────────────────────────────── -->
+    <section id="framework">
+      <div class="section-max">
+        <div class="framework-intro">
+          <div class="reveal">
+            <div class="section-label">The 3-Pillar Framework</div>
+            <h2 class="section-h2">Methodology for brands that<br><em>earn their price.</em></h2>
+          </div>
+          <div class="reveal reveal-d1">
+            <p class="section-body">
+              Clarity eliminates the guesswork. Credibility eliminates the doubt. Conviction eliminates the negotiation. Together they close the gap between what your brand is worth and what the market believes it's worth.
+            </p>
+          </div>
         </div>
 
-        <div class="bg-white text-neutral-900 p-8 lg:p-12 shadow-2xl rounded-[3rem] border-t-[8px] border-brand-600 relative text-left reveal-on-scroll">
-          <div id="strategyIndicator" class="mb-6 hidden animate-fade-in-up">
-            <div class="bg-brand-50 border border-brand-100 p-4 rounded-2xl flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white"><i data-lucide="target" size="16"></i></div>
-                <div>
-                  <div class="text-[9px] font-black uppercase tracking-widest text-brand-600">Strategy Result Attached</div>
-                  <div id="strategyText" class="text-sm font-bold">N/A</div>
+        <div class="pillars reveal">
+          <div class="pillar">
+            <div class="pillar-num">01</div>
+            <div class="pillar-name">Clarity</div>
+            <div class="pillar-body">
+              If your ideal client can't articulate your value in one sentence without coaching, the positioning isn't working. We rebuild the message from the core thesis outward — not from the tagline inward.
+            </div>
+            <div class="pillar-truth">"Define what you mean before you design how you look."</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-num">02</div>
+            <div class="pillar-name">Credibility</div>
+            <div class="pillar-body">
+              Authority is not claimed — it's demonstrated. We replace generic expertise signals with precision proof: case-backed results, documented thinking, and a brand system that shows you've done this before.
+            </div>
+            <div class="pillar-truth">"Replace assertions with architecture."</div>
+          </div>
+          <div class="pillar">
+            <div class="pillar-num">03</div>
+            <div class="pillar-name">Conviction</div>
+            <div class="pillar-body">
+              We don't sell services. We sell inevitable outcomes. When a prospect understands the cost of their current positioning problem, the price conversation changes. Conviction replaces persuasion.
+            </div>
+            <div class="pillar-truth">"When the diagnosis is undeniable, the solution sells itself."</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── PERCEPTION GAP ─────────────────────────────────────────────── -->
+    <section id="perception">
+      <div class="section-max">
+        <div class="perception-grid">
+          <div class="reveal">
+            <div class="section-label">The Gap</div>
+            <h2 class="section-h2">Your value is a 10.<br>Your market presence<br>reads as <em>a 3.</em></h2>
+            <p class="section-body" style="margin-bottom: 32px;">
+              This is the most expensive problem most founders don't know they have. The gap between your actual expertise and your perceived authority is where deals die, price sensitivity lives, and ideal clients walk to someone more visible.
+            </p>
+            <p class="section-body">We close that gap — systematically, not stylistically.</p>
+            <div class="stats-row" style="margin-top: 40px;">
+              <div class="stat">
+                <div class="stat-num">₦5M+</div>
+                <div class="stat-label">Min. project value</div>
+              </div>
+              <div class="stat">
+                <div class="stat-num">2</div>
+                <div class="stat-label">Clients per month</div>
+              </div>
+              <div class="stat">
+                <div class="stat-num">100%</div>
+                <div class="stat-label">Strategy-first</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal reveal-d2">
+            <div class="gap-visual" id="gapVisual">
+              <div class="gap-visual-label">The Perception Benchmark</div>
+              <div class="gap-bars">
+                <div class="gap-bar-wrap">
+                  <div class="gap-bar-val" id="barVal1">0/10</div>
+                  <div class="gap-bar actual" id="barActual"></div>
+                  <div class="gap-bar-name">Actual Value</div>
+                </div>
+                <div class="gap-bar-wrap">
+                  <div class="gap-bar-val" id="barVal2">0/10</div>
+                  <div class="gap-bar perceived" id="barPerceived"></div>
+                  <div class="gap-bar-name">Market Perception</div>
                 </div>
               </div>
+              <div class="gap-divider"></div>
+              <div class="gap-note">
+                The gap is not a design problem.<br>
+                It's a <strong>positioning architecture</strong> problem.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── APPLY SECTION ──────────────────────────────────────────────── -->
+    <section id="apply">
+      <div class="apply-bg">
+        <div class="apply-bg-grid"></div>
+      </div>
+      <div class="apply-inner">
+        <div class="reveal">
+          <div class="section-label" style="justify-content: center;">Free Diagnosis</div>
+          <h2 class="apply-h2">
+            45 minutes.<br>
+            <em>Real gaps. Real fixes.</em>
+          </h2>
+          <p class="apply-sub">A live screen-share where we show exactly what's costing you deals — whether you hire us or not.</p>
+          <p class="apply-disclaimer">No pitch. No pressure. Just a prioritised action plan.</p>
+        </div>
+
+        <div class="apply-form-card reveal reveal-d1">
+          <div class="strategy-attached" id="strategyIndicator" style="display:none;">
+            <div class="strategy-attached-icon">◎</div>
+            <div>
+              <div class="strategy-attached-label">Brand Sim Result Attached</div>
+              <div class="strategy-attached-val" id="strategyText"></div>
             </div>
           </div>
 
-          <form id="applyForm" class="space-y-8">
-              <input type="hidden" name="_subject" value="New Audit Request (PENNIO)">
-              <input type="hidden" name="strategy_result" id="hiddenStrategy" value="None">
+          <form id="applyForm">
+            <input type="hidden" name="_subject" value="New Audit Request (PENNIO)">
+            <input type="hidden" name="strategy_result" id="hiddenStrategy" value="None">
 
-              <div class="grid md:grid-cols-2 gap-6">
-                  <div>
-                      <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Name</label>
-                      <input required name="name" class="w-full px-5 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all font-medium">
-                  </div>
-                  <div>
-                      <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Email</label>
-                      <input required name="email" type="email" class="w-full px-5 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all font-medium">
-                  </div>
-              </div>
-
+            <div class="form-grid">
               <div>
-                  <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Current Website (If any)</label>
-                  <input name="website" placeholder="www..." class="w-full px-5 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all font-medium">
+                <label class="form-label">Name</label>
+                <input required name="name" class="form-input" placeholder="Your name">
               </div>
+              <div>
+                <label class="form-label">Email</label>
+                <input required name="email" type="email" class="form-input" placeholder="your@email.com">
+              </div>
+            </div>
 
-              <button id="submitBtn" type="submit" class="w-full py-6 bg-neutral-900 text-white font-black text-xl rounded-2xl hover:bg-brand-600 transition-all shadow-xl mt-4 flex items-center justify-center gap-3 active:scale-95">
-                  SEND MY WEBSITE FOR REVIEW
-              </button>
+            <div class="form-group">
+              <label class="form-label">Current Website (if any)</label>
+              <input name="website" class="form-input" placeholder="www.yourbrand.com">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Biggest brand challenge right now</label>
+              <div style="position:relative;">
+                <select name="challenge" class="form-select" required>
+                  <option value="" disabled selected>Select the most urgent issue</option>
+                  <option>My messaging doesn't communicate my actual value</option>
+                  <option>I attract the wrong clients who can't afford me</option>
+                  <option>I'm not known in my market despite being good at what I do</option>
+                  <option>My brand looks like everyone else's</option>
+                  <option>I'm competing on price instead of positioning</option>
+                  <option>I'm launching something new and want to build it right</option>
+                </select>
+              </div>
+            </div>
+
+            <button id="submitBtn" type="submit" class="submit-btn">
+              Send Website for Diagnosis
+            </button>
           </form>
 
-          <div id="successMessage" class="hidden text-center py-16 space-y-8">
-              <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
-                  <i data-lucide="check" size="48"></i>
-              </div>
-              <div class="space-y-4">
-                <h3 class="text-3xl font-black uppercase tracking-tighter italic leading-none">Request Received</h3>
-                <p class="text-neutral-500 font-medium leading-relaxed max-w-sm mx-auto">I'll review your platform details personally. Expect a calendar link in your inbox shortly.</p>
-              </div>
-              <button onclick="window.location.reload()" class="px-8 py-4 border-2 border-neutral-100 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-neutral-50 transition-colors mx-auto">
-                  Back to Top
-              </button>
+          <div id="successMessage" style="display:none;" class="success-state">
+            <div class="success-icon">✓</div>
+            <h3 class="success-h3">Request Received</h3>
+            <p class="success-p">Reviewed personally. Expect a calendar link in your inbox within 24 hours.</p>
+            <button class="success-back" onclick="location.reload()">Back to top</button>
           </div>
         </div>
       </div>
     </section>
-  </div>
 
+  </div><!-- /landingView -->
+
+  <!-- ═══════════════════ STRATEGY SIM VIEW ══════════════════════════════ -->
   <div id="strategyView" class="view-hidden">
-    <section class="max-w-4xl mx-auto pt-40 pb-24 px-6 animate-fade-in-up">
+    <div class="sim-wrap">
+      <div class="sim-header">
+        <div class="sim-title">Brand Position Simulator</div>
+        <div class="sim-step-track" id="stepTrack"></div>
+      </div>
+
       <div id="gameUI">
-        <div class="flex flex-col md:flex-row gap-12 items-start">
-          <div class="w-full md:w-72 space-y-6">
-            <div class="bg-neutral-900 p-8 rounded-[2rem] border border-neutral-800 text-white shadow-xl relative overflow-hidden">
-               <div class="absolute top-0 right-0 -mt-4 -mr-4 text-neutral-800 opacity-20"><i data-lucide="trending-up" size="120"></i></div>
-               <div class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest mb-4 relative z-10">Closing probability</div>
-               <div id="gameProbDisplay" class="text-6xl font-black italic mb-6 text-brand-500 relative z-10 leading-none">15%</div>
-               <div class="h-3 w-full bg-neutral-800 rounded-full overflow-hidden relative z-10">
-                 <div id="gameProbBar" class="h-full bg-brand-500 transition-all duration-1000 relative" style="width: 15%">
-                    <div class="absolute right-0 top-0 h-full w-2 bg-white/30 animate-pulse"></div>
-                 </div>
-               </div>
+        <div class="sim-layout">
+          <div class="prob-card">
+            <div class="prob-label">Closing Probability</div>
+            <div class="prob-num" id="gameProbDisplay">15%</div>
+            <div class="prob-bar-bg">
+              <div class="prob-bar-fill" id="gameProbBar"></div>
             </div>
+            <div class="prob-feedback" id="probFeedback">Make your first positioning decision</div>
           </div>
 
-          <div class="flex-1 space-y-10">
-            <div class="space-y-4">
-               <div class="inline-flex items-center gap-2 px-3 py-1 bg-brand-50 text-brand-600 text-[10px] font-bold tracking-widest uppercase rounded-full">
-                 Pillar Challenge
-               </div>
-               <h2 id="gameScenario" class="text-3xl lg:text-4xl font-black tracking-tight leading-tight uppercase italic">SCENARIO LOADING...</h2>
-            </div>
-            <div id="gameOptions" class="space-y-4">
-              </div>
+          <div class="sim-main">
+            <div class="sim-badge" id="simPillarBadge">Pillar Challenge</div>
+            <div class="sim-scenario" id="gameScenario">Loading scenario</div>
+            <div class="sim-options" id="gameOptions"></div>
           </div>
         </div>
       </div>
 
-      <div id="gameResult" class="view-hidden text-center bg-neutral-900 rounded-[3rem] p-12 text-white border border-neutral-800 shadow-2xl relative overflow-hidden max-w-2xl mx-auto">
-          <div class="absolute top-0 left-0 w-full h-1 bg-brand-500"></div>
-          
-          <div class="flex justify-center mb-8">
-             <img src="assets/images/illustrations/result-success.svg" alt="Success Illustration" class="w-48 h-48 object-contain animate-float-slow drop-shadow-[0_0_30px_rgba(249,115,22,0.3)]">
+      <div id="gameResult" class="view-hidden">
+        <div class="sim-result">
+          <div class="result-graphic">
+            <svg width="96" height="96" viewBox="0 0 96 96">
+              <circle class="result-ring" cx="48" cy="48" r="42"/>
+              <circle class="result-ring-fill" id="resultRing" cx="48" cy="48" r="42"/>
+            </svg>
+            <div class="result-icon-text" id="resultIconText">%</div>
           </div>
-          
-          <h2 class="text-4xl font-black uppercase italic tracking-tighter mb-2">Simulation Complete</h2>
-          <p id="finalProb" class="text-neutral-500 font-bold uppercase tracking-widest text-xs mb-10">Closing Probability: 15%</p>
-          <div id="finalRank" class="text-5xl lg:text-6xl font-black italic text-white mb-10 leading-none">Background Noise</div>
-          <button onclick="attachStrategyToForm()" class="w-full bg-white text-neutral-900 py-5 rounded-2xl font-black text-sm hover:bg-neutral-100 hover-lift transition-all flex items-center justify-center gap-2 active:scale-95">
-            ATTACH TO MY AUDIT & BOOK FIX
+
+          <div class="result-complete">Simulation Complete</div>
+          <div class="result-prob-line" id="finalProb">Closing Probability: 15%</div>
+          <div class="result-rank" id="finalRank">Background Noise</div>
+          <p class="result-verdict" id="finalVerdict">Your positioning isn't differentiated enough to command premium prices. Founders in your market are losing deals not because of price — but because of unclear value architecture.</p>
+
+          <button class="result-cta" onclick="attachStrategyToForm()">
+            Attach to Audit & Book Fix →
           </button>
-          <button onclick="resetGame()" class="mt-6 text-neutral-500 text-xs font-bold uppercase tracking-widest hover:text-brand-500 transition-colors">Restart Simulation</button>
+          <button class="result-restart" onclick="resetGame()">Restart Simulation</button>
+        </div>
       </div>
-    </section>
+    </div>
   </div>
 
-  <footer class="py-16 px-6 border-t border-neutral-100 text-neutral-400 bg-white relative z-10">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-      <div class="text-2xl font-black tracking-tighter text-neutral-900">PENNIO<span class="text-brand-600">.</span>DESIGN</div>
-      <div class="flex gap-12 text-xs font-bold uppercase tracking-widest text-neutral-500">
-        <button onclick="switchView('landing')" class="hover:text-brand-600 transition-colors">Framework</button>
-        <button onclick="switchView('strategy')" class="hover:text-brand-600 transition-colors">Strategy</button>
-        <a href="https://pennio-design.github.io/portfolio.pdf" target="_blank" class="hover:text-brand-600 transition-colors">Portfolio</a>
-      </div>
-      <div class="text-[10px] font-bold uppercase tracking-[0.2em]">&copy; 2026 THE PENNIO AGENCY</div>
+  <!-- ─── FOOTER ─────────────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-logo">PENNIO<span>.</span>DESIGN</div>
+    <div class="footer-links">
+      <button class="nav-link" onclick="switchView('landing')">Framework</button>
+      <button class="nav-link" onclick="switchView('strategy')">Brand Sim</button>
+      <a href="https://pennio-design.github.io/portfolio.pdf" target="_blank" class="nav-link">Portfolio</a>
     </div>
+    <div class="footer-copy">© 2026 PENNIO Agency</div>
   </footer>
 
-  <script>
-    lucide.createIcons();
+  <!-- ─── VITE REACT ENTRY POINT ──────────────────────────────────────── -->
+  <script type="module" src="/index.tsx"></script>
 
-    // VIEW SWITCHER
-    function switchView(view) {
-      document.getElementById('landingView').classList.toggle('view-hidden', view !== 'landing');
-      document.getElementById('strategyView').classList.toggle('view-hidden', view !== 'strategy');
-      window.scrollTo(0,0);
-      if(view === 'strategy') {
-          resetGame();
+  <!-- ─── VANILLA JS LOGIC ────────────────────────────────────────────── -->
+  <script>
+    function toggleMenu() {
+      document.getElementById('hamburger').classList.toggle('open');
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+    
+    function closeMenu() {
+      const btn = document.getElementById('hamburger');
+      const menu = document.getElementById('mobileMenu');
+      if (btn) btn.classList.remove('open');
+      if (menu) menu.classList.remove('open');
+    }
+    
+    document.addEventListener('click', function(e) {
+      const menu = document.getElementById('mobileMenu');
+      const btn  = document.getElementById('hamburger');
+      if (menu && menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+        closeMenu();
       }
+    });
+
+    function switchView(v) {
+      closeMenu();
+      document.getElementById('landingView').classList.toggle('view-hidden', v !== 'landing');
+      document.getElementById('strategyView').classList.toggle('view-hidden', v !== 'strategy');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (v === 'strategy') resetGame();
     }
 
-    // STRATEGY GAME LOGIC
+    function scrollToEl(id) {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 80);
+    }
+
+    window.addEventListener('scroll', () => {
+      const doc = document.documentElement;
+      const pct = (doc.scrollTop / (doc.scrollHeight - doc.clientHeight)) * 100;
+      document.getElementById('scrollLine').style.width = pct + '%';
+    });
+
+    function animateScanner() {
+      const rows = [1,2,3,4,5];
+      rows.forEach((n, i) => {
+        setTimeout(() => {
+          const el = document.getElementById('sig' + n);
+          if (el) el.classList.add('lit');
+        }, 300 + i * 320);
+      });
+      setTimeout(() => {
+        const footer = document.getElementById('scannerFooter');
+        if (footer) footer.classList.add('lit');
+      }, 300 + 5 * 320 + 200);
+    }
+    setTimeout(animateScanner, 600);
+
+    function animateGapBars() {
+      const actual    = document.getElementById('barActual');
+      const perceived = document.getElementById('barPerceived');
+      const v1 = document.getElementById('barVal1');
+      const v2 = document.getElementById('barVal2');
+      if (!actual) return;
+
+      setTimeout(() => {
+        actual.style.height    = '100%';
+        perceived.style.height = '32%';
+        let n1 = 0, n2 = 0;
+        const t1 = setInterval(() => { n1 = Math.min(n1+1, 10); if(v1) v1.textContent = n1 + '/10'; if(n1===10) clearInterval(t1); }, 60);
+        const t2 = setInterval(() => { n2 = Math.min(n2+1, 3);  if(v2) v2.textContent = n2 + '/10'; if(n2===3)  clearInterval(t2); }, 200);
+      }, 200);
+    }
+
+    const gapVisual = document.getElementById('gapVisual');
+    if (gapVisual) {
+      const barObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { animateGapBars(); barObserver.unobserve(e.target); } });
+      }, { threshold: 0.4 });
+      barObserver.observe(gapVisual);
+    }
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
     const SCENARIOS = [
       {
-        scenario: "You're writing your hero headline. You have 5 seconds before the prospect bounces.",
+        pillar: "Pillar 01 · Clarity",
+        scenario: "A founder visits your site for the first time. They have 5 seconds. Your hero headline says",
         options: [
-          { label: "We empower digital transformation through innovation.", impact: -15 },
-          { label: "We reduce enterprise cloud costs by 30% in 90 days.", impact: 30 }
+          { label: "We deliver innovative, client-focused design solutions for modern businesses.", impact: -18, feedback: "Generic positioning. 'Innovative' and 'client-focused' signal nothing — every competitor says the same thing. The prospect bounced." },
+          { label: "We build brand architecture for African founders who are done competing on price.", impact: 28, feedback: "Targeted, specific, and polarising. It immediately disqualifies the wrong client and attracts the right one. The prospect scrolls." }
         ]
       },
       {
-        scenario: "A prospect asks: 'Why should we trust you over the cheaper option?'",
+        pillar: "Pillar 02 · Credibility",
+        scenario: "A warm prospect asks: 'Why should I trust you over someone charging half your rate?'",
         options: [
-          { label: "We have 15 years of experience and we really care about clients.", impact: -10 },
-          { label: "Here is the exact framework we used to generate $4M for Company X.", impact: 35 }
+          { label: "We have years of experience and we really care about the results we get for clients.", impact: -14, feedback: "Claims without proof. 'We care' is the lowest-conviction thing a service provider can say. Every competitor says this too." },
+          { label: "Here's the exact positioning framework we used to help [Founder X] move from ₦200k to ₦2M projects.", impact: 32, feedback: "Specific, documented, case-backed. You replaced a claim with a proof. The price comparison disappears — they're now comparing outcomes, not rates." }
         ]
       },
       {
-        scenario: "Closing the deal. The prospect is on the fence about the premium price.",
+        pillar: "Pillar 01 · Clarity",
+        scenario: "You're writing your about page. You have 3 paragraphs. What do you lead with?",
         options: [
-          { label: "If you sign today, I can give you a 15% discount to make it easier.", impact: -25 },
-          { label: "This price reflects the $200k revenue bottleneck we are about to solve.", impact: 40 }
+          { label: "Your founder story — 10 years of design, client list, what inspires you every morning.", impact: -10, feedback: "Story without outcome doesn't convert. Prospects don't buy your biography — they buy the transformation it produced." },
+          { label: "The positioning problem you solve, who you solve it for, and what changes after you do.", impact: 25, feedback: "Outcome-first architecture. The prospect reads this and immediately thinks 'this is for me' — or knows it's not. Both outcomes are correct." }
+        ]
+      },
+      {
+        pillar: "Pillar 03 · Conviction",
+        scenario: "The perfect prospect says: 'I love your work — but your price is beyond our current budget.'",
+        options: [
+          { label: "We could do a lighter version of the project for something closer to your range.", impact: -22, feedback: "Discounting before the value is established destroys your positioning. You've signalled that the price was negotiable — and your credibility with it." },
+          { label: "I understand. Let me show you what this positioning problem is currently costing you per quarter.", impact: 38, feedback: "You reframed price as ROI. If they can see the cost of staying where they are, the investment looks different. Conviction replaces persuasion." }
+        ]
+      },
+      {
+        pillar: "Pillar 02 · Credibility",
+        scenario: "You're posting content. You have one post slot. What do you publish?",
+        options: [
+          { label: "A motivational post about consistency, resilience, and doing the work even when no one is watching.", impact: -8, feedback: "Inspiration without expertise. It gets likes from peers — not from founders who need your service. This is the most common content trap." },
+          { label: "A breakdown of why a well-known brand's positioning is failing — with the specific strategic fix.", impact: 30, feedback: "Expertise demonstrated publicly. This is the post a founder screenshots and sends to their co-founder. It proves you think at architecture level, not decoration level." }
         ]
       }
     ];
@@ -355,120 +560,163 @@
     let currentStep = 0;
     let probability = 15;
 
-    function renderGame() {
-      if (currentStep >= SCENARIOS.length) {
-        showResult();
-        return;
-      }
-      const data = SCENARIOS[currentStep];
-      document.getElementById('gameScenario').innerText = data.scenario;
-      // Animate counter could be added here, sticking to simple update for now
-      document.getElementById('gameProbDisplay').innerText = probability + '%';
-      document.getElementById('gameProbBar').style.width = probability + '%';
+    const VERDICTS = {
+      authority: { rank: "Market Authority", verdict: "Your positioning decisions are operating at Brand Architect level. You're building conviction, not just messaging — and that's the difference between asking for the rate and earning it." },
+      contender: { rank: "Solid Contender", verdict: "Strong strategic instincts, with a few critical gaps still costing you deals. The right positioning moves here could shift your closing rate significantly." },
+      generic: { rank: "Generic Player", verdict: "Your brand is indistinguishable from competitors in your market. That's not a design problem — it's a positioning architecture problem. The fix is structural, not cosmetic." },
+      noise: { rank: "Background Noise", verdict: "Your positioning isn't differentiated enough to command premium prices. Founders in your market lose deals not because of price — but because of unclear value architecture. This is fixable." }
+    };
 
+    function getVerdict(p) {
+      if (p >= 85) return VERDICTS.authority;
+      if (p >= 60) return VERDICTS.contender;
+      if (p >= 35) return VERDICTS.generic;
+      return VERDICTS.noise;
+    }
+
+    function buildStepTrack() {
+      const track = document.getElementById('stepTrack');
+      if (!track) return;
+      track.innerHTML = '';
+      SCENARIOS.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'sim-step-dot' + (i < currentStep ? ' done' : i === currentStep ? ' active' : '');
+        track.appendChild(dot);
+      });
+    }
+
+    function animateProbTo(target) {
+      const bar = document.getElementById('gameProbBar');
+      const display = document.getElementById('gameProbDisplay');
+      if (bar) bar.style.width = target + '%';
+      if (display) display.textContent = target + '%';
+    }
+
+    function renderGame() {
+      if (currentStep >= SCENARIOS.length) { showResult(); return; }
+      buildStepTrack();
+      const data = SCENARIOS[currentStep];
+      
+      const badge = document.getElementById('simPillarBadge');
+      const scenario = document.getElementById('gameScenario');
+      const feedback = document.getElementById('probFeedback');
       const opts = document.getElementById('gameOptions');
+
+      if (badge) badge.textContent = data.pillar;
+      if (scenario) scenario.textContent = data.scenario;
+      if (feedback) feedback.textContent = 'Make your positioning decision';
+      animateProbTo(probability);
+
+      if (!opts) return;
       opts.innerHTML = '';
       data.options.forEach(opt => {
         const btn = document.createElement('button');
-        // Added hover-lift and improved styling to options
-        btn.className = "w-full text-left p-6 lg:p-8 border-2 border-neutral-100 rounded-3xl hover:border-brand-500 hover:bg-brand-50/30 hover-lift transition-all flex justify-between items-center group bg-white";
-        btn.innerHTML = `<div><div class="text-lg lg:text-xl font-bold text-neutral-900 group-hover:text-brand-700 transition-colors leading-snug">${opt.label}</div></div><div class="ml-6 w-12 h-12 flex-shrink-0 bg-neutral-900 rounded-2xl flex items-center justify-center text-white group-hover:bg-brand-600 transition-colors"><i data-lucide="chevron-right"></i></div>`;
+        btn.className = 'sim-option';
+        btn.innerHTML = `<span class="sim-option-text">${opt.label}</span><span class="sim-option-arrow">→</span>`;
         btn.onclick = () => {
           probability = Math.min(100, Math.max(0, probability + opt.impact));
-          currentStep++;
-          renderGame();
-          lucide.createIcons();
+          if (feedback) feedback.textContent = opt.feedback;
+          opts.querySelectorAll('button').forEach(b => b.disabled = true);
+          setTimeout(() => { currentStep++; renderGame(); }, 1200);
         };
         opts.appendChild(btn);
       });
-      lucide.createIcons();
     }
 
     function showResult() {
       document.getElementById('gameUI').classList.add('view-hidden');
       document.getElementById('gameResult').classList.remove('view-hidden');
-      document.getElementById('finalProb').innerText = `Closing Probability: ${probability}%`;
 
-      let rank = "Background Noise";
-      if (probability >= 85) rank = "Market Authority";
-      else if (probability >= 60) rank = "Solid Contender";
-      else if (probability >= 30) rank = "Generic Player";
-      
-      document.getElementById('finalRank').innerText = rank;
-      lucide.createIcons();
+      const v = getVerdict(probability);
+      const finalProb = document.getElementById('finalProb');
+      const finalRank = document.getElementById('finalRank');
+      const finalVerdict = document.getElementById('finalVerdict');
+      const iconText = document.getElementById('resultIconText');
+      const ring = document.getElementById('resultRing');
+
+      if (finalProb) finalProb.textContent = `Closing Probability: ${probability}%`;
+      if (finalRank) finalRank.textContent = v.rank;
+      if (finalVerdict) finalVerdict.textContent = v.verdict;
+      if (iconText) iconText.textContent = probability + '%';
+
+      if (ring) {
+        const offset = 264 - (probability / 100) * 264;
+        setTimeout(() => { ring.style.strokeDashoffset = offset; }, 100);
+      }
+      buildStepTrack();
     }
 
     function resetGame() {
       currentStep = 0;
       probability = 15;
-      document.getElementById('gameUI').classList.remove('view-hidden');
-      document.getElementById('gameResult').classList.add('view-hidden');
+      const gameUI = document.getElementById('gameUI');
+      const gameResult = document.getElementById('gameResult');
+      const ring = document.getElementById('resultRing');
+
+      if (gameUI) gameUI.classList.remove('view-hidden');
+      if (gameResult) gameResult.classList.add('view-hidden');
+      if (ring) ring.style.strokeDashoffset = 264;
       renderGame();
     }
 
     function attachStrategyToForm() {
-      const rank = document.getElementById('finalRank').innerText;
-      document.getElementById('strategyIndicator').classList.remove('hidden');
-      document.getElementById('strategyText').innerText = `${rank} (${probability}%)`;
-      document.getElementById('hiddenStrategy').value = `${rank} (Score: ${probability}%)`;
+      const v = getVerdict(probability);
+      const indicator = document.getElementById('strategyIndicator');
+      const text = document.getElementById('strategyText');
+      const hidden = document.getElementById('hiddenStrategy');
+
+      if (indicator) indicator.style.display = 'flex';
+      if (text) text.textContent = `${v.rank} · ${probability}% closing probability`;
+      if (hidden) hidden.value = `${v.rank} (Score: ${probability}%)`;
+      
       switchView('landing');
-      // Small timeout to ensure view switches before scrolling
-      setTimeout(() => {
-          document.getElementById('apply').scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+      setTimeout(() => { 
+        const applySec = document.getElementById('apply');
+        if(applySec) applySec.scrollIntoView({ behavior: 'smooth' }); 
+      }, 120);
+    }
+
+    const form    = document.getElementById('applyForm');
+    const success = document.getElementById('successMessage');
+    const btn     = document.getElementById('submitBtn');
+
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#000;border-radius:50%;animation:spin 0.7s linear infinite;margin-right:10px;"></span> Sending';
+        }
+
+        const formData = new FormData(form);
+        fetch("https://formsubmit.co/ajax/ea0da421e8e6e82457be40792262eeed", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(formData))
+        })
+        .then(r => r.json())
+        .then(() => {
+          form.style.display = 'none';
+          const indicator = document.getElementById('strategyIndicator');
+          if (indicator) indicator.style.display = 'none';
+          if (success) success.style.display = 'block';
+          form.reset();
+        })
+        .catch(() => {
+          alert('Error submitting. Please email hello@pennio.design directly.');
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = 'Send Website for Diagnosis';
+          }
+        });
+      });
     }
 
     renderGame();
 
-    // Scroll Reveal Logic
-    const observerOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target); // Only animate once
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
-
-    // Form Handling (Kept same as original)
-    const form = document.getElementById('applyForm');
-    const success = document.getElementById('successMessage');
-    const btn = document.getElementById('submitBtn');
-    const originalBtnContent = btn.innerHTML;
-
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      btn.disabled = true;
-      btn.innerHTML = '<span class="animate-spin inline-block w-6 h-6 border-2 border-white border-t-transparent rounded-full mr-2"></span> ANALYZING...';
-
-      const formData = new FormData(form);
-
-      fetch("https://formsubmit.co/ajax/ea0da421e8e6e82457be40792262eeed", {
-        method: "POST",
-        headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify(Object.fromEntries(formData))
-      })
-      .then(response => response.json())
-      .then(data => {
-        form.classList.add('hidden');
-        document.getElementById('strategyIndicator').classList.add('hidden');
-        success.classList.remove('hidden');
-        form.reset();
-        lucide.createIcons();
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error sending application. Please email hello@pennio.design directly.');
-        btn.disabled = false;
-        btn.innerHTML = originalBtnContent;
-      });
-    });
+    const style = document.createElement('style');
+    style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
