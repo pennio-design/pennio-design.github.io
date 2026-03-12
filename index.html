@@ -219,10 +219,7 @@
       position: relative;
       z-index: 10;
       width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
+      max-width: 800px;
     }
 
     .hero h1 {
@@ -247,49 +244,6 @@
       display: flex;
       gap: 16px;
       align-items: center;
-    }
-
-    /* Hero visual — right card */
-    .hero-visual {
-      background: var(--surface);
-      border-radius: 8px;
-      aspect-ratio: 1.1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
-
-    .hero-visual .big-p {
-      font-size: 12rem;
-      font-weight: 600;
-      color: var(--grey-4);
-      line-height: 1;
-      letter-spacing: -0.05em;
-    }
-
-    .hero-float {
-      position: absolute;
-      bottom: 32px;
-      left: 32px;
-      background: var(--surface-2);
-      border: 1px solid var(--line-dark);
-      border-radius: 6px;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .hero-float-dot {
-      width: 6px; height: 6px;
-      background: var(--orange);
-      border-radius: 50%;
-    }
-    .hero-float-text {
-      font-size: 0.75rem;
-      font-weight: 400;
-      color: var(--white);
     }
 
     /* ─── MARQUEE ─── */
@@ -549,7 +503,7 @@
 
     .proof-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 16px;
     }
     .proof-card {
@@ -559,7 +513,6 @@
       border-radius: 8px;
       overflow: hidden;
     }
-    .proof-card.large { grid-column: span 2; aspect-ratio: 2/1; }
 
     .proof-placeholder {
       position: absolute;
@@ -924,10 +877,9 @@
       nav { height: 70px; }
       .nav-center, .nav-right .btn-cta { display: none; }
       .hero { padding-top: 120px; }
-      .hero-container { grid-template-columns: 1fr; text-align: center; }
+      .hero-container { text-align: center; }
       .hero-sub { margin: 0 auto 32px; }
       .hero-actions { justify-content: center; }
-      .hero-visual { display: none; }
       
       .cycle { grid-template-columns: 1fr; }
       .phases { grid-template-columns: 1fr; border-top: none; }
@@ -937,7 +889,6 @@
       .proof-header { flex-direction: column; align-items: flex-start; }
       .proof-header p { text-align: left; max-width: none; }
       .proof-grid { grid-template-columns: 1fr; }
-      .proof-card.large { grid-column: span 1; aspect-ratio: 4/3; }
       
       .form-grid { grid-template-columns: 1fr; }
       .apply-form-wrap { padding: 40px 24px; }
@@ -988,14 +939,6 @@
           <a href="#product" class="btn btn-outline">View Foundation</a>
         </div>
       </div>
-
-      <div class="hero-visual reveal reveal-d1" aria-hidden="true">
-        <div class="big-p">P</div>
-        <div class="hero-float">
-          <div class="hero-float-num" style="font-size: 1.6rem; font-weight: 700; color: var(--white); margin-right: 8px;">3</div>
-          <div class="hero-float-text">Phases · One price</div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -1039,7 +982,7 @@
     <div class="cycle reveal reveal-d1">
       <div class="cycle-step">
         <div class="cycle-n">Phase 01</div>
-        <div class="cycle-title">Get a Logo</div>
+        <div class="cycle-title">Get a Generic Logo</div>
         <div class="cycle-text">A quick visual with no meaning underneath it.</div>
       </div>
       <div class="cycle-step">
@@ -1114,18 +1057,6 @@
       <p>Visual proof added as E-Commerce Foundation brands complete. Launching Q2 2026.</p>
     </div>
     <div class="proof-grid reveal reveal-d1">
-      <div class="proof-card large">
-        <div class="proof-placeholder">
-          <div class="proof-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-          </div>
-          <span class="proof-placeholder-text">Case Study</span>
-        </div>
-        <div class="proof-overlay">
-          <div class="proof-cat">E-Commerce Identity</div>
-          <div class="proof-title">Brand Foundation: Full Case Study</div>
-        </div>
-      </div>
       <div class="proof-card">
         <div class="proof-placeholder">
           <div class="proof-icon">
@@ -1294,7 +1225,6 @@
 
     <div class="footer-bottom">
       <span class="footer-copy">© 2026 PENNIO Studio</span>
-      <span class="footer-location">Designed in Africa</span>
     </div>
   </footer>
 
