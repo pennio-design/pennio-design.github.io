@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PENNIO — Brand Architecture Studio</title>
+  <title>PENNIO · Brand Architecture Studio</title>
   <meta name="description" content="PENNIO builds the brand foundation African e-commerce founders run on. Meaning first. System second. Growth that compounds.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -187,8 +187,9 @@
 
     /* STATEMENT */
     .section-statement { background: var(--surface); border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark); padding: 80px 5vw; }
-    .statement-inner { display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; max-width: 1100px; margin: 0 auto; }
-    .statement-inner h2 { font-size: clamp(1.8rem, 2.8vw, 2.6rem); font-weight: 700; line-height: 1.12; letter-spacing: -0.025em; }
+    .statement-inner { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 60px; max-width: 1100px; margin: 0 auto; }
+    .statement-left { flex: 1; padding-right: 60px; border-right: 1px solid var(--line-dark); }
+    .statement-right { flex-shrink: 0; padding-left: 60px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
     .statement-inner p { font-size: 1rem; font-weight: 300; line-height: 1.65; color: var(--grey-4); margin-top: 14px; max-width: 420px; }
 
     /* PRICING */
@@ -289,7 +290,9 @@
       .phases { grid-template-columns: 1fr; border-top: none; }
       .phase { border-right: none !important; border-bottom: 1px solid var(--line-dark); padding: 36px 0; }
       .phase:last-child { border-bottom: none; }
-      .statement-inner { grid-template-columns: 1fr; gap: 28px; }
+      .statement-inner { flex-direction: column; gap: 28px; }
+      .statement-left { padding-right: 0; border-right: none; border-bottom: 1px solid var(--line-dark); padding-bottom: 28px; }
+      .statement-right { padding-left: 0; }
       .footer-top { grid-template-columns: 1fr; gap: 36px; }
       .footer-bottom { flex-direction: column; gap: 14px; text-align: center; }
       .form-grid { grid-template-columns: 1fr; }
@@ -298,6 +301,18 @@
     @media (max-width: 480px) {
       .cycle { grid-template-columns: 1fr; }
     }
+    /* MODALS */
+    .modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box { background: var(--surface); border: 1px solid var(--glass-bdr); border-radius: 10px; padding: 52px; max-width: 560px; width: 100%; position: relative; transform: translateY(16px); transition: transform 0.25s ease; max-height: 80vh; overflow-y: auto; }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+    .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; cursor: pointer; color: var(--grey-3); font-size: 1.2rem; line-height: 1; transition: color 0.2s; padding: 4px; }
+    .modal-close:hover { color: var(--white); }
+    .modal-box h3 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .modal-box .modal-date { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-3); margin-bottom: 28px; display: block; }
+    .modal-box p { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: var(--grey-4); margin-bottom: 16px; }
+    .modal-box p:last-child { margin-bottom: 0; }
+    .modal-box strong { font-weight: 500; color: var(--grey-5); }
   </style>
 </head>
 <body>
@@ -436,11 +451,14 @@
 
   <section class="section-statement">
     <div class="statement-inner reveal">
-      <div>
+      <div class="statement-left">
         <h2>You don't have an ads problem.<br>You have a brand problem.</h2>
         <p>The E-Commerce Foundation fixes the root before you invest in the branch.</p>
       </div>
-      <a href="#apply" class="btn btn-cta" style="padding: 16px 32px; font-size: 0.86rem; flex-shrink: 0;">Apply for a Spot</a>
+      <div class="statement-right">
+        <p style="font-size:0.7rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--grey-3);margin:0;">Ready to start?</p>
+        <a href="#apply" class="btn btn-cta" style="padding: 16px 32px; font-size: 0.86rem;">Apply for a Spot</a>
+      </div>
     </div>
   </section>
 
@@ -518,7 +536,7 @@
             </div>
           </div>
           <button type="submit" class="form-submit" id="submitBtn">Submit Application</button>
-          <p class="form-fine">We respond within 48 hours. No spam. No unsolicited pitch calls.</p>
+          <p class="form-fine">We respond within 48 hours.</p>
         </form>
         <div class="success-state" id="successMsg">
           <div class="success-icon">✓</div>
@@ -529,6 +547,33 @@
     </div>
   </section>
 
+  <!-- PRIVACY MODAL -->
+  <div class="modal-overlay" id="modal-privacy" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('modal-privacy')" aria-label="Close">✕</button>
+      <h3 id="privacy-title">Privacy Policy</h3>
+      <span class="modal-date">Effective January 2026</span>
+      <p>PENNIO collects only the information you submit through this application form: your name, email, brand name, product category, and the challenge you describe. It is used solely to evaluate your application.</p>
+      <p>We do not sell, rent, or share your information with third parties. We do not use your data for advertising. Application data is routed through FormSubmit and stored securely.</p>
+      <p>You may request deletion of your data at any time by emailing <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b030e0707042b1b0e05050204450f0e18020c05">[email&#160;protected]</a></strong>. We will respond within 5 business days.</p>
+      <p>This policy applies to information collected on pennio.design only. PENNIO reserves the right to update this policy. Material changes will be reflected with an updated effective date.</p>
+    </div>
+  </div>
+
+  <!-- TERMS MODAL -->
+  <div class="modal-overlay" id="modal-terms" role="dialog" aria-modal="true" aria-labelledby="terms-title">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal('modal-terms')" aria-label="Close">✕</button>
+      <h3 id="terms-title">Terms of Engagement</h3>
+      <span class="modal-date">Effective January 2026</span>
+      <p><strong>Submitting an application does not constitute a contract.</strong> PENNIO reviews every application manually and reserves the right to decline any project without obligation to provide a reason.</p>
+      <p>Accepted clients receive a formal project agreement outlining scope, deliverables, timeline, and payment terms before any work begins. The ₦450,000 starting price is indicative. Final pricing is confirmed in writing after scoping.</p>
+      <p>All creative work produced by PENNIO remains the intellectual property of PENNIO until final payment is received in full. Upon full payment, ownership of deliverables transfers to the client as outlined in the project agreement.</p>
+      <p>PENNIO does not offer refunds once a project phase has commenced. Disputes are handled in good faith and governed by Nigerian law.</p>
+      <p>Questions? Email <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5139343d3d3e1121343f3f383e7f35342238363f">[email&#160;protected]</a></strong>.</p>
+    </div>
+  </div>
+
   <footer>
     <div class="footer-top">
       <div class="footer-brand">
@@ -538,7 +583,7 @@
           </svg>
           <span class="nav-wordmark">PENNIO<span style="color:var(--orange);">.</span></span>
         </a>
-        <p class="footer-tagline">Brand architecture for the vision-driven.</p>
+        <p class="footer-tagline">Meaning-first brand architecture.</p>
       </div>
       <div class="footer-col">
         <h4>Studio</h4>
@@ -551,17 +596,32 @@
       <div class="footer-col">
         <h4>Legal</h4>
         <ul>
-          <li><a href="#">Privacy</a></li>
-          <li><a href="#">Terms</a></li>
+          <li><a href="#" onclick="openModal('modal-privacy');return false;">Privacy</a></li>
+          <li><a href="#" onclick="openModal('modal-terms');return false;">Terms</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 PENNIO — Brand Architecture Studio</span>
+      <span>© 2026 PENNIO · Brand Architecture Studio</span>
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
+    });
+
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('up'); obs.unobserve(e.target); } });
     }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
