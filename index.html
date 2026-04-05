@@ -228,6 +228,38 @@
     .include-list li::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
     .small-note { font-size: 0.72rem; font-weight: 300; line-height: 1.6; color: var(--grey-3); position: relative; z-index: 1; }
 
+    /* PROOF */
+    .section-proof { background: var(--off-black); padding: 120px 5vw; border-top: 1px solid var(--line-dark); }
+    .proof-header { text-align: center; margin-bottom: 72px; }
+    .proof-header h2 { font-size: clamp(2.2rem, 3.5vw, 3.4rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
+    .proof-header p { font-size: 1rem; font-weight: 300; color: var(--grey-4); margin-top: 14px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.65; }
+    .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; margin: 0 auto 72px; }
+    .proof-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--glass-bdr); background: var(--surface); position: relative; cursor: default; transition: transform 0.28s ease, border-color 0.28s ease; }
+    .proof-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.14); }
+    .proof-img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; }
+    .proof-img-placeholder { width: 100%; aspect-ratio: 4/5; background: var(--surface-2); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .proof-img-placeholder::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 60%); }
+    .proof-img-initial { font-size: 4rem; font-weight: 700; letter-spacing: -0.05em; color: rgba(255,255,255,0.06); user-select: none; }
+    .proof-meta { padding: 24px 24px 28px; }
+    .proof-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+    .proof-status-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; animation: pulse-dot 2s ease-in-out infinite; }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .proof-brand { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .proof-category { font-size: 0.78rem; font-weight: 300; color: var(--grey-4); }
+    .proof-behance { max-width: 1100px; margin: 0 auto; border-top: 1px solid var(--line-dark); padding-top: 52px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+    .proof-behance-left h3 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .proof-behance-left p { font-size: 0.9rem; font-weight: 300; color: var(--grey-4); line-height: 1.6; }
+    .btn-behance { font-size: 0.8rem; padding: 12px 24px; background: transparent; color: var(--white); border: 1px solid var(--line-dark); border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; white-space: nowrap; flex-shrink: 0; }
+    .btn-behance:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.03); }
+    .btn-behance svg { width: 14px; height: 14px; fill: currentColor; }
+    @media (max-width: 768px) {
+      .proof-grid { grid-template-columns: 1fr 1fr; }
+      .proof-behance { flex-direction: column; align-items: flex-start; gap: 20px; }
+    }
+    @media (max-width: 480px) {
+      .proof-grid { grid-template-columns: 1fr; }
+    }
+
     /* APPLY */
     .section-apply { position: relative; background: var(--off-white); color: var(--text-dark); padding: 120px 5vw; }
     .apply-wrap { max-width: 780px; margin: 0 auto; position: relative; z-index: 10; }
@@ -339,6 +371,7 @@
     </a>
     <ul class="nav-center">
       <li><a href="#problem">The Problem</a></li>
+      <li><a href="#work">Work</a></li>
       <li><a href="#pricing">Pricing</a></li>
     </ul>
     <div class="nav-right">
@@ -479,8 +512,8 @@
         <h2>One price.<br>No surprises.</h2>
         <p>The price reflects what it actually takes to build a brand that holds. Every project is scoped before the final number is confirmed.</p>
         <div class="price-from">Starting from</div>
-        <div class="price-amount">₦450,000</div>
-        <div class="price-note">Based on product category and complexity</div>
+        <div class="price-amount">₦50,000</div>
+        <div class="price-note">Based on project scope and complexity</div>
         <a href="#apply" class="btn btn-cta" style="align-self: flex-start;">Apply for a Spot</a>
       </div>
       <div class="pricing-right reveal reveal-d1">
@@ -497,6 +530,66 @@
         </ul>
         <p class="small-note">Final price is confirmed after scoping. Projects are evaluated against a minimum criteria score. PENNIO reserves the right to decline engagements that are not a fit.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="section-proof" id="work">
+    <div class="proof-header reveal">
+      <span class="label">Selected Work</span>
+      <h2>What PENNIO builds.</h2>
+      <p>Active projects and works in progress. Every brand below started with a meaning problem, not a design problem.</p>
+    </div>
+
+    <div class="proof-grid">
+      <!-- Jójò Jewels -->
+      <div class="proof-card reveal">
+        <div class="proof-img-placeholder">
+          <img src="pic1.webp" alt="Jójò Jewels brand work" class="proof-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="proof-img-initial" style="display:none">JJ</div>
+        </div>
+        <div class="proof-meta">
+          <div class="proof-status"><span class="proof-status-dot"></span>In Progress</div>
+          <div class="proof-brand">Jójò Jewels</div>
+          <div class="proof-category">Jewellery · Brand Architecture + Identity System</div>
+        </div>
+      </div>
+
+      <!-- Tabitha House of Fragrance -->
+      <div class="proof-card reveal reveal-d1">
+        <div class="proof-img-placeholder">
+          <img src="pic2.webp" alt="Tabitha House of Fragrance brand work" class="proof-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="proof-img-initial" style="display:none">TH</div>
+        </div>
+        <div class="proof-meta">
+          <div class="proof-status"><span class="proof-status-dot"></span>In Progress</div>
+          <div class="proof-brand">Tabitha House of Fragrance</div>
+          <div class="proof-category">Fragrance · Brand Architecture + Identity System</div>
+        </div>
+      </div>
+
+      <!-- PENNIO -->
+      <div class="proof-card reveal reveal-d2">
+        <div class="proof-img-placeholder">
+          <img src="pic3.webp" alt="PENNIO brand work" class="proof-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="proof-img-initial" style="display:none">PN</div>
+        </div>
+        <div class="proof-meta">
+          <div class="proof-status"><span class="proof-status-dot"></span>Ongoing</div>
+          <div class="proof-brand">PENNIO</div>
+          <div class="proof-category">Brand Studio · Platform + Creative System</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="proof-behance reveal">
+      <div class="proof-behance-left">
+        <h3>Full case studies on Behance.</h3>
+        <p>Process, rationale, and final systems for completed work across branding, identity, and digital.</p>
+      </div>
+      <a href="https://www.behance.net/paul-oyatowo" target="_blank" rel="noopener" class="btn-behance">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.228 9.42c.776 0 1.354-.17 1.73-.514.377-.343.566-.853.566-1.53 0-.623-.19-1.09-.572-1.4-.38-.31-.967-.464-1.757-.464H4.8v3.908h3.428zm.287 5.576c.872 0 1.52-.188 1.946-.563.427-.375.64-.938.64-1.688 0-.7-.218-1.234-.655-1.603-.437-.37-1.076-.554-1.918-.554H4.8v4.408h3.715zM0 3h9.107c1.238 0 2.29.327 3.156.98.867.654 1.3 1.618 1.3 2.893 0 .814-.193 1.497-.578 2.048-.385.551-.91.96-1.578 1.227.878.219 1.554.666 2.029 1.343.474.677.711 1.49.711 2.442 0 1.42-.467 2.494-1.4 3.22-.934.726-2.138 1.09-3.61 1.09H0V3zm14.8 0h7.344v1.514H14.8V3zm7.052 6.527c-.598-.613-1.466-.92-2.604-.92-1.197 0-2.103.35-2.718 1.05-.615.7-.922 1.543-.922 2.531h7.116c-.049-1.138-.274-2.048-.872-2.661zm-5.24 4.015c.044.88.3 1.554.77 2.022.47.469 1.127.703 1.971.703.664 0 1.225-.162 1.682-.487.457-.325.73-.67.82-1.036h2.445c-.373 1.123-1.021 1.977-1.944 2.562-.923.585-1.991.878-3.204.878-1.73 0-3.09-.514-4.08-1.543-.99-1.03-1.485-2.42-1.485-4.17 0-1.702.503-3.082 1.51-4.14 1.007-1.058 2.373-1.587 4.098-1.587 1.034 0 1.937.188 2.709.563.772.375 1.395.902 1.87 1.58.474.678.808 1.462 1.001 2.352.13.59.183 1.29.16 2.103H16.61z"/></svg>
+        View on Behance ↗
+      </a>
     </div>
   </section>
 
@@ -577,7 +670,7 @@
       <h3 id="terms-title">Terms of Engagement</h3>
       <span class="modal-date">Effective January 2026</span>
       <p><strong>Submitting an application does not constitute a contract.</strong> PENNIO reviews every application manually and reserves the right to decline any project without obligation to provide a reason.</p>
-      <p>Accepted clients receive a formal project agreement outlining scope, deliverables, timeline, and payment terms before any work begins. The ₦450,000 starting price is indicative. Final pricing is confirmed in writing after scoping.</p>
+      <p>Accepted clients receive a formal project agreement outlining scope, deliverables, timeline, and payment terms before any work begins. The ₦50,000 starting price is indicative. Final pricing is confirmed in writing after scoping.</p>
       <p>All creative work produced by PENNIO remains the intellectual property of PENNIO until final payment is received in full. Upon full payment, ownership of deliverables transfers to the client as outlined in the project agreement.</p>
       <p>PENNIO does not offer refunds once a project phase has commenced. Disputes are handled in good faith and governed by Nigerian law.</p>
       <p>For questions about a specific engagement, use the application form and indicate your query in the challenge field.</p>
@@ -610,7 +703,8 @@
         <h4>Studio</h4>
         <ul>
           <li><a href="#problem">Approach</a></li>
-          <li><a href="#product">The Work</a></li>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#product">The Foundation</a></li>
           <li><a href="#pricing">Pricing</a></li>
         </ul>
       </div>
