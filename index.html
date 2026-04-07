@@ -3,8 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PENNIO · Brand Architecture Studio</title>
+  <title>PENNIO — Brand Architecture Studio for African E-Commerce Founders</title>
   <meta name="description" content="PENNIO builds the brand foundation African e-commerce founders run on. Meaning first. System second. Growth that compounds.">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://pennio.agency/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pennio.agency/">
+  <meta property="og:title" content="PENNIO — Brand Architecture Studio for African E-Commerce Founders">
+  <meta property="og:description" content="PENNIO builds the brand foundation African e-commerce founders run on. Meaning first. System second. Growth that compounds.">
+  <meta property="og:image" content="https://pennio.agency/og-cover.jpg">
+  <meta property="og:site_name" content="PENNIO">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@penniodesign">
+  <meta name="twitter:title" content="PENNIO — Brand Architecture Studio for African E-Commerce Founders">
+  <meta name="twitter:description" content="PENNIO builds the brand foundation African e-commerce founders run on. Meaning first. System second. Growth that compounds.">
+  <meta name="twitter:image" content="https://pennio.agency/og-cover.jpg">
+
+  <!-- Structured Data: Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "PENNIO",
+    "url": "https://pennio.agency",
+    "logo": "https://pennio.agency/logo.png",
+    "description": "Brand Architecture Studio for vision-driven African e-commerce founders. We build the brand foundation your business runs on — meaning first, system second.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressRegion": "Oyo State",
+      "addressCountry": "NG"
+    },
+    "sameAs": [
+      "https://x.com/penniodesign",
+      "https://instagram.com/pennio.design",
+      "https://linkedin.com/in/paul-oyatowo",
+      "https://www.behance.net/paul-oyatowo"
+    ],
+    "priceRange": "₦₦₦"
+  }
+  </script>
+
+  <!-- Structured Data: Service -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Brand Architecture",
+    "provider": { "@type": "Organization", "name": "PENNIO" },
+    "name": "The E-Commerce Foundation",
+    "description": "A three-phase brand architecture engagement — Meaning Audit, Identity System, and E-Commerce Layer — built for African e-commerce founders who are ready to build a brand that compounds.",
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "NGN",
+      "price": "300000",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "minPrice": "300000",
+        "priceCurrency": "NGN"
+      }
+    }
+  }
+  </script>
+
+  <!-- Structured Data: FAQ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is included in the E-Commerce Foundation?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The E-Commerce Foundation includes a Brand Meaning Document, full logoset, color system and typography, visual identity guidelines, tone of voice and messaging, 3 content pillars for social media, an ad creative brief, and a complete Brand Kit covering product pages, packaging language, and social content."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does a PENNIO project take?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Every project is scoped individually. The timeline is confirmed in writing before work begins. PENNIO works on a limited number of projects at a time to ensure full attention on each engagement."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you work with brands outside Nigeria?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. PENNIO works with African founders regardless of location. International engagements are priced in USD starting at $500. Submit an application and PENNIO will confirm fit and scope."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does PENNIO charge for brand architecture?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nigeria-based projects start at ₦300,000. Most projects scope between ₦500,000 and ₦1,200,000 depending on complexity and deliverable depth. International engagements start at $500 USD. Final pricing is confirmed in writing after scoping."
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -354,6 +460,19 @@
     .footer-socials a:hover { border-color: rgba(255,255,255,0.28); color: var(--white); }
     .footer-socials svg { width: 14px; height: 14px; fill: currentColor; }
 
+    /* FAQ */
+    .section-faq { background: var(--black); padding: 110px 5vw; border-top: 1px solid var(--line-dark); }
+    .faq-wrap { max-width: 780px; margin: 0 auto; }
+    .faq-header { margin-bottom: 56px; }
+    .faq-header h2 { font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
+    .faq-item { border-bottom: 1px solid var(--line-dark); padding: 32px 0; }
+    .faq-item:first-of-type { border-top: 1px solid var(--line-dark); }
+    .faq-q { font-size: 1rem; font-weight: 600; line-height: 1.4; letter-spacing: -0.01em; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; list-style: none; }
+    .faq-q::-webkit-details-marker { display: none; }
+    .faq-q::after { content: '+'; font-size: 1.4rem; font-weight: 300; color: var(--grey-4); flex-shrink: 0; line-height: 1; margin-top: 2px; transition: transform 0.25s ease; }
+    details[open] .faq-q::after { transform: rotate(45deg); }
+    .faq-a { font-size: 0.94rem; font-weight: 300; line-height: 1.75; color: var(--grey-4); padding-top: 18px; max-width: 640px; }
+
     /* WHATSAPP FLOAT */
     .wa-float { position: fixed; bottom: 28px; right: 28px; z-index: 300; width: 48px; height: 48px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 4px 20px rgba(37,211,102,0.3); transition: transform 0.2s, box-shadow 0.2s; }
     .wa-float:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37,211,102,0.4); }
@@ -373,6 +492,7 @@
       <li><a href="#problem">The Problem</a></li>
       <li><a href="#work">Work</a></li>
       <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
     </ul>
     <div class="nav-right">
       <a href="#apply" class="btn btn-cta">Apply Now</a>
@@ -511,9 +631,12 @@
         <span class="label">Investment</span>
         <h2>One price.<br>No surprises.</h2>
         <p>The price reflects what it actually takes to build a brand that holds. Every project is scoped before the final number is confirmed.</p>
-        <div class="price-from">Investment starts at</div>
+        <div class="price-from">Nigeria-based projects start at</div>
         <div class="price-amount">₦300,000</div>
-        <div class="price-note">Most projects scope above that</div>
+        <div class="price-note">Most projects scope between ₦500,000 and ₦1,200,000</div>
+        <div class="price-from" style="margin-top: 24px;">International engagements start at</div>
+        <div class="price-amount" style="font-size: clamp(1.6rem,2.4vw,2.2rem); color: var(--grey-5);">$500 USD</div>
+        <div class="price-note" style="margin-bottom: 36px;">Pricing confirmed in writing after scoping</div>
         <a href="#apply" class="btn btn-cta" style="align-self: flex-start;">Apply for a Spot</a>
       </div>
       <div class="pricing-right reveal reveal-d1">
@@ -528,7 +651,7 @@
           <li>Ad creative brief</li>
           <li>Brand Kit (product pages, packaging, social + ad briefs)</li>
         </ul>
-        <p class="small-note">Final price is confirmed after scoping. Projects are evaluated against a minimum criteria score. PENNIO reserves the right to decline engagements that are not a fit.</p>
+        <p class="small-note">Assembled separately — a brand strategist, identity designer, copywriter, and media buyer brief — this scope runs ₦600,000 to ₦1.5M across vendors with no coherence guarantee. PENNIO delivers it as one integrated system.<br><br>Final price is confirmed after scoping. Projects are evaluated against a minimum criteria score. PENNIO reserves the right to decline engagements that are not a fit.</p>
       </div>
     </div>
   </section>
@@ -544,7 +667,7 @@
       <!-- Jójò Jewels -->
       <div class="proof-card reveal">
         <div class="proof-img-placeholder">
-          <img src="pic1.webp" alt="Jójò Jewels brand work" class="proof-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <img src="jojo-jewels-brand-identity.webp" alt="Jójò Jewels brand identity and visual system by PENNIO" class="proof-img" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="proof-img-initial" style="display:none">JJ</div>
         </div>
         <div class="proof-meta">
@@ -557,7 +680,7 @@
       <!-- Tabitha House of Fragrance -->
       <div class="proof-card reveal reveal-d1">
         <div class="proof-img-placeholder">
-          <img src="pic2.webp" alt="Tabitha House of Fragrance brand work" class="proof-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <img src="tabitha-house-of-fragrance-brand-identity.webp" alt="Tabitha House of Fragrance brand identity and visual system by PENNIO" class="proof-img" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="proof-img-initial" style="display:none">TH</div>
         </div>
         <div class="proof-meta">
@@ -570,7 +693,7 @@
       <!-- PENNIO -->
       <div class="proof-card reveal reveal-d2">
         <div class="proof-img-placeholder">
-          <img src="pic3.webp" alt="PENNIO brand work" class="proof-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <img src="pennio-brand-system.webp" alt="PENNIO brand architecture platform and creative system" class="proof-img" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="proof-img-initial" style="display:none">PN</div>
         </div>
         <div class="proof-meta">
@@ -590,6 +713,40 @@
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.228 9.42c.776 0 1.354-.17 1.73-.514.377-.343.566-.853.566-1.53 0-.623-.19-1.09-.572-1.4-.38-.31-.967-.464-1.757-.464H4.8v3.908h3.428zm.287 5.576c.872 0 1.52-.188 1.946-.563.427-.375.64-.938.64-1.688 0-.7-.218-1.234-.655-1.603-.437-.37-1.076-.554-1.918-.554H4.8v4.408h3.715zM0 3h9.107c1.238 0 2.29.327 3.156.98.867.654 1.3 1.618 1.3 2.893 0 .814-.193 1.497-.578 2.048-.385.551-.91.96-1.578 1.227.878.219 1.554.666 2.029 1.343.474.677.711 1.49.711 2.442 0 1.42-.467 2.494-1.4 3.22-.934.726-2.138 1.09-3.61 1.09H0V3zm14.8 0h7.344v1.514H14.8V3zm7.052 6.527c-.598-.613-1.466-.92-2.604-.92-1.197 0-2.103.35-2.718 1.05-.615.7-.922 1.543-.922 2.531h7.116c-.049-1.138-.274-2.048-.872-2.661zm-5.24 4.015c.044.88.3 1.554.77 2.022.47.469 1.127.703 1.971.703.664 0 1.225-.162 1.682-.487.457-.325.73-.67.82-1.036h2.445c-.373 1.123-1.021 1.977-1.944 2.562-.923.585-1.991.878-3.204.878-1.73 0-3.09-.514-4.08-1.543-.99-1.03-1.485-2.42-1.485-4.17 0-1.702.503-3.082 1.51-4.14 1.007-1.058 2.373-1.587 4.098-1.587 1.034 0 1.937.188 2.709.563.772.375 1.395.902 1.87 1.58.474.678.808 1.462 1.001 2.352.13.59.183 1.29.16 2.103H16.61z"/></svg>
         View on Behance ↗
       </a>
+    </div>
+  </section>
+
+  <section class="section-faq" id="faq" aria-label="Frequently Asked Questions">
+    <div class="faq-wrap">
+      <div class="faq-header reveal">
+        <span class="label">FAQ</span>
+        <h2>Questions founders ask<br>before applying.</h2>
+      </div>
+
+      <details class="faq-item reveal">
+        <summary class="faq-q">What is included in the E-Commerce Foundation?</summary>
+        <p class="faq-a">The Foundation covers the full scope of what a brand needs before it earns the right to advertise: a Brand Meaning Document, complete logoset, color system and typography, visual identity guidelines, tone of voice and messaging framework, three content pillars for social, an ad creative brief, and a full Brand Kit built for product pages, packaging language, and social content. Everything traced back to the meaning uncovered in Phase 01.</p>
+      </details>
+
+      <details class="faq-item reveal reveal-d1">
+        <summary class="faq-q">How long does a PENNIO project take?</summary>
+        <p class="faq-a">Every project is scoped individually. Timeline is confirmed in writing before any work begins. PENNIO works on a limited number of projects at a time to ensure nothing is rushed and every deliverable holds.</p>
+      </details>
+
+      <details class="faq-item reveal reveal-d1">
+        <summary class="faq-q">Do you work with brands outside Nigeria?</summary>
+        <p class="faq-a">Yes. PENNIO works with African founders regardless of location. International engagements are priced in USD starting at $500. Submit an application and we will confirm fit and scope from there.</p>
+      </details>
+
+      <details class="faq-item reveal reveal-d2">
+        <summary class="faq-q">What happens after I submit an application?</summary>
+        <p class="faq-a">Every application is read personally. If your brand meets the minimum criteria, PENNIO will reach out within 48 hours to schedule a scoping conversation. Final pricing is confirmed in writing before any work begins. Submitting an application is not a commitment on either side.</p>
+      </details>
+
+      <details class="faq-item reveal reveal-d2">
+        <summary class="faq-q">My brand already has a logo. Can PENNIO still help?</summary>
+        <p class="faq-a">Yes, and this is a common starting point. Most founders arrive with a visual that came before anything was understood. The Meaning Audit determines whether the existing identity can be built on or whether the foundation needs to be reset. Either way, the process starts with meaning, not the logo.</p>
+      </details>
     </div>
   </section>
 
@@ -706,6 +863,7 @@
           <li><a href="#work">Work</a></li>
           <li><a href="#product">The Foundation</a></li>
           <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
         </ul>
       </div>
       <div class="footer-col">
