@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Let's Create Network — PENNIO</title>
-  <meta name="description" content="letscreate.africa is a PENNIO-led creative network where African creatives learn to work in strong teams, build serious work, and grow through structure, critique, and proof." />
+  <meta name="description" content="The Let's Create Network is a PENNIO-led creative network where African creatives learn to work in strong teams, build serious work, and grow through structure, critique, and proof." />
   <meta property="og:title" content="The Let's Create Network — PENNIO" />
-  <meta property="og:description" content="A PENNIO-led creative network for African creatives." />
+  <meta property="og:description" content="The Let's Create Network is a PENNIO-led creative network for African creatives." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="./assets/og-image.svg" />
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
@@ -172,6 +172,17 @@
     .modal-body { padding: var(--space-5); display: grid; gap: var(--space-5); }
     .close-btn { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--color-border); background: rgba(255,255,255,.03); color: var(--color-text); }
     .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+    
+    .success-state { display: none; text-align: center; padding: var(--space-12) 0 var(--space-4); }
+    .success-state.show { display: block; }
+    .success-icon {
+      width: 64px; height: 64px; border: 2px solid var(--color-primary); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--color-primary);
+      margin: 0 auto var(--space-5);
+    }
+    .success-state h3 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); margin-bottom: .6rem; color: var(--color-text); }
+    .success-state p { max-width: 38ch; margin-inline: auto; color: var(--color-text-muted); }
+
     @media (max-width: 1024px) {
       .problem-panel, .partner-panel, .feature-row, .modal-grid, .footer-grid, .form-grid, .qualify-grid, .grid-3 { grid-template-columns: 1fr; }
       .pillar { border-right: 0; border-bottom: 1px solid var(--color-divider); min-height: auto; }
@@ -204,7 +215,7 @@
     <section class="hero" id="top">
       <div class="hero-inner">
         <h1>African creatives stop learning in isolation.</h1>
-        <p class="hero-copy">And start building with structure, critique, and real creative teams inside <span class="accent-africa">The Let's Create Network.</span></p>
+        <p class="hero-copy">And start building with structure, critique, and real creative teams inside The Let's Create Network<span class="accent-africa">.</span></p>
         <p class="hero-sub">A PENNIO-led creative movement. Built on structure. Measured by the work.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#apply">Apply for Cohort One</a>
@@ -350,6 +361,11 @@
             <div class="field full"><label>Why do you want to join?</label><textarea name="reason" required placeholder="Be specific. Generic answers get generic results."></textarea></div>
             <div class="field full"><button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%;">Submit Application</button></div><p class="hero-sub" id="formStatus" style="text-align:center; max-width:none;">Every application is reviewed personally.</p>
           </form>
+          <div class="success-state" id="successMsg" aria-live="polite">
+            <div class="success-icon">✓</div>
+            <h3>Message received.</h3>
+            <p>Your application is in. We will review it personally and reach out if there is a fit.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -384,7 +400,7 @@
     <div class="container footer-grid">
       <div>
         <div class="brand brand-lockup"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81.67 102.67" aria-hidden="true" style="width:18px;height:auto;flex:0 0 auto;"><path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42" fill="currentColor"/></svg><span>PENNIO</span></div>
-        <p style="margin-top:1rem;"><span class="accent-africa">The Let's Create Network</span> is a PENNIO-led creative movement for African talent.</p>
+        <p style="margin-top:1rem;">letscreate<span class="accent-africa">.africa</span> is a PENNIO-led creative movement for African talent.</p>
       </div>
       <div class="footer-links">
         <a href="#problem">The Problem</a>
@@ -451,6 +467,7 @@
     const form = document.getElementById('applyForm');
     const submitBtn = document.getElementById('submitBtn');
     const formStatus = document.getElementById('formStatus');
+    const successMsg = document.getElementById('successMsg');
     if(form){
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -468,9 +485,9 @@
           const data = await res.json();
           if(!res.ok || data.success === 'false'){ throw new Error('Submission failed'); }
           form.reset();
-          formStatus.textContent = 'Application received by The Let's Create Network. We will review it personally.';
-          formStatus.className = 'hero-sub success';
-          submitBtn.textContent = 'Submitted';
+          form.style.display = 'none';
+          formStatus.style.display = 'none';
+          if(successMsg) successMsg.classList.add('show');
         } catch(err) {
           formStatus.textContent = 'Submission failed. Please try again or contact PENNIO directly.';
           formStatus.className = 'hero-sub error';
