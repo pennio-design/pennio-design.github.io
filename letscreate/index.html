@@ -96,8 +96,8 @@
     .hero p { margin-inline: auto; }
     .hero-copy { font-size: clamp(1.2rem, 1rem + .6vw, 1.65rem); max-width: 42ch; font-weight: 500; color: var(--color-text); }
     .hero-sub { color: var(--color-text-faint); }
-    #formStatus.success { color: #f0c8b2; }
-    #formStatus.error { color: #ff9a6a; }
+    #formStatus.success, #partnerFormStatus.success { color: #f0c8b2; }
+    #formStatus.error, #partnerFormStatus.error { color: #ff9a6a; }
     .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .85rem; }
     .section { padding-block: clamp(var(--space-12), 7vw, var(--space-24)); border-bottom: 1px solid var(--color-divider); }
     .section-header { display: grid; gap: var(--space-3); margin-bottom: var(--space-8); text-align: center; justify-items: center; }
@@ -173,15 +173,15 @@
     .close-btn { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--color-border); background: rgba(255,255,255,.03); color: var(--color-text); }
     .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
 
-    .success-state { display: none; text-align: center; padding: var(--space-12) 0 var(--space-4); }
-    .success-state.show { display: block; }
+    .success-state, .partner-success-state { display: none; text-align: center; padding: var(--space-12) 0 var(--space-4); }
+    .success-state.show, .partner-success-state.show { display: block; }
     .success-icon {
       width: 64px; height: 64px; border: 2px solid var(--color-primary); border-radius: 50%;
       display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--color-primary);
       margin: 0 auto var(--space-5);
     }
-    .success-state h3 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); margin-bottom: .6rem; color: var(--color-text); }
-    .success-state p { max-width: 38ch; margin-inline: auto; color: var(--color-text-muted); }
+    .success-state h3, .partner-success-state h3 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); margin-bottom: .6rem; color: var(--color-text); }
+    .success-state p, .partner-success-state p { max-width: 38ch; margin-inline: auto; color: var(--color-text-muted); }
 
     .ladder-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-top: var(--space-6); }
     .ladder-step { padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: rgba(255,255,255,.01); }
@@ -531,13 +531,50 @@
       },
       partners: {
         kicker: 'Partner sheet',
-        title: 'How organisations can support',
+        title: 'Support the System Architecture',
         body: `
           <div class="modal-grid">
-            <div class="card"><h3>Funding</h3><p>Support venue, internet, logistics, mentor time, stipends, and documentation.</p></div>
-            <div class="card"><h3>Opportunity</h3><p>Create access to internships, reviews, briefs, and industry visibility.</p></div>
-            <div class="card"><h3>Ecosystem value</h3><p>Help strengthen creative infrastructure while developing future-ready talent.</p></div>
-            <div class="card"><h3>Why it works</h3><p>Every partnership is brokered personally. There are no generic sponsor tiers.</p></div>
+            <div>
+              <p style="font-size:var(--text-sm); margin-bottom:var(--space-4); color:var(--color-text-muted);">We work with forward-thinking organizations, studio leaders, and founders to cultivate elite engineering and aesthetic talent pipelines across the continent.</p>
+              <div class="card" style="margin-bottom:var(--space-3); padding:var(--space-3);">
+                <h4 style="font-size:var(--text-xs); text-transform:uppercase; color:var(--color-primary); letter-spacing:.1em; margin-bottom:var(--space-1);">Direct Placement</h4>
+                <p style="font-size:var(--text-xs); color:var(--color-text-muted);">Secure deep access to senior cohort graduates across specialized design, strategy, and technical development nodes.</p>
+              </div>
+              <div class="card" style="padding:var(--space-3);">
+                <h4 style="font-size:var(--text-xs); text-transform:uppercase; color:var(--color-primary); letter-spacing:.1em; margin-bottom:var(--space-1);">Brief Sponsorship</h4>
+                <p style="font-size:var(--text-xs); color:var(--color-text-muted);">Underwrite a multi-week technical brief rooted entirely in real ecosystem parameters.</p>
+              </div>
+            </div>
+            <div>
+              <form class="form-grid" id="partnerForm" style="grid-template-columns:1fr;">
+                <input type="hidden" name="_subject" value="New Let's Create Network Partner Alignment Inquiry" />
+                <div class="field"><label style="font-size:.65rem;">Organization Name</label><input name="org_name" required placeholder="Company or Studio name" style="min-height:48px; padding:.75rem;" /></div>
+                <div class="field"><label style="font-size:.65rem;">Contact Email</label><input type="email" name="org_email" required placeholder="name@company.com" style="min-height:48px; padding:.75rem;" /></div>
+                <div class="field">
+                  <label style="font-size:.65rem;">Primary Alignment Vector</label>
+                  <select name="partner_intent" required style="min-height:48px; padding:.75rem; background:#171717;">
+                    <option value="" disabled selected>Select pathway</option>
+                    <option>Talent Pipeline Access</option>
+                    <option>Live Brief Underwriting</option>
+                    <option>Infrastructure / Node Funding</option>
+                    <option>Other Structural Support</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label style="font-size:.65rem;">Strategic Context</label>
+                  <textarea name="partner_notes" required placeholder="Briefly describe what you seek to back or unlock." style="min-height:80px; padding:.75rem; font-size:var(--text-xs);"></textarea>
+                </div>
+                <div class="field">
+                  <button type="submit" id="partnerSubmitBtn" class="btn btn-primary" style="width:100%; min-height:44px; font-size:var(--text-xs);">Submit Intent</button>
+                </div>
+                <p id="partnerFormStatus" style="font-size:10px; color:var(--color-text-faint); text-align:center;">Direct framework inquiry routing secured.</p>
+              </form>
+              <div class="partner-success-state" id="partnerSuccessMsg" aria-live="polite">
+                <div class="success-icon" style="width:40px; height:40px; font-size:1rem; margin-bottom:var(--space-2);">✓</div>
+                <h3 style="font-size:var(--text-sm);">Intent Tracked.</h3>
+                <p style="font-size:var(--text-xs); color:var(--color-text-muted);">We will establish contact directly via our partnership framework leads.</p>
+              </div>
+            </div>
           </div>`
       },
       funding: {
@@ -552,7 +589,21 @@
     const modalKicker = document.getElementById('modal-kicker');
     const modalBody = document.getElementById('modal-body');
     const closeBtn = document.getElementById('modal-close');
-    function openModal(key){ const item = modalData[key]; if(!item) return; modalKicker.textContent=item.kicker; modalTitle.textContent=item.title; modalBody.innerHTML=item.body; overlay.classList.add('active'); document.body.style.overflow='hidden'; }
+    
+    function openModal(key){ 
+      const item = modalData[key]; 
+      if(!item) return; 
+      modalKicker.textContent=item.kicker; 
+      modalTitle.textContent=item.title; 
+      modalBody.innerHTML=item.body; 
+      overlay.classList.add('active'); 
+      document.body.style.overflow='hidden'; 
+      
+      if(key === 'partners') {
+        initializePartnerForm();
+      }
+    }
+    
     function closeModal(){ overlay.classList.remove('active'); document.body.style.overflow=''; }
     document.querySelectorAll('[data-modal-open]').forEach(el=>el.addEventListener('click',()=>openModal(el.getAttribute('data-modal-open'))));
     closeBtn.addEventListener('click', closeModal);
@@ -591,6 +642,41 @@
           submitBtn.textContent = 'Submit Application';
         }
       });
+    }
+
+    function initializePartnerForm() {
+      const pForm = document.getElementById('partnerForm');
+      const pSubmitBtn = document.getElementById('partnerSubmitBtn');
+      const pFormStatus = document.getElementById('partnerFormStatus');
+      const pSuccessMsg = document.getElementById('partnerSuccessMsg');
+      
+      if(pForm) {
+        pForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          pSubmitBtn.disabled = true;
+          pSubmitBtn.textContent = 'Transmitting...';
+          pFormStatus.textContent = 'Routing connection logs...';
+          try {
+            const payload = Object.fromEntries(new FormData(pForm));
+            const res = await fetch('https://formsubmit.co/ajax/ea0da421e8e6e82457be40792262eeed', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if(!res.ok || data.success === 'false'){ throw new Error('Transmission failed'); }
+            pForm.reset();
+            pForm.style.display = 'none';
+            pFormStatus.style.display = 'none';
+            if(pSuccessMsg) pSuccessMsg.classList.add('show');
+          } catch(err) {
+            pFormStatus.textContent = 'Transmission error. Retry or route via network mail directly.';
+            pFormStatus.className = 'error';
+            pSubmitBtn.disabled = false;
+            pSubmitBtn.textContent = 'Submit Intent';
+          }
+        });
+      }
     }
 </script>
 </body>
