@@ -89,12 +89,12 @@
       width: min(calc(100% - 2rem), 980px); margin-inline: auto; text-align: center; display: grid; gap: var(--space-5); position: relative; z-index: 1;
     }
     h1, h2, h3 { letter-spacing: -.05em; line-height: .98; }
-    h1 { font-size: clamp(3rem, 5.8vw, 6.2rem); max-width: 11ch; margin-inline: auto; }
+    h1 { font-size: clamp(3rem, 5.8vw, 6.2rem); max-width: 14ch; margin-inline: auto; }
     h2 { font-size: var(--text-2xl); max-width: 12ch; }
     h3 { font-size: var(--text-lg); line-height: 1.08; }
     p { color: var(--color-text-muted); max-width: 64ch; }
     .hero p { margin-inline: auto; }
-    .hero-copy { font-size: clamp(1.2rem, 1rem + .6vw, 1.65rem); max-width: 30ch; font-weight: 500; color: var(--color-text); }
+    .hero-copy { font-size: clamp(1.2rem, 1rem + .6vw, 1.65rem); max-width: 42ch; font-weight: 500; color: var(--color-text); }
     .hero-sub { color: var(--color-text-faint); }
     #formStatus.success { color: #f0c8b2; }
     #formStatus.error { color: #ff9a6a; }
@@ -147,7 +147,7 @@
     .qualify-wrap h2, .qualify-wrap h3, .qualify-wrap strong { color: #15110d; }
     .qualify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
     .apply-header-center { width: 100%; justify-items: center; }
-    .apply-header-center h2 { text-align: center; max-width: 12ch; }
+    .apply-header-center h2 { text-align: center; max-width: 24ch; }
     .apply-header-center p { text-align: center; max-width: 42ch; }
     .qualify-card { padding: var(--space-5); border-radius: var(--radius-lg); background: rgba(255,255,255,.72); box-shadow: 0 14px 34px rgba(20,12,8,.08); }
     .apply-bar { margin-top: var(--space-6); padding: var(--space-4) var(--space-5); border-radius: 1rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; background: rgba(242,101,34,.08); border: 1px solid rgba(242,101,34,.16); color: #6c4d3b; }
@@ -172,7 +172,7 @@
     .modal-body { padding: var(--space-5); display: grid; gap: var(--space-5); }
     .close-btn { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--color-border); background: rgba(255,255,255,.03); color: var(--color-text); }
     .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
-    
+
     .success-state { display: none; text-align: center; padding: var(--space-12) 0 var(--space-4); }
     .success-state.show { display: block; }
     .success-icon {
@@ -183,8 +183,16 @@
     .success-state h3 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); margin-bottom: .6rem; color: var(--color-text); }
     .success-state p { max-width: 38ch; margin-inline: auto; color: var(--color-text-muted); }
 
+    .ladder-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-top: var(--space-6); }
+    .ladder-step { padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: rgba(255,255,255,.01); }
+    .ladder-step h4 { font-size: var(--text-sm); font-weight: 600; color: var(--color-text); margin-bottom: var(--space-1); }
+    .ladder-step p { font-size: var(--text-xs); color: var(--color-text-muted); }
+
+    .share-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+    .share-item { padding: var(--space-4); border: 1px solid var(--color-divider); border-radius: var(--radius-sm); font-family: monospace; font-size: var(--text-xs); color: var(--color-text-faint); background: rgba(0,0,0,.2); }
+
     @media (max-width: 1024px) {
-      .problem-panel, .partner-panel, .feature-row, .modal-grid, .footer-grid, .form-grid, .qualify-grid, .grid-3 { grid-template-columns: 1fr; }
+      .problem-panel, .partner-panel, .feature-row, .modal-grid, .footer-grid, .form-grid, .qualify-grid, .grid-3, .ladder-grid { grid-template-columns: 1fr; }
       .pillar { border-right: 0; border-bottom: 1px solid var(--color-divider); min-height: auto; }
       .pillar:last-child { border-bottom: 0; }
       .feature-row:nth-child(even) .feature-card, .feature-row:nth-child(even) .feature-copy { order: initial; }
@@ -205,21 +213,44 @@
         <a href="#problem">The Problem</a>
         <a href="#system">What We Build</a>
         <a href="#apply">Apply</a>
-        <a href="#partners">Partners</a>
       </nav>
-      <a class="btn btn-primary" href="#apply">Apply to Cohort One</a>
+      <a class="btn btn-primary" href="#apply">Apply for the 10-Week Cohort</a>
     </div>
   </header>
 
   <main>
     <section class="hero" id="top">
       <div class="hero-inner">
-        <h1>African creatives stop learning in isolation.</h1>
-        <p class="hero-copy">And start building with structure, critique, and real creative teams inside The Let's Create Network<span class="accent-africa">.</span></p>
-        <p class="hero-sub">A PENNIO-led creative movement. Built on structure. Measured by the work.</p>
+        <h1>Fail in community. Build with guides. Grow in public.</h1>
+        <p class="hero-copy">The Let’s Create Network is a PENNIO-led learning system where African creatives build real work, share imperfect drafts, and grow through structure, critique, and proof.</p>
+        <p class="hero-sub">Start with a public challenge. Grow through a 10-week cohort. Stay through the network.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#apply">Apply for Cohort One</a>
-          <button class="btn btn-secondary" data-modal-open="cohort">How it works</button>
+          <a class="btn btn-primary" href="#apply">Apply for the 10-Week Cohort</a>
+          <button class="btn btn-secondary" data-modal-open="cohort">See the 10-Week Flow</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="bridge">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">The Entry Ladder</span>
+          <h2>A clear path into the room.</h2>
+          <p>We do not expect polished finality on day one. Progression is stepped.</p>
+        </div>
+        <div class="ladder-grid">
+          <div class="ladder-step">
+            <h4>1. The 7-Day Challenge</h4>
+            <p>A short sprint to test your focus, show your raw thinking, and clear the initial bar.</p>
+          </div>
+          <div class="ladder-step">
+            <h4>2. Live Failure Lab</h4>
+            <p>An entry point session where rough concepts and imperfect work are picked apart constructively.</p>
+          </div>
+          <div class="ladder-step">
+            <h4>3. 10-Week Cohort</h4>
+            <p>An intensive deep-dive team studio built entirely around real briefs and structured standards.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -231,8 +262,12 @@
             <h2>African creatives do not have a talent problem. They have a system problem.</h2>
           </div>
           <div>
-            <p>Community is still the oldest operating system. <span class="accent-africa">The Let's Create Network</span> builds the structure that unlocks it for creative work.</p>
-            <p style="margin-top:1rem;">Everything inside <span class="accent-africa">The Let's Create Network</span> exists to produce stronger creatives through structure, not scattered encouragement.</p>
+            <p>Community is still the oldest operating system. The Let's Create Network builds the structure that unlocks it for creative work. Everything inside the network exists to produce stronger creatives through structure, not scattered encouragement.</p>
+            <ul class="list" style="margin-top: var(--space-4);">
+              <li>Talented people are learning entirely alone.</li>
+              <li>Feedback is highly inconsistent or shallow.</li>
+              <li>Good work rarely compounds into real, permanent opportunity.</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -249,7 +284,7 @@
           <article class="pillar">
             <div class="pillar-no">01</div>
             <h3>Cohort Studio</h3>
-            <p>Short, serious cohort cycles where mixed-skill teams learn to work like a full-stack creative unit.</p>
+            <p>Short, serious cohort cycles where mixed-skill teams learn to work like a full-stack creative unit. You leave with stronger process and one serious body of work.</p>
             <ul class="list">
               <li>Creative direction, design, copy, strategy, and production.</li>
               <li>Real briefs, deadlines, and critique culture.</li>
@@ -259,7 +294,7 @@
           <article class="pillar">
             <div class="pillar-no">02</div>
             <h3>Community Network</h3>
-            <p>A living system where participants stay connected long after a single cohort ends.</p>
+            <p>A living system where participants stay connected long after a single cohort ends. You keep the room even after the cycle ends.</p>
             <ul class="list">
               <li>Peer review, learning loops, and shared standards.</li>
               <li>Alumni pathways into future cohorts and leadership.</li>
@@ -269,9 +304,9 @@
           <article class="pillar">
             <div class="pillar-no">03</div>
             <h3>Opportunity Engine</h3>
-            <p>Proof, mentorship, and partnerships that move strong creatives closer to real opportunity.</p>
+            <p>Proof, mentorship, and partnerships that move strong creatives closer to real opportunity. Access to reviews, briefs, visibility, and selected work opportunities as the network grows.</p>
             <ul class="list">
-              <li>Internships, contract work, and partner-backed exposure.</li>
+              <li>Access to partner networks, reviews, and design sprints.</li>
               <li>Merit-based progression inside the network.</li>
               <li>Opportunity routed through trust and quality.</li>
             </ul>
@@ -293,9 +328,10 @@
             <h3>Build real work, not practice work.</h3>
             <p>The cohort is built around real work. Teams move through strategy, concept, design, copy, critique, and refinement until the final output holds together.</p>
             <ul class="list">
-              <li>A 10-week cycle built around one real brief.</li>
-              <li>Mixed-skill teams with four defined roles.</li>
-              <li>Every critique session sharpens everyone in the room.</li>
+              <li><strong>Weeks 1–2:</strong> Orientation and team formation.</li>
+              <li><strong>Weeks 3–5:</strong> Strategy and core ideation.</li>
+              <li><strong>Weeks 6–8:</strong> Hard execution and continuous critique.</li>
+              <li><strong>Weeks 9–10:</strong> Final refinement and public network showcase.</li>
             </ul>
           </div>
         </div>
@@ -320,12 +356,28 @@
       </div>
     </section>
 
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Living Lab</span>
+          <h2>The Work Floor</h2>
+          <p>What people might share here—imperfect drafts, unpolished logic, and raw system architecture layout scripts before final production review.</p>
+        </div>
+        <div class="share-grid">
+          <div class="share-item">// rough vector plot map<br>identity_bounds = grid.symmetry(0.618);</div>
+          <div class="share-item">/* copy angle 04 */<br>"Your talent isn't missing. The scaffolding is."</div>
+          <div class="share-item"># strategy outline draft<br>Target: African founders moving early in 2026.</div>
+          <div class="share-item">// audio session routing<br>vocal_bus.send(failure_lab_monitors);</div>
+        </div>
+      </div>
+    </section>
+
     <section class="section qualify-wrap" id="apply">
       <div class="container">
         <div class="section-header apply-header-center">
           <span class="eyebrow">Apply</span>
-          <h2>Apply if the work matters.</h2>
-          <p>Every application is reviewed for fit. This is not a casual signup.</p>
+          <h2>Apply if you’re ready to be seen trying.</h2>
+          <p>This is for people who want to grow through real work, real critique, and real consistency. Every application is reviewed for fit.</p>
         </div>
         <div class="qualify-grid">
           <div class="qualify-card">
@@ -353,13 +405,44 @@
         </div>
         <div class="apply-panel">
           <form class="form-grid" id="applyForm">
-            <input type="hidden" name="_subject" value="New The Let's Create Network application" /><div class="field"><label>Full Name</label><input name="name" required placeholder="Your name" /></div>
+            <input type="hidden" name="_subject" value="New The Let's Create Network application" />
+            <div class="field"><label>Full Name</label><input name="name" required placeholder="Your name" /></div>
             <div class="field"><label>Email</label><input type="email" name="email" required placeholder="you@email.com" /></div>
-            <div class="field"><label>Primary Discipline</label><select name="discipline" required><option value="" disabled selected>Select your lane</option><option>Design</option><option>Copywriting</option><option>Strategy</option><option>Video</option><option>Other</option></select></div>
-            <div class="field"><label>Current Level</label><select name="level" required><option value="" disabled selected>Select your level</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
+            <div class="field">
+              <label>Primary Discipline</label>
+              <select name="discipline" required>
+                <option value="" disabled selected>Select your lane</option>
+                <option>Brand Design</option>
+                <option>Product Design</option>
+                <option>Copy / Writing</option>
+                <option>Strategy</option>
+                <option>Video / Motion</option>
+                <option>Development</option>
+                <option>Marketing / Growth</option>
+                <option>Illustration / Art</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Can you commit weekly time for 10 weeks?</label>
+              <select name="commitment" required>
+                <option value="" disabled selected>Select readiness</option>
+                <option>Yes, fully</option>
+                <option>Mostly, with some constraints</option>
+                <option>Not sure yet</option>
+              </select>
+            </div>
             <div class="field full"><label>Portfolio / Instagram / Behance</label><input name="portfolio" placeholder="@yourhandle or portfolio link" /></div>
+            <div class="field full">
+              <label>What skill, confidence gap, or creative weakness are you actively trying to improve?</label>
+              <textarea name="weakness" required placeholder="Be completely specific. Leaning into weakness helps us calibrate critique paths."></textarea>
+            </div>
             <div class="field full"><label>Why do you want to join?</label><textarea name="reason" required placeholder="Be specific. Generic answers get generic results."></textarea></div>
-            <div class="field full"><button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%;">Submit Application</button></div><p class="hero-sub" id="formStatus" style="text-align:center; max-width:none;">Every application is reviewed personally.</p>
+            <div class="field full">
+              <button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%;">Submit Application</button>
+              <p style="text-align: center; font-size: var(--text-xs); color: #6c635b; margin-top: var(--space-2);">We review every application personally. We do not spam or share your information.</p>
+            </div>
+            <p class="hero-sub" id="formStatus" style="text-align:center; max-width:none;">Every application is reviewed personally.</p>
           </form>
           <div class="success-state" id="successMsg" aria-live="polite">
             <div class="success-icon">✓</div>
@@ -406,7 +489,6 @@
         <a href="#problem">The Problem</a>
         <a href="#system">What We Build</a>
         <a href="#apply">Apply</a>
-        <a href="#partners">Partners</a>
       </div>
     </div>
   </footer>
@@ -430,8 +512,22 @@
         kicker: 'Cohort model',
         title: 'How the cohort works',
         body: `
-          <div class="card"><ul class="list"><li>A 10-week cycle built around one real brief.</li><li>Mixed-skill teams. Four defined roles.</li><li>Every team member joins every critique session.</li><li>The work itself becomes the teacher.</li></ul></div>
-          <p>Every brief is rooted in a real African problem. The first three brief components are fixed. The last two are deliberately open. This is where strategy is tested.</p>`
+          <div class="card">
+            <ul class="list">
+              <li>A 10-week cycle built around one real brief.</li>
+              <li>Mixed-skill teams. Four defined roles.</li>
+              <li>Every team member joins every critique session.</li>
+              <li>The work itself becomes the teacher.</li>
+            </ul>
+          </div>
+          <div style="margin-top:var(--space-4);">
+            <h5 style="color:var(--color-text); margin-bottom:var(--space-1); font-size:var(--text-sm);">Who it's for</h5>
+            <p style="font-size:var(--text-xs); color:var(--color-text-muted); margin-bottom:var(--space-3);">Serious builders looking for structure over validation.</p>
+            <h5 style="color:var(--color-text); margin-bottom:var(--space-1); font-size:var(--text-sm);">What a week looks like</h5>
+            <p style="font-size:var(--text-xs); color:var(--color-text-muted); margin-bottom:var(--space-3);">Deep sprint coordination early in the week, hard creation, concluding in ruthless weekend critique.</p>
+            <h5 style="color:var(--color-text); margin-bottom:var(--space-1); font-size:var(--text-sm);">What you leave with</h5>
+            <p style="font-size:var(--text-xs); color:var(--color-text-muted);">An uncompromised case study showing precise strategic and aesthetic execution.</p>
+          </div>`
       },
       partners: {
         kicker: 'Partner sheet',
