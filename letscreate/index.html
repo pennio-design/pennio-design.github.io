@@ -189,7 +189,7 @@
     .ladder-step p { font-size: var(--text-xs); color: var(--color-text-muted); }
 
     .share-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
-    .share-item { padding: var(--space-4); border: 1px solid var(--color-divider); border-radius: var(--radius-sm); font-family: monospace; font-size: var(--text-xs); color: var(--color-text-faint); background: rgba(0,0,0,.2); transition: all 0.2s ease; }
+    .share-item { padding: var(--space-4); border: 1px solid var(--color-divider); border-radius: var(--radius-sm); font-family: monospace; font-size: var(--text-xs); color: var(--color-text-faint); background: rgba(0,0,0,.2); }
 
     @media (max-width: 1024px) {
       .problem-panel, .partner-panel, .feature-row, .modal-grid, .footer-grid, .form-grid, .qualify-grid, .grid-3, .ladder-grid { grid-template-columns: 1fr; }
@@ -363,8 +363,12 @@
           <h2>The Work Floor</h2>
           <p>What people might share here—imperfect drafts, unpolished logic, and raw system architecture layout scripts before final production review.</p>
         </div>
-        <div class="share-grid" id="liveTelemetryFloor">
-          </div>
+        <div class="share-grid">
+          <div class="share-item">// rough vector plot map<br>identity_bounds = grid.symmetry(0.618);</div>
+          <div class="share-item">/* copy angle 04 */<br>"Your talent isn't missing. The scaffolding is."</div>
+          <div class="share-item"># strategy outline draft<br>Target: African founders moving early in 2026.</div>
+          <div class="share-item">// audio session routing<br>vocal_bus.send(failure_lab_monitors);</div>
+        </div>
       </div>
     </section>
 
@@ -544,7 +548,7 @@
             <div>
               <form class="form-grid" id="partnerForm" style="grid-template-columns:1fr;">
                 <input type="hidden" name="_subject" value="New Let's Create Network Partner Alignment Inquiry" />
-                <div class="field"><label style="font-size:.65rem;">Organization Name</label><input name="org_name" id="partnerOrgName" required placeholder="Company or Studio name" style="min-height:48px; padding:.75rem;" /></div>
+                <div class="field"><label style="font-size:.65rem;">Organization Name</label><input name="org_name" required placeholder="Company or Studio name" style="min-height:48px; padding:.75rem;" /></div>
                 <div class="field"><label style="font-size:.65rem;">Contact Email</label><input type="email" name="org_email" required placeholder="name@company.com" style="min-height:48px; padding:.75rem;" /></div>
                 <div class="field">
                   <label style="font-size:.65rem;">Primary Alignment Vector</label>
@@ -580,27 +584,6 @@
           <div class="card"><ul class="list"><li>Mentor support and critique time.</li><li>Space, electricity, and internet access.</li><li>Media capture and public documentation.</li><li>Participant support where possible.</li></ul></div>`
       }
     };
-
-    const operationalLogs = [
-      { text: "// rough vector plot map\\nidentity_bounds = grid.symmetry(0.618);" },
-      { text: "/* copy angle 04 */\\n\"Your talent isn't missing. The scaffolding is.\"" },
-      { text: "# strategy outline draft\\nTarget: African founders moving early in 2026." },
-      { text: "// audio session routing\\nvocal_bus.send(failure_lab_monitors);" }
-    ];
-
-    function feedTelemetryFloor() {
-      const logContainer = document.getElementById("liveTelemetryFloor");
-      if (!logContainer) return;
-      logContainer.innerHTML = "";
-      operationalLogs.forEach(log => {
-        const item = document.createElement("div");
-        item.className = "share-item";
-        item.innerHTML = log.text.replace(/\\n/g, "<br>");
-        logContainer.appendChild(item);
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", feedTelemetryFloor);
 
     const overlay = document.getElementById('modal-overlay');
     const modalTitle = document.getElementById('modal-title');
@@ -676,14 +659,6 @@
           pFormStatus.textContent = 'Routing connection logs...';
           try {
             const payload = Object.fromEntries(new FormData(pForm));
-            if (payload.org_name) {
-              operationalLogs.unshift({
-                text: `// new partner link request initialized\\norg_log = "${payload.org_name.toLowerCase().replace(/\s+/g, '_')}_node";`
-              });
-              if(operationalLogs.length > 5) operationalLogs.pop();
-              feedTelemetryFloor();
-            }
-
             const res = await fetch('https://formsubmit.co/ajax/ea0da421e8e6e82457be40792262eeed', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
