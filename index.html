@@ -308,6 +308,22 @@
     .proof-brand { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
     .proof-category { font-size: 0.78rem; font-weight: 300; color: var(--grey-4); margin-bottom: 12px; }
     .proof-outcome { font-size: 0.78rem; font-weight: 400; line-height: 1.55; color: var(--grey-3); padding-top: 12px; border-top: 1px solid var(--line-dark); }
+    a.proof-card { display: block; text-decoration: none; color: inherit; cursor: pointer; }
+    .proof-card.proof-link { cursor: pointer; }
+    .proof-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4); margin-bottom: 10px; }
+
+    /* PROJECT MODAL */
+    .proof-modal { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.72); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 5vw; }
+    .proof-modal.is-open { display: flex; }
+    .proof-modal-inner { background: var(--surface); border: 1px solid var(--glass-bdr); border-radius: 10px; max-width: 480px; width: 100%; padding: 40px 32px; position: relative; }
+    .proof-modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line-dark); background: transparent; color: var(--grey-5); font-size: 1.1rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .proof-modal-close:hover { border-color: var(--grey-4); }
+    .proof-modal-swatches { display: flex; gap: 8px; margin: 18px 0; }
+    .proof-modal-swatch { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line-dark); }
+    .proof-modal-inner h3 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .proof-modal-inner .proof-category { margin-bottom: 0; }
+    .proof-modal-inner p.proof-modal-desc { font-size: 0.88rem; font-weight: 300; line-height: 1.65; color: var(--grey-4); margin: 16px 0 24px; }
+    .proof-modal-status { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--orange); }
 
     /* FAQ */
     .section-faq { background: var(--black); padding: 110px 5vw; border-top: 1px solid var(--line-dark); }
@@ -691,8 +707,58 @@
           <div class="proof-outcome">A full creative platform built from scratch, covering identity, web, content, and ad infrastructure as one studio system.</div>
         </div>
       </div>
+      <a href="/KnowledgeGraph" class="proof-card proof-link reveal" aria-label="View KnowledgeGraph, an AI learning roadmap tool by PENNIO">
+        <div class="proof-img-placeholder">
+          <div class="proof-img-initial">KG</div>
+        </div>
+        <div class="proof-meta">
+          <div class="proof-status"><span class="proof-status-dot"></span>Live</div>
+          <div class="proof-brand">KnowledgeGraph</div>
+          <div class="proof-category">AI Product · Learning Architect</div>
+          <div class="proof-outcome">An AI tool that generates a personalised learning roadmap for any skill in seconds, built and shipped as a standalone PENNIO product.</div>
+        </div>
+      </a>
+      <a href="/letscreate" class="proof-card proof-link reveal reveal-d1" aria-label="View The Let's Create Network by PENNIO">
+        <div class="proof-img-placeholder">
+          <div class="proof-img-initial">LC</div>
+        </div>
+        <div class="proof-meta">
+          <div class="proof-status"><span class="proof-status-dot"></span>Live</div>
+          <div class="proof-brand">The Let's Create Network</div>
+          <div class="proof-category">Initiative · Creatives of Tomorrow</div>
+          <div class="proof-outcome">A skills acquisition network for the next generation of African creatives, built as a platform under the PENNIO umbrella.</div>
+        </div>
+      </a>
+      <div class="proof-card proof-link reveal reveal-d2" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Ogbifọ project details" onclick="openProofModal('ogbifo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProofModal('ogbifo');}">
+        <div class="proof-img-placeholder" style="background:#121413;">
+          <div class="proof-img-initial" style="color:rgba(212,155,65,0.35);">OG</div>
+        </div>
+        <div class="proof-meta">
+          <div class="proof-status"><span class="proof-status-dot"></span>In Progress</div>
+          <div class="proof-brand">Ogbifọ</div>
+          <div class="proof-category">AI Product · Language and Cultural Preservation</div>
+          <div class="proof-outcome">An AI-powered translation platform built to document, translate, and safeguard African languages before they disappear.</div>
+        </div>
+      </div>
     </div>
   </section>
+
+  <!-- PROJECT MODAL (Ogbifọ) -->
+  <div class="proof-modal" id="proofModal" role="dialog" aria-modal="true" aria-labelledby="proofModalTitle">
+    <div class="proof-modal-inner">
+      <button class="proof-modal-close" type="button" aria-label="Close" onclick="closeProofModal()">&times;</button>
+      <div class="proof-modal-status">In Progress</div>
+      <h3 id="proofModalTitle">Ogbifọ</h3>
+      <div class="proof-category">AI Product · Language and Cultural Preservation</div>
+      <div class="proof-modal-swatches" aria-hidden="true">
+        <span class="proof-modal-swatch" style="background:#121413;"></span>
+        <span class="proof-modal-swatch" style="background:#D49B41;"></span>
+        <span class="proof-modal-swatch" style="background:#FAF9F6;"></span>
+      </div>
+      <p class="proof-modal-desc">Ogbifọ is an AI-powered translation and cultural preservation platform that documents, translates, and safeguards African languages using machine learning, corpus verification, and offline-first tooling. The product page is in progress; a preview link will replace this pop-up once it is live.</p>
+      <a href="/letscreate" class="btn btn-outline" style="width:100%; text-align:center; justify-content:center; display:flex;">Explore the PENNIO platform</a>
+    </div>
+  </div>
 
   <!-- FAQ -->
   <section class="section-faq" id="faq" aria-label="Frequently Asked Questions">
@@ -933,6 +999,27 @@
         btn.disabled = false;
         btn.textContent = 'Submit Application';
       });
+    });
+  </script>
+
+  <script>
+    function openProofModal(id) {
+      var modal = document.getElementById('proofModal');
+      if (!modal) return;
+      modal.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeProofModal() {
+      var modal = document.getElementById('proofModal');
+      if (!modal) return;
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('proofModal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeProofModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeProofModal();
     });
   </script>
 </body>
