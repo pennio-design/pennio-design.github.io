@@ -301,6 +301,7 @@
     .proof-img-placeholder { width: 100%; aspect-ratio: 4/5; background: var(--surface-2); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
     .proof-img-placeholder::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, transparent 60%); }
     .proof-img-initial { font-size: 4rem; font-weight: 700; letter-spacing: -0.05em; color: rgba(255,255,255,0.06); user-select: none; }
+    .proof-logo-icon { width: 56px; height: auto; opacity: 0.9; }
     .proof-meta { padding: 24px 24px 28px; }
     .proof-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
     .proof-status-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; animation: pulse-dot 2s ease-in-out infinite; }
@@ -320,6 +321,7 @@
     .proof-modal-close:hover { border-color: var(--grey-4); }
     .proof-modal-swatches { display: flex; gap: 8px; margin: 18px 0; }
     .proof-modal-swatch { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line-dark); }
+    .proof-modal-mark { display: flex; align-items: center; justify-content: center; width: 96px; height: 96px; border-radius: 50%; background: #121413; margin: 18px 0; }
     .proof-modal-inner h3 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
     .proof-modal-inner .proof-category { margin-bottom: 0; }
     .proof-modal-inner p.proof-modal-desc { font-size: 0.88rem; font-weight: 300; line-height: 1.65; color: var(--grey-4); margin: 16px 0 24px; }
@@ -709,7 +711,7 @@
       </div>
       <a href="/KnowledgeGraph" class="proof-card proof-link reveal" aria-label="View KnowledgeGraph, an AI learning roadmap tool by PENNIO">
         <div class="proof-img-placeholder">
-          <div class="proof-img-initial">KG</div>
+          <img src="/logo.png" alt="PENNIO" class="proof-logo-icon">
         </div>
         <div class="proof-meta">
           <div class="proof-status"><span class="proof-status-dot"></span>Live</div>
@@ -720,7 +722,7 @@
       </a>
       <a href="/letscreate" class="proof-card proof-link reveal reveal-d1" aria-label="View The Let's Create Network by PENNIO">
         <div class="proof-img-placeholder">
-          <div class="proof-img-initial">LC</div>
+          <img src="/logo.png" alt="PENNIO" class="proof-logo-icon">
         </div>
         <div class="proof-meta">
           <div class="proof-status"><span class="proof-status-dot"></span>Live</div>
@@ -730,8 +732,14 @@
         </div>
       </a>
       <div class="proof-card proof-link reveal reveal-d2" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Ogbifọ project details" onclick="openProofModal('ogbifo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProofModal('ogbifo');}">
-        <div class="proof-img-placeholder" style="background:#121413;">
-          <div class="proof-img-initial" style="color:rgba(212,155,65,0.35);">OG</div>
+        <div class="proof-img-placeholder" style="background:#121413; color:#D49B41;">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" width="64" height="64" aria-hidden="true">
+            <g stroke="currentColor" stroke-width="3" stroke-linecap="round">
+              <line x1="83" y1="50" x2="88" y2="50" /><line x1="80.5" y1="61.5" x2="85" y2="63" /><line x1="72.5" y1="72.5" x2="77.5" y2="77.5" /><line x1="61.5" y1="80.5" x2="63" y2="85" /><line x1="50" y1="83" x2="50" y2="88" /><line x1="38.5" y1="80.5" x2="37" y2="85" /><line x1="27.5" y1="72.5" x2="22.5" y2="77.5" /><line x1="19.5" y1="61.5" x2="15" y2="63" /><line x1="17" y1="50" x2="12" y2="50" /><line x1="19.5" y1="38.5" x2="15" y2="37" /><line x1="27.5" y1="27.5" x2="22.5" y2="22.5" /><line x1="38.5" y1="19.5" x2="37" y2="15" /><line x1="50" y1="17" x2="50" y2="12" /><line x1="61.5" y1="19.5" x2="63" y2="15" /><line x1="72.5" y1="27.5" x2="77.5" y2="22.5" /><line x1="80.5" y1="38.5" x2="85" y2="37" />
+            </g>
+            <path d="M 32 50 C 32 36, 68 36, 68 50 C 68 64, 32 64, 32 50 Z" stroke="#D49B41" stroke-width="4.5"/>
+            <circle cx="50" cy="50" r="5" fill="#D49B41"/>
+          </svg>
         </div>
         <div class="proof-meta">
           <div class="proof-status"><span class="proof-status-dot"></span>In Progress</div>
@@ -750,10 +758,20 @@
       <div class="proof-modal-status">In Progress</div>
       <h3 id="proofModalTitle">Ogbifọ</h3>
       <div class="proof-category">AI Product · Language and Cultural Preservation</div>
-      <div class="proof-modal-swatches" aria-hidden="true">
-        <span class="proof-modal-swatch" style="background:#121413;"></span>
-        <span class="proof-modal-swatch" style="background:#D49B41;"></span>
-        <span class="proof-modal-swatch" style="background:#FAF9F6;"></span>
+      <div class="proof-modal-mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+          <style>
+            @keyframes spokePulseOdd { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.35); } }
+            @keyframes spokePulseEven { 0%, 100% { transform: scale(1.2); } 50% { transform: scale(0.85); } }
+            .spoke-odd { transform-origin: 50px 50px; animation: spokePulseOdd 1.5s ease-in-out infinite; }
+            .spoke-even { transform-origin: 50px 50px; animation: spokePulseEven 1.5s ease-in-out infinite; }
+          </style>
+          <g stroke="#FAF9F6" stroke-width="3" stroke-linecap="round">
+            <line x1="83" y1="50" x2="88" y2="50" class="spoke-odd" /><line x1="80.5" y1="61.5" x2="85" y2="63" class="spoke-even" /><line x1="72.5" y1="72.5" x2="77.5" y2="77.5" class="spoke-odd" /><line x1="61.5" y1="80.5" x2="63" y2="85" class="spoke-even" /><line x1="50" y1="83" x2="50" y2="88" class="spoke-odd" /><line x1="38.5" y1="80.5" x2="37" y2="85" class="spoke-even" /><line x1="27.5" y1="72.5" x2="22.5" y2="77.5" class="spoke-odd" /><line x1="19.5" y1="61.5" x2="15" y2="63" class="spoke-even" /><line x1="17" y1="50" x2="12" y2="50" class="spoke-odd" /><line x1="19.5" y1="38.5" x2="15" y2="37" class="spoke-even" /><line x1="27.5" y1="27.5" x2="22.5" y2="22.5" class="spoke-odd" /><line x1="38.5" y1="19.5" x2="37" y2="15" class="spoke-even" /><line x1="50" y1="17" x2="50" y2="12" class="spoke-odd" /><line x1="61.5" y1="19.5" x2="63" y2="15" class="spoke-even" /><line x1="72.5" y1="27.5" x2="77.5" y2="22.5" class="spoke-odd" /><line x1="80.5" y1="38.5" x2="85" y2="37" class="spoke-even" />
+          </g>
+          <path d="M 32 50 C 32 36, 68 36, 68 50 C 68 64, 32 64, 32 50 Z" stroke="#D49B41" stroke-width="4.5"/>
+          <circle cx="50" cy="50" r="5" fill="#D49B41"/>
+        </svg>
       </div>
       <p class="proof-modal-desc">Ogbifọ is an AI-powered translation and cultural preservation platform that documents, translates, and safeguards African languages using machine learning, corpus verification, and offline-first tooling. The product page is in progress; a preview link will replace this pop-up once it is live.</p>
       <a href="/letscreate" class="btn btn-outline" style="width:100%; text-align:center; justify-content:center; display:flex;">Explore the PENNIO platform</a>
