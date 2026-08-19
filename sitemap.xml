@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
-
-<url>
-  <loc>https://pennio.agency/</loc>
-  <lastmod>2026-06-06T07:54:53+00:00</lastmod>
-</url>
-<url>
-  <loc>https://pennio.agency/letscreate/</loc>
-  <lastmod>2026-06-06T07:54:53+00:00</lastmod>
-</url>
-<url>
-  <loc>https://pennio.agency/KnowledgeGraph/</loc>
-  <lastmod>2026-06-06T07:54:53+00:00</lastmod>
-</url>
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://pennio.agency/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- Confirmed live via direct fetch on 2026-08-19. Ogbifo intentionally excluded —
+       confirmed still in build, not yet public. Re-check before every deploy;
+       a sitemap entry is a promise to search engines that the page resolves. -->
+  <url>
+    <loc>https://pennio.agency/letscreate</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pennio.agency/KnowledgeGraph</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>

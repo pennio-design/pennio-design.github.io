@@ -1,65 +1,33 @@
-# Paul Oyatowo's Portfolio
+# PENNIO — reconciled repo (this pass)
 
-Welcome to the repository for **Paul Oyatowo's Portfolio** – the online showcase for the creative work of Paul Oyatowo, Founder & Creative Strategist at PENNIO.
+Base: `index-24.html` (the most evolved draft in the project files), reconciled against
+the **live** `index.html` at github.com/pennio-design/pennio-design.github.io/blob/master/index.html.
 
-## Overview
+## What was live vs. what's in this repo now
 
-This portfolio website displays a curated selection of branding projects and creative campaigns. It highlights key services, project details, and contact information, all presented with a clean, minimal design and interactive features such as:
+The live site is running an **older, partially-broken state**:
+- Apply form had no real submit handler wired up in a way that reliably worked (index-24 fixed this — AJAX POST, honeypot, inline validation, error state).
+- Meta Pixel loaded render-blocking in `<head>` (index-24 defers it to `window.load`).
+- No `robots.txt`, `sitemap.xml`, or `site.webmanifest` existed (added here).
+- Work grid mixed three real client case studies with two "Live" links to pages that were never confirmed to resolve (`/letscreate`, `/KnowledgeGraph`) plus an unlabeled AI-language-preservation project — all under one undifferentiated grid, which blurs "creative agency" into "AI lab" on first impression.
+- FAQ existed as a section but wasn't in the desktop nav.
 
-- **Responsive Layout:** Optimized for both desktop and mobile devices.
-- **Interactive Elements:** Modal popups for the PDF portfolio, smooth fade-in animations, and a dark/light mode toggle.
-- **Project Pages:** Each project has its own slide/page with rich descriptions and visuals.
-- **Contact Form:** An easy-to-use form for quick inquiries via FormSubmit.
-- **Social Media Integration:** Direct links to LinkedIn, Instagram, and more.
-- **Custom Favicon:** Easily customizable for enhanced brand recognition.
+## What I fixed to make this deployable today
 
-## Features
+1. **Form now actually works.** Pointed `action` at the FormSubmit endpoint ID that's already active and confirmed on the live site (`ea0da421e8e6e82457be40792262eeed`) instead of the unfilled placeholder email that was in index-24. This is the one line that determines whether a single lead gets captured — I did not leave it as a TODO.
+2. **Client work leads, studio products follow.** Jojo Jewels / Tabitha / PENNIO itself stand alone as the primary proof grid. KnowledgeGraph, The Let's Create Network, and Ogbifọ moved to a secondary "Also from the studio" strip — visible, still linked, not competing for the first impression.
+3. **`sitemap.xml`** only lists the homepage. `/letscreate` and `/KnowledgeGraph` are commented out until confirmed live — an agency selling "we don't ship what doesn't work" cannot have a sitemap that 404s.
+4. Deferred Meta Pixel, `decoding="async"` on below-fold images, `prefers-reduced-motion` support, visible focus states, FAQ added to both nav menus, root-absolute image paths.
 
-- **Responsive Design:** Fully responsive layout with a dynamic header and mobile-friendly navigation.
-- **Interactive UX:** Smooth transitions, hover effects, and a dark/light mode toggle.
-- **Detailed Projects:** Each project is showcased with its own page containing descriptions, visuals, challenges, solutions, and outcomes.
-- **Easy Customization:** Update HTML, CSS, and JavaScript files to tailor content and design.
-- **GitHub Pages Deployment:** Quick and easy setup for hosting via GitHub Pages.
+## What I did NOT fabricate
 
-## Installation & Usage
+- **`/letscreate` and `/KnowledgeGraph` page content.** Nothing in this project contains their actual copy, layout, or curriculum. I did not invent an academy page and ship it under your brand — that would be exactly the "assembled, not built" problem the homepage itself calls out. If you want these built, send me the real program structure (tracks, pricing, instructors, outcomes) and I'll build them to the same design system.
+- **Client photography, logo files, favicons.** Referenced by path (`/jojo-jewels-brand-identity.webp`, `/logo.png`, etc.) exactly as the live site does. I have no access to the actual binary assets — confirm they exist at those paths before deploy or the placeholders (initials on a dark card) will show instead.
+- **The FormSubmit inbox this hashed ID actually delivers to.** I reused the live ID because it's proven active, but I can't verify from here whose inbox that is. Confirm it's still monitored.
 
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/yourusername/pennio-design.github.io.git
-   ```
-2. **Open the Project:**
-   Navigate into the project folder and open `index.html` in your browser to preview the website.
-   
-3. **Customize Content:**
-   - Edit the HTML files (e.g., `index.html`) to update the content.
-   - Modify `styles.css` for styling tweaks (colors, fonts, layout).
-   - Update `script.js` for interactive feature adjustments.
-   - Replace placeholder images with your project visuals (place them in the appropriate folder, e.g., `/images`).
+## Before you deploy
 
-4. **Deploy with GitHub Pages:**
-   - Push the repository to GitHub.
-   - Go to your repository settings, scroll down to **GitHub Pages**, and select the `main` (or `master`) branch as the source.
-   - Your portfolio will be live at `https://pennio-design.github.io/`.
-
-## Contributing
-
-Feel free to fork this repository and submit pull requests if you have suggestions or improvements—be it design tweaks, content updates, or new features. Your contributions are welcome!
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For any inquiries or further information, please contact:
-
-- **Email:** [pauloyatowo@gmail.com](mailto:pauloyatowo@gmail.com)
-- **Website:** [pennio-design.github.io](https://pennio-design.github.io/)
-- **LinkedIn:** [linkedin.com/in/pauloyatowo](https://linkedin.com/in/pauloyatowo)
-- **Instagram:** [instagram.com/pennio__](https://instagram.com/pennio.design)
-- **Phone:** +234 810 183 3138
-
-*Designed with clarity, strategy, and creative impact by Paul Oyatowo.*
-```
-
-Feel free to adjust any sections to best match your needs!
+- [ ] Confirm `ea0da421e8e6e82457be40792262eeed` still delivers to a monitored inbox (FormSubmit IDs can be reset).
+- [ ] Confirm `/letscreate` and `/KnowledgeGraph` resolve, or point those chips somewhere real (Instagram, a waitlist) until they do.
+- [ ] Confirm the "3 new projects per month" and "48 hours" capacity claims are still true — these are live commitments, not decoration.
+- [ ] Drop real image assets at the referenced paths.
