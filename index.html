@@ -81,7 +81,7 @@
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal, .marquee-track, .proof-status-dot { transition: none !important; animation: none !important; opacity: 1 !important; transform: none !important; }
+  .reveal, .marquee-track, .proof-status-dot, .nav-logo svg { transition: none !important; animation: none !important; opacity: 1 !important; transform: none !important; }
 }
 body { background: var(--black); color: var(--white); font-family: 'Inter', sans-serif; font-weight: 400; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 .skip-nav { position: absolute; top: -100%; left: 0; background: var(--orange); color: var(--white); padding: 12px 20px; font-size: 0.8rem; font-weight: 600; text-decoration: none; z-index: 9999; border-radius: 0 0 4px 0; transition: top 0.15s ease; }
@@ -103,7 +103,8 @@ body { background: var(--black); color: var(--white); font-family: 'Inter', sans
 .grid-3d-light { position: absolute; bottom: -10%; left: -50%; width: 200%; height: 100%; background-image: linear-gradient(to right, rgba(0,0,80,0.045) 1px, transparent 1px), linear-gradient(to top, rgba(0,0,80,0.045) 1px, transparent 1px); background-size: 40px 40px; transform: perspective(60vh) rotateX(60deg) translateY(-50px); mask-image: linear-gradient(to top, black 10%, transparent 80%); -webkit-mask-image: linear-gradient(to top, black 10%, transparent 80%); }
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 72px; padding: 0 5vw; display: flex; align-items: center; justify-content: space-between; background: rgba(5,5,5,0.82); backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%); border-bottom: 1px solid var(--line-dark); }
 .nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; width: 180px; }
-.nav-logo svg { width: 18px; }
+.nav-logo svg { width: 18px; animation: navMarkBreathe 3.6s ease-in-out infinite; transform-origin: center; }
+@keyframes navMarkBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 .nav-wordmark { font-size: 0.88rem; font-weight: 600; letter-spacing: -0.02em; color: var(--white); }
 .nav-wordmark span { color: var(--orange); }
 .nav-center { display: flex; gap: 36px; list-style: none; }
