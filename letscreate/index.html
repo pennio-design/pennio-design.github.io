@@ -67,6 +67,9 @@
     .brand { font-size: var(--text-sm); font-weight: 700; letter-spacing: -.03em; }
     .brand-lockup { display:inline-flex; align-items:center; gap:.55rem; }
     .brand-lockup span { font-size:.88rem; font-weight:600; letter-spacing:-.02em; }
+    .brand-lockup svg { animation: navMarkBreathe 3.6s ease-in-out infinite; transform-origin: center; }
+    @keyframes navMarkBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @media (prefers-reduced-motion: reduce) { .brand-lockup svg { animation: none !important; } }
     .nav-links { display: flex; gap: 1.8rem; color: var(--color-text-muted); font-size: var(--text-sm); }
     .nav-links a:hover { color: var(--color-text); }
     .btn {
@@ -77,6 +80,7 @@
     .btn-primary { background: var(--color-primary); color: #fff4ed; }
     .btn-primary:hover { background: var(--color-primary-hover); }
     .btn-secondary { background: rgba(255,255,255,.03); color: var(--color-text); border: 1px solid var(--color-border); }
+    .btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
     .hero {
       min-height: 92vh; display: grid; align-items: center; position: relative; overflow: hidden; border-bottom: 1px solid var(--color-divider);
     }
@@ -171,6 +175,7 @@
     .modal-header { position: sticky; top: 0; display: flex; align-items: start; justify-content: space-between; gap: var(--space-4); padding: var(--space-5); border-bottom: 1px solid var(--color-divider); background: rgba(13,13,13,.94); }
     .modal-body { padding: var(--space-5); display: grid; gap: var(--space-5); }
     .close-btn { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--color-border); background: rgba(255,255,255,.03); color: var(--color-text); }
+    .close-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
     .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
 
     .success-state, .partner-success-state { display: none; text-align: center; padding: var(--space-12) 0 var(--space-4); }
@@ -190,6 +195,10 @@
 
     .share-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
     .share-item { padding: var(--space-4); border: 1px solid var(--color-divider); border-radius: var(--radius-sm); font-family: monospace; font-size: var(--text-xs); color: var(--color-text-faint); background: rgba(0,0,0,.2); }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
 
     @media (max-width: 1024px) {
       .problem-panel, .partner-panel, .feature-row, .modal-grid, .footer-grid, .form-grid, .qualify-grid, .grid-3, .ladder-grid { grid-template-columns: 1fr; }
@@ -348,7 +357,7 @@
             <p>After the cohort, creatives don't disappear. Their work, relationships, and growth stay inside the system and keep compounding. Alumni become the mentors for the next intake.</p>
             <ul class="list">
               <li>Cross-pollination is built into the workflow.</li>
-              <li># organic progress route verified via system.</li>
+              <li>An organic progress route verified via the system.</li>
               <li>Opportunities flow through the network because the work is trusted.</li>
             </ul>
           </div>
@@ -406,11 +415,13 @@
         <div class="apply-panel">
           <form class="form-grid" id="applyForm">
             <input type="hidden" name="_subject" value="New The Let's Create Network application" />
-            <div class="field"><label>Full Name</label><input name="name" required placeholder="Your name" /></div>
-            <div class="field"><label>Email</label><input type="email" name="email" required placeholder="you@email.com" /></div>
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+            <div class="field"><label for="lc-name">Full Name</label><input id="lc-name" name="name" required placeholder="Your name" autocomplete="name" /></div>
+            <div class="field"><label for="lc-email">Email</label><input id="lc-email" type="email" name="email" required placeholder="you@email.com" autocomplete="email" /></div>
             <div class="field">
-              <label>Primary Discipline</label>
-              <select name="discipline" required>
+              <label for="lc-discipline">Primary Discipline</label>
+              <select id="lc-discipline" name="discipline" required>
                 <option value="" disabled selected>Select your lane</option>
                 <option>Brand Design</option>
                 <option>Product Design</option>
@@ -424,20 +435,20 @@
               </select>
             </div>
             <div class="field">
-              <label>Can you commit weekly time for 10 weeks?</label>
-              <select name="commitment" required>
+              <label for="lc-commitment">Can you commit weekly time for 10 weeks?</label>
+              <select id="lc-commitment" name="commitment" required>
                 <option value="" disabled selected>Select readiness</option>
                 <option>Yes, fully</option>
                 <option>Mostly, with some constraints</option>
                 <option>Not sure yet</option>
               </select>
             </div>
-            <div class="field full"><label>Portfolio / Instagram / Behance</label><input name="portfolio" placeholder="@yourhandle or portfolio link" /></div>
+            <div class="field full"><label for="lc-portfolio">Portfolio / Instagram / Behance</label><input id="lc-portfolio" name="portfolio" placeholder="@yourhandle or portfolio link" /></div>
             <div class="field full">
-              <label>What skill, confidence gap, or creative weakness are you actively trying to improve?</label>
-              <textarea name="weakness" required placeholder="Be completely specific. Leaning into weakness helps us calibrate critique paths."></textarea>
+              <label for="lc-weakness">What skill, confidence gap, or creative weakness are you actively trying to improve?</label>
+              <textarea id="lc-weakness" name="weakness" required placeholder="Be completely specific. Leaning into weakness helps us calibrate critique paths."></textarea>
             </div>
-            <div class="field full"><label>Why do you want to join?</label><textarea name="reason" required placeholder="Be specific. Generic answers get generic results."></textarea></div>
+            <div class="field full"><label for="lc-reason">Why do you want to join?</label><textarea id="lc-reason" name="reason" required placeholder="Be specific. Generic answers get generic results."></textarea></div>
             <div class="field full">
               <button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%;">Submit Application</button>
               <p style="text-align: center; font-size: var(--text-xs); color: #6c635b; margin-top: var(--space-2);">We review every application personally. We do not spam or share your information.</p>
@@ -548,6 +559,8 @@
             <div>
               <form class="form-grid" id="partnerForm" style="grid-template-columns:1fr;">
                 <input type="hidden" name="_subject" value="New Let's Create Network Partner Alignment Inquiry" />
+                <input type="hidden" name="_captcha" value="false" />
+                <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                 <div class="field"><label style="font-size:.65rem;">Organization Name</label><input name="org_name" required placeholder="Company or Studio name" style="min-height:48px; padding:.75rem;" /></div>
                 <div class="field"><label style="font-size:.65rem;">Contact Email</label><input type="email" name="org_email" required placeholder="name@company.com" style="min-height:48px; padding:.75rem;" /></div>
                 <div class="field">
@@ -590,21 +603,21 @@
     const modalKicker = document.getElementById('modal-kicker');
     const modalBody = document.getElementById('modal-body');
     const closeBtn = document.getElementById('modal-close');
-    
-    function openModal(key){ 
-      const item = modalData[key]; 
-      if(!item) return; 
-      modalKicker.textContent=item.kicker; 
-      modalTitle.textContent=item.title; 
-      modalBody.innerHTML=item.body; 
-      overlay.classList.add('active'); 
-      document.body.style.overflow='hidden'; 
-      
+
+    function openModal(key){
+      const item = modalData[key];
+      if(!item) return;
+      modalKicker.textContent=item.kicker;
+      modalTitle.textContent=item.title;
+      modalBody.innerHTML=item.body;
+      overlay.classList.add('active');
+      document.body.style.overflow='hidden';
+
       if(key === 'partners') {
         initializePartnerForm();
       }
     }
-    
+
     function closeModal(){ overlay.classList.remove('active'); document.body.style.overflow=''; }
     document.querySelectorAll('[data-modal-open]').forEach(el=>el.addEventListener('click',()=>openModal(el.getAttribute('data-modal-open'))));
     closeBtn.addEventListener('click', closeModal);
@@ -619,6 +632,9 @@
     if(form){
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        // honeypot: bots fill hidden fields, humans never see this one
+        if (form.querySelector('[name="_honey"]').value) return;
+
         submitBtn.disabled = true;
         submitBtn.textContent = 'Submitting...';
         formStatus.textContent = 'Submitting your application...';
@@ -650,10 +666,12 @@
       const pSubmitBtn = document.getElementById('partnerSubmitBtn');
       const pFormStatus = document.getElementById('partnerFormStatus');
       const pSuccessMsg = document.getElementById('partnerSuccessMsg');
-      
+
       if(pForm) {
         pForm.addEventListener('submit', async (e) => {
           e.preventDefault();
+          if (pForm.querySelector('[name="_honey"]').value) return;
+
           pSubmitBtn.disabled = true;
           pSubmitBtn.textContent = 'Transmitting...';
           pFormStatus.textContent = 'Routing connection logs...';

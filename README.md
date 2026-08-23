@@ -25,9 +25,37 @@ The live site is running an **older, partially-broken state**:
 - **Client photography, logo files, favicons.** Referenced by path (`/jojo-jewels-brand-identity.webp`, `/logo.png`, etc.) exactly as the live site does. I have no access to the actual binary assets — confirm they exist at those paths before deploy or the placeholders (initials on a dark card) will show instead.
 - **The FormSubmit inbox this hashed ID actually delivers to.** I reused the live ID because it's proven active, but I can't verify from here whose inbox that is. Confirm it's still monitored.
 
+## Update — letscreate reconciliation + animation path fix
+
+**The bug:** all three embedded motion assets used absolute paths (`/motion/...`). Those
+only resolve once this is actually deployed to `pennio.agency` root with the `motion/`
+folder sitting alongside `index.html` — they break instantly under `file://` local
+preview, or any preview tool that doesn't serve from true domain root. Fixed to
+relative paths (`motion/...`) so the same repo works whether you're previewing it
+locally or it's live at the real domain. If you deploy `letscreate/` as a subfolder
+and later want these same assets there, its videos need `../motion/...` instead —
+one level up.
+
+**letscreate/index.html now materialized and reconciled**, not just referenced:
+- Both forms (apply + partner) now carry the same honeypot (`_honey`) and
+  `_captcha=false` fields as the main site's apply form, plus the matching JS guard
+  clause (`if (form.querySelector('[name="_honey"]').value) return;`) before either
+  fetch call. Verified by count: 6 field refs (2 forms × 2 fields + 2 JS references),
+  2 guard clauses — not assumed, grepped.
+- Nav logomark now carries the same idle-breathe animation as the main site, with the
+  same `prefers-reduced-motion` opt-out — one brand, one motion language, not two
+  slightly different implementations.
+- Added `:focus-visible` states to buttons and the close button, and `id`/`for` pairs
+  on every form label, matching the accessibility pass already done on the main site.
+  These didn't exist in the version you pasted.
+- Left content, layout, and the FormSubmit endpoint ID untouched — this was a
+  consistency and security pass, not a rewrite of what the page says or how it looks.
+
 ## Before you deploy
 
 - [ ] Confirm `ea0da421e8e6e82457be40792262eeed` still delivers to a monitored inbox (FormSubmit IDs can be reset).
 - [ ] Confirm `/letscreate` and `/KnowledgeGraph` resolve, or point those chips somewhere real (Instagram, a waitlist) until they do.
 - [ ] Confirm the "3 new projects per month" and "48 hours" capacity claims are still true — these are live commitments, not decoration.
 - [ ] Drop real image assets at the referenced paths.
+- [ ] Deploy `letscreate/index.html` to the actual `/letscreate` route, and `motion/` alongside `index.html` at repo root.
+
