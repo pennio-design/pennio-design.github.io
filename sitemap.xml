@@ -13,9 +13,12 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- /audit ships in this same commit as audit/index.html, so it resolves on
+       deploy. Trailing slash matches the canonical tag on the page itself —
+       keep the two in sync if either ever changes. -->
   <url>
-    <loc>https://pennio.agency/KnowledgeGraph</loc>
+    <loc>https://pennio.agency/audit/</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.9</priority>
   </url>
 </urlset>
