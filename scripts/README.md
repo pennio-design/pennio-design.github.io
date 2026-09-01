@@ -90,6 +90,27 @@ To enable it, set `HIGSFIELD_API_URL` and `HIGSFIELD_API_KEY`, then confirm the
 request body in `generateKineticAsset()` matches the provider's actual contract.
 It currently posts `{ prompt, media_type, aspect_ratio }` with a bearer token.
 
+## contrast-audit.js
+
+Not an MCP tool - a standalone script, since it checks the site rather than
+driving a generation pipeline.
+
+```sh
+python3 -m http.server 3000
+node scripts/contrast-audit.js
+```
+
+Loads each page in both themes and reports every text node below WCAG AA
+(4.5:1 body, 3:1 for large text). It composites translucent backgrounds up the
+ancestor chain and resolves gradients to their first colour stop; without that
+second step, anything sitting on a gradient reports the page default and the
+output is worthless.
+
+Known remaining failures are brand-level, not defects: white on the brand
+orange is 3.15:1 and orange text on a light ground is 2.7-3.2:1. Both predate
+the theme work and appear in dark mode too. The oversized decorative numerals
+("01") are deliberately near-invisible in both themes.
+
 ## Networking note
 
 Node's built-in `fetch` ignores `HTTPS_PROXY` unless `NODE_USE_ENV_PROXY=1`,

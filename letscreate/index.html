@@ -32,14 +32,24 @@
       --color-bg-top: #090909;
       --color-bg-bottom: #050505;
       --color-footer: #090909;
+      --invert-bg-top: #f5f1eb;
+      --invert-bg-bottom: #f2ece4;
+      --invert-fg: #18130f;
+      --invert-muted: #6c635b;
+      --invert-fg-rgb: 24,19,15;
+      --page-text: #f4efe8;
+      --page-muted: #c4bdb4;
+      --page-faint: #9a9289;
+      --card-top: #131313;
+      --card-bottom: #0c0c0c;
       --color-surface: #0d0d0d;
       --color-surface-2: #141414;
       --color-surface-3: #1a1a1a;
       --color-border: rgba(255,255,255,.085);
       --color-divider: rgba(255,255,255,.06);
       --color-text: #f4efe8;
-      --color-text-muted: #b3aba1;
-      --color-text-faint: #787067;
+      --color-text-muted: #c4bdb4;
+      --color-text-faint: #9a9289;
       --color-primary: #f26522;
       --color-primary-hover: #ff7d3d;
       --color-primary-soft: rgba(242,101,34,.10);
@@ -56,14 +66,24 @@
       --color-bg-top: #FFFFFF;
       --color-bg-bottom: #FAF8F5;
       --color-footer: #F1EDE7;
+      --invert-bg-top: #131313;
+      --invert-bg-bottom: #0c0c0c;
+      --invert-fg: #F4EFE8;
+      --invert-muted: #B3ABA1;
+      --invert-fg-rgb: 244,239,232;
+      --page-text: #14110E;
+      --page-muted: #4A443C;
+      --page-faint: #6B655C;
+      --card-top: #FFFFFF;
+      --card-bottom: #F5F2ED;
       --color-surface: #FFFFFF;
       --color-surface-2: #F5F2ED;
       --color-surface-3: #EFEBE4;
       --color-border: rgba(20,17,14,.12);
       --color-divider: rgba(20,17,14,.08);
       --color-text: #14110E;
-      --color-text-muted: #5C554C;
-      --color-text-faint: #8A8279;
+      --color-text-muted: #4A443C;
+      --color-text-faint: #6B655C;
       --shadow-md: 0 18px 40px rgba(20,17,14,.10);
       --shadow-lg: 0 28px 80px rgba(20,17,14,.16);
     }
@@ -137,11 +157,17 @@
     .section-header p { margin-inline: auto; }
     .problem-panel,
     .partner-panel,
+    .apply-panel, .qualify-card, .card, .modal {
+      --color-text: var(--page-text);
+      --color-text-muted: var(--page-muted);
+      --color-text-faint: var(--page-faint);
+      color: var(--page-text);
+    }
     .apply-panel,
     .card,
     .modal,
     .qualify-card {
-      border: 1px solid var(--color-border); background: linear-gradient(180deg, rgba(19,19,19,.96), rgba(12,12,12,.96));
+      border: 1px solid var(--color-border); background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
       box-shadow: var(--shadow-md);
     }
     .problem-panel {
@@ -173,9 +199,24 @@
     .list { display: grid; gap: .8rem; }
     .list li { list-style: none; display: flex; gap: .8rem; color: var(--color-text-muted); }
     .list li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); margin-top: .6rem; flex: 0 0 auto; }
-    .qualify-wrap { background: linear-gradient(180deg, #f5f1eb 0%, #f2ece4 100%); color: #18130f; }
-    .qualify-wrap .eyebrow, .qualify-wrap p, .qualify-wrap .list li { color: #6c635b; }
-    .qualify-wrap h2, .qualify-wrap h3, .qualify-wrap strong { color: #15110d; }
+    .qualify-wrap {
+      background: linear-gradient(180deg, var(--invert-bg-top) 0%, var(--invert-bg-bottom) 100%);
+      color: var(--invert-fg);
+      /* Descendants set their own colour from the page tokens, which point the
+         wrong way inside an inverted section. Custom properties inherit, so
+         rebinding them here corrects every descendant at once. */
+      --color-text: var(--invert-fg);
+      --color-text-muted: var(--invert-muted);
+      --color-text-faint: var(--invert-muted);
+      --color-border: rgba(var(--invert-fg-rgb),.14);
+      --color-divider: rgba(var(--invert-fg-rgb),.10);
+    }
+    .qualify-wrap .eyebrow, .qualify-wrap p, .qualify-wrap .list li { color: var(--invert-muted); }
+    /* Those selectors also reach into the nested page-coloured panel, where the
+       inverted ink is wrong. Re-assert the panel's own ink at higher specificity. */
+    .qualify-wrap .apply-panel .eyebrow, .qualify-wrap .apply-panel p, .qualify-wrap .apply-panel .list li { color: var(--color-text-muted); }
+    .qualify-wrap .apply-panel .hero-sub { color: var(--color-text-faint); }
+    .qualify-wrap h2, .qualify-wrap h3, .qualify-wrap strong { color: var(--invert-fg); }
     .qualify-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
     .apply-header-center { width: 100%; justify-items: center; }
     .apply-header-center h2 { text-align: center; max-width: 24ch; }

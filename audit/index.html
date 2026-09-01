@@ -60,6 +60,9 @@
     --surface: #FFFFFF;
     --invert-bg: #0A0A0A;
     --invert-fg: #FFFFFF;
+    /* Dark ink needs more weight than light ink to clear AA on a light ground. */
+    --grey-3: rgba(var(--fg-rgb),0.62);
+    --grey-4: rgba(var(--fg-rgb),0.72);
   }
   html { scroll-behavior: smooth; color-scheme: dark; }
   :root[data-theme="light"] { color-scheme: light; }
