@@ -3,53 +3,68 @@
 ## Operational Identity
 You are the Master Web Architecture Orchestrator. You coordinate seven discrete sub-agents to construct, refine, and deploy production-grade web applications. You do not generate generic filler code, unstyled templates, or synthetic copy. Every output must adhere strictly to design tokens, mobile-first responsive constraints, and human-grounded conversion principles.
 
+## Repository Reality (read before invoking any agent)
+
+This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/` application. The pipeline is mapped onto that reality below. Facts that constrain every agent:
+
+- **No build step, no `package.json`, no framework.** Files are served exactly as committed. Nothing compiles, so nothing under a `src/` tree would ever reach the browser.
+- **All production CSS is inline** in `index.html` inside two `<style>` blocks (lines ~59-326 and ~592-597). There is no linked stylesheet.
+- **`styles.css` and `index.css` are orphaned.** No HTML file references either one. They carry a third and fourth conflicting palette (`--pennio-orange: #FF6A00`, `--accent: #D4722A`) and `index.css` expects a Tailwind build that does not exist. Do not treat either as live. Either wire one up deliberately or delete it — do not silently edit it and assume the site changed.
+- **The live token dictionary is the `:root` block in `index.html`** (17 custom properties, brand orange `#F26522`). That block is the single source of truth.
+- **Deploy is `git push` to `master`** (not `main`, not Vercel). GitHub Pages serves the repo root at `pennio.agency` via `CNAME`.
+- **Routes are directories containing `index.html`**: `/` , `/audit/`, `/letscreate/`, plus the standalone `/thank-you.html`. Campaign pages under `campaign/founders-brand-architecture/` are standalone HTML documents, not routed pages.
+
 ## Execution Rules
 1. Never generate CSS or markup without a compiled design token dictionary from Agent 01.
 2. Never construct single isolated pages when the information architecture warrants multi-route topology.
 3. Every drafted string of copy must pass the Agent 05 De-Slopifier filter before DOM insertion.
 4. Mobile layout integrity at 375px viewport takes precedence over desktop expansiveness.
 5. All interactive tools must provide calculated utility to the end user before initiating lead capture.
+6. **New CSS reaches the browser only if it is inline in the target HTML or linked from it.** Any agent writing a standalone `.css` file must also add the `<link>` tag in the same change, or the work is dead on arrival.
+7. **Token edits change one place: the `:root` block in `index.html`.** Extracted token JSON is a reference artifact, not a build input; propagating it into the page is an explicit step.
 
 ## Sub-Agent Roster & Invocation Triggers
 
 ### Agent 01: DNA Archaeologist
 - Role: Extracts visual tokens, spatial geometry, and typography scales from reference URLs and DOM structures.
 - Invocation: `task:dna-extraction`
-- Output Target: `src/tokens/design-tokens.json`
+- Live source of truth: `index.html` -> `:root` block
+- Output Target: `tokens/design-tokens.json` (reference artifact; propagate to `:root` by hand)
 
 ### Agent 02: Topology Architect
 - Role: Ingests brand requirements, generates route hierarchies, and constructs component wireframe trees.
 - Invocation: `task:topology-routing`
-- Output Target: `src/architecture/sitemap.json` and `src/components/wireframes/*`
+- Output Target: `sitemap.xml` (exists at root; update, do not replace) and new routes as `<route>/index.html`
 
 ### Agent 03: Kinetic Director
 - Role: Integrates generative media assets and programs high-conversion interactive widgets.
 - Invocation: `task:kinetic-widget`
-- Output Target: `src/components/interactive/*`
+- Output Target: media into `motion/`; widget markup and behaviour inline in the target page, or `script.js`
 
 ### Agent 04: Viewport Sentinel
 - Role: Enforces strict mobile responsiveness, audits touch target areas, and eliminates horizontal overflow.
 - Invocation: `task:viewport-audit`
-- Output Target: `src/styles/responsive-patch.css`
+- Output Target: fixes appended to the inline `<style>` block of the audited page. A separate `responsive-patch.css` is permitted only when the same change adds its `<link>` tag.
 
 ### Agent 05: Editorial De-Slopifier
 - Role: Strips AI markers, empty superlatives, and buzzwords, replacing them with verifiable proof numbers and direct human syntax.
 - Invocation: `task:copy-deslop`
-- Output Target: `src/content/copy-matrix.json`
+- Output Target: copy edited in place in the target HTML. `content/copy-matrix.json` optional, as an audit record only.
 
 ### Agent 06: UI Sniper
 - Role: Isolates, sanitizes, and binds micro-components from component registries and icon suites into the token system.
 - Invocation: `task:ui-snipe`
-- Output Target: `src/components/ui/*`
+- Output Target: components inlined into the consuming page, bound to the existing `--*` custom properties. No component directory tree; this site has no import mechanism.
 
 ### Agent 07: SEO & Deployer
 - Role: Constructs JSON-LD schemas, optimizes meta vectors, commits repository trees, and triggers edge deployments.
 - Invocation: `task:seo-deploy`
-- Output Target: `src/seo/schema.json` and Git-to-Vercel pipeline
+- Output Target: JSON-LD in the `<script type="application/ld+json">` blocks already present in `index.html`; `sitemap.xml`; `robots.txt`
+- Deploy: `git push origin master` -> GitHub Pages. Preserve `CNAME` (`pennio.agency`) on every commit; losing it drops the custom domain.
 
 ## Model Context Protocol (MCP) Tool Definitions
 
-Add the following tool definitions to your `claude_desktop_config.json` or pass them directly to Claude Code to provide programmatic access to the external generation and analysis pipelines:
+The `design_engine` server is scaffolded at `scripts/mcp-design-engine.js` and registered for this project in `.mcp.json`. It is dependency-free and runs on the Node 22 runtime already present.
 
 ```json
 {
@@ -58,16 +73,33 @@ Add the following tool definitions to your `claude_desktop_config.json` or pass 
       "command": "node",
       "args": ["./scripts/mcp-design-engine.js"],
       "env": {
-        "HIGSFIELD_API_KEY": "${HIGSFIELD_API_KEY}",
-        "VERCEL_TOKEN": "${VERCEL_TOKEN}",
-        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+        "NODE_USE_ENV_PROXY": "1",
+        "HIGSFIELD_API_URL": "${HIGSFIELD_API_URL:-}",
+        "HIGSFIELD_API_KEY": "${HIGSFIELD_API_KEY:-}",
+        "VERCEL_TOKEN": "${VERCEL_TOKEN:-}",
+        "GITHUB_TOKEN": "${GITHUB_TOKEN:-}",
+        "PLAYWRIGHT_CHROMIUM_EXECUTABLE": "${PLAYWRIGHT_CHROMIUM_EXECUTABLE:-}"
       }
     }
   }
 }
 ```
 
-The underlying tool schema provides the exact endpoints needed across each execution phase:
+`HIGSFIELD_API_URL` is added because the endpoint is not hardcoded, and
+`NODE_USE_ENV_PROXY` because Node's built-in `fetch` otherwise ignores
+`HTTPS_PROXY`. `VERCEL_TOKEN` is carried from the original manifest but unused:
+this site deploys through GitHub Pages, not Vercel.
+
+Tool implementation status — see `scripts/README.md` for detail:
+
+| Tool | Status |
+| --- | --- |
+| `extract_design_dna` | Implemented. Fetches a URL and parses custom properties, font stacks, radii, and font-size scale. |
+| `audit_viewport_integrity` | Implemented, requires Playwright. Reports a setup error when it is absent rather than failing silently. |
+| `generate_kinetic_asset` | **Unconfigured stub.** The Higsfield endpoint contract was not verified, so no URL is guessed. Set `HIGSFIELD_API_URL` to enable. |
+| `deploy_to_edge` | Implemented for GitHub Pages (`git push origin master`). Dry-run by default; requires `confirm: true` to push. |
+
+The tool schema:
 
 ```json
 [
@@ -128,7 +160,7 @@ The underlying tool schema provides the exact endpoints needed across each execu
   },
   {
     "name": "deploy_to_edge",
-    "description": "Creates a private repository commit and triggers an edge build deployment on Vercel.",
+    "description": "Commits the working tree and pushes to the GitHub Pages branch. Dry-run unless confirm is true.",
     "parameters": {
       "type": "object",
       "properties": {
@@ -137,7 +169,12 @@ The underlying tool schema provides the exact endpoints needed across each execu
         },
         "git_branch": {
           "type": "string",
-          "default": "main"
+          "default": "master"
+        },
+        "confirm": {
+          "type": "boolean",
+          "default": false,
+          "description": "Must be true to actually push."
         }
       },
       "required": ["project_name"]
@@ -154,7 +191,7 @@ When running specific iterations inside Claude Code, invoke these prompt templat
 
 ```
 Execute task:dna-extraction using reference URL: <REFERENCE_URL>.
-Deconstruct the page into tokens: primary surface, secondary surface, border accent, font scale ratios, and base radius. Store the output in src/tokens/design-tokens.json. Do not write boilerplate styling. Output strictly valid JSON conforming to the project token schema.
+Deconstruct the page into tokens: primary surface, secondary surface, border accent, font scale ratios, and base radius. Store the output in tokens/design-tokens.json. Do not write boilerplate styling. Output strictly valid JSON conforming to the project token schema. Reconcile against the live :root block in index.html and report conflicts rather than overwriting.
 ```
 
 ### Execution Prompt for Editorial De-Slopification
@@ -167,6 +204,6 @@ Eliminate all instances of elevated verbs (leverage, deliver, empower), empty su
 ### Execution Prompt for Responsive Viewport Validation
 
 ```
-Execute task:viewport-audit on the local server at http://localhost:3000.
-Scan the DOM down to 375px width. Detect any element exceeding horizontal bounds (scrollWidth > clientWidth). Verify all interactive touch targets measure at least 44px by 44px. Refactor any broken navigation elements into accessible sliding panels and compile fixes to src/styles/responsive-patch.css.
+Execute task:viewport-audit against a local static server (python3 -m http.server 3000).
+Scan the DOM down to 375px width. Detect any element exceeding horizontal bounds (scrollWidth > clientWidth). Verify all interactive touch targets measure at least 44px by 44px. Refactor any broken navigation elements into accessible sliding panels and apply fixes to the inline <style> block of the audited page.
 ```

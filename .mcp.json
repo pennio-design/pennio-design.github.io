@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "design_engine": {
+      "command": "node",
+      "args": ["./scripts/mcp-design-engine.js"],
+      "env": {
+        "NODE_USE_ENV_PROXY": "1",
+        "HIGSFIELD_API_URL": "${HIGSFIELD_API_URL:-}",
+        "HIGSFIELD_API_KEY": "${HIGSFIELD_API_KEY:-}",
+        "VERCEL_TOKEN": "${VERCEL_TOKEN:-}",
+        "GITHUB_TOKEN": "${GITHUB_TOKEN:-}",
+        "PLAYWRIGHT_CHROMIUM_EXECUTABLE": "${PLAYWRIGHT_CHROMIUM_EXECUTABLE:-}"
+      }
+    }
+  }
+}
