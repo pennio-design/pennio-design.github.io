@@ -90,6 +90,36 @@ To enable it, set `HIGSFIELD_API_URL` and `HIGSFIELD_API_KEY`, then confirm the
 request body in `generateKineticAsset()` matches the provider's actual contract.
 It currently posts `{ prompt, media_type, aspect_ratio }` with a bearer token.
 
+## contrast-audit.js
+
+Not an MCP tool - a standalone script, since it checks the site rather than
+driving a generation pipeline.
+
+```sh
+python3 -m http.server 3000
+node scripts/contrast-audit.js
+```
+
+Loads each page in both themes and reports every text node below WCAG AA
+(4.5:1 body, 3:1 for large text). It composites translucent backgrounds up the
+ancestor chain and resolves gradients to their first colour stop; without that
+second step, anything sitting on a gradient reports the page default and the
+output is worthless.
+
+Orange used as *text* is handled by `--orange-ink`, which is `#F26522` on dark
+grounds (6.46:1) and `#BC440B` on light ones (4.5-5.3:1 across every light
+surface in use). It is rebound per surface rather than per theme, because an
+inverted section runs opposite to the page: the dark ink would itself fail on a
+dark ground at 3.87:1. Brand *fills* are untouched and stay `#F26522`.
+
+What remains is a brand decision, not a defect. White on the brand orange is
+3.15:1, so every CTA label falls short of the 4.5:1 body-text threshold, in
+both themes, exactly as it did before this work. The two remedies both alter
+the most recognisable element on the site, so neither was taken unilaterally:
+darken the button fill to `#CD4A0C` (4.57:1 with white), or keep the fill and
+switch labels to near-black (about 5.9:1). The oversized decorative numerals
+("01") are deliberately near-invisible in both themes.
+
 ## Networking note
 
 Node's built-in `fetch` ignores `HTTPS_PROXY` unless `NODE_USE_ENV_PROXY=1`,
