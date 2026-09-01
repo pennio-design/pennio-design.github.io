@@ -37,6 +37,9 @@
       --invert-fg: #18130f;
       --invert-muted: #6c635b;
       --invert-fg-rgb: 24,19,15;
+      --orange-ink-page: #f26522;
+      --orange-ink-inv: #BC440B;
+      --orange-ink: var(--orange-ink-page);
       --page-text: #f4efe8;
       --page-muted: #c4bdb4;
       --page-faint: #9a9289;
@@ -71,6 +74,8 @@
       --invert-fg: #F4EFE8;
       --invert-muted: #B3ABA1;
       --invert-fg-rgb: 244,239,232;
+      --orange-ink-page: #BC440B;
+      --orange-ink-inv: #f26522;
       --page-text: #14110E;
       --page-muted: #4A443C;
       --page-faint: #6B655C;
@@ -102,7 +107,7 @@
     button { cursor: pointer; border: 0; }
     img, svg { display: block; max-width: 100%; }
     .container { width: min(calc(100% - 2rem), var(--content)); margin-inline: auto; }
-    .accent-africa { color: var(--color-primary); }
+    .accent-africa { color: var(--orange-ink); }
     .eyebrow { text-transform: uppercase; letter-spacing: .16em; color: var(--color-text-faint); font-size: var(--text-xs); }
     .site-header {
       position: sticky; top: 0; z-index: 30; border-bottom: 1px solid var(--color-divider);
@@ -157,12 +162,7 @@
     .section-header p { margin-inline: auto; }
     .problem-panel,
     .partner-panel,
-    .apply-panel, .qualify-card, .card, .modal {
-      --color-text: var(--page-text);
-      --color-text-muted: var(--page-muted);
-      --color-text-faint: var(--page-faint);
-      color: var(--page-text);
-    }
+    .apply-panel { --orange-ink: var(--orange-ink-page); }
     .apply-panel,
     .card,
     .modal,
@@ -200,16 +200,9 @@
     .list li { list-style: none; display: flex; gap: .8rem; color: var(--color-text-muted); }
     .list li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); margin-top: .6rem; flex: 0 0 auto; }
     .qualify-wrap {
+      --orange-ink: var(--orange-ink-inv);
       background: linear-gradient(180deg, var(--invert-bg-top) 0%, var(--invert-bg-bottom) 100%);
       color: var(--invert-fg);
-      /* Descendants set their own colour from the page tokens, which point the
-         wrong way inside an inverted section. Custom properties inherit, so
-         rebinding them here corrects every descendant at once. */
-      --color-text: var(--invert-fg);
-      --color-text-muted: var(--invert-muted);
-      --color-text-faint: var(--invert-muted);
-      --color-border: rgba(var(--invert-fg-rgb),.14);
-      --color-divider: rgba(var(--invert-fg-rgb),.10);
     }
     .qualify-wrap .eyebrow, .qualify-wrap p, .qualify-wrap .list li { color: var(--invert-muted); }
     /* Those selectors also reach into the nested page-coloured panel, where the
@@ -250,7 +243,7 @@
     .success-state.show, .partner-success-state.show { display: block; }
     .success-icon {
       width: 64px; height: 64px; border: 2px solid var(--color-primary); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--color-primary);
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--orange-ink);
       margin: 0 auto var(--space-5);
     }
     .success-state h3, .partner-success-state h3 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); margin-bottom: .6rem; color: var(--color-text); }

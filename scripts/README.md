@@ -106,9 +106,18 @@ ancestor chain and resolves gradients to their first colour stop; without that
 second step, anything sitting on a gradient reports the page default and the
 output is worthless.
 
-Known remaining failures are brand-level, not defects: white on the brand
-orange is 3.15:1 and orange text on a light ground is 2.7-3.2:1. Both predate
-the theme work and appear in dark mode too. The oversized decorative numerals
+Orange used as *text* is handled by `--orange-ink`, which is `#F26522` on dark
+grounds (6.46:1) and `#BC440B` on light ones (4.5-5.3:1 across every light
+surface in use). It is rebound per surface rather than per theme, because an
+inverted section runs opposite to the page: the dark ink would itself fail on a
+dark ground at 3.87:1. Brand *fills* are untouched and stay `#F26522`.
+
+What remains is a brand decision, not a defect. White on the brand orange is
+3.15:1, so every CTA label falls short of the 4.5:1 body-text threshold, in
+both themes, exactly as it did before this work. The two remedies both alter
+the most recognisable element on the site, so neither was taken unilaterally:
+darken the button fill to `#CD4A0C` (4.57:1 with white), or keep the fill and
+switch labels to near-black (about 5.9:1). The oversized decorative numerals
 ("01") are deliberately near-invisible in both themes.
 
 ## Networking note
