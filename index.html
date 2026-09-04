@@ -152,6 +152,9 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .label.dark { color: var(--text-muted); }
 .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-family: 'Inter', sans-serif; font-weight: 500; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; border-radius: 4px; }
 .btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+/* The two decorative loops blend with mix-blend-mode:screen, which only works
+   over a dark ground; on a light page they flatten into grey blocks. */
+:root[data-theme="light"] video[aria-hidden="true"] { display: none; }
 .theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0; background: none; border: 1px solid var(--line-dark); border-radius: 4px; color: var(--fg); cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease; }
 .theme-toggle:hover { border-color: var(--grey-4); background: rgba(var(--fg-rgb),0.06); }
 .theme-toggle:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
@@ -193,7 +196,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .mobile-drawer.open { opacity: 1; transform: translateY(0); pointer-events: all; }
 .mobile-drawer a { font-size: 0.96rem; font-weight: 400; color: var(--fg); text-decoration: none; padding: 16px 0; border-bottom: 1px solid var(--line-dark); transition: color 0.2s; display: flex; align-items: center; justify-content: space-between; }
 .mobile-drawer a:last-child { border-bottom: none; padding-bottom: 0; }
-.mobile-drawer a::after { content: 'Go'; font-size: 0.72rem; color: var(--grey-4); }
+.mobile-drawer a::after { content: '\203A'; font-size: 1.15rem; line-height: 1; color: var(--grey-4); }
 .mobile-drawer a.drawer-cta { color: var(--orange-ink); font-weight: 500; margin-top: 8px; border: 1px solid rgba(242,101,34,0.25); border-radius: 4px; padding: 14px 16px; background: rgba(242,101,34,0.04); }
 .mobile-drawer a.drawer-cta::after { content: ''; }
 .hero { position: relative; min-height: 100svh; padding: 160px 5vw 110px; display: flex; align-items: center; justify-content: center; background: var(--off-black); text-align: center; }
@@ -277,7 +280,8 @@ a.proof-card { display: block; text-decoration: none; color: inherit; cursor: po
 .studio-strip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .studio-chip { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border: 1px solid var(--line-dark); border-radius: 8px; text-decoration: none; color: inherit; transition: border-color 0.2s, background 0.2s; }
 .studio-chip:hover { border-color: rgba(var(--fg-rgb),0.2); background: rgba(var(--fg-rgb),0.02); }
-.studio-chip-icon { width: 30px; height: 30px; flex-shrink: 0; opacity: 0.85; }
+.studio-chip-icon { width: 30px; height: auto; aspect-ratio: 82 / 103; flex-shrink: 0; opacity: 0.85; }
+:root[data-theme="light"] .studio-chip-icon { filter: invert(1); }
 .studio-chip-name { font-size: 0.84rem; font-weight: 600; margin-bottom: 2px; }
 .studio-chip-status { font-size: 0.68rem; font-weight: 400; color: var(--grey-3); }
 .proof-modal { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.72); backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 5vw; }
