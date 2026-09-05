@@ -325,17 +325,32 @@ details[open] .faq-q::after { transform: rotate(45deg); }
 .apply-time-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(242,101,34,0.08); border: 1px solid rgba(242,101,34,0.2); border-radius: 100px; padding: 6px 14px; margin-bottom: 20px; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em; color: var(--orange-ink); }
 .apply-time-badge::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; }
 .apply-fit { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 48px; }
-.fit-col { border-radius: 8px; padding: 28px 24px; border: 1px solid var(--line-light); }
+.fit-col { border-radius: 8px; padding: 24px 0 20px; border: 1px solid var(--line-light); display: flex; flex-direction: column; overflow: hidden; }
 .fit-col:first-child { background: rgba(0,0,0,0.03); }
 .fit-col:last-child { background: rgba(0,0,0,0.02); }
-.fit-heading { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 18px; }
+.fit-heading { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 18px; padding: 0 24px; }
 .fit-heading.fit-yes { color: var(--ok-inv); }
 .fit-heading.fit-no { color: var(--warn-inv); }
-.fit-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-.fit-list li { display: flex; align-items: flex-start; gap: 9px; font-size: 0.88rem; font-weight: 400; line-height: 1.5; color: var(--text-dark); }
-.fit-list li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
-.fit-col:first-child .fit-list li::before { background: var(--ok-inv); }
-.fit-col:last-child .fit-list li::before { background: var(--warn-inv); }
+.fit-carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; list-style: none; }
+.fit-carousel::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: reduce) { .fit-carousel { scroll-behavior: auto; } }
+.fit-card { scroll-snap-align: start; flex: 0 0 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 4px 24px 8px; min-height: 128px; }
+.fit-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; flex-shrink: 0; }
+.fit-col:first-child .fit-icon { background: rgba(26,122,60,0.12); color: var(--ok-inv); }
+.fit-col:last-child .fit-icon { background: rgba(176,64,32,0.12); color: var(--warn-inv); }
+.fit-card p { font-size: 1.05rem; font-weight: 400; line-height: 1.55; color: var(--text-dark); margin: 0; }
+.fit-nav { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 8px; }
+.fit-arrow { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; color: var(--text-dark); cursor: pointer; font-size: 1.1rem; transition: background 0.2s, transform 160ms var(--ease-out); }
+.fit-arrow:active { transform: scale(0.92); }
+.fit-arrow:disabled { opacity: 0.25; cursor: default; }
+@media (hover: hover) and (pointer: fine) {
+  .fit-arrow:not(:disabled):hover { background: rgba(0,0,0,0.05); }
+}
+.fit-dots { display: flex; }
+.fit-dot { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; padding: 0; cursor: pointer; }
+.fit-dot::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--line-light); transition: background 0.2s, transform 160ms var(--ease-out); }
+.fit-col:first-child .fit-dot.active::before { background: var(--ok-inv); transform: scale(1.4); }
+.fit-col:last-child .fit-dot.active::before { background: var(--warn-inv); transform: scale(1.4); }
 .apply-capacity { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(242,101,34,0.06); border: 1px solid rgba(242,101,34,0.15); border-radius: 6px; padding: 14px 20px; margin-bottom: 32px; }
 .apply-capacity-text { font-size: 0.82rem; font-weight: 400; line-height: 1.5; color: var(--capacity-fg); }
 .apply-capacity-text strong { font-weight: 600; }
@@ -744,21 +759,41 @@ When brand, web, and growth creative come from different vendors working off dif
 <div class="apply-fit reveal reveal-d1">
 <div class="fit-col">
 <div class="fit-heading fit-yes">This is for you if</div>
-<ul class="fit-list">
-<li>You run a startup or local business with a real product or service</li>
-<li>You want brand, web, and creative handled as one connected system</li>
-<li>You are ready to invest in a foundation that grows with the business</li>
-<li>You can give the process the time and attention it deserves</li>
+<ul class="fit-carousel" data-fit-carousel>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10003;</span><p>You run a startup or local business with a real product or service</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10003;</span><p>You want brand, web, and creative handled as one connected system</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10003;</span><p>You are ready to invest in a foundation that grows with the business</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10003;</span><p>You can give the process the time and attention it deserves</p></li>
 </ul>
+<div class="fit-nav">
+<button type="button" class="fit-arrow" data-fit-prev aria-label="Previous reason">&#8249;</button>
+<div class="fit-dots" data-fit-dots>
+<button type="button" class="fit-dot active" aria-label="Reason 1 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 2 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 3 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 4 of 4"></button>
+</div>
+<button type="button" class="fit-arrow" data-fit-next aria-label="Next reason">&#8250;</button>
+</div>
 </div>
 <div class="fit-col">
 <div class="fit-heading fit-no">Who should wait</div>
-<ul class="fit-list">
-<li>You need a logo done quickly with no strategy behind it</li>
-<li>You are still testing whether the business idea will work</li>
-<li>You want to skip strategy and go straight to execution</li>
-<li>You are exploring without a real brief or committed budget</li>
+<ul class="fit-carousel" data-fit-carousel>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10005;</span><p>You need a logo done quickly with no strategy behind it</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10005;</span><p>You are still testing whether the business idea will work</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10005;</span><p>You want to skip strategy and go straight to execution</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10005;</span><p>You are exploring without a real brief or committed budget</p></li>
 </ul>
+<div class="fit-nav">
+<button type="button" class="fit-arrow" data-fit-prev aria-label="Previous reason">&#8249;</button>
+<div class="fit-dots" data-fit-dots>
+<button type="button" class="fit-dot active" aria-label="Reason 1 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 2 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 3 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 4 of 4"></button>
+</div>
+<button type="button" class="fit-arrow" data-fit-next aria-label="Next reason">&#8250;</button>
+</div>
 </div>
 </div>
 <div class="apply-capacity reveal reveal-d1">
@@ -939,6 +974,39 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.querySelectorAll('video[autoplay]').forEach(v => { v.pause(); v.removeAttribute('autoplay'); });
 }
+
+/* Fit carousels: native scroll-snap swiped by touch/trackpad, plus click
+   controls for mouse users. Dots reflect scroll position via one observer
+   per carousel rather than a scroll listener, so it stays correct however
+   the user got there (swipe, arrow click, or dot click). */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.querySelectorAll('[data-fit-carousel]').forEach(carousel => {
+  const col = carousel.closest('.fit-col');
+  const cards = Array.from(carousel.children);
+  const dots = Array.from(col.querySelectorAll('[data-fit-dots] .fit-dot'));
+  const prevBtn = col.querySelector('[data-fit-prev]');
+  const nextBtn = col.querySelector('[data-fit-next]');
+
+  function setActive(index) {
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === cards.length - 1;
+  }
+  function goTo(index) {
+    index = Math.max(0, Math.min(cards.length - 1, index));
+    cards[index].scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', inline: 'start', block: 'nearest' });
+  }
+
+  const cardObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) setActive(cards.indexOf(e.target)); });
+  }, { root: carousel, threshold: 0.6 });
+  cards.forEach(c => cardObs.observe(c));
+
+  dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+  prevBtn.addEventListener('click', () => goTo(dots.findIndex(d => d.classList.contains('active')) - 1));
+  nextBtn.addEventListener('click', () => goTo(dots.findIndex(d => d.classList.contains('active')) + 1));
+  setActive(0);
+});
 
 function openProofModal(id) {
   if (id === 'ogbifo') { document.getElementById('proofModal').classList.add('is-open'); document.body.style.overflow = 'hidden'; }
