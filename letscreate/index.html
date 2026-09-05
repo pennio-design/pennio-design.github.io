@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Let's Create Network — PENNIO</title>
+  <title>The Let's Create Network · PENNIO</title>
   <meta name="description" content="The Let's Create Network is a PENNIO-led creative network where African creatives learn to work in strong teams, build serious work, and grow through structure, critique, and proof." />
-  <meta property="og:title" content="The Let's Create Network — PENNIO" />
+  <meta property="og:title" content="The Let's Create Network · PENNIO" />
   <meta property="og:description" content="The Let's Create Network is a PENNIO-led creative network for African creatives." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://pennio.agency/og-cover.jpg" />
@@ -61,6 +61,7 @@
       --shadow-lg: 0 28px 80px rgba(0,0,0,.45);
       --font-body: 'General Sans', Inter, sans-serif;
       --content: 1180px;
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     }
     :root[data-theme="light"] {
       --fg-rgb: 20,17,14;
@@ -123,12 +124,17 @@
     @keyframes navMarkBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
     @media (prefers-reduced-motion: reduce) { .brand-lockup svg { animation: none !important; } }
     .nav-links { display: flex; gap: 1.8rem; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .nav-links a { transition: color .2s ease; }
     .nav-links a:hover { color: var(--color-text); }
     .btn {
       display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: .85rem 1.2rem;
-      border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600; transition: .18s ease;
+      border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600;
+      transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform 160ms var(--ease-out);
     }
-    .btn:hover { transform: translateY(-1px); }
+    @media (hover: hover) and (pointer: fine) {
+      .btn:hover { transform: translateY(-1px); }
+    }
+    .btn:active { transform: scale(0.97); }
     .btn-primary { background: var(--color-primary); color: #fff4ed; }
     .btn-primary:hover { background: var(--color-primary-hover); }
     .btn-secondary { background: rgba(var(--fg-rgb),.03); color: var(--color-text); border: 1px solid var(--color-border); }
@@ -230,12 +236,18 @@
     .site-footer { padding: var(--space-10) 0; background: var(--color-footer); }
     .footer-grid { display: grid; grid-template-columns: 1fr auto; gap: var(--space-6); align-items: end; }
     .footer-links { display: flex; gap: 1rem; flex-wrap: wrap; color: var(--color-text-muted); font-size: var(--text-sm); }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(var(--bg-rgb),.72); backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 60; }
-    .modal-overlay.active { display: flex; }
-    .modal { width: min(100%, 860px); max-height: 88vh; overflow: auto; border-radius: 1.5rem; }
+    .footer-links a { transition: color .2s ease; }
+    .footer-links a:hover { color: var(--color-text); }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(var(--bg-rgb),.72); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 60; opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal { width: min(100%, 860px); max-height: 88vh; overflow: auto; border-radius: 1.5rem; transform: translateY(16px); transition: transform .25s ease; }
+    .modal-overlay.active .modal { transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .modal-overlay, .modal { transition: none !important; } }
     .modal-header { position: sticky; top: 0; display: flex; align-items: start; justify-content: space-between; gap: var(--space-4); padding: var(--space-5); border-bottom: 1px solid var(--color-divider); background: rgba(var(--bg-rgb),.94); }
     .modal-body { padding: var(--space-5); display: grid; gap: var(--space-5); }
-    .close-btn { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--color-border); background: rgba(var(--fg-rgb),.03); color: var(--color-text); }
+    .close-btn { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--color-border); background: rgba(var(--fg-rgb),.03); color: var(--color-text); transition: background .2s ease, transform 120ms var(--ease-out); }
+    .close-btn:hover { background: rgba(var(--fg-rgb),.08); }
+    .close-btn:active { transform: scale(0.92); }
     .close-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
     .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
 
@@ -255,7 +267,7 @@
     .ladder-step p { font-size: var(--text-xs); color: var(--color-text-muted); }
 
     .share-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
-    .share-item { padding: var(--space-4); border: 1px solid var(--color-divider); border-radius: var(--radius-sm); font-family: monospace; font-size: var(--text-xs); color: var(--color-text-faint); background: rgba(0,0,0,.2); }
+    .share-item { min-width: 0; padding: var(--space-4); border: 1px solid var(--color-divider); border-radius: var(--radius-sm); font-family: monospace; font-size: var(--text-xs); color: var(--color-text-faint); background: rgba(0,0,0,.2); overflow-wrap: anywhere; }
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -442,7 +454,7 @@
         <div class="section-header">
           <span class="eyebrow">Living Lab</span>
           <h2>The Work Floor</h2>
-          <p>What people might share here—imperfect drafts, unpolished logic, and raw system architecture layout scripts before final production review.</p>
+          <p>What people might share here: imperfect drafts, unpolished logic, and raw system architecture layout scripts before final production review.</p>
         </div>
         <div class="share-grid">
           <div class="share-item">// rough vector plot map<br>identity_bounds = grid.symmetry(0.618);</div>
@@ -683,6 +695,7 @@
       modalTitle.textContent=item.title;
       modalBody.innerHTML=item.body;
       overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden','false');
       document.body.style.overflow='hidden';
 
       if(key === 'partners') {
@@ -690,7 +703,7 @@
       }
     }
 
-    function closeModal(){ overlay.classList.remove('active'); document.body.style.overflow=''; }
+    function closeModal(){ overlay.classList.remove('active'); overlay.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
     document.querySelectorAll('[data-modal-open]').forEach(el=>el.addEventListener('click',()=>openModal(el.getAttribute('data-modal-open'))));
     closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
