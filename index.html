@@ -108,6 +108,7 @@
   --grey-5: rgba(var(--fg-rgb),0.85);
   --glass-bg: rgba(var(--fg-rgb),0.035);
   --glass-bdr: rgba(var(--fg-rgb),0.08);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 :root[data-theme="light"] {
   --fg-rgb: 5,5,5;
@@ -139,6 +140,7 @@ html { scroll-behavior: smooth; color-scheme: dark; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal, .marquee-track, .proof-status-dot, .nav-logo svg { transition: none !important; animation: none !important; opacity: 1 !important; transform: none !important; }
+  .faq-item::details-content { transition: none !important; }
   video[aria-hidden="true"] { display: none !important; }
 }
 body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif; font-weight: 400; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -150,8 +152,9 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .reveal-d2 { transition-delay: 0.2s; }
 .label { display: inline-block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4); margin-bottom: 16px; }
 .label.dark { color: var(--text-muted); }
-.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-family: 'Inter', sans-serif; font-weight: 500; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; border-radius: 4px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-family: 'Inter', sans-serif; font-weight: 500; text-decoration: none; border: none; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 160ms var(--ease-out); white-space: nowrap; border-radius: 4px; }
 .btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.btn:active { transform: scale(0.97); }
 /* The two decorative loops blend with mix-blend-mode:screen, which only works
    over a dark ground; on a light page they flatten into grey blocks. */
 :root[data-theme="light"] video[aria-hidden="true"] { display: none; }
@@ -186,8 +189,9 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .nav-center a { font-size: 0.78rem; font-weight: 400; color: var(--fg); text-decoration: none; transition: opacity 0.2s; }
 .nav-center a:hover { opacity: 0.55; }
 .nav-right { display: flex; justify-content: flex-end; width: 180px; gap: 12px; align-items: center; }
-.nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; min-width: 44px; min-height: 44px; color: var(--fg); flex-direction: column; gap: 5px; align-items: center; justify-content: center; border-radius: 4px; transition: background 0.2s; }
+.nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; min-width: 44px; min-height: 44px; color: var(--fg); flex-direction: column; gap: 5px; align-items: center; justify-content: center; border-radius: 4px; transition: background 0.2s, transform 120ms var(--ease-out); }
 .nav-hamburger:hover { background: rgba(var(--fg-rgb),0.06); }
+.nav-hamburger:active { transform: scale(0.92); }
 .nav-hamburger span { display: block; width: 22px; height: 1.5px; background: currentColor; transition: transform 0.25s ease, opacity 0.25s ease; }
 .nav-hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
 .nav-hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; transform: scaleX(0); }
@@ -218,8 +222,10 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .problem-header h2 { font-size: clamp(2.2rem, 3.5vw, 3.4rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 14px; }
 .problem-header p { font-size: 1.05rem; font-weight: 400; line-height: 1.6; color: var(--text-muted); }
 .cycle { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; position: relative; z-index: 10; }
-.cycle-step { background: var(--invert-bg); border: 1px solid var(--line-light); border-radius: 6px; padding: 40px 28px; text-align: left; box-shadow: 0 2px 16px rgba(0,0,0,0.03); transition: transform 0.28s ease; }
-.cycle-step:hover { transform: translateY(-4px); }
+.cycle-step { background: var(--invert-bg); border: 1px solid var(--line-light); border-radius: 6px; padding: 40px 28px; text-align: left; box-shadow: 0 2px 16px rgba(0,0,0,0.03); transition: transform 0.28s var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .cycle-step:hover { transform: translateY(-4px); }
+}
 .cycle-step.fatal { background: var(--bg); color: var(--fg); border-color: var(--bg); }
 .cycle-n { font-size: 0.7rem; font-weight: 500; color: var(--text-muted); margin-bottom: 28px; }
 .cycle-step.fatal .cycle-n { color: var(--grey-4); }
@@ -257,8 +263,10 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .work-header h2 { font-size: clamp(2.2rem, 3.5vw, 3.4rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
 .work-header p { font-size: 1rem; font-weight: 300; color: var(--grey-4); margin-top: 14px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.65; }
 .proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; margin: 0 auto; }
-.proof-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--glass-bdr); background: var(--surface); position: relative; cursor: default; transition: transform 0.28s ease, border-color 0.28s ease; }
-.proof-card:hover { transform: translateY(-4px); border-color: rgba(var(--fg-rgb),0.14); }
+.proof-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--glass-bdr); background: var(--surface); position: relative; cursor: default; transition: transform 0.28s var(--ease-out), border-color 0.28s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .proof-card:hover { transform: translateY(-4px); border-color: rgba(var(--fg-rgb),0.14); }
+}
 .proof-card:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 .proof-img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; height: auto; }
 .proof-img-placeholder { width: 100%; aspect-ratio: 4/5; background: var(--surface-2); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
@@ -278,8 +286,9 @@ a.proof-card { display: block; text-decoration: none; color: inherit; cursor: po
 .studio-strip { max-width: 1100px; margin: 40px auto 0; padding-top: 32px; border-top: 1px solid var(--line-dark); }
 .studio-strip-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-3); margin-bottom: 18px; }
 .studio-strip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.studio-chip { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border: 1px solid var(--line-dark); border-radius: 8px; text-decoration: none; color: inherit; transition: border-color 0.2s, background 0.2s; }
+.studio-chip { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border: 1px solid var(--line-dark); border-radius: 8px; text-decoration: none; color: inherit; transition: border-color 0.2s, background 0.2s, transform 160ms var(--ease-out); }
 .studio-chip:hover { border-color: rgba(var(--fg-rgb),0.2); background: rgba(var(--fg-rgb),0.02); }
+.studio-chip:active { transform: scale(0.98); }
 .studio-chip-icon { width: 30px; height: auto; aspect-ratio: 82 / 103; flex-shrink: 0; opacity: 0.85; }
 :root[data-theme="light"] .studio-chip-icon { filter: invert(1); }
 .studio-chip-name { font-size: 0.84rem; font-weight: 600; margin-bottom: 2px; }
@@ -305,25 +314,41 @@ a.proof-card { display: block; text-decoration: none; color: inherit; cursor: po
 .faq-q::after { content: '+'; font-size: 1.4rem; font-weight: 300; color: var(--grey-4); flex-shrink: 0; line-height: 1; margin-top: 2px; transition: transform 0.25s ease; }
 details[open] .faq-q::after { transform: rotate(45deg); }
 .faq-a { font-size: 0.94rem; font-weight: 300; line-height: 1.75; color: var(--grey-4); padding-top: 18px; max-width: 640px; }
+.faq-item { interpolate-size: allow-keywords; }
+.faq-item::details-content { overflow: hidden; opacity: 0; height: 0; transition: height 320ms var(--ease-out), opacity 220ms ease, content-visibility 320ms allow-discrete; }
+.faq-item[open]::details-content { opacity: 1; height: auto; }
 .section-apply { position: relative; background: var(--off-white); color: var(--text-dark); padding: 120px 5vw; }
 .apply-wrap { max-width: 780px; margin: 0 auto; position: relative; z-index: 10; }
 .apply-header { text-align: center; margin-bottom: 48px; }
 .apply-header h2 { font-size: clamp(2.2rem, 3.5vw, 3.4rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 14px; }
 .apply-header p { font-size: 1.02rem; font-weight: 400; line-height: 1.65; color: var(--text-muted); }
-.apply-time-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(242,101,34,0.08); border: 1px solid rgba(242,101,34,0.2); border-radius: 100px; padding: 6px 14px; margin-bottom: 20px; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em; color: var(--orange-ink); }
-.apply-time-badge::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; }
 .apply-fit { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 48px; }
-.fit-col { border-radius: 8px; padding: 28px 24px; border: 1px solid var(--line-light); }
+.fit-col { border-radius: 8px; padding: 24px 0 20px; border: 1px solid var(--line-light); display: flex; flex-direction: column; overflow: hidden; }
 .fit-col:first-child { background: rgba(0,0,0,0.03); }
 .fit-col:last-child { background: rgba(0,0,0,0.02); }
-.fit-heading { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 18px; }
+.fit-heading { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 18px; padding: 0 24px; }
 .fit-heading.fit-yes { color: var(--ok-inv); }
 .fit-heading.fit-no { color: var(--warn-inv); }
-.fit-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-.fit-list li { display: flex; align-items: flex-start; gap: 9px; font-size: 0.88rem; font-weight: 400; line-height: 1.5; color: var(--text-dark); }
-.fit-list li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
-.fit-col:first-child .fit-list li::before { background: var(--ok-inv); }
-.fit-col:last-child .fit-list li::before { background: var(--warn-inv); }
+.fit-carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; list-style: none; }
+.fit-carousel::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: reduce) { .fit-carousel { scroll-behavior: auto; } }
+.fit-card { scroll-snap-align: start; flex: 0 0 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 4px 24px 8px; min-height: 128px; }
+.fit-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; flex-shrink: 0; }
+.fit-col:first-child .fit-icon { background: rgba(26,122,60,0.12); color: var(--ok-inv); }
+.fit-col:last-child .fit-icon { background: rgba(176,64,32,0.12); color: var(--warn-inv); }
+.fit-card p { font-size: 1.05rem; font-weight: 400; line-height: 1.55; color: var(--text-dark); margin: 0; }
+.fit-nav { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 8px; }
+.fit-arrow { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; color: var(--text-dark); cursor: pointer; font-size: 1.1rem; transition: background 0.2s, transform 160ms var(--ease-out); }
+.fit-arrow:active { transform: scale(0.92); }
+.fit-arrow:disabled { opacity: 0.25; cursor: default; }
+@media (hover: hover) and (pointer: fine) {
+  .fit-arrow:not(:disabled):hover { background: rgba(0,0,0,0.05); }
+}
+.fit-dots { display: flex; }
+.fit-dot { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: transparent; border: none; padding: 0; cursor: pointer; }
+.fit-dot::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--line-light); transition: background 0.2s, transform 160ms var(--ease-out); }
+.fit-col:first-child .fit-dot.active::before { background: var(--ok-inv); transform: scale(1.4); }
+.fit-col:last-child .fit-dot.active::before { background: var(--warn-inv); transform: scale(1.4); }
 .apply-capacity { display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(242,101,34,0.06); border: 1px solid rgba(242,101,34,0.15); border-radius: 6px; padding: 14px 20px; margin-bottom: 32px; }
 .apply-capacity-text { font-size: 0.82rem; font-weight: 400; line-height: 1.5; color: var(--capacity-fg); }
 .apply-capacity-text strong { font-weight: 600; }
@@ -340,8 +365,11 @@ details[open] .faq-q::after { transform: rotate(45deg); }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: rgba(var(--fg-rgb),0.22); background: rgba(var(--fg-rgb),0.06); }
 .field textarea { resize: vertical; min-height: 110px; }
 .field-error { font-size: 0.7rem; color: var(--danger); min-height: 14px; }
-.form-submit { width: 100%; margin-top: 28px; padding: 16px; background: var(--orange); color: var(--white); border: none; border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.15s; }
-.form-submit:hover { background: var(--orange-dark); transform: translateY(-1px); }
+.form-submit { width: 100%; margin-top: 28px; padding: 16px; background: var(--orange); color: var(--white); border: none; border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 160ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .form-submit:hover { background: var(--orange-dark); transform: translateY(-1px); }
+}
+.form-submit:active:not(:disabled) { transform: scale(0.98); }
 .form-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .form-fine { font-size: 0.72rem; text-align: center; color: rgba(var(--fg-rgb),0.62); margin-top: 14px; line-height: 1.65; }
 .form-alert { display: none; font-size: 0.78rem; color: var(--danger); background: rgba(255,138,101,0.08); border: 1px solid rgba(255,138,101,0.25); border-radius: 6px; padding: 12px 16px; margin-bottom: 20px; }
@@ -722,28 +750,47 @@ When brand, web, and growth creative come from different vendors working off dif
 <div class="grid-bg"><div class="grid-3d-light"></div></div>
 <div class="apply-wrap">
 <div class="apply-header reveal">
-<div class="apply-time-badge">5 questions, 5 minutes</div>
 <h2>Apply if the brand is real<br>and the founder is ready.</h2>
 <p>Every application is read personally. If there is a fit, you will hear back within 48 hours to book a strategy call. Submitting does not commit you to anything.</p>
 </div>
 <div class="apply-fit reveal reveal-d1">
 <div class="fit-col">
 <div class="fit-heading fit-yes">This is for you if</div>
-<ul class="fit-list">
-<li>You run a startup or local business with a real product or service</li>
-<li>You want brand, web, and creative handled as one connected system</li>
-<li>You are ready to invest in a foundation that grows with the business</li>
-<li>You can give the process the time and attention it deserves</li>
+<ul class="fit-carousel" data-fit-carousel>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10003;</span><p>You run a startup or local business with a real product or service</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10003;</span><p>You want brand, web, and creative handled as one connected system</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10003;</span><p>You are ready to invest in a foundation that grows with the business</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10003;</span><p>You can give the process the time and attention it deserves</p></li>
 </ul>
+<div class="fit-nav">
+<button type="button" class="fit-arrow" data-fit-prev aria-label="Previous reason">&#8249;</button>
+<div class="fit-dots" data-fit-dots>
+<button type="button" class="fit-dot active" aria-label="Reason 1 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 2 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 3 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 4 of 4"></button>
+</div>
+<button type="button" class="fit-arrow" data-fit-next aria-label="Next reason">&#8250;</button>
+</div>
 </div>
 <div class="fit-col">
 <div class="fit-heading fit-no">Who should wait</div>
-<ul class="fit-list">
-<li>You need a logo done quickly with no strategy behind it</li>
-<li>You are still testing whether the business idea will work</li>
-<li>You want to skip strategy and go straight to execution</li>
-<li>You are exploring without a real brief or committed budget</li>
+<ul class="fit-carousel" data-fit-carousel>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10005;</span><p>You need a logo done quickly with no strategy behind it</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10005;</span><p>You are still testing whether the business idea will work</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10005;</span><p>You want to skip strategy and go straight to execution</p></li>
+<li class="fit-card"><span class="fit-icon" aria-hidden="true">&#10005;</span><p>You are exploring without a real brief or committed budget</p></li>
 </ul>
+<div class="fit-nav">
+<button type="button" class="fit-arrow" data-fit-prev aria-label="Previous reason">&#8249;</button>
+<div class="fit-dots" data-fit-dots>
+<button type="button" class="fit-dot active" aria-label="Reason 1 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 2 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 3 of 4"></button>
+<button type="button" class="fit-dot" aria-label="Reason 4 of 4"></button>
+</div>
+<button type="button" class="fit-arrow" data-fit-next aria-label="Next reason">&#8250;</button>
+</div>
 </div>
 </div>
 <div class="apply-capacity reveal reveal-d1">
@@ -924,6 +971,39 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.querySelectorAll('video[autoplay]').forEach(v => { v.pause(); v.removeAttribute('autoplay'); });
 }
+
+/* Fit carousels: native scroll-snap swiped by touch/trackpad, plus click
+   controls for mouse users. Dots reflect scroll position via one observer
+   per carousel rather than a scroll listener, so it stays correct however
+   the user got there (swipe, arrow click, or dot click). */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.querySelectorAll('[data-fit-carousel]').forEach(carousel => {
+  const col = carousel.closest('.fit-col');
+  const cards = Array.from(carousel.children);
+  const dots = Array.from(col.querySelectorAll('[data-fit-dots] .fit-dot'));
+  const prevBtn = col.querySelector('[data-fit-prev]');
+  const nextBtn = col.querySelector('[data-fit-next]');
+
+  function setActive(index) {
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === cards.length - 1;
+  }
+  function goTo(index) {
+    index = Math.max(0, Math.min(cards.length - 1, index));
+    cards[index].scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', inline: 'start', block: 'nearest' });
+  }
+
+  const cardObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) setActive(cards.indexOf(e.target)); });
+  }, { root: carousel, threshold: 0.6 });
+  cards.forEach(c => cardObs.observe(c));
+
+  dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+  prevBtn.addEventListener('click', () => goTo(dots.findIndex(d => d.classList.contains('active')) - 1));
+  nextBtn.addEventListener('click', () => goTo(dots.findIndex(d => d.classList.contains('active')) + 1));
+  setActive(0);
+});
 
 function openProofModal(id) {
   if (id === 'ogbifo') { document.getElementById('proofModal').classList.add('is-open'); document.body.style.overflow = 'hidden'; }
