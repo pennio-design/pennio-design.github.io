@@ -1,7 +1,8 @@
 /**
  * Pennio form guard.
  *
- * Shared by every page that carries a FormSubmit form. Two measures, chosen so
+ * Shared by every page that carries a FormSubmit form, including forms that
+ * are injected after load. Two measures, chosen so
  * that neither can cost a real enquiry:
  *
  *  1. A trap field, injected at runtime rather than shipped in the HTML, and
@@ -38,7 +39,14 @@
     return el;
   }
 
+  var GUARD_FLAG = '__pennioGuarded';
+
   function guard(form) {
+    if (form[GUARD_FLAG]) return;
+    form[GUARD_FLAG] = true;
+
+    // Timed from when the form appeared, which for an injected form is when it
+    // was opened rather than when the page loaded.
     var startedAt = Date.now();
 
     var trap = hiddenInput(TRAP_NAME);
@@ -64,9 +72,27 @@
     );
   }
 
-  function init() {
-    var forms = document.querySelectorAll('form');
+  function scan(root) {
+    if (root.tagName === 'FORM') guard(root);
+    var forms = root.querySelectorAll ? root.querySelectorAll('form') : [];
     for (var i = 0; i < forms.length; i++) guard(forms[i]);
+  }
+
+  function init() {
+    scan(document);
+
+    // Not every form is in the served HTML. The Let's Create partner sheet is
+    // built from a template string when its modal opens, so a one-off pass at
+    // load would leave it unguarded.
+    if (typeof MutationObserver !== 'function') return;
+    new MutationObserver(function (records) {
+      for (var i = 0; i < records.length; i++) {
+        var added = records[i].addedNodes;
+        for (var j = 0; j < added.length; j++) {
+          if (added[j].nodeType === 1) scan(added[j]);
+        }
+      }
+    }).observe(document.documentElement, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') {
