@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#050505">
+<title>PENNIO Reel Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root{
+  --orange:#F26522; --black:#050505; --white:#fff;
+  --g3:rgba(255,255,255,0.38); --g4:rgba(255,255,255,0.64); --g5:rgba(255,255,255,0.86);
+  --rule:rgba(255,255,255,0.14);
+}
+html,body{ height:100%; }
+body{
+  background:#0b0b0b; color:#fff; font-family:'Inter',Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.top{ display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:10px 14px; border-bottom:1px solid var(--rule); }
+.wm{ font-size:12px; font-weight:700; letter-spacing:0.02em; }
+.wm i{ color:var(--orange); font-style:normal; }
+.top .meta{ font-size:9px; font-weight:500; letter-spacing:0.18em; text-transform:uppercase; color:var(--g3); }
+
+.wrap{ display:flex; gap:20px; padding:16px; align-items:flex-start; justify-content:center; flex-wrap:wrap; }
+.stage{ flex:0 0 auto; }
+.side{ flex:1 1 340px; max-width:440px; min-width:280px; }
+
+.frame{ position:relative; width:min(92vw,360px); aspect-ratio:9/16;
+        background:#000; border-radius:10px; overflow:hidden; border:1px solid var(--rule); }
+#preview{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; }
+#preview.mir{ transform:scaleX(-1); }
+canvas#composite{ display:none; }
+
+.prompter{ position:absolute; left:0; right:0; top:0; z-index:6;
+  background:linear-gradient(to bottom, rgba(0,0,0,0.88) 62%, rgba(0,0,0,0));
+  padding:14px 14px 36px; pointer-events:none; }
+.prompter .lbl{ font-size:9px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase;
+                color:var(--orange); display:flex; justify-content:space-between; }
+.prompter .line{ font-size:19px; font-weight:700; line-height:1.28; letter-spacing:-0.015em;
+                 margin-top:8px; text-shadow:0 2px 12px rgba(0,0,0,0.9); }
+.prompter .next{ font-size:11px; font-weight:400; line-height:1.4; color:var(--g3); margin-top:8px; }
+.prompter .bar{ height:3px; background:rgba(255,255,255,0.18); border-radius:2px; margin-top:10px; overflow:hidden; }
+.prompter .bar i{ display:block; height:100%; width:0%; background:var(--orange); }
+.prompter.hold .line{ color:var(--orange); }
+.prompter.hold .bar i{ background:#fff; }
+
+.hud{ position:absolute; left:0; right:0; bottom:0; z-index:6; display:flex;
+      align-items:flex-end; justify-content:space-between; gap:10px; padding:12px 14px;
+      background:linear-gradient(to top, rgba(0,0,0,0.82), transparent); pointer-events:none; }
+.hud .t{ font-size:22px; font-weight:700; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; }
+.hud .t.over{ color:var(--orange); }
+.hud .right{ display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+.hud .beats{ display:flex; gap:3px; align-items:center; }
+.hud .beats i{ display:block; height:4px; border-radius:2px; background:rgba(255,255,255,0.25); }
+.hud .beats i.on{ background:var(--orange); }
+.hud .beats i.done{ background:rgba(255,255,255,0.6); }
+.mtr{ width:74px; height:4px; background:rgba(255,255,255,0.2); border-radius:2px; overflow:hidden; }
+.mtr i{ display:block; height:100%; width:0%; background:#3ddc84; transition:width .06s linear; }
+.mtr.low i{ background:#ff3b30; }
+
+.seg{ position:absolute; top:0; left:0; right:0; height:2px; z-index:7; background:transparent; }
+.seg i{ position:absolute; top:0; height:2px; background:var(--orange); opacity:.9; }
+
+.rec{ position:absolute; top:10px; right:12px; z-index:8; display:none; align-items:center; gap:6px;
+      background:rgba(0,0,0,0.6); border-radius:100px; padding:4px 10px; font-size:10px; font-weight:700; letter-spacing:0.16em; }
+.rec.on{ display:flex; }
+.rec b{ width:8px; height:8px; border-radius:50%; background:#ff3b30; animation:pulse 1s infinite; }
+@keyframes pulse{ 50%{ opacity:0.25; } }
+.count{ position:absolute; inset:0; z-index:10; display:none; align-items:center; justify-content:center;
+        background:rgba(0,0,0,0.55); font-size:96px; font-weight:700; letter-spacing:-0.04em; }
+.count.on{ display:flex; }
+.err{ position:absolute; inset:0; z-index:11; display:none; flex-direction:column; align-items:center;
+      justify-content:center; gap:10px; background:#0d0d0d; padding:24px; text-align:center; }
+.err.on{ display:flex; }
+.err h3{ font-size:15px; font-weight:700; }
+.err p{ font-size:12px; line-height:1.55; color:var(--g4); }
+
+.ctl{ display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap;
+      width:min(92vw,360px); margin-top:12px; }
+button{ font-family:inherit; cursor:pointer; border:none; }
+.btn{ background:none; border:1px solid var(--rule); color:var(--g4); border-radius:6px;
+      padding:9px 12px; font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; }
+.btn:hover{ color:#fff; border-color:rgba(255,255,255,0.3); }
+.btn.on{ border-color:var(--orange); color:var(--orange); }
+.btn[disabled]{ opacity:.35; cursor:not-allowed; }
+.record{ flex:1 1 100%; background:var(--orange); color:#0a0a0a; border-radius:6px;
+         padding:14px; font-size:12px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; }
+.record.stop{ background:#ff3b30; color:#fff; }
+
+.box{ background:#111; border:1px solid var(--rule); border-radius:8px; padding:14px; margin-bottom:14px; }
+.box h4{ font-size:9px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase;
+         color:var(--orange); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.box p.hint{ font-size:11px; line-height:1.6; color:var(--g3); }
+.box p.hint b{ color:var(--g5); font-weight:600; }
+textarea{ width:100%; min-height:190px; background:#0b0b0b; border:1px solid var(--rule); border-radius:5px;
+          color:var(--g5); font-family:inherit; font-size:12px; line-height:1.65; padding:10px; resize:vertical; outline:none; }
+textarea:focus{ border-color:rgba(242,101,34,0.5); }
+.row{ display:flex; align-items:center; gap:10px; margin-top:10px; font-size:11px; color:var(--g4); }
+.row label{ min-width:74px; font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--g3); }
+.row .val{ min-width:52px; text-align:right; font-variant-numeric:tabular-nums; }
+input[type=range]{ flex:1; accent-color:var(--orange); }
+.total{ font-size:10px; color:var(--g4); font-weight:500; letter-spacing:0.04em; }
+.total b{ color:#fff; font-weight:700; }
+.total.over b{ color:var(--orange); }
+.mode{ font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase;
+       border:1px solid rgba(242,101,34,0.4); color:var(--orange); border-radius:4px; padding:3px 7px; }
+
+.take{ border-top:1px solid var(--rule); padding:12px 0; }
+.take:first-of-type{ border-top:none; }
+.take .hd{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.take .hd b{ font-size:12px; font-weight:700; }
+.take .hd span{ font-size:10px; color:var(--g3); }
+.parts{ display:flex; flex-wrap:wrap; gap:6px; margin-top:9px; }
+.parts a{ font-size:10px; font-weight:600; color:var(--g5); text-decoration:none;
+          border:1px solid var(--rule); border-radius:5px; padding:6px 9px; font-variant-numeric:tabular-nums; }
+.parts a:hover{ border-color:var(--orange); color:var(--orange); }
+.take .acts{ display:flex; gap:6px; margin-top:9px; flex-wrap:wrap; }
+.take .acts button{ background:none; border:1px solid rgba(242,101,34,0.4); color:var(--orange);
+                    border-radius:5px; padding:7px 10px; font-size:9px; font-weight:700;
+                    letter-spacing:0.12em; text-transform:uppercase; }
+code.cmd{ display:block; margin-top:9px; background:#0b0b0b; border:1px solid var(--rule); border-radius:5px;
+          padding:9px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:10px;
+          line-height:1.55; color:var(--g4); word-break:break-all; }
+
+@media (max-width:760px){
+  .wrap{ padding:10px; gap:12px; }
+  .side{ max-width:none; }
+  .frame, .ctl{ width:min(96vw,420px); }
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <span class="wm">PENNIO<i>.</i> Reel Studio</span>
+  <span class="meta" id="fmtLabel">9:16 · 1080×1920</span>
+</div>
+
+<div class="wrap">
+  <div class="stage">
+    <div class="frame">
+      <video id="preview" autoplay muted playsinline></video>
+      <div class="seg" id="segMarks"></div>
+
+      <div class="prompter" id="prompter">
+        <div class="lbl"><span id="pLabel">Ready</span><span id="pClock">0:00</span></div>
+        <div class="line" id="pLine">Paste a script on the right. Press record.</div>
+        <div class="next" id="pNext"></div>
+        <div class="bar"><i id="pBar"></i></div>
+      </div>
+
+      <div class="rec" id="recBadge"><b></b><span id="recPart">REC</span></div>
+      <div class="count" id="count">3</div>
+
+      <div class="hud">
+        <span class="t" id="clock">0:00</span>
+        <span class="right">
+          <span class="mtr low" id="mtr"><i id="mtrFill"></i></span>
+          <span class="beats" id="beatDots"></span>
+        </span>
+      </div>
+
+      <div class="err" id="err">
+        <h3 id="errT">Camera not available</h3>
+        <p id="errP"></p>
+      </div>
+    </div>
+
+    <div class="ctl">
+      <button class="record" id="recBtn">Start recording</button>
+      <button class="btn" id="flipBtn">Flip camera</button>
+      <button class="btn on" id="mirBtn">Mirror preview</button>
+      <button class="btn" id="mirRecBtn">Mirror output</button>
+      <button class="btn on" id="snapBtn">Snap cuts to beats</button>
+    </div>
+  </div>
+
+  <aside class="side">
+    <div class="box">
+      <h4><span>Script</span><span style="display:flex;gap:7px;align-items:center;"><span class="mode" id="mode">Prose</span><span class="total" id="total"></span></span></h4>
+      <p class="hint" style="margin-bottom:9px;">
+        Paste plain text. Blank lines separate beats, timing is read from the word count.
+        Put a direction in square brackets on its own line for a silent hold, like <b>[hold 2]</b>.
+        A line written as <b>seconds | LABEL | text</b> switches the whole script to exact timing.
+      </p>
+      <textarea id="script" spellcheck="false"></textarea>
+      <div class="row">
+        <label>Pace</label>
+        <input type="range" id="wpm" min="110" max="190" step="5" value="150">
+        <span class="val" id="wpmVal">150 wpm</span>
+      </div>
+      <div class="row">
+        <label>Clip length</label>
+        <input type="range" id="seglen" min="5" max="30" step="1" value="10">
+        <span class="val" id="seglenVal">10s</span>
+      </div>
+      <div class="row">
+        <label>Type size</label>
+        <input type="range" id="size" min="14" max="30" step="1" value="19">
+        <span class="val" id="sizeVal">19px</span>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn" id="resetBtn" style="flex:1;">Load A3 reel script</button>
+      </div>
+    </div>
+
+    <div class="box" id="takesBox" style="display:none;">
+      <h4>Takes</h4>
+      <div id="takes"></div>
+    </div>
+
+    <div class="box">
+      <h4>Before you shoot</h4>
+      <p class="hint">
+        <b>Watch the green bar.</b> If it stays red while you talk, the mic is not picking you up. Stop and fix it before the take, not after.<br><br>
+        <b>Do not let the screen lock.</b> Recording keeps it awake where the browser allows it, but if the screen sleeps the video freezes while audio keeps running.<br><br>
+        <b>Look at the lens</b>, not at yourself. The prompter sits high in frame to keep your eyeline close to it.<br><br>
+        The HOLD beat is silence. Do not fill it.
+      </p>
+    </div>
+  </aside>
+</div>
+
+<canvas id="composite" width="1080" height="1920"></canvas>
+
+<script>
+'use strict';
+
+const A3_SCRIPT =
+`Ads do not build brands. They amplify the signal that is already there.
+
+[hold 2]
+
+Three founders came to me this quarter. All three asked for creative. All three had the same gap underneath, and it was not the creative.
+
+None of them could say in one sentence what they stood for and who it was for. So every naira they spent was amplifying a signal nobody could repeat.
+
+The diagnostic we run before taking a project is on the site. Fifteen questions, five minutes, free. Link in bio.`;
+
+/* localStorage throws in private mode, sandboxed frames and when site data is
+   blocked. A preference read must never be able to take the app down. */
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:v; }catch{ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch{} }
+};
+
+const $ = id => document.getElementById(id);
+const els = {};
+['preview','composite','prompter','pLabel','pLine','pNext','pBar','pClock','clock','beatDots',
+ 'recBadge','recPart','count','err','errT','errP','recBtn','flipBtn','mirBtn','mirRecBtn','snapBtn',
+ 'script','wpm','wpmVal','seglen','seglenVal','size','sizeVal','total','takes','takesBox','mode',
+ 'mtr','mtrFill','segMarks','resetBtn'].forEach(k => els[k] = $(k));
+
+let camStream=null, mixedStream=null, recorder=null, chunks=[], takes=[];
+let facing='user', mirrorPreview=true, mirrorOutput=false, snapToBeats=true;
+let beats=[], running=false, tStart=0, rafId=0, wakeLock=null;
+let audioCtx=null, analyser=null, audioBuf=null;
+let rec = { active:false, take:null, mime:'', cutTimer:0, segStart:0, boundaries:[] };
+
+const elapsed = () => (performance.now() - tStart) / 1000;
+const fmt = s => Math.floor(s/60) + ':' + String(Math.floor(s%60)).padStart(2,'0');
+
+/* =======================================================================
+   SCRIPT PARSING
+   Two modes. Structured wins if any line looks like "12 | LABEL | text",
+   otherwise the script is prose and timing is derived from word count.
+   ======================================================================= */
+
+const STRUCT_RE = /^\s*\d+(?:\.\d+)?\s*\|/;
+const isStructured = t => t.split('\n').some(l => STRUCT_RE.test(l));
+
+function words(s){ return (s.match(/[A-Za-z0-9’'’-]+/g) || []).length; }
+
+/* Speech time plus the pauses punctuation actually creates. A full stop is
+   worth roughly a third of a second of air, a comma about half that. */
+function estimate(s, wpm){
+  const w = words(s);
+  const stops  = (s.match(/[.!?]/g) || []).length;
+  const commas = (s.match(/[,;:]/g) || []).length;
+  return Math.max(1.2, (w / wpm) * 60 + stops * 0.35 + commas * 0.15);
+}
+
+/* A beat longer than ~13s is too much to hold on screen at once, so long
+   paragraphs get split on sentence boundaries rather than mid-thought. */
+function splitLong(block, wpm){
+  if (estimate(block, wpm) <= 13) return [block];
+  const sents = block.match(/[^.!?]+[.!?]*/g) || [block];
+  const tidy = s => s.replace(/\s+/g,' ').trim();
+  const out = []; let cur = '';
+  for (const s of sents){
+    const joined = tidy(cur + ' ' + s);
+    if (cur && estimate(joined, wpm) > 13){ out.push(tidy(cur)); cur = tidy(s); }
+    else cur = joined;
+  }
+  if (tidy(cur)) out.push(tidy(cur));
+  return out;
+}
+
+function parseProse(text, wpm){
+  const blocks = text.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
+  const out = [];
+  for (const block of blocks){
+    const hold = block.match(/^\[([^\]]*)\]$/);
+    if (hold){
+      const n = hold[1].match(/(\d+(?:\.\d+)?)/);
+      out.push({ secs:n?parseFloat(n[1]):2, label:'HOLD', text:'[ '+hold[1].trim()+' ]', hold:true });
+      continue;
+    }
+    for (const part of splitLong(block, wpm)) out.push({ secs:estimate(part,wpm), label:'', text:part });
+  }
+  out.forEach((b,i) => {
+    if (b.label) return;
+    b.label = i === 0 ? 'HOOK' : (i === out.length-1 ? 'CTA' : String(i+1).padStart(2,'0'));
+  });
+  return out;
+}
+
+function parseStructured(text){
+  return text.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+    const p = line.split('|');
+    const s = parseFloat(p[0]);
+    const label = (p[1]||'').trim() || 'BEAT';
+    return { secs: isFinite(s)&&s>0 ? s : 3, label, text: p.slice(2).join('|').trim(), hold:/hold/i.test(label) };
+  });
+}
+
+/* In structured mode the seconds are authored, so pace scales them inversely.
+   In prose mode pace already drove the estimate, so it must not apply twice. */
+let structured = false;
+function dur(b){ return structured ? b.secs * (150 / +els.wpm.value) : b.secs; }
+
+function applyScript(){
+  const text = els.script.value;
+  const wpm = +els.wpm.value;
+  structured = isStructured(text);
+  beats = structured ? parseStructured(text) : parseProse(text, wpm);
+
+  els.mode.textContent = structured ? 'Exact' : 'Prose';
+  const total = beats.reduce((n,b) => n + dur(b), 0);
+  els.total.innerHTML = `<b>${total.toFixed(0)}s</b> · ${beats.length} beats`;
+  els.total.classList.toggle('over', total > 90);
+
+  els.beatDots.innerHTML = '';
+  beats.forEach(b => {
+    const i = document.createElement('i');
+    i.style.width = Math.max(6, Math.min(26, dur(b) * 2.2)) + 'px';
+    els.beatDots.appendChild(i);
+  });
+
+  drawSegMarks(total);
+  if (!running) resetPrompter();
+  store.set('pennio.reel.script', text);
+  store.set('pennio.reel.wpm', els.wpm.value);
+}
+
+/* Where the clip cuts will land, drawn across the top of the frame so the
+   boundaries are visible before recording rather than discovered after. */
+function drawSegMarks(total){
+  els.segMarks.innerHTML = '';
+  if (!total) return;
+  let t = 0;
+  const bounds = beatBoundaries();
+  while (true){
+    const next = nextCutAt(t, bounds, total);
+    if (next >= total || next <= t) break;
+    const i = document.createElement('i');
+    i.style.left = (next/total*100) + '%';
+    i.style.width = '2px';
+    els.segMarks.appendChild(i);
+    t = next;
+  }
+}
+
+function beatBoundaries(){
+  let acc = 0; const out = [];
+  for (const b of beats){ acc += dur(b); out.push(acc); }
+  return out;
+}
+
+/* Target a fixed clip length, but prefer a nearby beat boundary so a cut
+   lands in the pause between thoughts instead of mid-sentence. */
+function nextCutAt(from, bounds, total){
+  const len = +els.seglen.value;
+  const target = from + len;
+  if (!snapToBeats) return target;
+  const tol = len * 0.4;
+  let best = null, bestD = Infinity;
+  for (const b of bounds){
+    if (b <= from + 1.5) continue;
+    if (total && b >= total - 0.75) continue;
+    const d = Math.abs(b - target);
+    if (d < bestD && d <= tol){ best = b; bestD = d; }
+  }
+  return best === null ? target : best;
+}
+
+function resetPrompter(){
+  els.prompter.classList.remove('hold');
+  els.pLabel.textContent = 'Ready';
+  els.pClock.textContent = '0:00';
+  els.pLine.textContent = beats.length ? 'Press record. Three second countdown, then the script runs itself.'
+                                       : 'Paste a script on the right.';
+  els.pNext.textContent = beats.length ? 'First up · ' + beats[0].label : '';
+  els.pBar.style.width = '0%';
+  els.clock.textContent = '0:00';
+  els.clock.classList.remove('over');
+  [...els.beatDots.children].forEach(d => d.className = '');
+}
+
+/* ======================= PROMPTER LOOP ======================= */
+
+function tick(){
+  if (!running) return;
+  const t = elapsed();
+  els.clock.textContent = fmt(t);
+  els.pClock.textContent = fmt(t);
+
+  let acc = 0, idx = -1, within = 0, d = 0;
+  for (let i = 0; i < beats.length; i++){
+    const bd = dur(beats[i]);
+    if (t < acc + bd){ idx = i; within = t - acc; d = bd; break; }
+    acc += bd;
+  }
+  const total = beats.reduce((n,b) => n + dur(b), 0);
+  els.clock.classList.toggle('over', t > total);
+
+  if (idx === -1){
+    els.prompter.classList.remove('hold');
+    els.pLabel.textContent = 'Done';
+    els.pLine.textContent = 'Script finished. Stop when ready.';
+    els.pNext.textContent = '';
+    els.pBar.style.width = '100%';
+    [...els.beatDots.children].forEach(x => x.className = 'done');
+  } else {
+    const b = beats[idx];
+    els.prompter.classList.toggle('hold', !!b.hold);
+    els.pLabel.textContent = b.label;
+    els.pLine.textContent = b.text;
+    const n = beats[idx+1];
+    els.pNext.textContent = n ? 'Next · ' + n.label + ' · ' + n.text.slice(0,60) + (n.text.length>60?'…':'') : 'Last beat';
+    els.pBar.style.width = Math.min(100,(within/d)*100) + '%';
+    [...els.beatDots.children].forEach((x,i) => x.className = i<idx ? 'done' : (i===idx ? 'on' : ''));
+  }
+
+  if (analyser){
+    analyser.getByteTimeDomainData(audioBuf);
+    let peak = 0;
+    for (let i = 0; i < audioBuf.length; i++) peak = Math.max(peak, Math.abs(audioBuf[i]-128));
+    const lvl = Math.min(100, (peak/128) * 260);
+    els.mtrFill.style.width = lvl + '%';
+    els.mtr.classList.toggle('low', lvl < 6);
+  }
+  rafId = requestAnimationFrame(tick);
+}
+
+/* ======================= CAMERA ======================= */
+
+async function startCamera(){
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    return showErr('Camera not available', location.protocol === 'http:'
+      ? 'Camera needs a secure context. Open this over https, not plain http.'
+      : 'This browser does not expose getUserMedia.');
+  }
+  if (camStream) camStream.getTracks().forEach(t => t.stop());
+  try{
+    camStream = await navigator.mediaDevices.getUserMedia({
+      video:{ facingMode:facing, width:{ideal:1080}, height:{ideal:1920}, aspectRatio:{ideal:9/16} },
+      audio:{ echoCancellation:true, noiseSuppression:true }
+    });
+  }catch(e){
+    return showErr('Camera blocked', e.name === 'NotAllowedError'
+      ? 'Permission was denied. Allow camera and microphone for this page, then reload.'
+      : (e.message || String(e)));
+  }
+  els.err.classList.remove('on');
+  els.recBtn.disabled = false;
+  els.preview.srcObject = camStream;
+  els.preview.classList.toggle('mir', mirrorPreview);
+  setupMeter();
+  drawLoop();
+}
+
+function setupMeter(){
+  try{
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (!audioCtx) audioCtx = new AC();
+    const src = audioCtx.createMediaStreamSource(camStream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 512;
+    audioBuf = new Uint8Array(analyser.fftSize);
+    src.connect(analyser);
+  }catch{ analyser = null; }
+}
+
+function showErr(t, m){
+  els.errT.textContent = t; els.errP.textContent = m;
+  els.err.classList.add('on'); els.recBtn.disabled = true;
+}
+
+/* Composite to a fixed 1080x1920 canvas so the output is always a true 9:16
+   reel, centre cropped, whatever shape the camera hands us. */
+function drawLoop(){
+  const ctx = els.composite.getContext('2d');
+  const v = els.preview, W = 1080, H = 1920, target = W/H;
+  (function paint(){
+    if (v.videoWidth){
+      const vw=v.videoWidth, vh=v.videoHeight, r=vw/vh;
+      let sx,sy,sw,sh;
+      if (r > target){ sh=vh; sw=vh*target; sx=(vw-sw)/2; sy=0; }
+      else           { sw=vw; sh=vw/target; sx=0; sy=(vh-sh)/2; }
+      ctx.save();
+      if (mirrorOutput){ ctx.translate(W,0); ctx.scale(-1,1); }
+      ctx.drawImage(v, sx,sy,sw,sh, 0,0,W,H);
+      ctx.restore();
+    }
+    requestAnimationFrame(paint);
+  })();
+}
+
+/* ======================= WAKE LOCK ======================= */
+
+async function keepAwake(){
+  try{ if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); }catch{}
+}
+function releaseAwake(){ try{ wakeLock && wakeLock.release(); }catch{} wakeLock = null; }
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && rec.active) keepAwake();
+});
+
+/* ======================= RECORDING ======================= */
+
+function pickMime(){
+  const want = ['video/mp4;codecs=h264,aac','video/mp4',
+                'video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+  for (const m of want) if (window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m;
+  return '';
+}
+
+async function countdown(n){
+  els.count.classList.add('on');
+  for (let i=n; i>0; i--){ els.count.textContent = i; await new Promise(r => setTimeout(r,1000)); }
+  els.count.classList.remove('on');
+}
+
+async function start(){
+  if (!camStream) return;
+  applyScript();
+  if (audioCtx && audioCtx.state === 'suspended'){ try{ await audioCtx.resume(); }catch{} }
+  await countdown(3);
+
+  const canvasStream = els.composite.captureStream(30);
+  mixedStream = new MediaStream([...canvasStream.getVideoTracks(), ...camStream.getAudioTracks()]);
+  rec.mime = pickMime();
+  if (!window.MediaRecorder) return showErr('Cannot record','This browser has no MediaRecorder.');
+
+  const total = beats.reduce((n,b)=>n+dur(b),0);
+  rec = { active:true, take:{ id:Date.now(), segments:[], mime:rec.mime },
+          mime:rec.mime, cutTimer:0, segStart:0, boundaries:beatBoundaries(), total };
+
+  running = true; tStart = performance.now();
+  els.recBadge.classList.add('on');
+  els.recBtn.textContent = 'Stop';
+  els.recBtn.classList.add('stop');
+  keepAwake();
+  beginSegment();
+  tick();
+}
+
+/* Each clip is its own MediaRecorder session, which is what makes every file
+   independently playable. A single session split by timeslice would give
+   fragments only the first of which has a container header. */
+function beginSegment(){
+  rec.segStart = elapsed();
+  chunks = [];
+  let r;
+  try{
+    r = new MediaRecorder(mixedStream, rec.mime ? { mimeType:rec.mime, videoBitsPerSecond:6_000_000 } : undefined);
+  }catch(e){ return showErr('Cannot record','MediaRecorder failed: ' + (e.message||e)); }
+
+  r.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  r.onstop = () => {
+    const blob = new Blob(chunks, { type: r.mimeType || rec.mime || 'video/webm' });
+    if (blob.size){
+      rec.take.segments.push({ blob, url:URL.createObjectURL(blob),
+                               from:rec.segStart, to:elapsed(), size:blob.size });
+      renderTakes();
+    }
+    if (rec.active) beginSegment(); else endTake();
+  };
+  recorder = r;
+  r.start();
+  els.recPart.textContent = 'REC · CLIP ' + String(rec.take.segments.length + 1).padStart(2,'0');
+
+  const cutAt = nextCutAt(rec.segStart, rec.boundaries, rec.total);
+  rec.cutTimer = setTimeout(() => {
+    if (rec.active && recorder && recorder.state === 'recording') recorder.stop();
+  }, Math.max(600, (cutAt - elapsed()) * 1000));
+}
+
+function stop(){
+  rec.active = false;
+  clearTimeout(rec.cutTimer);
+  running = false;
+  cancelAnimationFrame(rafId);
+  releaseAwake();
+  if (recorder && recorder.state !== 'inactive') recorder.stop(); else endTake();
+  els.recBadge.classList.remove('on');
+  els.recPart.textContent = 'REC';
+  els.recBtn.textContent = 'Start recording';
+  els.recBtn.classList.remove('stop');
+  els.mtrFill.style.width = '0%';
+  resetPrompter();
+}
+
+function endTake(){
+  if (!rec.take || !rec.take.segments.length) return;
+  takes.unshift(rec.take);
+  while (takes.length > 3){
+    takes.pop().segments.forEach(s => URL.revokeObjectURL(s.url));
+  }
+  rec.take = null;
+  renderTakes();
+}
+
+/* ======================= TAKES ======================= */
+
+function stamp(id){ return new Date(id).toISOString().replace(/[:T]/g,'-').slice(0,19); }
+function extFor(mime){ return (mime||'').includes('mp4') ? 'mp4' : 'webm'; }
+
+function nameFor(take, i){
+  return `pennio-reel-${stamp(take.id)}-p${String(i+1).padStart(2,'0')}.${extFor(take.mime)}`;
+}
+
+function renderTakes(){
+  const live = rec.take && rec.take.segments.length ? [rec.take] : [];
+  const all = [...live, ...takes];
+  els.takesBox.style.display = all.length ? 'block' : 'none';
+  els.takes.innerHTML = '';
+
+  all.forEach((take, ti) => {
+    const secs = take.segments.reduce((n,s) => n + (s.to - s.from), 0);
+    const mb = take.segments.reduce((n,s) => n + s.size, 0) / 1048576;
+    const isLive = live.length && ti === 0;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'take';
+    wrap.innerHTML =
+      `<div class="hd"><b>${isLive ? 'Recording…' : 'Take ' + (takes.length - (ti - live.length))}</b>
+        <span>${take.segments.length} clips · ${secs.toFixed(1)}s · ${mb.toFixed(1)} MB</span></div>
+       <div class="parts"></div>`;
+
+    const parts = wrap.querySelector('.parts');
+    take.segments.forEach((s, i) => {
+      const a = document.createElement('a');
+      a.href = s.url; a.download = nameFor(take, i);
+      a.textContent = `p${String(i+1).padStart(2,'0')} · ${(s.to-s.from).toFixed(1)}s`;
+      parts.appendChild(a);
+    });
+
+    if (!isLive){
+      const acts = document.createElement('div');
+      acts.className = 'acts';
+      const saveAll = document.createElement('button');
+      saveAll.textContent = 'Save all clips';
+      saveAll.onclick = () => saveAllClips(take);
+      const list = document.createElement('button');
+      list.textContent = 'Save merge list';
+      list.onclick = () => saveMergeList(take);
+      acts.append(saveAll, list);
+      wrap.appendChild(acts);
+
+      const cmd = document.createElement('code');
+      cmd.className = 'cmd';
+      cmd.textContent = `ffmpeg -f concat -safe 0 -i pennio-reel-${stamp(take.id)}.txt -c copy pennio-reel-${stamp(take.id)}.${extFor(take.mime)}`;
+      wrap.appendChild(cmd);
+    }
+    els.takes.appendChild(wrap);
+  });
+}
+
+/* Browsers throttle or silently drop rapid successive downloads, so the
+   clips are released one at a time rather than in a burst. */
+async function saveAllClips(take){
+  for (let i = 0; i < take.segments.length; i++){
+    const a = document.createElement('a');
+    a.href = take.segments[i].url;
+    a.download = nameFor(take, i);
+    document.body.appendChild(a); a.click(); a.remove();
+    await new Promise(r => setTimeout(r, 700));
+  }
+}
+
+function saveMergeList(take){
+  const body = take.segments.map((_,i) => `file '${nameFor(take,i)}'`).join('\n') + '\n';
+  const blob = new Blob([body], { type:'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `pennio-reel-${stamp(take.id)}.txt`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+/* ======================= WIRING ======================= */
+
+els.recBtn.onclick    = () => rec.active ? stop() : start();
+els.flipBtn.onclick   = () => { facing = facing==='user' ? 'environment' : 'user'; startCamera(); };
+els.mirBtn.onclick    = () => { mirrorPreview = !mirrorPreview; els.mirBtn.classList.toggle('on',mirrorPreview); els.preview.classList.toggle('mir',mirrorPreview); };
+els.mirRecBtn.onclick = () => { mirrorOutput = !mirrorOutput; els.mirRecBtn.classList.toggle('on',mirrorOutput); };
+els.snapBtn.onclick   = () => { snapToBeats = !snapToBeats; els.snapBtn.classList.toggle('on',snapToBeats); applyScript(); };
+els.resetBtn.onclick  = () => { els.script.value = A3_SCRIPT; applyScript(); };
+els.script.oninput    = applyScript;
+els.wpm.oninput    = () => { els.wpmVal.textContent = els.wpm.value + ' wpm'; applyScript(); };
+els.seglen.oninput = () => { els.seglenVal.textContent = els.seglen.value + 's'; store.set('pennio.reel.seglen', els.seglen.value); applyScript(); };
+els.size.oninput   = () => { els.pLine.style.fontSize = els.size.value+'px'; els.sizeVal.textContent = els.size.value+'px'; store.set('pennio.reel.size', els.size.value); };
+
+els.script.value = store.get('pennio.reel.script', A3_SCRIPT) || A3_SCRIPT;
+els.wpm.value    = store.get('pennio.reel.wpm','150');
+els.seglen.value = store.get('pennio.reel.seglen','10');
+els.size.value   = store.get('pennio.reel.size','19');
+els.wpmVal.textContent    = els.wpm.value + ' wpm';
+els.seglenVal.textContent = els.seglen.value + 's';
+els.sizeVal.textContent   = els.size.value + 'px';
+els.pLine.style.fontSize  = els.size.value + 'px';
+
+applyScript();
+startCamera();
+</script>
+</body>
+</html>
