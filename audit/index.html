@@ -201,6 +201,10 @@
             <input type="hidden" name="_subject" value="New Lead: Brand Checklist (PENNIO)">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
+            <!-- Where FormSubmit sends a NATIVE submit, which is what happens when the
+                 script below never runs. The page then shows its own success state from
+                 the query string. Ignored on the AJAX path. -->
+            <input type="hidden" name="_next" value="https://pennio.agency/audit/?sent=1">
             <input type="hidden" name="_autoresponse" value="Thanks for requesting The Brand Checklist. Here is your copy: https://pennio.agency/audit/pennio-brand-checklist.pdf. If your score comes back low, that is the part I build. Apply at https://pennio.agency/#apply.">
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
             <div class="field">
@@ -295,6 +299,22 @@ window.addEventListener('load', function () {
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1288692886314507&ev=PageView&noscript=1"/></noscript>
 
 <script>
+/* Deliberately a separate script from the one below. If that one throws, the
+   browser still submits the form natively, FormSubmit returns here with
+   ?sent=1, and this block is what turns that into a visible confirmation.
+   Putting the two together would mean one syntax error costs the lead. */
+(function () {
+  if (!/[?&]sent=1\b/.test(location.search)) return;
+  var formView = document.getElementById('formView');
+  var successView = document.getElementById('auditSuccess');
+  if (formView) formView.style.display = 'none';
+  if (successView) successView.style.display = 'block';
+  if (window.history && history.replaceState) {
+    history.replaceState(null, '', location.pathname + location.hash);
+  }
+})();
+</script>
+<script>
 function trackLead() { if (typeof fbq !== 'undefined') fbq('track', 'Lead'); }
 
 (function () {
@@ -304,21 +324,33 @@ function trackLead() { if (typeof fbq !== 'undefined') fbq('track', 'Lead'); }
   const formView = document.getElementById('formView');
   const successView = document.getElementById('auditSuccess');
 
+  // Hand validation to the handler below rather than the browser. Native
+  // validation blocks the submit event outright, so the page's own message
+  // never runs and all the user gets is a bubble, which on a phone can land
+  // off-screen or not render at all. That reads as the button doing nothing.
+  // Set from script on purpose: with JavaScript dead the attribute is absent,
+  // native validation applies as before, and an empty form still cannot post.
+  form.noValidate = true;
+
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
     alertBox.classList.remove('show');
 
     if (form.querySelector('[name="_honey"]').value) return; // honeypot tripped, silently drop
 
-    const requiredFields = ['name', 'email'];
-    for (const key of requiredFields) {
-      const field = form.querySelector(`[name="${key}"]`);
-      if (!field.value.trim()) {
-        field.focus();
-        alertBox.textContent = 'Please fill in your name and email.';
-        alertBox.classList.add('show');
-        return;
-      }
+    // checkValidity covers the empty case and a malformed email in one pass.
+    // The message is written into the page as well as handed to the browser:
+    // a native bubble on a field scrolled out of view reads as nothing at all
+    // happening, which is the worst thing a submit button can do.
+    if (!form.checkValidity()) {
+      const bad = form.querySelector(':invalid');
+      alertBox.textContent = bad && bad.name === 'email' && bad.value.trim()
+        ? 'That email address does not look right.'
+        : 'Please fill in your name and email.';
+      alertBox.classList.add('show');
+      if (bad) bad.focus();
+      form.reportValidity();
+      return;
     }
 
     submitBtn.disabled = true;

@@ -805,6 +805,9 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 <input type="hidden" name="_subject" value="New Project Application (PENNIO)">
 <input type="hidden" name="_captcha" value="false">
 <input type="hidden" name="_template" value="table">
+<!-- Where FormSubmit sends a NATIVE submit, which is what happens when the script
+     at the foot of this page never runs. Ignored on the AJAX path. -->
+<input type="hidden" name="_next" value="https://pennio.agency/?sent=1#apply">
 <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 <div class="form-grid">
 <div class="field">
@@ -1075,11 +1078,33 @@ document.getElementById('proofModal').addEventListener('click', e => { if (e.tar
 /* Application form: progressive-enhancement AJAX submit via FormSubmit's ajax endpoint,
    so the founder sees the success state in-page instead of being redirected off-site.
    Falls back to a normal POST (native form action) if fetch fails or JS is off. */
+/* Deliberately ahead of, and separate from, the submit handler. If that throws,
+   the browser submits the form natively, FormSubmit returns here with ?sent=1,
+   and this is what turns that into a visible confirmation. */
+(function () {
+  if (!/[?&]sent=1\b/.test(location.search)) return;
+  var form = document.getElementById('applyForm');
+  var successMsg = document.getElementById('successMsg');
+  if (form) form.style.display = 'none';
+  if (successMsg) successMsg.style.display = 'block';
+  if (window.history && history.replaceState) {
+    history.replaceState(null, '', location.pathname + location.hash);
+  }
+})();
+
 (function () {
   const form = document.getElementById('applyForm');
   const alertBox = document.getElementById('formAlert');
   const submitBtn = document.getElementById('submitBtn');
   const successMsg = document.getElementById('successMsg');
+
+  // Hand validation to the handler below rather than the browser. Native
+  // validation blocks the submit event outright, so the page's own message
+  // never runs and all the user gets is a bubble, which on a phone can land
+  // off-screen or not render at all. That reads as the button doing nothing.
+  // Set from script on purpose: with JavaScript dead the attribute is absent,
+  // native validation applies as before, and an empty form still cannot post.
+  form.noValidate = true;
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -1087,15 +1112,18 @@ document.getElementById('proofModal').addEventListener('click', e => { if (e.tar
 
     if (form.querySelector('[name="_honey"]').value) return; // honeypot tripped, silently drop
 
-    const requiredFields = ['name', 'email', 'brand_name', 'stage', 'budget'];
-    for (const key of requiredFields) {
-      const field = form.querySelector(`[name="${key}"]`);
-      if (!field.value.trim()) {
-        field.focus();
-        alertBox.textContent = 'Please fill in every required field before submitting.';
-        alertBox.classList.add('show');
-        return;
-      }
+    // Written into the page as well as handed to the browser: a native bubble on
+    // a field scrolled out of view reads as nothing happening at all, which is
+    // the worst thing a submit button can do.
+    if (!form.checkValidity()) {
+      const bad = form.querySelector(':invalid');
+      alertBox.textContent = bad && bad.name === 'email' && bad.value.trim()
+        ? 'That email address does not look right.'
+        : 'Please fill in every required field before submitting.';
+      alertBox.classList.add('show');
+      if (bad) bad.focus();
+      form.reportValidity();
+      return;
     }
 
     submitBtn.disabled = true;
