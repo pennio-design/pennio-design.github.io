@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PENNIO. Brand identity and websites for African businesses</title>
-<meta name="description" content="I build brand identities and websites for African businesses that want to charge more. Projects start at ₦350,000. Paul Oyatowo, Brand Architect and Creative Director.">
+<meta name="description" content="I build brand identities and websites for African businesses that want to charge more. Projects start at ₦350,000. Built by Paul Oyatowo in Oyo State, Nigeria.">
 <link rel="canonical" href="https://pennio.agency/">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -16,13 +16,13 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pennio.agency/">
 <meta property="og:title" content="PENNIO. Brand identity and websites for African businesses">
-<meta property="og:description" content="I build brand identities and websites for African businesses that want to charge more. Projects start at ₦350,000. Paul Oyatowo, Brand Architect and Creative Director.">
+<meta property="og:description" content="I build brand identities and websites for African businesses that want to charge more. Projects start at ₦350,000. Built by Paul Oyatowo in Oyo State, Nigeria.">
 <meta property="og:image" content="https://pennio.agency/og-cover.jpg">
 <meta property="og:site_name" content="PENNIO">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@penniodesign">
 <meta name="twitter:title" content="PENNIO. Brand identity and websites for African businesses">
-<meta name="twitter:description" content="I build brand identities and websites for African businesses that want to charge more. Projects start at ₦350,000. Paul Oyatowo, Brand Architect and Creative Director.">
+<meta name="twitter:description" content="I build brand identities and websites for African businesses that want to charge more. Projects start at ₦350,000. Built by Paul Oyatowo in Oyo State, Nigeria.">
 <meta name="twitter:image" content="https://pennio.agency/og-cover.jpg">
 <script type="application/ld+json">
 {
@@ -31,8 +31,8 @@
 "name": "PENNIO",
 "url": "https://pennio.agency",
 "logo": "https://pennio.agency/logo.png",
-"description": "Brand identity and websites for African businesses that want to charge more. Run by Paul Oyatowo, Brand Architect and Creative Director.",
-"founder": { "@type": "Person", "name": "Paul Oyatowo", "jobTitle": "Brand Architect and Creative Director" },
+"description": "Brand identity and websites for African businesses that want to charge more. Run by Paul Oyatowo, designer and founder, from Oyo State, Nigeria.",
+"founder": { "@type": "Person", "name": "Paul Oyatowo", "jobTitle": "Designer and founder" },
 "address": { "@type": "PostalAddress", "addressRegion": "Oyo State", "addressCountry": "NG" },
 "sameAs": [
 "https://x.com/penniodesign",
@@ -142,7 +142,7 @@ html { scroll-behavior: smooth; color-scheme: dark; }
 :root[data-theme="light"] { color-scheme: light; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal, .proof-status-dot, .nav-logo svg { transition: none !important; animation: none !important; opacity: 1 !important; transform: none !important; }
+  .reveal, .nav-logo svg { transition: none !important; animation: none !important; opacity: 1 !important; transform: none !important; }
   .faq-item::details-content { transition: none !important; }
   video[aria-hidden="true"] { display: none !important; }
 }
@@ -281,27 +281,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .work-header { text-align: center; margin-bottom: 56px; }
 .work-header h2 { font-size: clamp(2.2rem, 3.5vw, 3.4rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
 .work-header p { font-size: 1rem; font-weight: 300; color: var(--grey-4); margin-top: 14px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.65; }
-.proof-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; margin: 0 auto; }
-.proof-card { border-radius: 8px; overflow: hidden; border: 1px solid var(--glass-bdr); background: var(--surface); position: relative; cursor: default; transition: transform 0.28s var(--ease-out), border-color 0.28s ease; }
-@media (hover: hover) and (pointer: fine) {
-  .proof-card:hover { transform: translateY(-4px); border-color: rgba(var(--fg-rgb),0.14); }
-}
-.proof-card:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
-.proof-img { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; height: auto; }
-.proof-img-placeholder { width: 100%; aspect-ratio: 4/5; background: var(--surface-2); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-.proof-img-placeholder::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(var(--fg-rgb),0.02) 0%, transparent 60%); }
-.proof-img-initial { font-size: 4rem; font-weight: 700; letter-spacing: -0.05em; color: rgba(var(--fg-rgb),0.06); user-select: none; }
-.proof-logo-icon { width: 56px; height: auto; opacity: 0.9; }
-.proof-meta { padding: 24px 24px 28px; }
-.proof-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange-ink); margin-bottom: 10px; }
-.proof-status-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; animation: pulse-dot 2s ease-in-out infinite; }
-@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-.proof-brand { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
 .proof-category { font-size: 0.78rem; font-weight: 300; color: var(--grey-4); margin-bottom: 12px; }
-.proof-outcome { font-size: 0.78rem; font-weight: 400; line-height: 1.55; color: var(--grey-3); padding-top: 12px; border-top: 1px solid var(--line-dark); }
-a.proof-card { display: block; text-decoration: none; color: inherit; cursor: pointer; }
-.proof-card.proof-link { cursor: pointer; }
-.proof-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4); margin-bottom: 10px; }
 .deck-cta { max-width: 1100px; margin: 40px auto 0; text-align: center; }
 .deck-note { margin-top: 10px; font-size: 0.72rem; color: var(--grey-4); }
 .studio-strip { max-width: 1100px; margin: 40px auto 0; padding-top: 32px; border-top: 1px solid var(--line-dark); }
@@ -323,7 +303,6 @@ a.proof-card { display: block; text-decoration: none; color: inherit; cursor: po
 .proof-modal-inner h3 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
 .proof-modal-inner .proof-category { margin-bottom: 0; }
 .proof-modal-inner p.proof-modal-desc { font-size: 0.88rem; font-weight: 300; line-height: 1.65; color: var(--grey-4); margin: 16px 0 24px; }
-.proof-modal-status { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--orange-ink); }
 .section-faq { background: var(--bg); padding: 110px 5vw; border-top: 1px solid var(--line-dark); }
 .faq-wrap { max-width: 780px; margin: 0 auto; }
 .faq-header { margin-bottom: 56px; }
@@ -450,7 +429,6 @@ footer { background: var(--bg); padding: 72px 5vw 36px; border-top: 1px solid va
   .statement-inner { flex-direction: column; gap: 28px; }
   .statement-left { padding-right: 0; border-right: none; border-bottom: 1px solid var(--line-dark); padding-bottom: 28px; }
   .statement-right { padding-left: 0; }
-  .proof-grid { grid-template-columns: 1fr 1fr; }
   .studio-strip-grid { grid-template-columns: 1fr; }
   .footer-top { grid-template-columns: 1fr; gap: 36px; }
   .footer-bottom { flex-direction: column; gap: 14px; text-align: center; }
@@ -459,7 +437,7 @@ footer { background: var(--bg); padding: 72px 5vw 36px; border-top: 1px solid va
   .apply-fit { grid-template-columns: 1fr; }
   .apply-capacity { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
-@media (max-width: 480px) { .cycle { grid-template-columns: 1fr; } .proof-grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .cycle { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -721,19 +699,18 @@ When your logo, your page, your packaging and your posts are made by different p
 </svg>
 </div>
 <p class="proof-modal-desc">Ogbifọ is an AI-powered translation and cultural preservation platform that documents, translates, and safeguards African languages using machine learning, corpus verification, and offline-first tooling. The product page is in progress; a preview link will replace this pop-up once it is live.</p>
-<a href="/letscreate" class="btn btn-outline" style="width:100%; text-align:center; justify-content:center; display:flex;">Explore the PENNIO platform</a>
 </div>
 </div>
 
 <section class="section-about" id="about" style="padding: 110px 5vw; background: var(--bg-2);">
 <div class="about reveal">
-<img src="/paul-oyatowo.webp" alt="Paul Oyatowo, Brand Architect and Creative Director at PENNIO" class="about-photo" width="400" height="400" loading="lazy" decoding="async">
+<img src="/paul-oyatowo.webp" alt="Paul Oyatowo, designer and founder of PENNIO" class="about-photo" width="400" height="400" loading="lazy" decoding="async">
 <div class="about-body">
 <span class="label">Who you are working with</span>
 <h2>I am Paul Oyatowo.</h2>
 <p>I have been building brands since 2022 and I run PENNIO from Oyo State. I teach during the week and build brands the rest of the time, which means I take on two brands at a time and not more.</p>
 <p>When you hire PENNIO, I do the work. There is no account manager and nothing gets handed to a junior.</p>
-<div class="about-sig">Brand Architect and Creative Director</div>
+<div class="about-sig">Designer and founder, PENNIO</div>
 </div>
 </div>
 </section>

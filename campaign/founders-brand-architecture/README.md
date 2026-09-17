@@ -1,3 +1,8 @@
+> **Superseded.** This campaign ran on the retired positioning: brand architecture,
+> three pillars, full-stack creative. The September 2026 rebuild replaced all of it.
+> These files are kept as a record of what was published, not as direction. Nothing
+> here should be reused as current copy. See CLAUDE.md for the rules that replaced it.
+
 # "Architecture First" — PENNIO Founder Acquisition Campaign
 
 Positions PENNIO as the brand architecture studio for visionary founders: the
