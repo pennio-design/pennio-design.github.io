@@ -10,4 +10,8 @@ Allow: /
 # genuinely confidential under a public static host.
 Disallow: /campaign/
 
+# Print master for the checklist PDF. A six-page A4 document with the
+# typeface embedded, meant to be rendered, not read in a browser.
+Disallow: /audit/checklist-source.html
+
 Sitemap: https://pennio.agency/sitemap.xml

@@ -135,3 +135,32 @@ printf '%s\n' \
   '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
   | node scripts/mcp-design-engine.js
 ```
+
+## The checklist PDF
+
+`audit/checklist-source.html` -> `audit/pennio-brand-checklist.pdf`, six A4
+pages, no build step and no local server:
+
+```
+node scripts/render-checklist.js
+python3 scripts/pdf-creator.py audit/pennio-brand-checklist.pdf "PENNIO."
+```
+
+`render-checklist.js` refuses to write a PDF when Inter has not loaded, because
+a document that silently ships in a fallback face is worse than one that fails
+to build. `pdf-creator.py` replaces the User-Agent string Skia stamps into
+`/Creator`, padding to the same byte length so the cross-reference table stays
+valid.
+
+Inter is embedded in the source rather than linked. Subset to the characters
+the document uses, the four faces come to 62 KB; the full family is 843 KB.
+After adding a character the document did not previously contain, rebuild the
+subset or that character renders as a blank:
+
+```
+pip install fonttools brotli
+python3 scripts/embed-inter.py
+```
+
+That step needs fonts.googleapis.com and fonts.gstatic.com. The render itself
+needs neither.
