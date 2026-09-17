@@ -1110,11 +1110,24 @@ document.getElementById('proofModal').addEventListener('click', e => { if (e.tar
         headers: { 'Accept': 'application/json' },
         body: formData
       });
-      if (!res.ok) throw new Error('Submit failed');
+      // FormSubmit answers 200 with {"success":"false"} for several rejections,
+      // among them an unactivated endpoint and a spent quota. Trusting res.ok
+      // alone shows a success screen for a submission that was never delivered.
+      const raw = await res.text();
+      let payload = null;
+      try { payload = JSON.parse(raw); } catch (e) { /* not JSON; raw is the detail */ }
+      if (!res.ok || (payload && String(payload.success) === 'false')) {
+        throw new Error('FormSubmit ' + res.status + ': ' +
+          ((payload && payload.message) || raw.slice(0, 300) || 'no response body'));
+      }
       form.style.display = 'none';
       successMsg.style.display = 'block';
       trackLead(formData.get('budget'));
     } catch (err) {
+      // The detail goes to the console, not the page: FormSubmit's own wording
+      // ("activate your form", "rate limit") is for whoever owns the form, not
+      // for the person trying to reach them.
+      console.error('[pennio] apply form submit failed:', err);
       alertBox.textContent = "Something didn't go through. You can also reach us directly on Instagram @pennio.agency.";
       alertBox.classList.add('show');
       submitBtn.disabled = false;
