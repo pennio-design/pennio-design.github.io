@@ -210,9 +210,8 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .hero-container { position: relative; z-index: 10; width: 100%; max-width: 860px; }
 .hero h1 { font-size: clamp(2.8rem, 5vw, 5.6rem); font-weight: 700; line-height: 1.02; letter-spacing: -0.035em; margin-bottom: 24px; }
 .hero h1 em { font-style: italic; font-weight: 300; color: var(--grey-4); }
-.hero-sub { font-size: 1.08rem; font-weight: 300; line-height: 1.68; color: var(--grey-4); max-width: 560px; margin: 0 auto 14px; }
+.hero-sub { font-size: 1.08rem; font-weight: 300; line-height: 1.68; color: var(--grey-4); max-width: 560px; margin: 0 auto 40px; }
 .hero-note { font-size: 0.82rem; font-weight: 400; color: var(--grey-3); max-width: 440px; margin: 0 auto 40px; line-height: 1.65; }
-.hero-price { font-size: 1.05rem; font-weight: 400; color: var(--fg); max-width: 560px; margin: 0 auto 38px; line-height: 1.6; letter-spacing: -0.01em; }
 .hero-price strong { font-weight: 600; }
 .hero-actions { display: flex; gap: 14px; align-items: center; justify-content: center; }
 .section-problem, .section-apply { --orange-ink: var(--orange-ink-inv); }
@@ -419,6 +418,16 @@ footer { background: var(--bg); padding: 72px 5vw 36px; border-top: 1px solid va
 .modal-overlay.open .modal-box { transform: translateY(0); }
 .modal-close { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; background: none; border: none; cursor: pointer; color: var(--grey-3); font-size: 1.2rem; line-height: 1; transition: color 0.2s; padding: 4px; }
 .modal-close:hover { color: var(--fg); }
+.rate-row { padding: 22px 0; border-bottom: 1px solid var(--line-dark); }
+.rate-row:last-of-type { border-bottom: none; }
+.rate-top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.rate-name { font-size: 1rem; font-weight: 600; color: var(--fg); }
+.rate-figure { font-size: 0.95rem; font-weight: 500; color: var(--grey-5); white-space: nowrap; }
+.rate-figure.lead { color: var(--orange-ink); }
+.rate-detail { font-size: 0.84rem; font-weight: 300; line-height: 1.7; color: var(--grey-4); }
+.rate-terms { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line-dark); }
+.rate-link { display: inline-flex; align-items: center; min-height: 44px; background: none; border: none; padding: 0 2px; font: inherit; color: var(--orange-ink); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.rate-link:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
 .modal-box h3 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
 .modal-box .modal-date { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-3); margin-bottom: 28px; display: block; }
 .modal-box p { font-size: 0.9rem; font-weight: 300; line-height: 1.8; color: var(--grey-4); margin-bottom: 16px; }
@@ -494,7 +503,6 @@ footer { background: var(--bg); padding: 72px 5vw 36px; border-top: 1px solid va
 <div class="hero-container reveal">
 <h1>Stop looking cheaper<br>than you are.</h1>
 <p class="hero-sub">I build brand identities and websites for African businesses that want to charge more for what they already sell.</p>
-<p class="hero-price">Projects start at <strong>&#8358;350,000</strong>.</p>
 <div class="hero-actions">
 <a href="#apply" class="btn btn-cta">Book a call</a>
 <a href="#work" class="btn btn-outline">See the work</a>
@@ -592,6 +600,9 @@ When your logo, your page, your packaging and your posts are made by different p
 </ul>
 <div class="phase-price">Monthly, minimum three months.</div>
 </div>
+</div>
+<div class="deck-cta reveal">
+<button type="button" class="rate-link" data-open-rates>See the full rate card</button>
 </div>
 </section>
 
@@ -809,7 +820,7 @@ When your logo, your page, your packaging and your posts are made by different p
 </div>
 <div class="apply-capacity reveal reveal-d1">
 <p class="apply-capacity-text"><strong>I take on two brands at a time.</strong> When both slots are full, the next application waits.</p>
-<a href="#apply-form" class="apply-capacity-link">Apply below</a>
+<button type="button" class="rate-link apply-capacity-link" data-open-rates>See the rate card</button>
 </div>
 <div class="apply-form-wrap reveal reveal-d2" id="apply-form">
 <div class="form-alert" id="formAlert"></div>
@@ -871,6 +882,34 @@ When your logo, your page, your packaging and your posts are made by different p
 </div>
 </div>
 </section>
+
+<div class="modal-overlay" id="modal-rates" role="dialog" aria-modal="true" aria-labelledby="rates-title">
+<div class="modal-box">
+<button class="modal-close" id="close-rates" aria-label="Close rate card">&#10005;</button>
+<h3 id="rates-title">Rate card</h3>
+<div class="modal-date">Updated September 2026</div>
+
+<div class="rate-row">
+<div class="rate-top"><span class="rate-name">Brand identity</span><span class="rate-figure lead">From &#8358;350,000</span></div>
+<p class="rate-detail">Positioning, logo and marks, colour and type system, the brand rules document, and tone of voice. This is where every project starts.</p>
+</div>
+
+<div class="rate-row">
+<div class="rate-top"><span class="rate-name">Website</span><span class="rate-figure">Priced after the call</span></div>
+<p class="rate-detail">Landing pages, online stores, page structure and copy. Priced once I know how many pages there are and what each one has to do.</p>
+</div>
+
+<div class="rate-row">
+<div class="rate-top"><span class="rate-name">Monthly creative</span><span class="rate-figure">Minimum three months</span></div>
+<p class="rate-detail">Campaign and social work for brands I have already built. The direction exists, so it costs less than starting fresh each month.</p>
+</div>
+
+<div class="rate-terms">
+<p>You get a written price and timeline before any work starts. Nothing begins until you have both.</p>
+<p>I take on two brands at a time. When both slots are full, the next project waits.</p>
+</div>
+</div>
+</div>
 
 <div class="modal-overlay" id="modal-privacy" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
 <div class="modal-box">
@@ -966,6 +1005,8 @@ document.getElementById('open-privacy').addEventListener('click', e => { e.preve
 document.getElementById('open-terms').addEventListener('click', e => { e.preventDefault(); openModal('modal-terms'); });
 document.getElementById('close-privacy').addEventListener('click', () => closeModal('modal-privacy'));
 document.getElementById('close-terms').addEventListener('click', () => closeModal('modal-terms'));
+document.getElementById('close-rates').addEventListener('click', () => closeModal('modal-rates'));
+document.querySelectorAll('[data-open-rates]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); openModal('modal-rates'); }));
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
 });
