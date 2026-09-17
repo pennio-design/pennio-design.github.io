@@ -670,14 +670,14 @@ When your logo, your page, your packaging and your posts are made by different p
 <div class="studio-strip-label">Also from the studio</div>
 <div class="studio-strip-grid">
 <div class="studio-chip">
-<img src="/logo.png" alt="" class="studio-chip-icon">
+<img src="/logo.png" alt="" class="studio-chip-icon" width="30" height="38" loading="lazy" decoding="async">
 <div>
 <div class="studio-chip-name">PENNIO</div>
 <div class="studio-chip-status">This site, and the studio's own brand</div>
 </div>
 </div>
 <a href="/letscreate" class="studio-chip" aria-label="The Let's Create Network by PENNIO">
-<img src="/logo.png" alt="" class="studio-chip-icon">
+<img src="/logo.png" alt="" class="studio-chip-icon" width="30" height="38" loading="lazy" decoding="async">
 <div>
 <div class="studio-chip-name">The Let's Create Network</div>
 <div class="studio-chip-status">Teaching, run in public</div>
@@ -998,6 +998,21 @@ window.addEventListener('load', function () {
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1288692886314507&ev=PageView&noscript=1"/></noscript>
 
 <script>
+// The spec tracks the Brilla case entering view, since it is the only case
+// carrying the page and its read rate is the signal worth having.
+(function () {
+  var el = document.querySelector('.case');
+  if (!el || typeof IntersectionObserver !== 'function') return;
+  var fired = false;
+  new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting || fired) return;
+      fired = true;
+      if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: 'Brilla case' });
+      obs.disconnect();
+    });
+  }, { threshold: 0.35 }).observe(el);
+})();
 function trackLead(budget) { if (typeof fbq !== 'undefined') fbq('track', 'Lead', budget ? { content_category: budget } : {}); }
 function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
