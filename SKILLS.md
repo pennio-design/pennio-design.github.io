@@ -55,10 +55,11 @@ facts a generation pass has to work against, not aspirations.
 - **`/reel-studio/` sits outside the token system**: no theme guard, no
   `theme.js`, hardcoded `rgba(255,255,255,...)` greys instead of channel
   tokens, and a viewport meta carrying `user-scalable=no`, which is a WCAG
-  1.4.4 failure. It is absent from `sitemap.xml` and not excluded in
-  `robots.txt`, so it is both reachable and indexable. It is an internal
-  recording tool, so being off-brand is defensible; being invisible to the
-  documentation was not, and CLAUDE.md now records it as a route.
+  1.4.4 failure. It is an internal recording tool, so being off-brand is
+  defensible; being invisible to the documentation was not, and CLAUDE.md now
+  records it as a route. It is also now kept out of search deliberately - see
+  `SEO.md` - so what remains open here is the theming and the pinch-zoom
+  block.
 - **The literals the static audit flags are also real contrast failures.** Two
   of `/letscreate/`'s hardcoded colours are the evidence: `#6c4d3b` in
   `.apply-bar` measures 2.24:1 in the light theme, and `#6c635b`, written into
@@ -253,9 +254,12 @@ decided rather than drifting.
    highest-traffic page on the site and needs sign-off, not a commit.
 3. **Corner scale.** Pick three from {4px, 8px, 12px} and map everything to
    them. 10px on the homepage and 28.8px on `/letscreate/` both have to move.
-4. **`/reel-studio/`.** Either bring it into the token system and fix
-   `user-scalable=no`, or declare it an internal tool and exclude it in
-   `robots.txt` as `campaign/` is. It currently gets neither.
+4. **`/reel-studio/`.** The search half is settled: it is declared an internal
+   tool, carries `noindex, nofollow`, and is disallowed in `robots.txt` as
+   `campaign/` is. What is still open is whether to bring it into the token
+   system and fix `user-scalable=no`, or leave it as an off-brand internal
+   tool. Leaving it is defensible; `user-scalable=no` is a WCAG 1.4.4 failure
+   either way and should go regardless of the theming decision.
 5. **`thank-you.html`.** CLAUDE.md already records this as needing a rebrand
    decision. It declares Inter without loading it, so it renders in a system
    fallback.

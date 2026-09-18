@@ -8,8 +8,11 @@
   <!-- Confirmed live via direct fetch on 2026-08-19. Ogbifo intentionally excluded —
        confirmed still in build, not yet public. Re-check before every deploy;
        a sitemap entry is a promise to search engines that the page resolves. -->
+  <!-- Trailing slash matches the canonical tag on the page, added 2026-09-18.
+       Without it this entry pointed at the non-canonical form and spent crawl
+       budget on a redirect. Keep the two in sync if either changes. -->
   <url>
-    <loc>https://pennio.agency/letscreate</loc>
+    <loc>https://pennio.agency/letscreate/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

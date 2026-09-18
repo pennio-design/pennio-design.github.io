@@ -10,6 +10,18 @@ Allow: /
 # genuinely confidential under a public static host.
 Disallow: /campaign/
 
+# Internal recording tool: a teleprompter and segmented recorder Paul uses to
+# shoot reels. Thin content, no h1, off the brand token system.
+#
+# The page also carries a noindex meta, but note the interaction: while this
+# line stands, no crawler fetches the page, so that meta is never read. It is
+# the fallback if this line is ever lifted, not a second active signal. A
+# disallowed URL can still surface as a URL-only result when something links to
+# it, and the meta cannot prevent that. Nothing on this site links here, so the
+# Disallow is sufficient. If that changes, remove this line and let the noindex
+# do the work, because a signal that is read beats one that is blocked.
+Disallow: /reel-studio/
+
 # Print master for the checklist PDF. A six-page A4 document with the
 # typeface embedded, meant to be rendered, not read in a browser.
 Disallow: /audit/checklist-source.html

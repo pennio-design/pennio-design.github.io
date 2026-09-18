@@ -26,20 +26,55 @@
 <meta name="twitter:image" content="https://pennio.agency/og-cover.jpg">
 <script type="application/ld+json">
 {
-"@context": "https://schema.org",
-"@type": "ProfessionalService",
-"name": "PENNIO",
-"url": "https://pennio.agency",
-"logo": "https://pennio.agency/logo.png",
-"description": "Brand identity and websites for African businesses that want to charge more. Run by Paul Oyatowo, designer and founder, from Oyo State, Nigeria.",
-"founder": { "@type": "Person", "name": "Paul Oyatowo", "jobTitle": "Designer and founder" },
-"address": { "@type": "PostalAddress", "addressRegion": "Oyo State", "addressCountry": "NG" },
-"sameAs": [
-"https://x.com/penniodesign",
-"https://instagram.com/pennio.agency",
-"https://linkedin.com/in/paul-oyatowo"
-],
-"priceRange": "From ₦350,000"
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "ProfessionalService",
+   "@id": "https://pennio.agency/#organization",
+   "name": "PENNIO",
+   "url": "https://pennio.agency/",
+   "logo": "https://pennio.agency/logo.png",
+   "image": "https://pennio.agency/og-cover.jpg",
+   "description": "Brand identity and websites for African businesses that want to charge more. Run by Paul Oyatowo, designer and founder, from Oyo State, Nigeria.",
+   "founder": {
+    "@id": "https://pennio.agency/#paul-oyatowo"
+   },
+   "address": {
+    "@type": "PostalAddress",
+    "addressRegion": "Oyo State",
+    "addressCountry": "NG"
+   },
+   "areaServed": "Africa",
+   "sameAs": [
+    "https://x.com/penniodesign",
+    "https://instagram.com/pennio.agency"
+   ],
+   "priceRange": "From ₦350,000"
+  },
+  {
+   "@type": "Person",
+   "@id": "https://pennio.agency/#paul-oyatowo",
+   "name": "Paul Oyatowo",
+   "jobTitle": "Designer and founder",
+   "image": "https://pennio.agency/paul-oyatowo.webp",
+   "worksFor": {
+    "@id": "https://pennio.agency/#organization"
+   },
+   "sameAs": [
+    "https://linkedin.com/in/paul-oyatowo"
+   ]
+  },
+  {
+   "@type": "WebSite",
+   "@id": "https://pennio.agency/#website",
+   "url": "https://pennio.agency/",
+   "name": "PENNIO",
+   "publisher": {
+    "@id": "https://pennio.agency/#organization"
+   },
+   "inLanguage": "en"
+  }
+ ]
 }
 </script>
 <script type="application/ld+json">

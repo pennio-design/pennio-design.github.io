@@ -162,6 +162,53 @@ The check it deliberately does not attempt is compositional: whether a viewport
 has one dominant element. That needs a screenshot, so it stays with the
 Playwright loop.
 
+## geo-audit.js
+
+Not an MCP tool. Offline, dependency-free and ratchetable, like
+`aesthetic-audit.js`.
+
+```sh
+node scripts/geo-audit.js --max=1     # the gate
+node scripts/geo-audit.js             # every finding
+node scripts/geo-audit.js --json --max=1
+```
+
+Static search and citation-readiness against the rules in `../SEO.md`. Per
+page: title and description presence and length, canonical present and
+self-referential, one `h1`, the four Open Graph tags, `twitter:card`, `og:url`
+agreeing with the canonical, a share image that is in the repository, JSON-LD
+that parses, and meta copy against the vocabulary CLAUDE.md bars from
+buyer-facing copy. Site-wide: sitemap and `robots.txt` consistency against the
+routes actually on disk, and `llms.txt` links resolving to real files and real
+anchor ids. Entities: `@id` presence, a personal profile wrongly claimed as an
+organization's identity, and any `sameAs` asserting a knowledge-base entry that
+has not been verified.
+
+Baseline is **1 finding** (the `/letscreate/` meta description at 181
+characters, which is a copy decision). Exit 1 above the ceiling, 2 on a bad
+`--max`.
+
+Three decisions keep it honest:
+
+- **Only `linkedin.com/in/` is treated as a personal profile.** The path
+  settles it there, because `/company/` is the organization page. An X or
+  Instagram handle carries no such marker - `x.com/penniodesign` is the company
+  and nothing in the URL says so. An earlier revision flagged every X handle
+  and reported the company's own account as a person, which is how a checker
+  gets ignored.
+- **A fragment is split off before resolving a path, then checked.**
+  `/#services` addresses the homepage, not a file named `#services`. Having
+  split it, the fragment is verified against the real element ids, which
+  catches the link that silently lands at the top of the page.
+- **Network and Search Console checks are refused, not approximated.** Live
+  status codes, redirect chains, index coverage, query performance and anything
+  about a competitor need the network or an index this repository does not
+  have. The script says so instead of reporting an unmeasured pass.
+
+`SEO.md` records what the search brief gets wrong, chiefly that no open-source
+tool can produce backlink or search-volume data: those are readings off a
+proprietary crawl index, not outputs of an algorithm.
+
 ## contrast-audit.js
 
 Not an MCP tool - a standalone script, since it checks the site rather than

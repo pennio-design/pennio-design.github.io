@@ -9,8 +9,14 @@ You are the Master Web Architecture Orchestrator. You coordinate seven discrete 
   ramp, the spacing grid, the corner scale, the colour discipline, and which of
   the named aesthetic modules are actually installed. It is enforced by
   `node scripts/aesthetic-audit.js`, which is free to run and needs no server.
-  This file stays the authority on repository facts and on the proof rules; a
-  rule in `SKILLS.md` never overrides one here.
+- **`SEO.md` governs how the site is made findable and quotable** - canonicals,
+  the entity graph, indexing posture per route, `llms.txt`, and which search
+  modules are real. It is enforced by `node scripts/geo-audit.js`, also offline
+  and dependency-free. It includes the banned-vocabulary check on meta copy,
+  because ranking pressure points straight at the words the positioning bars.
+
+This file stays the authority on repository facts and on the proof rules; a
+rule in `SKILLS.md` or `SEO.md` never overrides one here.
 
 ## Repository Reality (read before invoking any agent)
 
@@ -24,7 +30,7 @@ This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/
 - **Positioning is governed by `01-positioning-source-of-truth.md` (September 2026).** Copy aimed at buyers does not use: agency, architecture, stack, pillars, framework, ecosystem, brief, execution, growth creative, full-stack, leverage, elevate, curated, bespoke, holistic, unlock, journey, solutions, or "connection problem". Those words remain fine internally, including in CSS class names, which are not copy. No em dashes. First person throughout: "I build", never "PENNIO delivers". Check with a rendered-text scan, not a source grep, or class attributes and the pennio.agency domain will produce false hits.
 - **Three proof rules, and they outrank any brief.** Never name a brand that cannot be shown. Never publish a claim that breaks on inspection, which includes an undated "In Progress" badge. Never invent a metric. Brilla is currently the only showable case, and it is told as decisions rather than results because no figures were supplied.
 - **Pricing lives in the rate card, not the hero.** The hero states the proposition. The number appears on the lead offer card, in the rate card modal, in the FAQ, in the fit criteria and in the budget field, so it filters people who have already seen the work rather than people who have not.
-- **The homepage is not the only surface.** A positioning change also touches `og-cover.jpg` (re-render from `campaign/brand-assets/og-cover-source.html`, which is what every share of the site shows), `/audit/`, `/letscreate/`, the FAQ structured data, and the meta and share tags. The campaign pack under `campaign/` is a superseded record, excluded in robots.txt, and is not updated.
+- **The homepage is not the only surface.** A positioning change also touches `og-cover.jpg` (re-render from `campaign/brand-assets/og-cover-source.html`, which is what every share of the site shows), `/audit/`, `/letscreate/`, the FAQ structured data, the meta and share tags, the `@graph` entity block in `index.html`, and `llms.txt` at the root, which restates the proposition for anything quoting the site. `node scripts/geo-audit.js` catches the meta and the entity half; `llms.txt` is prose and needs reading. The campaign pack under `campaign/` is a superseded record, excluded in robots.txt, and is not updated.
 - **The checklist PDF is built, not hand-edited.** `audit/checklist-source.html` is the print master for `audit/pennio-brand-checklist.pdf`: six A4 pages, Inter embedded as a subset woff2 so the render never depends on the network or a system fallback. Change copy in the source, then `node scripts/render-checklist.js` and `python3 scripts/pdf-creator.py audit/pennio-brand-checklist.pdf "PENNIO."`. Adding a character the document did not previously contain also needs `python3 scripts/embed-inter.py`, or that character renders as a blank. `audit/pennio-brand-architecture-checklist.pdf` is a byte copy at the retired path, kept because that URL went out in autoresponse emails; it is not a second document.
 
 - **Orange is two things.** `--orange` is the brand *fill* and never changes. `--orange-ink` is orange used as *text*, and is rebound by the surface it lands on, not by the theme: `#F26522` reads 6.46:1 on a dark ground but the darker `#BC440B` is needed on a light one, and each fails on the other. Check contrast with `node scripts/contrast-audit.js`.
@@ -32,7 +38,7 @@ This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/
 - **`thank-you.html` is off-brand and excluded from the theme system.** It uses `#fff8e1` and Material orange `#ff9800`, has no nav and no tokens - a leftover template rather than a Pennio page. It needs a rebrand decision, not a toggle.
 - **Deploy is `git push` to `master`** (not `main`, not Vercel). GitHub Pages serves the repo root at `pennio.agency` via `CNAME`.
 - **Routes are directories containing `index.html`**: `/` , `/audit/`, `/letscreate/`, `/reel-studio/`, plus the standalone `/thank-you.html`. Campaign pages under `campaign/founders-brand-architecture/` are standalone HTML documents, not routed pages.
-- **`/reel-studio/` is an internal tool, not a brand page, and is undocumented everywhere else.** A teleprompter and segmented recorder. It sits outside the theme system (no inline guard, no `theme.js`), uses hardcoded `rgba(255,255,255,...)` greys instead of channel tokens, and carries `user-scalable=no` in its viewport meta, which is a WCAG 1.4.4 failure. It is absent from `sitemap.xml` and not excluded in `robots.txt`, so it is reachable and indexable. Being off-brand is defensible for an internal tool; it currently has neither the fix nor the exclusion. See `SKILLS.md`.
+- **`/reel-studio/` is an internal tool, not a brand page.** A teleprompter and segmented recorder. It sits outside the theme system (no inline guard, no `theme.js`), uses hardcoded `rgba(255,255,255,...)` greys instead of channel tokens, and carries `user-scalable=no` in its viewport meta, which is a WCAG 1.4.4 failure. It is now kept out of search deliberately: `noindex, nofollow` on the page and `Disallow: /reel-studio/` in `robots.txt`. Being off-brand is defensible for an internal tool; the theming and the pinch-zoom block are still open, and `SKILLS.md` carries that decision.
 
 ## Execution Rules
 1. Never generate CSS or markup without a compiled design token dictionary from Agent 01.
@@ -80,7 +86,8 @@ This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/
 ### Agent 07: SEO & Deployer
 - Role: Constructs JSON-LD schemas, optimizes meta vectors, commits repository trees, and triggers edge deployments.
 - Invocation: `task:seo-deploy`
-- Output Target: JSON-LD in the `<script type="application/ld+json">` blocks already present in `index.html`; `sitemap.xml`; `robots.txt`
+- Output Target: JSON-LD in the `<script type="application/ld+json">` blocks already present in `index.html` (now a `@graph` of `ProfessionalService` / `Person` / `WebSite`, cross-referenced by `@id`) and the `WebPage` nodes on `/audit/` and `/letscreate/`; `sitemap.xml`; `robots.txt`; `llms.txt`
+- Run `node scripts/geo-audit.js --max=1` before and after. It is offline and dependency-free, and it errors on meta copy that breaks the positioning vocabulary and on any `sameAs` asserting an unverified knowledge-base entity. Read `SEO.md` first: it records what the search brief gets wrong, in particular that no open-source tool can produce backlink or search-volume data, because those are readings off a proprietary index rather than an algorithm.
 - Deploy: `git push origin master` -> GitHub Pages. Preserve `CNAME` (`pennio.agency`) on every commit; losing it drops the custom domain.
 
 ## Model Context Protocol (MCP) Tool Definitions
