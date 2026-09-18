@@ -263,7 +263,17 @@ decided rather than drifting.
 5. **`thank-you.html`.** CLAUDE.md already records this as needing a rebrand
    decision. It declares Inter without loading it, so it renders in a system
    fallback.
-6. **White on orange is 3.15:1.** `scripts/README.md` records this as a brand
+6. **Three footer links on `/letscreate/` are 23px tall.** `.footer-links a`
+   for "The Problem", "What we build" and "Apply" measure 81x23, 93x23 and
+   35x23, all under the 44px WCAG 2.5.8 minimum, at every width. The header
+   `.brand-lockup` had the same defect and is fixed, because `.nav` is
+   min-height 76px and absorbed it with no visual change. The footer row has no
+   such slack: `min-height: 44px` there grows the footer by about 21px. That is
+   a small, defensible change on a footer, but it is a visual one, so it is
+   named here rather than made. The fix is one line:
+   `.footer-links a { display: inline-flex; align-items: center; min-height: 44px; }`
+   plus `row-gap: 0` on `.footer-links` so a wrapped row does not double-space.
+7. **White on orange is 3.15:1.** `scripts/README.md` records this as a brand
    decision, not a defect, with two remedies that both alter the most
    recognisable element on the site. Unchanged and still open.
 

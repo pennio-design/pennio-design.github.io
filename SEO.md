@@ -102,16 +102,24 @@ the twelve skills in `.agents/skills/`. Two extra cautions specific to these:
 ## What geo-audit.js checks
 
 ```sh
-node scripts/geo-audit.js --max=1    # the gate
-node scripts/geo-audit.js            # every finding
-node scripts/geo-audit.js --json --max=1
+node scripts/geo-audit.js            # the gate; baseline is 0 findings
+node scripts/geo-audit.js --max=0    # same thing, explicit
+node scripts/geo-audit.js --json
 ```
 
 Per page: title presence and length, meta description presence and length,
 canonical present and self-referential, exactly one `h1`, the four Open Graph
 tags, `twitter:card`, `og:url` agreeing with the canonical, a share image that
-is actually in the repository, JSON-LD that parses, and meta copy against the
-banned vocabulary.
+is actually in the repository, and JSON-LD that parses.
+
+Positioning, on the meta and share tags of every page and on the **rendered
+body** of every indexable one: the banned vocabulary, PENNIO in a subject
+position ("PENNIO-led", "PENNIO delivers"), and em dashes. The body scan strips
+script, style and svg contents, drops tags, decodes entities and removes the
+domain before matching, which is what CLAUDE.md means by a rendered-text scan
+rather than a grep. `class="pillars"`, `class="pillar-row"` and
+`class="feature-stack"` are all live in this repository and correctly produce
+no hits; a source grep would report seven false positives on them.
 
 Site-wide: every route with an `index.html` is either in the sitemap or
 excluded in `robots.txt`; sitemap entries match the canonical form and have
@@ -134,9 +142,9 @@ coverage, Core Web Vitals field data, query performance, and anything about a
 competitor. Those need the network, Search Console, or an index this
 repository does not have. The script says so rather than approximating them.
 
-`--max` is the gate, for the reason given in `SKILLS.md`: the baseline is **1
-finding**, and a bare run exits 1 while any finding stands. The ceiling only
-moves down.
+`--max` is the gate, for the reason given in `SKILLS.md`. The baseline is now
+**0 findings**, so `--max=0` and a bare run are equivalent and either works.
+The ceiling only moves down.
 
 ## What this change did
 
@@ -181,9 +189,44 @@ The audit started at 14 findings, 7 of them errors. All errors are fixed:
   are attributable, because none were supplied. That is the proof rules
   reaching the one file whose entire audience is a model.
 
-One finding is left, and it is a copy decision rather than a defect: the
-`/letscreate/` meta description is 181 characters and will be truncated in
-results. Trimming it is an edit to buyer-facing copy, so it is not made here.
+### The positioning pass /letscreate/ never got
+
+Adding the rendered-text scan turned up what a meta-only check could not see.
+`index.html` and `/audit/` are clean: no banned word, no third-person
+construction, no em dash. `/letscreate/` carried seven violations, because the
+September 2026 repositioning touched it only lightly:
+
+- "a PENNIO-led learning system" in the hero, "a PENNIO-led creative movement"
+  in the footer, and "a PENNIO-led creative network" in the meta description,
+  the Open Graph description and the Twitter description. Five instances of the
+  one construction the positioning explicitly bars.
+- "real briefs" twice and "briefs" once in the network benefits; "Hard
+  execution" and "not just execution" in the cohort weeks and the fit
+  criteria. `brief` and `execution` are both on the banned list.
+
+All seven are fixed with meaning-preserving substitutions: the hero now reads
+"I run the Let's Create Network", "briefs" becomes "projects", "Hard
+execution" becomes "Hard building", and "not just execution" becomes "not just
+output". Nothing about the offer changed; if any single word reads wrong, it is
+a one-line revert.
+
+Fixing the meta description also closed the last open finding from the previous
+pass: it was 181 characters and would have been truncated in results. The
+rewrite is 137.
+
+`llms.txt` was rewritten in first person for the same reason. The first draft
+had slipped into "Run by Paul Oyatowo", "Works with businesses across Africa"
+and "attribute ... to PENNIO or to its clients", which is exactly the voice the
+rule exists to prevent. It now reads "I am Paul Oyatowo", "I work with
+businesses across Africa", and "to me or to my clients", and it uses the
+site's own second-person address where the site does: "the words your business
+is known for", "so that the next person you hire cannot get it wrong".
+
+The `ProfessionalService` description in the homepage `@graph` said "Run by
+Paul Oyatowo, designer and founder" while the meta description beside it said
+"I build". Both now carry the same sentence, so meta, Open Graph, Twitter and
+the entity graph state the proposition identically. One canonical sentence is
+also better for entity consistency than four paraphrases.
 
 ## The honest strategic read
 

@@ -168,25 +168,31 @@ Not an MCP tool. Offline, dependency-free and ratchetable, like
 `aesthetic-audit.js`.
 
 ```sh
-node scripts/geo-audit.js --max=1     # the gate
-node scripts/geo-audit.js             # every finding
-node scripts/geo-audit.js --json --max=1
+node scripts/geo-audit.js             # the gate; baseline is 0 findings
+node scripts/geo-audit.js --max=0     # same thing, explicit
+node scripts/geo-audit.js --json
 ```
 
 Static search and citation-readiness against the rules in `../SEO.md`. Per
 page: title and description presence and length, canonical present and
 self-referential, one `h1`, the four Open Graph tags, `twitter:card`, `og:url`
 agreeing with the canonical, a share image that is in the repository, JSON-LD
-that parses, and meta copy against the vocabulary CLAUDE.md bars from
-buyer-facing copy. Site-wide: sitemap and `robots.txt` consistency against the
-routes actually on disk, and `llms.txt` links resolving to real files and real
+that parses, and the positioning check below. Site-wide: sitemap and
+`robots.txt` consistency against the routes actually on disk, and `llms.txt` links resolving to real files and real
 anchor ids. Entities: `@id` presence, a personal profile wrongly claimed as an
 organization's identity, and any `sameAs` asserting a knowledge-base entry that
 has not been verified.
 
-Baseline is **1 finding** (the `/letscreate/` meta description at 181
-characters, which is a copy decision). Exit 1 above the ceiling, 2 on a bad
-`--max`.
+The positioning check runs over the meta and share tags of every page and the
+**rendered body** of every indexable one, matching the banned vocabulary,
+PENNIO in a subject position, and em dashes. The body text is taken by
+stripping script, style and svg contents, dropping tags, decoding entities and
+removing the domain, which is what CLAUDE.md means by a rendered-text scan
+rather than a grep: `class="pillars"`, `class="pillar-row"` and
+`class="feature-stack"` are all live here, and a grep would report every one of
+them.
+
+Baseline is **0 findings**. Exit 1 above the ceiling, 2 on a bad `--max`.
 
 Three decisions keep it honest:
 

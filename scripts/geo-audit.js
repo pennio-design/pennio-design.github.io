@@ -60,6 +60,22 @@ const BANNED_COPY = [
   'connection problem',
 ];
 
+/**
+ * Third-person constructions the positioning bars. CLAUDE.md requires first
+ * person throughout: "I build", never "PENNIO delivers".
+ *
+ * Matched as PENNIO in a subject position, not as a bare mention. "Built by
+ * Paul Oyatowo" and "PENNIO." as a wordmark are fine; "PENNIO-led" and "PENNIO
+ * is a" are not. /letscreate/ carried "a PENNIO-led learning system" in its
+ * hero and its meta description until this check existed.
+ */
+const THIRD_PERSON = [
+  /PENNIO[-\s]led\b/i,
+  /\bPENNIO\s+(?:builds?|delivers?|creates?|offers?|provides?|helps?|serves?|works?|is|was|has|specialis\w+|specializ\w+)\b/i,
+  /\bPENNIO's\b/i,
+  /\bwe(?:'re| are)\s+an?\s+\w*\s*(?:studio|team|company|practice)\b/i,
+];
+
 /* The AI crawler tokens worth a deliberate decision. Reported, not scored:
    `User-agent: *` with `Allow: /` already permits every compliant crawler, so
    an absent group means "allowed by the wildcard", not "blocked". An explicit
@@ -110,6 +126,41 @@ const linkRel = (head, rel) => attr(head, 'rel', rel, 'href');
 const decode = (s) =>
   s.replace(/&#(\d+);/g, (_, d) => String.fromCharCode(+d))
    .replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+
+/**
+ * Approximates the text a reader sees: script, style and svg contents removed,
+ * tags stripped, entities decoded, whitespace collapsed.
+ *
+ * CLAUDE.md is explicit that this has to be a rendered-text scan rather than a
+ * source grep, because class attributes and the pennio.agency domain otherwise
+ * produce false hits - `class="brand-architecture"` is a name, not copy. The
+ * domain is removed here for the same reason. This is not a DOM, so it will not
+ * resolve text injected by script; the Playwright loop in SKILLS.md covers
+ * that ground when it matters.
+ */
+function renderedText(src) {
+  let body = src.slice(Math.max(0, src.search(/<body\b/i)));
+  body = body.replace(/<(script|style|svg|template|noscript)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  body = body.replace(/<!--[\s\S]*?-->/g, ' ');
+  body = body.replace(/<[^>]+>/g, ' ');
+  return decode(body).replace(/pennio\.agency/gi, ' ').replace(/\s+/g, ' ').trim();
+}
+
+/** Every distinct banned word or third-person construction in a stretch of copy. */
+function copyViolations(text) {
+  const out = [];
+  for (const word of BANNED_COPY) {
+    const re = new RegExp(`\\b${word.replace(/[-\s]/g, '[-\\s]')}\\w*`, 'i');
+    const m = re.exec(text);
+    if (m) out.push({ kind: 'banned word', match: m[0], word });
+  }
+  for (const re of THIRD_PERSON) {
+    const m = re.exec(text);
+    if (m) out.push({ kind: 'third person', match: m[0].trim() });
+  }
+  if (text.includes('\u2014')) out.push({ kind: 'em dash', match: '\u2014' });
+  return out;
+}
 
 function jsonLdBlocks(src) {
   return [...src.matchAll(/<script[^>]*application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi)]
@@ -203,15 +254,21 @@ function auditPage(page) {
     auditEntities(w, flattenNodes(parsed));
   });
 
-  // Meta copy is buyer-facing copy.
-  const copy = [decode(title || ''), description || '',
-                metaProp(head, 'og:title') || '', metaProp(head, 'og:description') || '']
-    .join(' ').toLowerCase();
-  for (const word of BANNED_COPY) {
-    // The domain is pennio.agency and is not copy, so discount that occurrence.
-    const hay = copy.replace(/pennio\.agency/g, '');
-    if (new RegExp(`\\b${word.replace(/[-\s]/g, '[-\\s]')}\\b`).test(hay)) {
-      add('error', w, `meta copy uses "${word}", which CLAUDE.md bars from copy aimed at buyers`);
+  // Meta and share tags are buyer-facing copy, and so is the page itself.
+  const metaCopy = [decode(title || ''), description || '',
+                    metaProp(head, 'og:title') || '', metaProp(head, 'og:description') || '',
+                    metaName(head, 'twitter:title') || '', metaName(head, 'twitter:description') || '']
+    .join(' ').replace(/pennio\.agency/gi, ' ');
+
+  for (const v of copyViolations(metaCopy)) {
+    add('error', w, `meta copy uses ${v.kind} "${v.match}", which CLAUDE.md bars from copy aimed at buyers`);
+  }
+  // Only pages meant for readers are held to the positioning. /reel-studio/ is
+  // an internal tool and thank-you.html is a leftover template awaiting a
+  // rebrand decision, both recorded as such in CLAUDE.md.
+  if (page.index) {
+    for (const v of copyViolations(renderedText(src))) {
+      add('error', w, `rendered copy uses ${v.kind} "${v.match}", which CLAUDE.md bars from copy aimed at buyers`);
     }
   }
 }
