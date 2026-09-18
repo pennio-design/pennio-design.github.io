@@ -305,18 +305,60 @@ async function generateKineticAsset({ prompt, aspect_ratio, media_type }) {
 const DEFAULT_VIEWPORTS = [375, 768, 1024, 1440];
 const MIN_TOUCH_TARGET = 44;
 
+/**
+ * Resolves Playwright from outside this directory.
+ *
+ * This repository has no `package.json` and no `node_modules`, so a bare
+ * `require('playwright')` finds nothing even when Playwright is installed -
+ * Node walks parent `node_modules` directories and the global root is not one
+ * of them. Sandboxes and CI images commonly ship it globally, so the candidate
+ * list below is tried before declaring it absent. Without this the tool
+ * reported a setup error on a machine that already had a working copy.
+ */
+function loadPlaywright() {
+  const tried = [];
+  const candidates = ['playwright'];
+
+  if (process.env.PLAYWRIGHT_MODULE_PATH) {
+    candidates.push(process.env.PLAYWRIGHT_MODULE_PATH);
+  }
+  for (const dir of (process.env.NODE_PATH || '').split(path.delimiter).filter(Boolean)) {
+    candidates.push(path.join(dir, 'playwright'));
+  }
+  // The npm global root sits beside the running interpreter: with node at
+  // <prefix>/bin/node, packages land in <prefix>/lib/node_modules.
+  candidates.push(path.join(path.dirname(process.execPath), '..', 'lib', 'node_modules', 'playwright'));
+  candidates.push('/usr/local/lib/node_modules/playwright');
+  candidates.push('/usr/lib/node_modules/playwright');
+
+  for (const candidate of candidates) {
+    try {
+      return require(candidate);
+    } catch (err) {
+      // Only a missing module is worth moving past. A module that is present
+      // but throws while loading is a real fault and must not be swallowed.
+      if (err && err.code === 'MODULE_NOT_FOUND' && String(err.message).includes(candidate)) {
+        tried.push(candidate);
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error(tried.join(', '));
+}
+
 async function auditViewportIntegrity({ local_server_url, viewports }) {
   if (!local_server_url) throw new Error('local_server_url is required');
 
   let chromium;
   try {
-    // require (not import) so NODE_PATH-installed copies resolve too.
-    ({ chromium } = require('playwright'));
-  } catch {
+    ({ chromium } = loadPlaywright());
+  } catch (err) {
     throw new Error(
       'Playwright is not installed, so no viewport audit was run. ' +
         'Install it with `npm install playwright` (a Chromium build is already present at ' +
         '/opt/pw-browsers, so set PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1), then re-run. ' +
+        'Searched: ' + err.message + '. ' +
         'No results are reported rather than reporting an unverified pass.'
     );
   }

@@ -3,6 +3,15 @@
 ## Operational Identity
 You are the Master Web Architecture Orchestrator. You coordinate seven discrete sub-agents to construct, refine, and deploy production-grade web applications. You do not generate generic filler code, unstyled templates, or synthetic copy. Every output must adhere strictly to design tokens, mobile-first responsive constraints, and human-grounded conversion principles.
 
+## Companion files
+
+- **`SKILLS.md` governs what generated interface may look like** - the type
+  ramp, the spacing grid, the corner scale, the colour discipline, and which of
+  the named aesthetic modules are actually installed. It is enforced by
+  `node scripts/aesthetic-audit.js`, which is free to run and needs no server.
+  This file stays the authority on repository facts and on the proof rules; a
+  rule in `SKILLS.md` never overrides one here.
+
 ## Repository Reality (read before invoking any agent)
 
 This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/` application. The pipeline is mapped onto that reality below. Facts that constrain every agent:
@@ -22,7 +31,8 @@ This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/
 - **Writing themeable CSS.** Colour tokens are named for their *role*, not their value: `--bg`, `--fg`, `--surface`, `--border`. Value-named tokens (`--white`, `--black`) are literals for things that must not flip, such as text on an orange fill. `--invert-*` is for sections deliberately opposite the page, which is what keeps the dark/light rhythm working in both themes. Alpha values use the channel tokens - `rgba(var(--fg-rgb),0.06)`, never `rgba(255,255,255,0.06)`, which goes invisible on a light background. A hardcoded hex or a `fill="white"` SVG attribute will not follow the theme; CSS outranks a presentation attribute, so style the SVG rather than editing its markup.
 - **`thank-you.html` is off-brand and excluded from the theme system.** It uses `#fff8e1` and Material orange `#ff9800`, has no nav and no tokens - a leftover template rather than a Pennio page. It needs a rebrand decision, not a toggle.
 - **Deploy is `git push` to `master`** (not `main`, not Vercel). GitHub Pages serves the repo root at `pennio.agency` via `CNAME`.
-- **Routes are directories containing `index.html`**: `/` , `/audit/`, `/letscreate/`, plus the standalone `/thank-you.html`. Campaign pages under `campaign/founders-brand-architecture/` are standalone HTML documents, not routed pages.
+- **Routes are directories containing `index.html`**: `/` , `/audit/`, `/letscreate/`, `/reel-studio/`, plus the standalone `/thank-you.html`. Campaign pages under `campaign/founders-brand-architecture/` are standalone HTML documents, not routed pages.
+- **`/reel-studio/` is an internal tool, not a brand page, and is undocumented everywhere else.** A teleprompter and segmented recorder. It sits outside the theme system (no inline guard, no `theme.js`), uses hardcoded `rgba(255,255,255,...)` greys instead of channel tokens, and carries `user-scalable=no` in its viewport meta, which is a WCAG 1.4.4 failure. It is absent from `sitemap.xml` and not excluded in `robots.txt`, so it is reachable and indexable. Being off-brand is defensible for an internal tool; it currently has neither the fix nor the exclusion. See `SKILLS.md`.
 
 ## Execution Rules
 1. Never generate CSS or markup without a compiled design token dictionary from Agent 01.
@@ -54,6 +64,7 @@ This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/
 ### Agent 04: Viewport Sentinel
 - Role: Enforces strict mobile responsiveness, audits touch target areas, and eliminates horizontal overflow.
 - Invocation: `task:viewport-audit`
+- Run `node scripts/aesthetic-audit.js` first: it needs no server or browser and catches the type-ramp, spacing-grid, corner-scale and theme-blind-colour defects that a screenshot cannot show. Thresholds are in `SKILLS.md`.
 - Output Target: fixes appended to the inline `<style>` block of the audited page. A separate `responsive-patch.css` is permitted only when the same change adds its `<link>` tag.
 
 ### Agent 05: Editorial De-Slopifier

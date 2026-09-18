@@ -43,7 +43,31 @@ Two filters keep the output trustworthy:
 - **Hidden and inline elements are skipped.** Off-screen skip links are not
   layout bugs, and WCAG 2.5.8 exempts targets rendered inline within a sentence.
 
-Playwright is not bundled. Install it and point the server at a browser:
+Playwright is not bundled, but it is no longer required to be local. This
+repository has no `package.json` and no `node_modules`, so a bare
+`require('playwright')` resolves nothing even on a machine that has Playwright
+installed - Node walks parent `node_modules` directories, and the npm global
+root is not one of them. `loadPlaywright()` therefore tries, in order:
+
+1. `require('playwright')` - a local install, if one is ever added
+2. `PLAYWRIGHT_MODULE_PATH`, if set
+3. every entry in `NODE_PATH`
+4. the npm global root beside the running interpreter, derived from
+   `process.execPath`: with node at `<prefix>/bin/node`, packages are at
+   `<prefix>/lib/node_modules`
+5. `/usr/local/lib/node_modules` and `/usr/lib/node_modules`
+
+Only a `MODULE_NOT_FOUND` naming that exact candidate advances the loop. A copy
+that is present but throws while loading is a real fault and propagates. When
+every candidate misses, the error lists what it searched.
+
+This matters because the tool previously reported "Playwright is not installed"
+on a machine carrying a working global copy, which reads as a missing
+dependency rather than a resolution failure. Verified against the global
+Playwright 1.56.1 in this sandbox: the audit runs and reports `passed: true`
+across 375, 768, 1024 and 1440px.
+
+To add a local install instead:
 
 ```sh
 npm install playwright
@@ -89,6 +113,54 @@ a plausible-looking wrong endpoint is worse than an explicit error.
 To enable it, set `HIGSFIELD_API_URL` and `HIGSFIELD_API_KEY`, then confirm the
 request body in `generateKineticAsset()` matches the provider's actual contract.
 It currently posts `{ prompt, media_type, aspect_ratio }` with a bearer token.
+
+## aesthetic-audit.js
+
+Not an MCP tool, and unlike everything else here it needs no server, no browser
+and no dependencies - which is what lets it gate a commit.
+
+```sh
+node scripts/aesthetic-audit.js --max=24     # the gate: fail above 24
+node scripts/aesthetic-audit.js              # every page, always fails today
+node scripts/aesthetic-audit.js --json --max=24
+node scripts/aesthetic-audit.js index.html --max=7
+```
+
+Static conformance against the thresholds in `../SKILLS.md`: typeface count,
+type-ramp length and adjacent step ratios, spacing grid, corner scales, and
+colour literals that cannot follow the theme.
+
+**`--max` is the form that gates.** The baseline is 24 violations across five
+pages, so a bare run exits 1 by design - a check that always fails gets ignored
+within a day. `--max=24` tolerates the known debt, exits 1 on anything that
+adds to it, and prints the lower ceiling to adopt once the count drops.
+Lowering the number is the commit that locks in a fix; it never goes up. Bad
+input to `--max` exits 2, so a typo cannot silently pass.
+
+Per page today: `index.html` 7, `audit/index.html` 6, `letscreate/index.html`
+7, `reel-studio/index.html` 3, `thank-you.html` 1. They sum to the 24 above.
+
+Four decisions keep the output honest:
+
+- **Token blocks are excluded from the colour check.** A literal hex inside
+  `:root` *is* the palette definition. Without that split every page reports
+  its own token block and the output is worthless.
+- **Inline `style` attributes are scanned for colour** as well as the `<style>`
+  blocks. That is where a theme-blind literal survives review:
+  `letscreate/index.html:538` hardcodes `#6c635b` this way, which is 3.16:1 on
+  the dark page and is exactly the value `--invert-muted` already holds. Sizes
+  and spacing are *not* read from inline attributes, because a one-off nudge is
+  a different defect from a systemic one and would distort the ramp counts.
+- **A fluid size occupies two steps of the ramp**, its `clamp()` floor and its
+  ceiling, analysed as separate scales. Collapsing it to one number hides the
+  common failure where the desktop ramp is well spaced and the mobile one is
+  flat.
+- **Pills and shorthand radii are exempt from the corner scale.** `50%`,
+  `999px` and `0 0 4px 0` are shape decisions, not steps on a scale.
+
+The check it deliberately does not attempt is compositional: whether a viewport
+has one dominant element. That needs a screenshot, so it stays with the
+Playwright loop.
 
 ## contrast-audit.js
 
