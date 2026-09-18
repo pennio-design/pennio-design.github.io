@@ -46,6 +46,7 @@ const PAGES = [
   { file: 'index.html', url: `${ORIGIN}/`, index: true },
   { file: 'audit/index.html', url: `${ORIGIN}/audit/`, index: true },
   { file: 'letscreate/index.html', url: `${ORIGIN}/letscreate/`, index: true },
+  { file: 'work/jojo-jewels/index.html', url: `${ORIGIN}/work/jojo-jewels/`, index: true },
   { file: 'reel-studio/index.html', url: `${ORIGIN}/reel-studio/`, index: false },
   { file: 'thank-you.html', url: `${ORIGIN}/thank-you.html`, index: false },
 ];

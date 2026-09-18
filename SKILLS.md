@@ -234,6 +234,17 @@ npm global root beside the running interpreter, and `PLAYWRIGHT_MODULE_PATH`
 before reporting Playwright absent. Before this it reported a setup error on a
 machine that already had a working copy.
 
+## The reference implementation
+
+`work/jojo-jewels/index.html` is built to this document and reports **zero
+violations**: one typeface, a five-step ramp, every spacing value on the 8px
+cadence, two corner scales, and no colour literal outside the token blocks. It
+carries its own `--text-*` and `--s-*` scales inline, which is what the
+homepage still lacks.
+
+Copy it when starting a page. It also settles open decision 2 in the small:
+the scale works, it is shipped, and nothing about it required a build step.
+
 ## Open decisions - do not resolve these unilaterally
 
 Each is a visible brand change with real cost. They are named here so they get

@@ -42,6 +42,7 @@ const PAGES = [
   { file: 'index.html', inSystem: true },
   { file: 'audit/index.html', inSystem: true },
   { file: 'letscreate/index.html', inSystem: true },
+  { file: 'work/jojo-jewels/index.html', inSystem: true },
   { file: 'reel-studio/index.html', inSystem: false },
   { file: 'thank-you.html', inSystem: false },
 ];

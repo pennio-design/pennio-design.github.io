@@ -24,4 +24,11 @@
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+  <!-- Case route. Added 2026-09-18 with the page itself, so it resolves on
+       deploy. Trailing slash matches the canonical on the page. -->
+  <url>
+    <loc>https://pennio.agency/work/jojo-jewels/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

@@ -228,6 +228,39 @@ Paul Oyatowo, designer and founder" while the meta description beside it said
 the entity graph state the proposition identically. One canonical sentence is
 also better for entity consistency than four paraphrases.
 
+## Moving the portfolio onto routes
+
+`/work/jojo-jewels/` is the first case route, built from the material in
+`portfolio.pdf` rather than composed for the web: the lede, the mark
+description, the palette and the delivery count are the deck's own facts,
+rewritten into first person and clear of the banned vocabulary. It is in the
+sitemap, carries a `CreativeWork` node linked to `#paul-oyatowo`,
+`#website` and `#organization` by `@id`, and is listed in `llms.txt`.
+
+Two things came out of reading that PDF, and both are blockers rather than
+tasks:
+
+**`portfolio.pdf` contradicts the live positioning and ships placeholders.**
+Its text uses `brand architecture` five times, `growth creative` three times,
+`pillars` and `stack`, and speaks as "We build bold brands for Africa's next
+decade". It names eleven brands. Three pages still print the editorial
+placeholder that should have been filled or cut before export: "Reserved for a
+dated, specific claim", and "Reserved. One real claim with a date. Empty slots
+are removed at export." It is linked twice from the homepage, so a visitor who
+asks for more depth gets the previous company and sees the production notes.
+Rebuild it or drop the link; leaving it is the one thing that is not an option,
+because it is precisely the second proof rule. Not decided here.
+
+**Tabitha House is blocked on artwork, not on permission.** The brand is real
+and confirmed showable. The only asset in the repository,
+`tabitha-house-of-fragrance-brand-identity.webp`, is a generated product mockup
+with a visibly malformed hand, and it shows one fragrance bottle when the deck
+describes the work as a two-line lockup kit, Crafts and Fragrance, six files.
+Publishing a generated mockup as portfolio work on a brand designer's own site
+is a claim that breaks the moment anyone looks closely. The case is ready to
+write the moment the real lockup artwork exists; the deck already contains the
+story.
+
 ## The honest strategic read
 
 The technical layer is now clean, and that means it has stopped being the
