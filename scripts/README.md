@@ -261,6 +261,38 @@ printf '%s\n' \
   | node scripts/mcp-design-engine.js
 ```
 
+## build-headshot.py
+
+`paul-oyatowo.webp` is built, not hand-cropped. The site's device is a circle
+inscribed in a 400px square: cream fill `#F5F1EB`, a 5px brand-orange `#F26522`
+ring flush to the outer edge, and transparency outside it so the disc sits on
+either theme's ground.
+
+```sh
+pip install Pillow
+python3 scripts/build-headshot.py /path/to/cutout.png
+```
+
+It takes a background-removed portrait with an alpha channel and writes the
+asset beside itself, plus dark and light composites for review. The source
+cutout is not in the repository; only the script and the measurements are.
+
+Two things in it are the whole point and should not be changed casually:
+
+- **The framing constants match the asset they replaced.** Head top at 13.75%
+  of the circle, head width 44% of the diameter, head centred. They are derived
+  from `HEAD_TOP` and `HEAD_CX` measured off the source's alpha profile, and a
+  crop size of 1400px follows from them. A portrait with less headroom than the
+  crop needs is padded with transparency rather than framed tighter, because
+  the cream fill shows through and costs nothing.
+- **The ring is an annulus between two circular masks**, not an ellipse
+  outline. PIL draws an outline inward from its bounding box, which left a pale
+  antialiased gap outside the ring; against the light theme that read as a
+  broken edge. Drawing an orange disc and laying the inset portrait disc on top
+  keeps the ring flush. Verified by sampling 72 points around the ring and by
+  comparing the centre-row transition against the previous asset, which matches
+  to within three units per channel.
+
 ## The checklist PDF
 
 `audit/checklist-source.html` -> `audit/pennio-brand-checklist.pdf`, six A4
