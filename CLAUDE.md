@@ -15,6 +15,7 @@ You are the Master Web Architecture Orchestrator. You coordinate seven discrete 
   and dependency-free. It includes the banned-vocabulary check on meta copy,
   because ranking pressure points straight at the words the positioning bars.
 
+- **Nothing is committed that nothing points at, and nothing points at what is not committed.** `geo-audit.js` checks both directions across every served HTML, CSS, `.webmanifest` and `.txt` file, resolving same-origin absolute URLs as local paths. A reference to a missing file is an error; a committed media file nothing references is a warning. The second half exists because the unrepaired Tabitha render sat in the repository for three weeks looking usable, and `site.webmanifest` pointed at a `favicon.svg` that has never existed in this repository's history. Deliberate exceptions live in `ORPHAN_ALLOW` in that script and each carries a reason, because an allowlist without one becomes the loophole it was meant to close.
 - **`scripts/copy-audit.js` governs how the copy reads.** Offline and
   dependency-free like the other two. It scores the rendered text per page and
   per section against the band below, and reports sentences over 25 words.
@@ -83,7 +84,7 @@ This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/
 ### Agent 03: Kinetic Director
 - Role: Integrates generative media assets and programs high-conversion interactive widgets.
 - Invocation: `task:kinetic-widget`
-- Output Target: media into `motion/`; widget markup and behaviour inline in the target page, or `script.js`
+- Output Target: media into `motion/`, which no longer exists and is created by the first change that needs it; widget markup and behaviour inline in the target page, or `script.js`. Anything written there must be referenced by the same change, or `geo-audit.js` reports it as an orphan.
 
 ### Agent 04: Viewport Sentinel
 - Role: Enforces strict mobile responsiveness, audits touch target areas, and eliminates horizontal overflow.

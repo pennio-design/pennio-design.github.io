@@ -7,6 +7,9 @@
 <meta name="description" content="I build brand identities and websites for African businesses that want to charge more. Projects start at ₦350,000. Built by Paul Oyatowo in Oyo State, Nigeria.">
 <link rel="canonical" href="https://pennio.agency/">
 <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#050505">
@@ -179,7 +182,6 @@ html { scroll-behavior: smooth; color-scheme: dark; }
   html { scroll-behavior: auto; }
   .reveal, .nav-logo svg { transition: none !important; animation: none !important; opacity: 1 !important; transform: none !important; }
   .faq-item::details-content { transition: none !important; }
-  video[aria-hidden="true"] { display: none !important; }
 }
 body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif; font-weight: 400; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 .skip-nav { position: absolute; top: -100%; left: 0; background: var(--orange); color: var(--white); padding: 12px 20px; font-size: 0.8rem; font-weight: 600; text-decoration: none; z-index: 9999; border-radius: 0 0 4px 0; transition: top 0.15s ease; }
@@ -193,9 +195,6 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-family: 'Inter', sans-serif; font-weight: 500; text-decoration: none; border: none; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 160ms var(--ease-out); white-space: nowrap; border-radius: 4px; }
 .btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 .btn:active { transform: scale(0.97); }
-/* The two decorative loops blend with mix-blend-mode:screen, which only works
-   over a dark ground; on a light page they flatten into grey blocks. */
-:root[data-theme="light"] video[aria-hidden="true"] { display: none; }
 .theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0; background: none; border: 1px solid var(--line-dark); border-radius: 4px; color: var(--fg); cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease; }
 .theme-toggle:hover { border-color: var(--grey-4); background: rgba(var(--fg-rgb),0.06); }
 .theme-toggle:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }

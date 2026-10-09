@@ -232,6 +232,20 @@ them.
 
 Baseline is **0 findings**. Exit 1 above the ceiling, 2 on a bad `--max`.
 
+It also checks reference integrity in both directions, across every served
+HTML, CSS, `.webmanifest` and `.txt` file: a reference to a file that is not in
+the repository is an error, and a committed media file that nothing references
+is a warning. Same-origin absolute URLs resolve as local paths, because the
+share tags write `og:image` as a full `https://pennio.agency/...` URL and
+skipping every absolute URL reported `og-cover.jpg` as an orphan.
+
+That check found `site.webmanifest` pointing at `/favicon.svg`, which has never
+existed here, and four icon files that existed but were never linked. It exists
+because the orphan direction is the one that bites: an unreferenced file looks
+usable, and the unrepaired Tabitha render sat in the repository for three weeks
+on exactly that basis. Deliberate exceptions go in `ORPHAN_ALLOW` with a reason
+attached; an allowlist without reasons is the loophole it was meant to close.
+
 Three decisions keep it honest:
 
 - **Only `linkedin.com/in/` is treated as a personal profile.** The path

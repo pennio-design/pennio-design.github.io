@@ -347,6 +347,96 @@ function auditEntities(where, nodes) {
 }
 
 /* ---------------------------------------------------------------- *
+ * Reference integrity
+ * ---------------------------------------------------------------- */
+
+/**
+ * Paths that are committed on purpose and that nothing is meant to reference
+ * yet. Each needs a reason, because an allowlist without one becomes the
+ * loophole it was meant to close.
+ */
+const ORPHAN_ALLOW = [
+  { prefix: 'campaign/', why: 'superseded campaign record, excluded in robots.txt, not updated' },
+  { prefix: 'work/assets/', why: 'artwork staged for case routes that are not built yet' },
+  { prefix: 'audit/pennio-brand-architecture-checklist.pdf', why: 'retired URL that went out in autoresponse emails' },
+];
+
+const MEDIA = /\.(webp|png|jpe?g|gif|mp4|webm|pdf|svg|ico|woff2?)$/i;
+
+/** Every local path a served file points at. */
+function referencedPaths() {
+  const refs = new Map();           // path -> the file that referenced it
+  const note = (raw, from) => {
+    if (!raw) return;
+    let v = raw.trim();
+    // Same-origin absolute URLs are local references. The share tags write
+    // og:image as a full https://pennio.agency/... URL, and skipping every
+    // absolute URL reported og-cover.jpg as an orphan.
+    if (v.startsWith(ORIGIN)) v = v.slice(ORIGIN.length) || '/';
+    if (!v || /^(https?:|data:|mailto:|tel:|#|\/\/)/i.test(v)) return;
+    v = v.split('#')[0].split('?')[0];
+    if (!v) return;
+    const rel = v.startsWith('/') ? v.slice(1)
+      : path.posix.normalize(path.posix.join(path.posix.dirname(from), v));
+    if (!refs.has(rel)) refs.set(rel, from);
+  };
+
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(path.join(ROOT, dir || '.'), { withFileTypes: true })) {
+      if (e.name.startsWith('.') || e.name === 'node_modules') continue;
+      const rel = dir ? `${dir}/${e.name}` : e.name;
+      if (e.isDirectory()) { walk(rel); continue; }
+      if (!/\.(html|css|webmanifest|json|txt)$/i.test(e.name)) continue;
+      if (rel.startsWith('campaign/')) continue;   // archive, not served as live
+      const body = fs.readFileSync(path.join(ROOT, rel), 'utf8');
+      for (const m of body.matchAll(/\b(?:src|href|poster|content)\s*=\s*["']([^"']+)["']/gi)) note(m[1], rel);
+      for (const m of body.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/gi)) note(m[1], rel);
+      if (/\.webmanifest$|\.json$/i.test(e.name)) {
+        for (const m of body.matchAll(/"src"\s*:\s*"([^"]+)"/g)) note(m[1], rel);
+      }
+    }
+  };
+  walk('');
+  return refs;
+}
+
+/** Every media file actually committed under a live path. */
+function mediaOnDisk() {
+  const out = [];
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(path.join(ROOT, dir || '.'), { withFileTypes: true })) {
+      if (e.name.startsWith('.') || e.name === 'node_modules') continue;
+      const rel = dir ? `${dir}/${e.name}` : e.name;
+      if (e.isDirectory()) walk(rel);
+      else if (MEDIA.test(e.name)) out.push(rel);
+    }
+  };
+  walk('');
+  return out;
+}
+
+function auditReferences() {
+  const refs = referencedPaths();
+
+  // A reference to a file that is not there is a 404 waiting to be served.
+  for (const [target, from] of refs) {
+    if (!MEDIA.test(target) && !/\.(html|css|js|txt|xml|webmanifest)$/i.test(target)) continue;
+    if (exists(target)) continue;
+    if (exists(target.replace(/\/$/, '') + '/index.html')) continue;
+    add('error', from, `references ${target}, which is not in the repository`);
+  }
+
+  // A file nothing points at looks live and is the one that gets used by
+  // mistake. The unrepaired Tabitha render sat here for three weeks.
+  for (const file of mediaOnDisk()) {
+    if (refs.has(file)) continue;
+    const allow = ORPHAN_ALLOW.find((a) => file.startsWith(a.prefix));
+    if (allow) continue;
+    add('warn', file, 'is committed but nothing references it. Delete it, use it, or add it to ORPHAN_ALLOW with a reason.');
+  }
+}
+
+/* ---------------------------------------------------------------- *
  * Site-wide checks
  * ---------------------------------------------------------------- */
 
@@ -482,6 +572,7 @@ function main() {
 
   PAGES.forEach(auditPage);
   auditSiteWide();
+  auditReferences();
 
   const errors = findings.filter((f) => f.severity === 'error');
   const warns = findings.filter((f) => f.severity === 'warn');
