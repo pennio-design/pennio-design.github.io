@@ -72,7 +72,17 @@ const BANNED_COPY = [
  */
 const THIRD_PERSON = [
   /PENNIO[-\s]led\b/i,
-  /\bPENNIO\s+(?:builds?|delivers?|creates?|offers?|provides?|helps?|serves?|works?|is|was|has|specialis\w+|specializ\w+)\b/i,
+  // Any verb, not a hand-picked list. The first version named ten verbs and
+  // missed "PENNIO collects", "PENNIO reviews", "PENNIO remains" and "PENNIO
+  // does not offer" sitting in the privacy and terms modals. A generic verb
+  // shape catches the construction instead of guessing which verb was used.
+  // "PENNIO from Oyo State" and "by PENNIO" stay clean: those are not subjects.
+  /\bPENNIO\s+(?:does|do|did|is|was|are|were|has|have|had|can|will|would|may|must|shall)\b/i,
+  // Deliberately case-sensitive. With /i the character class matches capitals
+  // too, and "PENNIO" followed by the studio chip's "This site, and the
+  // studio's own brand" was reported as "PENNIO This". A verb mid-sentence is
+  // lowercase, so requiring that is both the fix and the correct rule.
+  /PENNIO\s+[a-z]+(?:s|es|ed)\b/,
   /\bPENNIO's\b/i,
   /\bwe(?:'re| are)\s+an?\s+\w*\s*(?:studio|team|company|practice)\b/i,
 ];

@@ -15,6 +15,21 @@ You are the Master Web Architecture Orchestrator. You coordinate seven discrete 
   and dependency-free. It includes the banned-vocabulary check on meta copy,
   because ranking pressure points straight at the words the positioning bars.
 
+- **`scripts/copy-audit.js` governs how the copy reads.** Offline and
+  dependency-free like the other two. It scores the rendered text per page and
+  per section against the band below, and reports sentences over 25 words.
+  Target: **plain but adult, grade 5 to 6 as a ceiling.** There is no floor.
+  Pushing prose below grade 4 on a page asking for 350,000 naira starts to read
+  as talking down, but a section that lands there naturally is not a defect.
+  Current state: every page is at zero findings, which is the ratchet.
+
+  Read the numbers as proxies, not truth. Flesch-Kincaid counts syllables and
+  sentence length; it cannot tell whether a short sentence says anything. Note
+  also that splitting a long sentence lowers the grade without changing a
+  single word, so concision and simplification move the same number in the same
+  direction and the score alone cannot tell them apart. Use it to find
+  suspects, then read them.
+
 This file stays the authority on repository facts and on the proof rules; a
 rule in `SKILLS.md` or `SEO.md` never overrides one here.
 
@@ -28,6 +43,7 @@ This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/
 - **The live token dictionary is the `:root` block in `index.html`**, now a role-based layer (brand orange `#F26522`). That block is the single source of truth.
 - **Themes.** Every page carries a dark `:root` and a `:root[data-theme="light"]` override. Dark is the default; a visitor who never touches the control sees the original design. `theme.js` at the repo root drives every page, and any control with a `data-theme-toggle` attribute becomes a toggle. Each page also inlines a small guard in `<head>` that applies the stored theme before first paint - it must stay inline and synchronous, or the wrong theme flashes.
 - **Positioning. The named source of truth is missing.** `01-positioning-source-of-truth.md` (September 2026) is referenced as the governing document and **is not in this repository and never has been** in its history, verified 2026-09-18. The paragraph below is therefore the operative record, not a summary of one: if it is trimmed, the positioning is gone. Commit the real document, or accept that this paragraph is it and treat it accordingly. Copy aimed at buyers does not use: agency, architecture, stack, pillars, framework, ecosystem, brief, execution, growth creative, full-stack, leverage, elevate, curated, bespoke, holistic, unlock, journey, solutions, or "connection problem". Those words remain fine internally, including in CSS class names, which are not copy. No em dashes. First person throughout: "I build", never "PENNIO delivers". Check with a rendered-text scan, not a source grep, or class attributes and the pennio.agency domain will produce false hits. `node scripts/geo-audit.js` now does that scan: it strips script, style and svg contents, drops tags, decodes entities and removes the domain before matching, across the meta and share tags and the rendered body of every indexable page, and it errors on a banned word, on PENNIO in a subject position, and on an em dash. `class="pillars"` and `class="feature-stack"` are live in the repository and correctly produce no hits, which is the whole reason the scan is not a grep.
+- **Ogbifọ is off the site.** The homepage carried a chip opening a modal that described it as "an AI-powered translation and cultural preservation platform [...] using machine learning, corpus verification, and offline-first tooling", and said "the product page is in progress". That was grade 15.4 on a site whose body copy is grade 4, and an undated in-progress claim, which the second proof rule names explicitly. The chip, the modal, its JavaScript and its CSS were removed on 2026-10-09 rather than rewritten, because the brand has no public page to point at. Put it back when it ships.
 - **Three proof rules, and they outrank any brief.** Never name a brand that cannot be shown. Never publish a claim that breaks on inspection, which includes an undated "In Progress" badge. Never invent a metric. Brilla and Jójò Jewels are showable and are both told as decisions rather than results, because no figures were supplied for either. Tabitha House is a real brand and is confirmed showable, but the only asset in the repository for it, `tabitha-house-of-fragrance-brand-identity.webp`, is a generated product mockup with a malformed hand, and it shows a single fragrance bottle rather than the two-line lockup kit that is what the work actually was. Publishing it would be a claim that breaks on inspection on a brand designer's own portfolio. That case is blocked on real artwork, not on permission.
 - **Pricing lives in the rate card, not the hero.** The hero states the proposition. The number appears on the lead offer card, in the rate card modal, in the FAQ, in the fit criteria and in the budget field, so it filters people who have already seen the work rather than people who have not.
 - **The homepage is not the only surface.** A positioning change also touches `og-cover.jpg` (re-render from `campaign/brand-assets/og-cover-source.html`, which is what every share of the site shows), `/audit/`, `/letscreate/`, the FAQ structured data, the meta and share tags, the `@graph` entity block in `index.html`, and `llms.txt` at the root, which restates the proposition for anything quoting the site. `node scripts/geo-audit.js` catches the meta and the entity half; `llms.txt` is prose and needs reading. The campaign pack under `campaign/` is a superseded record, excluded in robots.txt, and is not updated.

@@ -162,6 +162,44 @@ The check it deliberately does not attempt is compositional: whether a viewport
 has one dominant element. That needs a screenshot, so it stays with the
 Playwright loop.
 
+## copy-audit.js
+
+Offline, dependency-free and ratchetable, like the other two.
+
+```sh
+node scripts/copy-audit.js              # the gate; baseline is 0 findings
+node scripts/copy-audit.js --sections   # every section, not just the worst three
+node scripts/copy-audit.js --json --max=0
+```
+
+Flesch Reading Ease and Flesch-Kincaid Grade over the rendered text, per page
+and per section, plus a count of sentences over 25 words. The ceiling is grade
+6 and reading ease 60, set in `../CLAUDE.md`. Exit 1 above the ceiling, 2 on a
+bad `--max`.
+
+Three things keep the output honest:
+
+- **Script, style and svg are stripped before the section splitter runs, not
+  after.** `letscreate/index.html` keeps modal HTML inside JS template
+  literals. A splitter run over the raw body matched the `<div
+  class="modal-body">` inside a string, sliced there, and scored JavaScript as
+  prose: it reported a section at grade 23 with a 119-word sentence, which was
+  source code.
+- **Sections are containers, not any class containing a word.** Matching
+  `class="*case*"` split on `case-kind` and scored the label row "Jewellery,
+  retail - Identity, packaging and campaign" as a sentence. Six polysyllabic
+  nouns with no verb read as grade 7.6, which measures a fragment rather than
+  prose.
+- **Closing block tags become sentence boundaries first.** Without that a
+  heading runs into the paragraph beneath it and the two score as one
+  impossibly long sentence.
+
+The formulas are proxies. They count syllables and sentence length and cannot
+tell whether a short sentence says anything, so a low grade beside heavy jargon
+is still bad copy. They also cannot separate concision from simplification:
+splitting one long sentence lowers the grade without changing a word. Find
+suspects with the numbers, then read them.
+
 ## geo-audit.js
 
 Not an MCP tool. Offline, dependency-free and ratchetable, like
