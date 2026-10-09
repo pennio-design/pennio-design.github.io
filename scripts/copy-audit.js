@@ -37,6 +37,10 @@ const PAGES = [
   'audit/index.html',
   'letscreate/index.html',
   'work/jojo-jewels/index.html',
+  // Not a route: the print master for the checklist PDF, which is the lead
+  // magnet people actually receive. It shares a paragraph with /audit/ and had
+  // already drifted from it, so it is held to the same standard.
+  'audit/checklist-source.html',
 ];
 
 /* The band CLAUDE.md commits to. Grade 6 is the ceiling: above it the writing
