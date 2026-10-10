@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page not found | PENNIO</title>
+<meta name="description" content="That page does not exist. Brand identity and websites for African businesses, built by Paul Oyatowo.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#050505">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+/* Applies the stored theme before first paint; a deferred script would flash. */
+(function(){try{if(localStorage.getItem('pennio-theme')==='light'){document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  /* Brand constants - identical in both themes */
+  --orange: #F26522;
+  --orange-dark:#D9561B;
+  --white: #FFFFFF;   /* literal: text on an orange fill */
+  --black: #050505;   /* literal */
+
+  /* Page roles. Channel tokens let alpha values follow the theme. */
+  --fg-rgb: 255,255,255;
+  --bg-rgb: 5,5,5;
+  --bg: #050505;
+  --bg-2: #0A0A0A;
+  --fg: #FFFFFF;
+  --surface: #121212;
+  --surface-2: #1A1A1A;
+
+  /* Inverted sections: deliberately the opposite of the page, which is what
+     keeps the dark/light rhythm working in either theme. */
+  --invert-bg: #FFFFFF;
+  --invert-bg-2: #F8F8F8;
+  --invert-fg: #000000;
+  --invert-muted: #666666;
+  --invert-border: rgba(0,0,0,0.09);
+  --invert-fg-rgb: 0,0,0;
+  /* Semantic colours come in two flavours: one for the page, one for the
+     inverted sections, because those two surfaces move in opposite directions. */
+  --danger: #FF8A65;   /* on page-coloured surfaces */
+  --ok-inv: #1A7A3C;   /* inside an inverted section */
+  --warn-inv: #B04020;
+  --capacity-fg: #5A2800;
+  --orange-ink-page: #F26522;   /* 6.46:1 on the dark page */
+  --orange-ink-inv: #BC440B;    /* >=4.5:1 on every light ground in use */
+  --orange-ink: var(--orange-ink-page);
+
+  /* Legacy names kept as aliases so existing declarations follow the theme. */
+  --off-black: var(--bg-2);
+  --off-white: var(--invert-bg-2);
+  --text-dark: var(--invert-fg);
+  --text-muted: var(--invert-muted);
+  --line-dark: rgba(var(--fg-rgb),0.09);
+  --line-light: var(--invert-border);
+  --grey-3: rgba(var(--fg-rgb),0.50);
+  --grey-4: rgba(var(--fg-rgb),0.60);
+  --grey-5: rgba(var(--fg-rgb),0.85);
+  --glass-bg: rgba(var(--fg-rgb),0.035);
+  --glass-bdr: rgba(var(--fg-rgb),0.08);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+:root[data-theme="light"] {
+  --fg-rgb: 5,5,5;
+  --bg-rgb: 248,248,248;
+  --bg: #F8F8F8;
+  --bg-2: #FFFFFF;
+  --fg: #050505;
+  --surface: #FFFFFF;
+  --surface-2: #F0F0F0;
+
+  --invert-bg: #0A0A0A;
+  --invert-bg-2: #121212;
+  --invert-fg: #FFFFFF;
+  --invert-muted: rgba(255,255,255,0.60);
+  --invert-border: rgba(255,255,255,0.10);
+  --invert-fg-rgb: 255,255,255;
+  --danger: #B04020;
+  --ok-inv: #4CC97F;
+  --warn-inv: #FF8A65;
+  --capacity-fg: #FFD3BE;
+  --orange-ink-page: #BC440B;
+  --orange-ink-inv: #F26522;
+  /* Dark ink needs more weight than light ink to clear AA on a light ground. */
+  --grey-3: rgba(var(--fg-rgb),0.62);
+  --grey-4: rgba(var(--fg-rgb),0.72);
+}
+html { color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
+@media (prefers-reduced-motion: reduce) { .nav-logo svg { animation: none !important; } }
+body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; min-height: 100svh; display: flex; flex-direction: column; overflow-x: hidden; }
+.site-nav { height: 72px; padding: 0 5vw; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line-dark); }
+.nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--fg); min-height: 44px; }
+.nav-logo svg { width: 18px; animation: breathe 3.6s ease-in-out infinite; }
+.nav-logo svg path { fill: currentColor; }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.nav-wordmark { font-size: 0.88rem; font-weight: 600; letter-spacing: -0.02em; }
+.nav-wordmark span { color: var(--orange-ink); }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; background: none; border: 1px solid var(--line-dark); border-radius: 4px; color: var(--fg); cursor: pointer; }
+.theme-toggle:hover { border-color: var(--grey-4); background: rgba(var(--fg-rgb),0.06); }
+.theme-toggle:focus-visible, .btn:focus-visible, .nav-logo:focus-visible, .links a:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.theme-toggle svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+main { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; padding: 72px 5vw; text-align: center; overflow: hidden; }
+.grid-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.grid-3d { position: absolute; bottom: -10%; left: -50%; width: 200%; height: 100%; background-image: linear-gradient(to right, rgba(var(--fg-rgb),0.045) 1px, transparent 1px), linear-gradient(to top, rgba(var(--fg-rgb),0.045) 1px, transparent 1px); background-size: 40px 40px; transform: perspective(60vh) rotateX(60deg) translateY(-50px); mask-image: linear-gradient(to top, black 10%, transparent 80%); -webkit-mask-image: linear-gradient(to top, black 10%, transparent 80%); }
+.wrap { position: relative; z-index: 1; width: 100%; max-width: 620px; }
+.label { display: inline-block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4); margin-bottom: 16px; }
+.code { font-size: clamp(5.5rem, 22vw, 11rem); font-weight: 700; line-height: 0.9; letter-spacing: -0.05em; color: var(--orange-ink); margin-bottom: 24px; }
+h1 { font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 700; line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 18px; }
+.sub { font-size: 1.05rem; font-weight: 300; line-height: 1.68; color: var(--grey-4); max-width: 480px; margin: 0 auto 36px; }
+.actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-family: inherit; font-size: 0.8rem; font-weight: 500; text-decoration: none; transition: background-color 0.2s ease, border-color 0.2s ease; }
+.btn-cta { padding: 12px 24px; background: var(--orange); color: var(--white); }
+.btn-cta:hover { background: var(--orange-dark); }
+.btn-outline { padding: 11px 23px; color: var(--fg); border: 1px solid var(--line-dark); }
+.btn-outline:hover { border-color: var(--grey-4); background: rgba(var(--fg-rgb),0.03); }
+.links { display: flex; gap: 8px 28px; justify-content: center; flex-wrap: wrap; list-style: none; }
+.links a { display: inline-flex; align-items: center; min-height: 44px; font-size: 0.8rem; color: var(--grey-4); text-decoration: underline; text-underline-offset: 3px; }
+.links a:hover { color: var(--fg); }
+footer { padding: 24px 5vw; border-top: 1px solid var(--line-dark); font-size: 0.72rem; color: var(--grey-3); text-align: center; }
+@media (max-width: 480px) { .actions .btn { width: 100%; } }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Site">
+<a href="/" class="nav-logo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81.67 102.67" aria-hidden="true">
+<path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42" fill="white"/>
+</svg>
+<span class="nav-wordmark">PENNIO<span>.</span></span>
+</a>
+<button class="theme-toggle" id="themeToggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch to light theme">
+<svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.4M12 19v2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M2.6 12h2.4M19 12h2.4M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7"/></svg>
+<svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/></svg>
+</button>
+</nav>
+
+<main id="main">
+<div class="grid-bg"><div class="grid-3d"></div></div>
+<div class="wrap">
+<div class="code" aria-hidden="true">404</div>
+<span class="label">Page not found</span>
+<h1>That page is not here.</h1>
+<p class="sub">The link may be old, or I may have moved the page. The work and the price are on the homepage, and the rest is a click away.</p>
+<div class="actions">
+<a href="/" class="btn btn-cta">Go to the homepage</a>
+<a href="/#work" class="btn btn-outline">See the work</a>
+</div>
+<ul class="links">
+<li><a href="/audit/">Free brand checklist</a></li>
+<li><a href="/#faq">Questions</a></li>
+<li><a href="/#apply">Book a call</a></li>
+</ul>
+</div>
+</main>
+
+<footer>&#169; 2026 PENNIO. I make good businesses look as good as they are.</footer>
+<script src="/theme.js" defer></script>
+</body>
+</html>
