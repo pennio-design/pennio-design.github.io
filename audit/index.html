@@ -195,7 +195,7 @@
         <div id="formView">
           <div class="form-card-eyebrow">Get Instant Access</div>
           <h2>Download the checklist.</h2>
-          <p class="form-card-note">One PDF, straight to your screen. No spam, no drip sequence, unsubscribe from anything we send whenever you like.</p>
+          <p class="form-card-note">One PDF, straight to your screen. Three short emails over ten days, then nothing unless you reply.</p>
           <div class="form-alert" id="formAlert"></div>
           <form id="auditForm" action="https://formsubmit.co/ea0da421e8e6e82457be40792262eeed" method="POST">
             <input type="hidden" name="_subject" value="New Lead: Brand Checklist (PENNIO)">
@@ -338,7 +338,7 @@ function trackLead() { if (typeof fbq !== 'undefined') fbq('track', 'Lead'); }
       successView.style.display = 'block';
       trackLead();
     } catch (err) {
-      alertBox.textContent = "Something didn't go through. You can also reach us directly on Instagram @pennio.agency.";
+      alertBox.textContent = "Something didn't go through. You can also reach me directly on Instagram @pennio.agency.";
       alertBox.classList.add('show');
       submitBtn.disabled = false;
       submitBtn.textContent = 'Send Me the Checklist';
