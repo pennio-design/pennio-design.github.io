@@ -272,6 +272,7 @@
     <div class="foot-links">
       <a href="/">Home</a>
       <a href="/#apply">Apply</a>
+      <a href="mailto:contact@pennio.agency">contact@pennio.agency</a>
       <a href="https://instagram.com/pennio.agency" target="_blank" rel="noopener">Instagram</a>
     </div>
   </div>
@@ -338,7 +339,7 @@ function trackLead() { if (typeof fbq !== 'undefined') fbq('track', 'Lead'); }
       successView.style.display = 'block';
       trackLead();
     } catch (err) {
-      alertBox.textContent = "Something didn't go through. You can also reach me directly on Instagram @pennio.agency.";
+      alertBox.textContent = "Something didn't go through. You can also email me at contact@pennio.agency.";
       alertBox.classList.add('show');
       submitBtn.disabled = false;
       submitBtn.textContent = 'Send Me the Checklist';

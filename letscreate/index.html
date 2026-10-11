@@ -583,6 +583,7 @@
         <a href="#problem">The Problem</a>
         <a href="#system">What We Build</a>
         <a href="#apply">Apply</a>
+        <a href="mailto:contact@pennio.agency">contact@pennio.agency</a>
       </div>
     </div>
   </footer>
@@ -737,7 +738,7 @@
           formStatus.style.display = 'none';
           if(successMsg) successMsg.classList.add('show');
         } catch(err) {
-          formStatus.textContent = 'Submission failed. Please try again or contact PENNIO directly.';
+          formStatus.textContent = 'Submission failed. Please try again or email contact@pennio.agency.';
           formStatus.className = 'hero-sub error';
           submitBtn.disabled = false;
           submitBtn.textContent = 'Submit Application';
@@ -773,7 +774,7 @@
             pFormStatus.style.display = 'none';
             if(pSuccessMsg) pSuccessMsg.classList.add('show');
           } catch(err) {
-            pFormStatus.textContent = 'Transmission error. Retry or route via network mail directly.';
+            pFormStatus.textContent = 'Submission failed. Please try again or email contact@pennio.agency.';
             pFormStatus.className = 'error';
             pSubmitBtn.disabled = false;
             pSubmitBtn.textContent = 'Submit Intent';
