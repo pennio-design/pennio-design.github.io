@@ -9,7 +9,7 @@
   'use strict';
 
   var style = document.createElement('style');
-  style.textContent = 'p,li,figcaption,summary,dd{text-wrap:pretty}h1,h2,h3,h4{text-wrap:balance}';
+  style.textContent = 'p,li,figcaption,summary,dd{text-wrap:pretty}h1,h2,h3,h4{text-wrap:balance}button,input,select,textarea{font-family:inherit}';
   document.head.appendChild(style);
 
   var SKIP = /^(SCRIPT|STYLE|CODE|PRE|TEXTAREA|OPTION|BUTTON|LABEL|INPUT|SELECT)$/;

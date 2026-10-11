@@ -10,8 +10,9 @@
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://pennio.agency/og-cover.jpg" />
   <link rel="icon" href="/favicon.ico" sizes="any" />
-  <link rel="preconnect" href="https://api.fontshare.com" />
-  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script>
   /* Applies the stored theme before first paint; a deferred script would flash. */
   (function(){try{if(localStorage.getItem('pennio-theme')==='light'){document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();
@@ -59,7 +60,7 @@
       --radius-sm: .5rem; --radius-md: .9rem; --radius-lg: 1.25rem; --radius-xl: 1.8rem; --radius-full: 999px;
       --shadow-md: 0 18px 40px rgba(0,0,0,.28);
       --shadow-lg: 0 28px 80px rgba(0,0,0,.45);
-      --font-body: 'General Sans', Inter, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --content: 1180px;
       --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     }
@@ -267,7 +268,7 @@
     .ladder-step p { font-size: var(--text-xs); color: var(--color-text-muted); }
 
     .share-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
-    .share-item { min-width: 0; padding: var(--space-4); border: 1px solid var(--color-divider); border-radius: var(--radius-sm); font-family: monospace; font-size: var(--text-xs); color: var(--color-text-faint); background: rgba(0,0,0,.2); overflow-wrap: anywhere; }
+    .share-item { min-width: 0; padding: var(--space-4); border: 1px solid var(--color-divider); border-radius: var(--radius-sm); font-family: inherit; font-size: var(--text-xs); color: var(--color-text-faint); background: rgba(0,0,0,.2); overflow-wrap: anywhere; }
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }

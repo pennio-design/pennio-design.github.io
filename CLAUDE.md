@@ -21,9 +21,9 @@ This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/
 
 - **Orange is two things.** `--orange` is the brand *fill* and never changes. `--orange-ink` is orange used as *text*, and is rebound by the surface it lands on, not by the theme: `#F26522` reads 6.46:1 on a dark ground but the darker `#BC440B` is needed on a light one, and each fails on the other. Check contrast with `node scripts/contrast-audit.js`.
 - **Writing themeable CSS.** Colour tokens are named for their *role*, not their value: `--bg`, `--fg`, `--surface`, `--border`. Value-named tokens (`--white`, `--black`) are literals for things that must not flip, such as text on an orange fill. `--invert-*` is for sections deliberately opposite the page, which is what keeps the dark/light rhythm working in both themes. Alpha values use the channel tokens - `rgba(var(--fg-rgb),0.06)`, never `rgba(255,255,255,0.06)`, which goes invisible on a light background. A hardcoded hex or a `fill="white"` SVG attribute will not follow the theme; CSS outranks a presentation attribute, so style the SVG rather than editing its markup.
-- **`thank-you.html` is off-brand and excluded from the theme system.** It uses `#fff8e1` and Material orange `#ff9800`, has no nav and no tokens - a leftover template rather than a Pennio page. It needs a rebrand decision, not a toggle.
+- **`thank-you.html` was deleted (October 2026).** It was an unlinked leftover template in off-brand colours. Unknown URLs now fall through to `404.html`.
 - **Deploy is `git push` to `master`** (not `main`, not Vercel). GitHub Pages serves the repo root at `pennio.agency` via `CNAME`.
-- **Routes are directories containing `index.html`**: `/` , `/audit/`, `/letscreate/`, plus the standalone `/thank-you.html`. Campaign pages under `campaign/founders-brand-architecture/` are standalone HTML documents, not routed pages.
+- **Routes are directories containing `index.html`**: `/` , `/audit/`, `/letscreate/`, plus the standalone `/404.html`. Campaign pages under `campaign/founders-brand-architecture/` are standalone HTML documents, not routed pages.
 
 ## Execution Rules
 1. Never generate CSS or markup without a compiled design token dictionary from Agent 01.
