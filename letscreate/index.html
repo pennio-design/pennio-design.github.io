@@ -726,7 +726,7 @@
         formStatus.className = 'hero-sub';
         try {
           const payload = Object.fromEntries(new FormData(form));
-          const res = await fetch('https://formsubmit.co/ajax/ea0da421e8e6e82457be40792262eeed', {
+          const res = await fetch('https://formsubmit.co/ajax/385f3fed9367873e3a24fa92c673e010', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify(payload)
@@ -762,7 +762,7 @@
           pFormStatus.textContent = 'Routing connection logs...';
           try {
             const payload = Object.fromEntries(new FormData(pForm));
-            const res = await fetch('https://formsubmit.co/ajax/ea0da421e8e6e82457be40792262eeed', {
+            const res = await fetch('https://formsubmit.co/ajax/385f3fed9367873e3a24fa92c673e010', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
               body: JSON.stringify(payload)

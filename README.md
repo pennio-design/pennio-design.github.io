@@ -14,7 +14,7 @@ The live site is running an **older, partially-broken state**:
 
 ## What I fixed to make this deployable today
 
-1. **Form now actually works.** Pointed `action` at the FormSubmit endpoint ID that's already active and confirmed on the live site (`ea0da421e8e6e82457be40792262eeed`) instead of the unfilled placeholder email that was in index-24. This is the one line that determines whether a single lead gets captured — I did not leave it as a TODO.
+1. **Form now actually works.** Pointed `action` at the FormSubmit endpoint ID that's already active and confirmed on the live site (`385f3fed9367873e3a24fa92c673e010`) instead of the unfilled placeholder email that was in index-24. This is the one line that determines whether a single lead gets captured — I did not leave it as a TODO.
 2. **Client work leads, studio products follow.** Jojo Jewels / Tabitha / PENNIO itself stand alone as the primary proof grid. KnowledgeGraph, The Let's Create Network, and Ogbifọ moved to a secondary "Also from the studio" strip — visible, still linked, not competing for the first impression.
 3. **`sitemap.xml`** only lists the homepage. `/letscreate` and `/KnowledgeGraph` are commented out until confirmed live — an agency selling "we don't ship what doesn't work" cannot have a sitemap that 404s.
 4. Deferred Meta Pixel, `decoding="async"` on below-fold images, `prefers-reduced-motion` support, visible focus states, FAQ added to both nav menus, root-absolute image paths.
@@ -53,7 +53,7 @@ one level up.
 
 ## Before you deploy
 
-- [ ] Confirm `ea0da421e8e6e82457be40792262eeed` still delivers to a monitored inbox (FormSubmit IDs can be reset).
+- [ ] Confirm `385f3fed9367873e3a24fa92c673e010` still delivers to a monitored inbox (FormSubmit IDs can be reset).
 - [ ] Confirm `/letscreate` and `/KnowledgeGraph` resolve, or point those chips somewhere real (Instagram, a waitlist) until they do.
 - [ ] Confirm the "3 new projects per month" and "48 hours" capacity claims are still true — these are live commitments, not decoration.
 - [ ] Drop real image assets at the referenced paths.
