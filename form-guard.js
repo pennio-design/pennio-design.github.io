@@ -25,7 +25,7 @@
 (function () {
   'use strict';
 
-  var TRAP_NAME = 'website_confirm';
+  var TRAP_NAME = 'zz_extra_note';
 
   function hiddenInput(name) {
     var el = document.createElement('input');
@@ -63,9 +63,15 @@
       'submit',
       function (e) {
         elapsed.value = ((Date.now() - startedAt) / 1000).toFixed(1);
+        // Never drop the submit. Browser autofill and password managers do fill
+        // off-screen fields, and a silent drop looked to the visitor like a form
+        // that does nothing. Flag it in the subject and still send it, so the
+        // worst case is one spam email and not one lost client.
         if (trap.value !== '') {
-          e.preventDefault();
-          e.stopImmediatePropagation();
+          var subject = form.querySelector('[name="_subject"]');
+          if (subject && subject.value.indexOf('[CHECK]') !== 0) {
+            subject.value = '[CHECK] ' + subject.value;
+          }
         }
       },
       true
