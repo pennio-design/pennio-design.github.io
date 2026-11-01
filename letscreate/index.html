@@ -293,7 +293,12 @@
     .theme-toggle .icon-moon { display: none; }
     :root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
     :root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
-  </style>
+  
+    .challenge-days { list-style: none; margin: 0 0 var(--space-8); padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+    .challenge-days li { padding: var(--space-4); border: 1px solid var(--color-divider); border-radius: var(--radius-sm); font-size: var(--text-sm); line-height: 1.55; color: var(--color-text-muted); }
+    .challenge-days b { display: block; margin-bottom: 4px; font-size: var(--text-xs); letter-spacing: .1em; text-transform: uppercase; color: var(--orange-ink); }
+    @media (max-width: 720px) { .challenge-days { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
   <header class="site-header">
@@ -317,10 +322,57 @@
       <div class="hero-inner">
         <h1>Make real work. Get honest feedback. Grow in public.</h1>
         <p class="hero-copy">Let's Create is a learning group I run for African creatives. You work on real projects, share rough drafts, and get honest feedback.</p>
-        <p class="hero-sub">Start with a 7-day challenge. Join a 10-week cohort. Stay in the group after.</p>
+        <p class="hero-sub">The 7-day challenge starts Monday, November 16. After it comes the 10-week cohort. Then you stay in the group.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#apply">Apply for the 10-Week Cohort</a>
+          <a class="btn btn-primary" href="#challenge">Join the 7-day challenge</a>
           <button class="btn btn-secondary" data-modal-open="cohort">See how the 10 weeks go</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="challenge">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Starts Monday, November 16</span>
+          <h2>Join the 7-day challenge.</h2>
+          <p>One task a day for seven days. Share your rough work, and each day I go through three of them on video. It is free.</p>
+        </div>
+        <ol class="challenge-days">
+          <li><b>Day 1</b> Write what your business or work stands for in one sentence.</li>
+          <li><b>Day 2</b> Gather everything you have made and lay it side by side.</li>
+          <li><b>Day 3</b> Pick two colours and two fonts, and say why.</li>
+          <li><b>Day 4</b> Write the rules: what is allowed and what is not.</li>
+          <li><b>Day 5</b> Say your price out loud with no apology.</li>
+          <li><b>Day 6</b> Look at your page for five seconds, then say what it sells.</li>
+          <li><b>Day 7</b> Remove your name from your last five posts. Could someone tell it was you?</li>
+        </ol>
+        <div class="apply-panel">
+          <form class="form-grid" id="challengeForm" action="https://formsubmit.co/385f3fed9367873e3a24fa92c673e010" method="POST">
+            <input type="hidden" name="_subject" value="New Let's Create challenge sign-up (starts Nov 16)" />
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" name="_autoresponse" value="You are in. The Let's Create 7-day challenge starts on Monday, November 16. I will send you the first task that morning. Paul Oyatowo, PENNIO." />
+            <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+            <div class="field"><label for="ch-name">Full Name</label><input id="ch-name" name="name" required placeholder="Your name" autocomplete="name" /></div>
+            <div class="field"><label for="ch-email">Email</label><input id="ch-email" type="email" name="email" required placeholder="you@email.com" autocomplete="email" /></div>
+            <div class="field"><label for="ch-wa">WhatsApp number</label><input id="ch-wa" type="tel" name="whatsapp" required placeholder="080..." autocomplete="tel" /></div>
+            <div class="field"><label for="ch-ig">Instagram handle</label><input id="ch-ig" name="instagram" placeholder="@yourhandle" /></div>
+            <div class="field full"><label for="ch-skill">Main skill</label>
+              <select id="ch-skill" name="skill" required>
+                <option value="" disabled selected>Choose one</option>
+                <option>Brand Design</option><option>Product Design</option><option>Copy / Writing</option><option>Strategy</option><option>Video / Motion</option><option>Development</option><option>Marketing / Growth</option><option>Illustration / Art</option><option>I run a business</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field full">
+              <button type="submit" id="challengeBtn" class="btn btn-primary" style="width:100%;">Join the challenge</button>
+              <p id="challengeStatus" style="text-align:center; font-size: var(--text-xs); margin-top: var(--space-2);">I will send the first task on the morning of November 16.</p>
+            </div>
+          </form>
+          <div class="success-state" id="challengeDone" aria-live="polite" style="display:none">
+            <div class="success-icon">✓</div>
+            <h3>You are in.</h3>
+            <p>The challenge starts Monday, November 16. I will send you the first task that morning.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -531,7 +583,7 @@
             <div class="field full"><label for="lc-portfolio">Portfolio / Instagram / Behance</label><input id="lc-portfolio" name="portfolio" placeholder="@yourhandle or portfolio link" /></div>
             <div class="field full">
               <label for="lc-weakness">What skill do you want to get better at?</label>
-              <textarea id="lc-weakness" name="weakness" required placeholder="Be completely specific. Leaning into weakness helps us calibrate critique paths."></textarea>
+              <textarea id="lc-weakness" name="weakness" required placeholder="Be specific. For example: logo design, writing a brand story, or pricing."></textarea>
             </div>
             <div class="field full"><label for="lc-reason">Why do you want to join?</label><textarea id="lc-reason" name="reason" required placeholder="Be specific. Generic answers get generic results."></textarea></div>
             <div class="field full">
@@ -784,6 +836,26 @@
       }
     }
 </script>
+  <script>
+  (function () {
+    var f = document.getElementById('challengeForm'); if (!f) return;
+    var btn = document.getElementById('challengeBtn'), done = document.getElementById('challengeDone'), st = document.getElementById('challengeStatus');
+    f.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (f.querySelector('[name="_honey"]').value) return;
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        var r = await fetch(f.action.replace('formsubmit.co/', 'formsubmit.co/ajax/'), { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(f) });
+        if (!r.ok) throw new Error('fail');
+        f.style.display = 'none'; done.style.display = 'block';
+        if (typeof fbq !== 'undefined') fbq('track', 'Lead', { content_category: 'Challenge' });
+      } catch (err) {
+        st.textContent = "Something didn't go through. Please try again or email contact@pennio.agency.";
+        btn.disabled = false; btn.textContent = 'Join the challenge';
+      }
+    });
+  })();
+  </script>
 <script src="/theme.js" defer></script>
 <script src="/typography.js" defer></script>
 <script src="/form-guard.js" defer></script>
