@@ -158,6 +158,31 @@
   .foot-links { display: flex; gap: 20px; }
   .foot-links a { font-size: 0.78rem; color: var(--grey-4); text-decoration: none; transition: color 0.2s ease; }
   .foot-links a:hover { color: var(--fg); }
+
+  /* BRAND CHECK (scorer) */
+  .q-group { border: 0; margin: 0 0 22px; padding: 0; min-width: 0; }
+  .q-group legend { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey-3); margin-bottom: 10px; padding: 0; }
+  .q-item { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line); cursor: pointer; min-height: 44px; }
+  .q-item input { position: absolute; opacity: 0; pointer-events: none; }
+  .q-box { flex: 0 0 22px; width: 22px; height: 22px; margin-top: 1px; border: 1.5px solid rgba(var(--fg-rgb),0.35); border-radius: 5px; display: grid; place-items: center; transition: background-color 0.15s ease, border-color 0.15s ease; }
+  .q-item input:checked + .q-box { background: var(--orange); border-color: var(--orange); }
+  .q-item input:checked + .q-box::after { content: ""; width: 6px; height: 11px; border: solid var(--white); border-width: 0 2px 2px 0; transform: rotate(45deg) translate(-1px,-1px); }
+  .q-item input:focus-visible + .q-box { outline: 2px solid var(--orange); outline-offset: 2px; }
+  .q-text { font-size: 0.88rem; font-weight: 300; line-height: 1.55; color: var(--grey-5); }
+  .q-text b { font-weight: 600; color: var(--grey-3); margin-right: 6px; font-variant-numeric: tabular-nums; }
+  .q-bar { position: sticky; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0 0; background: linear-gradient(to top, var(--bg) 70%, transparent); }
+  .q-bar .form-submit { width: auto; margin: 0; padding: 14px 24px; }
+  #qCount { font-size: 0.78rem; color: var(--grey-4); font-variant-numeric: tabular-nums; }
+  .score-row { display: flex; align-items: baseline; gap: 8px; margin: 4px 0 10px; }
+  .score-num { font-size: 4.2rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--orange-ink); }
+  .score-of { font-size: 1.1rem; color: var(--grey-3); }
+  .gap-list { margin: 0 0 24px; padding-left: 20px; font-size: 0.85rem; font-weight: 300; line-height: 1.55; color: var(--grey-5); }
+  .gap-list li { margin-bottom: 8px; }
+  .score-form-note { font-size: 0.8rem; color: var(--grey-4); margin: 18px 0 14px; line-height: 1.55; }
+  .btn-link { background: none; border: 0; padding: 12px 0 0; font: inherit; font-size: 0.75rem; color: var(--grey-4); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 44px; }
+  .btn-link:hover { color: var(--fg); }
+  .success-primary { display: inline-flex; margin-top: 10px; background: var(--orange); color: var(--white); text-decoration: none; font-size: 0.82rem; font-weight: 700; padding: 14px 26px; border-radius: 6px; min-height: 44px; align-items: center; }
+  .success-primary:hover { background: var(--orange-dark); }
 </style>
 </head>
 <body>
@@ -192,16 +217,30 @@
       </div>
 
       <div class="form-card">
-        <div id="formView">
-          <div class="form-card-eyebrow">Get Instant Access</div>
-          <h2>Download the checklist.</h2>
-          <p class="form-card-note">One PDF, straight to your screen. Three short emails over ten days, then nothing unless you reply.</p>
+        <div id="quizView">
+          <div class="form-card-eyebrow">Free check, five minutes</div>
+          <h2>Tick what is true today.</h2>
+          <p class="form-card-note">Tick a box only if it is true right now, not once the thing you keep meaning to fix is fixed.</p>
+          <div id="quizGroups"></div>
+          <noscript><p class="form-card-note">This check needs JavaScript. You can <a href="/audit/pennio-brand-checklist.pdf">download the checklist as a PDF</a> instead.</p></noscript>
+          <div class="q-bar"><span id="qCount" aria-live="polite">0 of 15 ticked</span><button type="button" class="form-submit" id="showScore">Show my score</button></div>
+        </div>
+        <div id="scoreView" style="display:none">
+          <div class="form-card-eyebrow">Your score</div>
+          <div class="score-row"><span class="score-num" id="scoreNum">0</span><span class="score-of">out of 15</span></div>
+          <h2 id="bandTitle"></h2>
+          <p class="form-card-note" id="bandText"></p>
+          <div id="gapBox"><div class="form-card-eyebrow">Fix these first</div><ol class="gap-list" id="gapList"></ol></div>
+          <p class="score-form-note">Want your score and the full checklist in your inbox? I will also send three short emails over ten days, then nothing unless you reply.</p>
           <div class="form-alert" id="formAlert"></div>
           <form id="auditForm" action="https://formsubmit.co/385f3fed9367873e3a24fa92c673e010" method="POST">
-            <input type="hidden" name="_subject" value="New Lead: Brand Checklist (PENNIO)">
+            <input type="hidden" name="_subject" value="New Lead: Brand Check (PENNIO)">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_template" value="table">
-            <input type="hidden" name="_autoresponse" value="Thanks for requesting The Brand Checklist. Here is your copy: https://pennio.agency/audit/pennio-brand-checklist.pdf. If your score comes back low, that is the part I build. Apply at https://pennio.agency/#apply.">
+            <input type="hidden" name="_autoresponse" value="Thanks for taking the Brand Check. Here is the full checklist: https://pennio.agency/audit/pennio-brand-checklist.pdf. If you want a closer look, I do a 20-minute Brand Review of your brand and page: https://pennio.agency/review/. If your score is low, that is the part I build. Apply at https://pennio.agency/#apply.">
+            <input type="hidden" name="score" id="fScore" value="">
+            <input type="hidden" name="band" id="fBand" value="">
+            <input type="hidden" name="gaps" id="fGaps" value="">
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
             <div class="field">
               <label for="a-name">Full Name</label>
@@ -211,16 +250,18 @@
               <label for="a-email">Email</label>
               <input type="email" id="a-email" name="email" required placeholder="you@email.com" autocomplete="email">
             </div>
-            <button type="submit" class="form-submit" id="auditSubmitBtn">Send Me the Checklist</button>
-            <p class="form-fine">Also emailed to you as a backup. From Paul Oyatowo at PENNIO.</p>
+            <button type="submit" class="form-submit" id="auditSubmitBtn">Email Me My Score</button>
+            <p class="form-fine">From Paul Oyatowo at PENNIO.</p>
           </form>
+          <button type="button" class="btn-link" id="retake">Change my answers</button>
         </div>
         <div class="success-state" id="auditSuccess">
           <div class="success-icon">&#10003;</div>
-          <h3>It's ready.</h3>
-          <p>Your copy is emailed to you as a backup. Download it below and go through it now, while you still have the five minutes.</p>
+          <h3>Your score is on its way.</h3>
+          <p>Check your inbox for the full checklist. You can also download it now.</p>
           <a class="download-btn" href="/audit/pennio-brand-checklist.pdf" download>&#8595; Download the Checklist (PDF)</a>
-          <a class="success-secondary" href="/#apply">Already know your score is low? Apply to the studio →</a>
+          <a class="success-primary" href="/review/">Get a 20-minute Brand Review</a>
+          <a class="success-secondary" href="/#apply">Ready to fix it? Apply to the studio &rarr;</a>
         </div>
       </div>
     </div>
@@ -296,53 +337,98 @@ window.addEventListener('load', function () {
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1288692886314507&ev=PageView&noscript=1"/></noscript>
 
 <script>
-function trackLead() { if (typeof fbq !== 'undefined') fbq('track', 'Lead'); }
+function trackLead(band) { if (typeof fbq !== 'undefined') fbq('track', 'Lead', band ? { content_category: band } : {}); }
 
 (function () {
+  const GROUPS = [
+    { t: 'The look', q: [
+      "Our logo would still make sense with the name taken off it, and it would not fit a competitor's business just as well.",
+      "We chose our colours and typefaces for a reason we can say out loud, not because they looked good on a moodboard.",
+      "Someone who saw our flyer, then our Instagram, then our packaging, then our shop front, would know it was the same business without being told.",
+      "Anyone we hire to make a flyer, a label or a post could open our files today and know what is allowed, without asking us.",
+      "Nothing we currently use was made by copying a competitor's layout and putting our name on it." ] },
+    { t: 'The page', q: [
+      "A stranger can tell what we sell and who it is for within five seconds on our homepage.",
+      "There is at least one thing on the site a customer can check: a named client, a finished job, a photograph of real work.",
+      "The page loads and works on a cheap phone on mobile data, which is how most of our customers will see it.",
+      "Nothing on the site is a placeholder, a dead link, or a “coming soon” that has been sitting there over a month.",
+      "There is one obvious next step, and it is the same one on every page." ] },
+    { t: 'The price', q: [
+      "We can say our price out loud without adding a reason, an apology, or a discount in the same sentence.",
+      "We have raised our price in the last 18 months and kept the customers we wanted to keep.",
+      "We know who we are not for, and we turn those enquiries down instead of dropping the price to win them.",
+      "Our headline makes a claim someone could argue with, rather than resting on quality, excellence, or passion.",
+      "With our name removed from our last five posts, a regular customer could still tell it was us." ] }
+  ];
+  const BANDS = [
+    { min: 12, t: 'You look like what you charge.', x: 'If you want to charge more than this, the next move is the offer and the proof, not the brand.' },
+    { min: 7,  t: 'Parts of it hold and parts of it do not.', x: 'The gaps are the first thing a customer meets. This is the score that gets compared on price.' },
+    { min: 0,  t: 'The business is worth more than it looks.', x: 'You pay that difference every time someone asks for a discount and you give it.' }
+  ];
+  const all = GROUPS.flatMap(g => g.q);
+  const holder = document.getElementById('quizGroups');
+  let n = 0;
+  GROUPS.forEach((g, gi) => {
+    const fs = document.createElement('fieldset'); fs.className = 'q-group';
+    const lg = document.createElement('legend'); lg.textContent = '0' + (gi + 1) + '  ' + g.t; fs.appendChild(lg);
+    g.q.forEach(text => {
+      n += 1;
+      const lab = document.createElement('label'); lab.className = 'q-item';
+      lab.innerHTML = '<input type="checkbox" value="' + n + '"><span class="q-box" aria-hidden="true"></span><span class="q-text"><b>' + String(n).padStart(2, '0') + '</b></span>';
+      lab.querySelector('.q-text').appendChild(document.createTextNode(text));
+      fs.appendChild(lab);
+    });
+    holder.appendChild(fs);
+  });
+
+  const boxes = () => Array.from(holder.querySelectorAll('input[type="checkbox"]'));
+  const count = document.getElementById('qCount');
+  const quiz = document.getElementById('quizView'), scoreV = document.getElementById('scoreView'), success = document.getElementById('auditSuccess');
+  holder.addEventListener('change', () => { count.textContent = boxes().filter(b => b.checked).length + ' of 15 ticked'; });
+
+  let score = 0, band = '';
+  document.getElementById('showScore').addEventListener('click', () => {
+    const ticked = boxes().filter(b => b.checked).map(b => +b.value);
+    score = ticked.length;
+    const bd = BANDS.find(b => score >= b.min); band = bd.t;
+    const gaps = all.map((t, i) => i + 1).filter(i => !ticked.includes(i));
+    document.getElementById('scoreNum').textContent = score;
+    document.getElementById('bandTitle').textContent = bd.t;
+    document.getElementById('bandText').textContent = bd.x;
+    const list = document.getElementById('gapList'); list.innerHTML = '';
+    gaps.slice(0, 3).forEach(i => { const li = document.createElement('li'); li.textContent = all[i - 1]; list.appendChild(li); });
+    document.getElementById('gapBox').style.display = gaps.length ? '' : 'none';
+    document.getElementById('fScore').value = score + '/15';
+    document.getElementById('fBand').value = bd.t;
+    document.getElementById('fGaps').value = gaps.join(', ');
+    quiz.style.display = 'none'; scoreV.style.display = 'block';
+    scoreV.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (typeof fbq !== 'undefined') fbq('trackCustom', 'BrandCheckScored', { score: score });
+  });
+  document.getElementById('retake').addEventListener('click', () => { scoreV.style.display = 'none'; quiz.style.display = 'block'; });
+
   const form = document.getElementById('auditForm');
   const alertBox = document.getElementById('formAlert');
   const submitBtn = document.getElementById('auditSubmitBtn');
-  const formView = document.getElementById('formView');
-  const successView = document.getElementById('auditSuccess');
-
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
     alertBox.classList.remove('show');
-
-    if (form.querySelector('[name="_honey"]').value) return; // honeypot tripped, silently drop
-
-    const requiredFields = ['name', 'email'];
-    for (const key of requiredFields) {
-      const field = form.querySelector(`[name="${key}"]`);
-      if (!field.value.trim()) {
-        field.focus();
-        alertBox.textContent = 'Please fill in your name and email.';
-        alertBox.classList.add('show');
-        return;
-      }
+    if (form.querySelector('[name="_honey"]').value) return;
+    for (const key of ['name', 'email']) {
+      const field = form.querySelector('[name="' + key + '"]');
+      if (!field.value.trim()) { field.focus(); alertBox.textContent = 'Please fill in your name and email.'; alertBox.classList.add('show'); return; }
     }
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending…';
-
+    submitBtn.disabled = true; submitBtn.textContent = 'Sending…';
     const actionUrl = form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
-    const formData = new FormData(form);
-
     try {
-      const res = await fetch(actionUrl, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: formData
-      });
+      const res = await fetch(actionUrl, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) });
       if (!res.ok) throw new Error('Submit failed');
-      formView.style.display = 'none';
-      successView.style.display = 'block';
-      trackLead();
+      scoreV.style.display = 'none'; success.style.display = 'block';
+      trackLead(band);
     } catch (err) {
       alertBox.textContent = "Something didn't go through. You can also email me at contact@pennio.agency.";
       alertBox.classList.add('show');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Send Me the Checklist';
+      submitBtn.disabled = false; submitBtn.textContent = 'Email Me My Score';
     }
   });
 })();

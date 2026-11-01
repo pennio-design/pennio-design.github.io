@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Review | PENNIO</title>
+<meta name="description" content="A 20-minute video where I go through your logo, page, flyers and posts and tell you what is costing you customers. ₦30,000, credited if you hire me.">
+<link rel="canonical" href="https://pennio.agency/review/">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#050505">
+<meta property="og:title" content="Brand Review | PENNIO">
+<meta property="og:description" content="A 20-minute video where I go through your brand and tell you what is costing you customers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pennio.agency/review/">
+<meta property="og:image" content="https://pennio.agency/og-cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+/* Applies the stored theme before first paint; a deferred script would flash. */
+(function(){try{if(localStorage.getItem('pennio-theme')==='light'){document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  /* Brand constants - identical in both themes */
+  --orange: #F26522;
+  --orange-dark:#D9561B;
+  --white: #FFFFFF;   /* literal: text on an orange fill */
+  --black: #050505;   /* literal */
+
+  /* Page roles. Channel tokens let alpha values follow the theme. */
+  --fg-rgb: 255,255,255;
+  --bg-rgb: 5,5,5;
+  --bg: #050505;
+  --bg-2: #0A0A0A;
+  --fg: #FFFFFF;
+  --surface: #121212;
+  --surface-2: #1A1A1A;
+
+  /* Inverted sections: deliberately the opposite of the page, which is what
+     keeps the dark/light rhythm working in either theme. */
+  --invert-bg: #FFFFFF;
+  --invert-bg-2: #F8F8F8;
+  --invert-fg: #000000;
+  --invert-muted: #666666;
+  --invert-border: rgba(0,0,0,0.09);
+  --invert-fg-rgb: 0,0,0;
+  /* Semantic colours come in two flavours: one for the page, one for the
+     inverted sections, because those two surfaces move in opposite directions. */
+  --danger: #FF8A65;   /* on page-coloured surfaces */
+  --ok-inv: #1A7A3C;   /* inside an inverted section */
+  --warn-inv: #B04020;
+  --capacity-fg: #5A2800;
+  --orange-ink-page: #F26522;   /* 6.46:1 on the dark page */
+  --orange-ink-inv: #BC440B;    /* >=4.5:1 on every light ground in use */
+  --orange-ink: var(--orange-ink-page);
+
+  /* Legacy names kept as aliases so existing declarations follow the theme. */
+  --off-black: var(--bg-2);
+  --off-white: var(--invert-bg-2);
+  --text-dark: var(--invert-fg);
+  --text-muted: var(--invert-muted);
+  --line-dark: rgba(var(--fg-rgb),0.09);
+  --line-light: var(--invert-border);
+  --grey-3: rgba(var(--fg-rgb),0.50);
+  --grey-4: rgba(var(--fg-rgb),0.60);
+  --grey-5: rgba(var(--fg-rgb),0.85);
+  --glass-bg: rgba(var(--fg-rgb),0.035);
+  --glass-bdr: rgba(var(--fg-rgb),0.08);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+}
+:root[data-theme="light"] {
+  --fg-rgb: 5,5,5;
+  --bg-rgb: 248,248,248;
+  --bg: #F8F8F8;
+  --bg-2: #FFFFFF;
+  --fg: #050505;
+  --surface: #FFFFFF;
+  --surface-2: #F0F0F0;
+
+  --invert-bg: #0A0A0A;
+  --invert-bg-2: #121212;
+  --invert-fg: #FFFFFF;
+  --invert-muted: rgba(255,255,255,0.60);
+  --invert-border: rgba(255,255,255,0.10);
+  --invert-fg-rgb: 255,255,255;
+  --danger: #B04020;
+  --ok-inv: #4CC97F;
+  --warn-inv: #FF8A65;
+  --capacity-fg: #FFD3BE;
+  --orange-ink-page: #BC440B;
+  --orange-ink-inv: #F26522;
+  /* Dark ink needs more weight than light ink to clear AA on a light ground. */
+  --grey-3: rgba(var(--fg-rgb),0.62);
+  --grey-4: rgba(var(--fg-rgb),0.72);
+}
+html { color-scheme: dark; scroll-behavior: smooth; }
+:root[data-theme="light"] { color-scheme: light; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .nav-logo svg { animation: none !important; } }
+body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 6vw; }
+.site-nav { height: 72px; padding: 0 5vw; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line-dark); }
+.nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--fg); min-height: 44px; }
+.nav-logo svg { width: 18px; animation: breathe 3.6s ease-in-out infinite; }
+.nav-logo svg path { fill: currentColor; }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.nav-wordmark { font-size: 0.88rem; font-weight: 600; letter-spacing: -0.02em; }
+.nav-wordmark span { color: var(--orange-ink); }
+.nav-actions { display: flex; align-items: center; gap: 14px; }
+.nav-back { font-size: 0.78rem; color: var(--grey-4); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.nav-back:hover { color: var(--fg); }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; background: none; border: 1px solid var(--line-dark); border-radius: 4px; color: var(--fg); cursor: pointer; }
+.theme-toggle:hover { border-color: var(--grey-4); background: rgba(var(--fg-rgb),0.06); }
+.theme-toggle svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+.label { display: block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4); margin-bottom: 16px; }
+.hero { padding: 88px 0 72px; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 700; line-height: 1.05; letter-spacing: -0.035em; max-width: 14em; margin-bottom: 22px; }
+.lede { font-size: 1.08rem; font-weight: 300; line-height: 1.65; color: var(--grey-4); max-width: 34em; margin-bottom: 32px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 12px 24px; background: var(--orange); color: var(--white); font: inherit; font-size: 0.85rem; font-weight: 600; text-decoration: none; border: 0; border-radius: 4px; cursor: pointer; transition: background-color 0.2s ease; }
+.btn:hover { background: var(--orange-dark); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.price-note { margin-top: 14px; font-size: 0.8rem; color: var(--grey-4); }
+.section { padding: 72px 0; border-top: 1px solid var(--line-dark); }
+h2 { font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.12; margin-bottom: 28px; max-width: 16em; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.card { background: var(--glass-bg); border: 1px solid var(--glass-bdr); border-radius: 8px; padding: 28px; }
+.card .n { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange-ink); margin-bottom: 14px; display: block; }
+.card h3 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 10px; }
+.card p { font-size: 0.92rem; font-weight: 300; line-height: 1.65; color: var(--grey-4); }
+.fit { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.fit ul { list-style: none; }
+.fit li { font-size: 0.92rem; font-weight: 300; line-height: 1.6; color: var(--grey-5); padding: 14px 0; border-top: 1px solid var(--line-dark); }
+.fit h3 { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4); margin-bottom: 8px; }
+.form-wrap { max-width: 560px; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--grey-3); margin-bottom: 7px; }
+.field input, .field textarea { width: 100%; min-height: 44px; background: rgba(var(--fg-rgb),0.04); border: 1px solid rgba(var(--fg-rgb),0.12); border-radius: 6px; padding: 12px 14px; font: inherit; font-size: 0.92rem; color: var(--fg); }
+.field input:focus, .field textarea:focus { border-color: var(--orange-ink); outline: none; }
+.field textarea { min-height: 110px; resize: vertical; }
+.form-alert { display: none; font-size: 0.8rem; color: var(--danger); border: 1px solid var(--error-line, rgba(255,138,101,0.25)); background: rgba(255,138,101,0.08); border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; }
+.form-alert.show { display: block; }
+.fine { font-size: 0.78rem; color: var(--grey-4); line-height: 1.6; margin-top: 14px; }
+.done { display: none; border: 1px solid var(--glass-bdr); background: var(--glass-bg); border-radius: 8px; padding: 32px; }
+.done h3 { font-size: 1.3rem; font-weight: 600; margin-bottom: 10px; }
+.done p { font-size: 0.95rem; font-weight: 300; line-height: 1.65; color: var(--grey-4); }
+details { border-top: 1px solid var(--line-dark); }
+summary { cursor: pointer; padding: 18px 0; font-size: 1rem; font-weight: 500; min-height: 44px; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+details p { font-size: 0.95rem; font-weight: 300; line-height: 1.7; color: var(--grey-4); padding: 0 0 20px; max-width: 40em; }
+footer { padding: 32px 0; border-top: 1px solid var(--line-dark); font-size: 0.78rem; color: var(--grey-3); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+footer a { color: var(--grey-4); }
+@media (max-width: 860px) { .grid3, .fit { grid-template-columns: 1fr; } .hero { padding: 56px 0 48px; } .section { padding: 52px 0; } }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Site">
+<a href="/" class="nav-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81.67 102.67" aria-hidden="true">
+<path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42" fill="white"/>
+</svg><span class="nav-wordmark">PENNIO<span>.</span></span></a>
+<span class="nav-actions"><button class="theme-toggle" id="themeToggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch to light theme">
+<svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.4M12 19v2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M2.6 12h2.4M19 12h2.4M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7"/></svg>
+<svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/></svg>
+</button><a href="/" class="nav-back">&larr; pennio.agency</a></span>
+</nav>
+
+<main>
+<section class="hero"><div class="wrap">
+<span class="label">Brand Review</span>
+<h1>I look at your brand the way a customer does.</h1>
+<p class="lede">You send me your logo, your page, your flyers and your posts. I record a 20-minute video going through them and tell you what is costing you customers, and what to fix first.</p>
+<a href="#request" class="btn">Request a review</a>
+<p class="price-note">₦30,000. If you hire me for your brand identity, the full amount comes off the price.</p>
+</div></section>
+
+<section class="section"><div class="wrap">
+<span class="label">What you get</span>
+<h2>A straight opinion, before you spend more.</h2>
+<div class="grid3">
+<div class="card"><span class="n">01</span><h3>A 20-minute video</h3><p>I go through your brand on screen, one thing at a time, and say what a customer sees and what they think of it.</p></div>
+<div class="card"><span class="n">02</span><h3>The five things to fix first</h3><p>A short written list in the order that matters, so you know where the next naira should go.</p></div>
+<div class="card"><span class="n">03</span><h3>The money comes back</h3><p>Hire me for your brand identity within 60 days and the ₦30,000 comes off the price.</p></div>
+</div>
+</div></section>
+
+<section class="section"><div class="wrap">
+<span class="label">Is this for you</span>
+<h2>Good for some, wrong for others.</h2>
+<div class="fit">
+<div><h3>This is for you if</h3><ul>
+<li>You sell something real, or you are about to launch.</li>
+<li>Your logo, page, flyers and posts do not look like the same business.</li>
+<li>You want an honest opinion before you decide to spend more.</li></ul></div>
+<div><h3>Not for you if</h3><ul>
+<li>You want me to redesign your brand during the review. I only tell you what is wrong.</li>
+<li>You want praise without changes.</li>
+<li>You want it today. I record each review properly, and it takes a few days.</li></ul></div>
+</div>
+</div></section>
+
+<section class="section" id="request"><div class="wrap">
+<span class="label">Request a review</span>
+<h2>Tell me about the business.</h2>
+<div class="form-wrap">
+<div class="form-alert" id="formAlert"></div>
+<form id="reviewForm" action="https://formsubmit.co/385f3fed9367873e3a24fa92c673e010" method="POST">
+<input type="hidden" name="_subject" value="New Brand Review request (PENNIO)">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_autoresponse" value="Thanks for requesting a Brand Review. I read every request myself. If I can help, I will reply within 24 hours with payment details. You pay only after I confirm I can help. Paul Oyatowo, PENNIO.">
+<input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+<div class="field"><label for="r-name">Full name</label><input id="r-name" name="name" required autocomplete="name"></div>
+<div class="field"><label for="r-email">Email</label><input id="r-email" name="email" type="email" required autocomplete="email" placeholder="you@email.com"></div>
+<div class="field"><label for="r-wa">WhatsApp number</label><input id="r-wa" name="whatsapp" type="tel" required autocomplete="tel" placeholder="080..."></div>
+<div class="field"><label for="r-biz">Business name</label><input id="r-biz" name="business" required></div>
+<div class="field"><label for="r-links">Website and Instagram links</label><input id="r-links" name="links" required placeholder="Paste your links"></div>
+<div class="field"><label for="r-worry">What worries you most about how it looks today?</label><textarea id="r-worry" name="worry" required></textarea></div>
+<button class="btn" type="submit" id="reviewBtn">Request my review</button>
+<p class="fine">I reply within 24 hours. You pay only after I confirm I can help.</p>
+</form>
+<div class="done" id="reviewDone" role="status"><h3>Your request is in.</h3><p>I will read it myself and reply within 24 hours. If I can help, you will get payment details by email and WhatsApp.</p></div>
+</div>
+</div></section>
+
+<section class="section"><div class="wrap">
+<span class="label">Questions</span>
+<h2>Before you ask.</h2>
+<details><summary>How do I pay?</summary><p>After I confirm I can help, I send my bank details by email and WhatsApp. I start recording once the payment arrives.</p></details>
+<details><summary>What if you cannot help me?</summary><p>Then you pay nothing. I only take the money after I have read your request and said yes.</p></details>
+<details><summary>How long until I get the video?</summary><p>Within 3 working days of your payment.</p></details>
+<details><summary>Do I need a website?</summary><p>No. An Instagram page, a flyer and a logo are enough for me to work with.</p></details>
+</div></section>
+</main>
+
+<footer><div class="wrap"><span>&copy; 2026 PENNIO. I make good businesses look as good as they are.</span><a href="mailto:contact@pennio.agency">contact@pennio.agency</a></div></footer>
+
+<!-- Meta Pixel: deferred so it never blocks first paint -->
+<script defer>
+window.addEventListener('load', function () {
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1288692886314507');
+  fbq('track', 'PageView');
+});
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1288692886314507&ev=PageView&noscript=1"/></noscript>
+<script>
+(function () {
+  var form = document.getElementById('reviewForm'), alertBox = document.getElementById('formAlert'), btn = document.getElementById('reviewBtn'), done = document.getElementById('reviewDone');
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault(); alertBox.classList.remove('show');
+    if (form.querySelector('[name="_honey"]').value) return;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      var res = await fetch(form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/'), { method: 'POST', headers: { 'Accept': 'application/json' }, body: new FormData(form) });
+      if (!res.ok) throw new Error('fail');
+      form.style.display = 'none'; done.style.display = 'block';
+      if (typeof fbq !== 'undefined') fbq('track', 'Lead', { content_category: 'Brand Review' });
+    } catch (err) {
+      alertBox.textContent = "Something didn't go through. You can also email me at contact@pennio.agency.";
+      alertBox.classList.add('show'); btn.disabled = false; btn.textContent = 'Request my review';
+    }
+  });
+})();
+</script>
+<script src="/theme.js" defer></script>
+<script src="/typography.js" defer></script>
+<script src="/form-guard.js" defer></script>
+</body>
+</html>

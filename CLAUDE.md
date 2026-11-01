@@ -23,7 +23,7 @@ This repository is a **flat, build-free GitHub Pages site**, not a bundled `src/
 - **Writing themeable CSS.** Colour tokens are named for their *role*, not their value: `--bg`, `--fg`, `--surface`, `--border`. Value-named tokens (`--white`, `--black`) are literals for things that must not flip, such as text on an orange fill. `--invert-*` is for sections deliberately opposite the page, which is what keeps the dark/light rhythm working in both themes. Alpha values use the channel tokens - `rgba(var(--fg-rgb),0.06)`, never `rgba(255,255,255,0.06)`, which goes invisible on a light background. A hardcoded hex or a `fill="white"` SVG attribute will not follow the theme; CSS outranks a presentation attribute, so style the SVG rather than editing its markup.
 - **`thank-you.html` was deleted (October 2026).** It was an unlinked leftover template in off-brand colours. Unknown URLs now fall through to `404.html`.
 - **Deploy is `git push` to `master`** (not `main`, not Vercel). GitHub Pages serves the repo root at `pennio.agency` via `CNAME`.
-- **Routes are directories containing `index.html`**: `/` , `/audit/`, `/letscreate/`, plus the standalone `/404.html`. Campaign pages under `campaign/founders-brand-architecture/` are standalone HTML documents, not routed pages.
+- **Routes are directories containing `index.html`**: `/` , `/audit/` (the Brand Check scorer: score first, email after, score sent with the lead), `/review/` (the paid Brand Review, manual payment), `/letscreate/`, plus the standalone `/404.html`. Campaign pages under `campaign/founders-brand-architecture/` are standalone HTML documents, not routed pages.
 
 ## Execution Rules
 1. Never generate CSS or markup without a compiled design token dictionary from Agent 01.
