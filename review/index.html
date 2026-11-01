@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brand Review | PENNIO</title>
 <meta name="description" content="A 20-minute video where I go through your logo, page, flyers and posts and tell you what is costing you customers. ₦30,000, credited if you hire me.">
@@ -217,12 +219,12 @@ footer a { color: var(--grey-4); }
 <input type="hidden" name="_template" value="table">
 <input type="hidden" name="_autoresponse" value="Thanks for requesting a Brand Review. I read every request myself. If I can help, I will reply within 24 hours with payment details. You pay only after I confirm I can help. Paul Oyatowo, PENNIO.">
 <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-<div class="field"><label for="r-name">Full name</label><input id="r-name" name="name" required autocomplete="name"></div>
-<div class="field"><label for="r-email">Email</label><input id="r-email" name="email" type="email" required autocomplete="email" placeholder="you@email.com"></div>
-<div class="field"><label for="r-wa">WhatsApp number</label><input id="r-wa" name="whatsapp" type="tel" required autocomplete="tel" placeholder="080..."></div>
-<div class="field"><label for="r-biz">Business name</label><input id="r-biz" name="business" required></div>
-<div class="field"><label for="r-links">Website and Instagram links</label><input id="r-links" name="links" required placeholder="Paste your links"></div>
-<div class="field"><label for="r-worry">What worries you most about how it looks today?</label><textarea id="r-worry" name="worry" required></textarea></div>
+<div class="field"><label for="r-name">Full name</label><input id="r-name" name="name" required autocomplete="name" maxlength="200"></div>
+<div class="field"><label for="r-email">Email</label><input id="r-email" name="email" type="email" required autocomplete="email" placeholder="you@email.com" maxlength="254"></div>
+<div class="field"><label for="r-wa">WhatsApp number</label><input id="r-wa" name="whatsapp" type="tel" required autocomplete="tel" placeholder="080..." maxlength="20"></div>
+<div class="field"><label for="r-biz">Business name</label><input id="r-biz" name="business" required maxlength="200"></div>
+<div class="field"><label for="r-links">Website and Instagram links</label><input id="r-links" name="links" required placeholder="Paste your links" maxlength="200"></div>
+<div class="field"><label for="r-worry">What worries you most about how it looks today?</label><textarea id="r-worry" name="worry" required maxlength="2000"></textarea></div>
 <button class="btn" type="submit" id="reviewBtn">Request my review</button>
 <p class="fine">I reply within 24 hours. You pay only after I confirm I can help.</p>
 </form>

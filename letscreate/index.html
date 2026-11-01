@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Let's Create Network · PENNIO</title>
   <meta name="description" content="Let's Create is a learning group for African creatives, run by Paul Oyatowo. Build real work in a team and get honest feedback." />
   <meta property="og:title" content="The Let's Create Network · PENNIO" />
@@ -353,10 +355,10 @@
             <input type="hidden" name="_template" value="table" />
             <input type="hidden" name="_autoresponse" value="You are in. The Let's Create 7-day challenge starts on Monday, November 16. I will send you the first task that morning. Paul Oyatowo, PENNIO." />
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
-            <div class="field"><label for="ch-name">Full Name</label><input id="ch-name" name="name" required placeholder="Your name" autocomplete="name" /></div>
-            <div class="field"><label for="ch-email">Email</label><input id="ch-email" type="email" name="email" required placeholder="you@email.com" autocomplete="email" /></div>
-            <div class="field"><label for="ch-wa">WhatsApp number</label><input id="ch-wa" type="tel" name="whatsapp" required placeholder="080..." autocomplete="tel" /></div>
-            <div class="field"><label for="ch-ig">Instagram handle</label><input id="ch-ig" name="instagram" placeholder="@yourhandle" /></div>
+            <div class="field"><label for="ch-name">Full Name</label><input id="ch-name" name="name" required placeholder="Your name" autocomplete="name" maxlength="200"/></div>
+            <div class="field"><label for="ch-email">Email</label><input id="ch-email" type="email" name="email" required placeholder="you@email.com" autocomplete="email" maxlength="254"/></div>
+            <div class="field"><label for="ch-wa">WhatsApp number</label><input id="ch-wa" type="tel" name="whatsapp" required placeholder="080..." autocomplete="tel" maxlength="20"/></div>
+            <div class="field"><label for="ch-ig">Instagram handle</label><input id="ch-ig" name="instagram" placeholder="@yourhandle" maxlength="200"/></div>
             <div class="field full"><label for="ch-skill">Main skill</label>
               <select id="ch-skill" name="skill" required>
                 <option value="" disabled selected>Choose one</option>
@@ -554,8 +556,8 @@
             <input type="hidden" name="_subject" value="New The Let's Create Network application" />
             <input type="hidden" name="_captcha" value="false" />
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
-            <div class="field"><label for="lc-name">Full Name</label><input id="lc-name" name="name" required placeholder="Your name" autocomplete="name" /></div>
-            <div class="field"><label for="lc-email">Email</label><input id="lc-email" type="email" name="email" required placeholder="you@email.com" autocomplete="email" /></div>
+            <div class="field"><label for="lc-name">Full Name</label><input id="lc-name" name="name" required placeholder="Your name" autocomplete="name" maxlength="200"/></div>
+            <div class="field"><label for="lc-email">Email</label><input id="lc-email" type="email" name="email" required placeholder="you@email.com" autocomplete="email" maxlength="254"/></div>
             <div class="field">
               <label for="lc-discipline">Main skill</label>
               <select id="lc-discipline" name="discipline" required>
@@ -580,12 +582,12 @@
                 <option>Not sure yet</option>
               </select>
             </div>
-            <div class="field full"><label for="lc-portfolio">Portfolio / Instagram / Behance</label><input id="lc-portfolio" name="portfolio" placeholder="@yourhandle or portfolio link" /></div>
+            <div class="field full"><label for="lc-portfolio">Portfolio / Instagram / Behance</label><input id="lc-portfolio" name="portfolio" placeholder="@yourhandle or portfolio link" maxlength="200"/></div>
             <div class="field full">
               <label for="lc-weakness">What skill do you want to get better at?</label>
-              <textarea id="lc-weakness" name="weakness" required placeholder="Be specific. For example: logo design, writing a brand story, or pricing."></textarea>
+              <textarea id="lc-weakness" name="weakness" required placeholder="Be specific. For example: logo design, writing a brand story, or pricing." maxlength="2000"></textarea>
             </div>
-            <div class="field full"><label for="lc-reason">Why do you want to join?</label><textarea id="lc-reason" name="reason" required placeholder="Be specific. Generic answers get generic results."></textarea></div>
+            <div class="field full"><label for="lc-reason">Why do you want to join?</label><textarea id="lc-reason" name="reason" required placeholder="Be specific. Generic answers get generic results." maxlength="2000"></textarea></div>
             <div class="field full">
               <button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%;">Submit Application</button>
               <p style="text-align: center; font-size: var(--text-xs); color: #6c635b; margin-top: var(--space-2);">I read every application myself. I do not send spam or share your details.</p>
@@ -698,8 +700,8 @@
                 <input type="hidden" name="_subject" value="New Let's Create Network Partner Alignment Inquiry" />
                 <input type="hidden" name="_captcha" value="false" />
                 <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
-                <div class="field"><label style="font-size:.65rem;">Organization Name</label><input name="org_name" required placeholder="Company or Studio name" style="min-height:48px; padding:.75rem;" /></div>
-                <div class="field"><label style="font-size:.65rem;">Contact Email</label><input type="email" name="org_email" required placeholder="name@company.com" style="min-height:48px; padding:.75rem;" /></div>
+                <div class="field"><label style="font-size:.65rem;">Organization Name</label><input name="org_name" required placeholder="Company or Studio name" style="min-height:48px; padding:.75rem;" maxlength="200"/></div>
+                <div class="field"><label style="font-size:.65rem;">Contact Email</label><input type="email" name="org_email" required placeholder="name@company.com" style="min-height:48px; padding:.75rem;" maxlength="254"/></div>
                 <div class="field">
                   <label style="font-size:.65rem;">How would you like to help?</label>
                   <select name="partner_intent" required style="min-height:48px; padding:.75rem; background:var(--color-surface-3);">
@@ -712,7 +714,7 @@
                 </div>
                 <div class="field">
                   <label style="font-size:.65rem;">Strategic Context</label>
-                  <textarea name="partner_notes" required placeholder="Briefly describe what you want to support and why." style="min-height:80px; padding:.75rem; font-size:var(--text-xs);"></textarea>
+                  <textarea name="partner_notes" required placeholder="Briefly describe what you want to support and why." style="min-height:80px; padding:.75rem; font-size:var(--text-xs);" maxlength="2000"></textarea>
                 </div>
                 <div class="field">
                   <button type="submit" id="partnerSubmitBtn" class="btn btn-primary" style="width:100%; min-height:44px; font-size:var(--text-xs);">Submit Intent</button>

@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PENNIO. Brand identity and websites for African businesses</title>
 <meta name="description" content="I build brand identities and websites for African businesses that want to charge more. Paul Oyatowo, Oyo State, Nigeria.">
@@ -806,15 +808,15 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 <div class="form-grid">
 <div class="field">
 <label for="f-name">Full Name</label>
-<input type="text" id="f-name" name="name" required placeholder="Your name" autocomplete="name">
+<input type="text" id="f-name" name="name" required placeholder="Your name" autocomplete="name" maxlength="200">
 </div>
 <div class="field">
 <label for="f-email">Email</label>
-<input type="email" id="f-email" name="email" required placeholder="you@email.com" autocomplete="email">
+<input type="email" id="f-email" name="email" required placeholder="you@email.com" autocomplete="email" maxlength="254">
 </div>
 <div class="field">
 <label for="f-brand">Brand or Business Name</label>
-<input type="text" id="f-brand" name="brand_name" required placeholder="What is your brand called?">
+<input type="text" id="f-brand" name="brand_name" required placeholder="What is your brand called?" maxlength="200">
 </div>
 <div class="field">
 <label for="f-stage">Where are you right now?</label>
@@ -838,11 +840,11 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 </div>
 <div class="field full">
 <label for="f-social">Website or Instagram (if any)</label>
-<input type="text" id="f-social" name="social" placeholder="@yourbrand or www.yourbrand.com">
+<input type="text" id="f-social" name="social" placeholder="@yourbrand or www.yourbrand.com" maxlength="200">
 </div>
 <div class="field full">
 <label for="f-challenge">What is the main thing you need help with?</label>
-<textarea id="f-challenge" name="challenge" placeholder="Be specific. The clearer you are, the faster I can tell you whether I can help."></textarea>
+<textarea id="f-challenge" name="challenge" placeholder="Be specific. The clearer you are, the faster I can tell you whether I can help." maxlength="2000"></textarea>
 </div>
 </div>
 <button type="submit" class="form-submit" id="submitBtn">Submit Application</button>

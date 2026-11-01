@@ -1,0 +1,10 @@
+# GitHub Pages builds this site with Jekyll. This list keeps internal files out of
+# the public site. They stay in the repository but are no longer served at
+# pennio.agency/<file>.
+exclude:
+  - CLAUDE.md
+  - README.md
+  - scripts
+  - skills-lock.json
+  - portfolio-src
+  - _config.yml

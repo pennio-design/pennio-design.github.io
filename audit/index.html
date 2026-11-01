@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Brand Checklist &#183; Free &#183; PENNIO</title>
 <meta name="description" content="15 questions about what a customer sees before they decide what you are worth. A free check on your look, your page and your price. From Paul Oyatowo at PENNIO.">
@@ -244,11 +246,11 @@
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
             <div class="field">
               <label for="a-name">Full Name</label>
-              <input type="text" id="a-name" name="name" required placeholder="Your name" autocomplete="name">
+              <input type="text" id="a-name" name="name" required placeholder="Your name" autocomplete="name" maxlength="200">
             </div>
             <div class="field">
               <label for="a-email">Email</label>
-              <input type="email" id="a-email" name="email" required placeholder="you@email.com" autocomplete="email">
+              <input type="email" id="a-email" name="email" required placeholder="you@email.com" autocomplete="email" maxlength="254">
             </div>
             <button type="submit" class="form-submit" id="auditSubmitBtn">Email Me My Score</button>
             <p class="form-fine">From Paul Oyatowo at PENNIO.</p>
