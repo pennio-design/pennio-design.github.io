@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PENNIO. Brand identity and websites for African businesses</title>
@@ -58,9 +58,8 @@
 ]
 }
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<style>/* Inter, hosted on this domain so it loads on slow or blocked networks. */@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/inter-300.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-500.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/inter-600.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-700.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/inter-800.woff2') format('woff2')}</style>
 <script>
 /* Applies the stored theme before first paint; a deferred script would flash. */
 (function(){try{if(localStorage.getItem('pennio-theme')==='light'){document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();
@@ -148,7 +147,7 @@ html { scroll-behavior: smooth; color-scheme: dark; }
   .faq-item::details-content { transition: none !important; }
   video[aria-hidden="true"] { display: none !important; }
 }
-body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif; font-weight: 400; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-weight: 400; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 .skip-nav { position: absolute; top: -100%; left: 0; background: var(--orange); color: var(--white); padding: 12px 20px; font-size: 0.8rem; font-weight: 600; text-decoration: none; z-index: 9999; border-radius: 0 0 4px 0; transition: top 0.15s ease; }
 .skip-nav:focus { top: 0; }
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1); }
@@ -157,7 +156,7 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif
 .reveal-d2 { transition-delay: 0.2s; }
 .label { display: inline-block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-4); margin-bottom: 16px; }
 .label.dark { color: var(--text-muted); }
-.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-family: 'Inter', sans-serif; font-weight: 500; text-decoration: none; border: none; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 160ms var(--ease-out); white-space: nowrap; border-radius: 4px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-weight: 500; text-decoration: none; border: none; cursor: pointer; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 160ms var(--ease-out); white-space: nowrap; border-radius: 4px; }
 .btn:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 .btn:active { transform: scale(0.97); }
 /* The two decorative loops blend with mix-blend-mode:screen, which only works
@@ -360,13 +359,13 @@ details[open] .faq-q::after { transform: rotate(45deg); }
 .field { display: flex; flex-direction: column; gap: 8px; }
 .field.full { grid-column: 1 / -1; }
 .field label { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.06em; color: rgba(var(--fg-rgb),0.62); }
-.field input, .field select, .field textarea { background: rgba(var(--fg-rgb),0.04); border: 1px solid rgba(var(--fg-rgb),0.09); border-radius: 4px; padding: 13px 15px; font-family: 'Inter', sans-serif; font-size: 0.92rem; font-weight: 300; color: var(--fg); outline: none; transition: border-color 0.2s; width: 100%; -webkit-appearance: none; }
+.field input, .field select, .field textarea { background: rgba(var(--fg-rgb),0.04); border: 1px solid rgba(var(--fg-rgb),0.09); border-radius: 4px; padding: 13px 15px; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 0.92rem; font-weight: 300; color: var(--fg); outline: none; transition: border-color 0.2s; width: 100%; -webkit-appearance: none; }
 .field select option { background: #111; }
 .field input::placeholder, .field textarea::placeholder { color: rgba(var(--fg-rgb),0.18); }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: rgba(var(--fg-rgb),0.22); background: rgba(var(--fg-rgb),0.06); }
 .field textarea { resize: vertical; min-height: 110px; }
 .field-error { font-size: 0.7rem; color: var(--danger); min-height: 14px; }
-.form-submit { width: 100%; margin-top: 28px; padding: 16px; background: var(--orange); color: var(--white); border: none; border-radius: 4px; font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 160ms var(--ease-out); }
+.form-submit { width: 100%; margin-top: 28px; padding: 16px; background: var(--orange); color: var(--white); border: none; border-radius: 4px; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 160ms var(--ease-out); }
 @media (hover: hover) and (pointer: fine) {
   .form-submit:hover { background: var(--orange-dark); transform: translateY(-1px); }
 }
@@ -648,10 +647,10 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 <div class="studio-chip-status">This site, and the studio's own brand</div>
 </div>
 </div>
-<a href="/letscreate" class="studio-chip" aria-label="The Let's Create Network by PENNIO">
+<a href="/letscreate" class="studio-chip" aria-label="Let's Create by PENNIO">
 <img src="/logo.png" alt="" class="studio-chip-icon" width="30" height="38" loading="lazy" decoding="async">
 <div>
-<div class="studio-chip-name">The Let's Create Network</div>
+<div class="studio-chip-name">Let's Create</div>
 <div class="studio-chip-status">Teaching, run in public</div>
 </div>
 </a>
@@ -752,7 +751,7 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 <div class="apply-wrap">
 <div class="apply-header reveal">
 <h2>If people keep telling you<br>that you are expensive, we should talk.</h2>
-<p>Five questions, five minutes. I read every one myself and reply within 48 hours whether or not there is a fit.</p>
+<p>A few questions, about five minutes. I read every one myself and reply within 48 hours whether or not there is a fit.</p>
 </div>
 <div class="apply-fit reveal reveal-d1">
 <div class="fit-col">
@@ -847,12 +846,12 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 <textarea id="f-challenge" name="challenge" placeholder="Be specific. The clearer you are, the faster I can tell you whether I can help." maxlength="2000"></textarea>
 </div>
 </div>
-<button type="submit" class="form-submit" id="submitBtn">Submit Application</button>
+<button type="submit" class="form-submit" id="submitBtn">Submit application</button>
 <p class="form-fine">Submitting this application does not commit you to a project. If there is a fit, I will reply within 48 hours to book a call.</p>
 </form>
 <div class="success-state" id="successMsg">
 <div class="success-icon">&#10003;</div>
-<h3>Application Received.</h3>
+<h3>Application received.</h3>
 <p>Your application is in. I will reply within 48 hours.</p>
 </div>
 </div>
@@ -897,10 +896,11 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 <div class="modal-box">
 <button class="modal-close" id="close-privacy" aria-label="Close privacy policy">&#10005;</button>
 <h3 id="privacy-title">Privacy Policy</h3>
-<span class="modal-date">Effective January 2026</span>
-<p>PENNIO collects only the information you submit through this application form: your name, email, brand name, stage, budget range, and what you describe. It is used solely to evaluate your application.</p>
-<p>I do not sell, rent, or share your information with third parties. I do not use your data for advertising. Application data is routed through FormSubmit and stored securely.</p>
-<p>You may request deletion of your data at any time by submitting a request through the application form. I will respond within 5 business days.</p>
+<span class="modal-date">Updated November 2026</span>
+<p>I collect only what you type into the forms on this site: your name, email, WhatsApp number where I ask for it, your business name, your links, your budget range and what you tell me. I use it to reply to you and to decide if I can help.</p>
+<p>I do not sell or rent your details. The forms reach me by email through FormSubmit, and my email is hosted by Zoho. Those two services handle your details on my behalf.</p>
+<p>This site uses the Meta Pixel to count visits and to measure my own ads. It tells Meta which pages were viewed and when a form was sent, with the budget range or score band you chose.</p>
+<p>You can ask me to delete your details at any time. Email contact@pennio.agency and I will reply within 5 business days.</p>
 </div>
 </div>
 
@@ -908,11 +908,12 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 <div class="modal-box">
 <button class="modal-close" id="close-terms" aria-label="Close terms of engagement">&#10005;</button>
 <h3 id="terms-title">Terms of Engagement</h3>
-<span class="modal-date">Effective January 2026</span>
-<p><strong>Submitting an application does not constitute a contract.</strong> I review every application manually and reserve the right to decline any project without obligation to provide a reason.</p>
-<p>Accepted clients receive a formal project agreement outlining scope, deliverables, timeline, and payment terms before any work begins. Pricing is confirmed in writing after the call.</p>
-<p>All creative work produced by PENNIO remains the intellectual property of PENNIO until final payment is received in full. Upon full payment, ownership of deliverables transfers to the client as outlined in the project agreement.</p>
-<p>PENNIO does not offer refunds once a project phase has begun. Disputes are handled in good faith and governed by Nigerian law.</p>
+<span class="modal-date">Updated November 2026</span>
+<p><strong>Sending an application is not a contract.</strong> I read every application myself, and I can decline a project without giving a reason.</p>
+<p>Accepted clients get a written agreement with the scope, what you receive, the timeline and the payment terms before any work begins. The price is confirmed in writing after the call.</p>
+<p>All the creative work stays mine until final payment is received in full. After full payment, ownership of what I make for you passes to you, as set out in the agreement.</p>
+<p>Once a project phase has started, I do not refund it. Disputes are handled in good faith and governed by Nigerian law.</p>
+<p>The Brand Review fee is credited in full against a brand identity project booked within 60 days. You pay only after I confirm I can help.</p>
 </div>
 </div>
 
@@ -1125,7 +1126,7 @@ document.getElementById('proofModal').addEventListener('click', e => { if (e.tar
       alertBox.textContent = "Something didn't go through. You can also email me at contact@pennio.agency.";
       alertBox.classList.add('show');
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit Application';
+      submitBtn.textContent = 'Submit application';
     }
   });
 })();

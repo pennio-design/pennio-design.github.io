@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Brand Checklist &#183; Free &#183; PENNIO</title>
+<title>The Brand Check &#183; Free &#183; PENNIO</title>
 <meta name="description" content="15 questions about what a customer sees before they decide what you are worth. A free check on your look, your page and your price. From Paul Oyatowo at PENNIO.">
 <link rel="canonical" href="https://pennio.agency/audit/">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -13,15 +13,14 @@
 <meta name="theme-color" content="#050505">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pennio.agency/audit/">
-<meta property="og:title" content="The Brand Checklist &#183; A free check from PENNIO">
+<meta property="og:title" content="The Brand Check &#183; A free check from PENNIO">
 <meta property="og:description" content="15 questions about what a customer sees before they decide what you are worth. A free check on your look, your page and your price. From Paul Oyatowo at PENNIO.">
 <meta property="og:image" content="https://pennio.agency/og-cover.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="The Brand Checklist &#183; A free check from PENNIO">
+<meta name="twitter:title" content="The Brand Check &#183; A free check from PENNIO">
 <meta name="twitter:description" content="15 questions about what a customer sees before they decide what you are worth.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<style>/* Inter, hosted on this domain so it loads on slow or blocked networks. */@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/inter-300.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-500.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/inter-600.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-700.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/inter-800.woff2') format('woff2')}</style>
 <script>
 /* Applies the stored theme before first paint; a deferred script would flash. */
 (function(){try{if(localStorage.getItem('pennio-theme')==='light'){document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();
@@ -75,7 +74,7 @@
   html { scroll-behavior: smooth; color-scheme: dark; }
   :root[data-theme="light"] { color-scheme: light; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-  body { background: var(--bg); color: var(--fg); font-family: 'Inter', sans-serif; font-weight: 400; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-weight: 400; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   a { color: inherit; }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 0 6vw; }
 
@@ -118,11 +117,11 @@
   .form-card-note { font-size: 0.85rem; font-weight: 300; color: var(--grey-4); line-height: 1.55; margin-bottom: 26px; }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--grey-3); margin-bottom: 7px; }
-  .field input { width: 100%; background: rgba(var(--fg-rgb),0.04); border: 1px solid rgba(var(--fg-rgb),0.1); border-radius: 6px; padding: 13px 15px; font-family: 'Inter', sans-serif; font-size: 0.92rem; font-weight: 400; color: var(--fg); outline: none; transition: border-color 0.2s; }
+  .field input { width: 100%; background: rgba(var(--fg-rgb),0.04); border: 1px solid rgba(var(--fg-rgb),0.1); border-radius: 6px; padding: 13px 15px; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 0.92rem; font-weight: 400; color: var(--fg); outline: none; transition: border-color 0.2s; }
   .field input:focus { border-color: var(--orange-ink); }
   .form-alert { display: none; font-size: 0.78rem; color: #ff8a65; background: rgba(255,90,30,0.08); border: 1px solid rgba(255,90,30,0.25); border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; }
   .form-alert.show { display: block; }
-  .form-submit { width: 100%; margin-top: 6px; padding: 15px; background: var(--orange); color: var(--white); border: none; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em; cursor: pointer; transition: background 0.2s, transform 160ms var(--ease-out); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .form-submit { width: 100%; margin-top: 6px; padding: 15px; background: var(--orange); color: var(--white); border: none; border-radius: 6px; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em; cursor: pointer; transition: background 0.2s, transform 160ms var(--ease-out); display: flex; align-items: center; justify-content: center; gap: 8px; }
   .form-submit:hover { background: var(--orange-dark); }
   .form-submit:active:not(:disabled) { transform: scale(0.98); }
   .form-submit:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -150,7 +149,7 @@
   .pillars-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--grey-3); margin-bottom: 26px; }
   .pillar-row { display: grid; grid-template-columns: 60px 1fr; gap: 20px; border-top: 1px solid var(--line); padding: 26px 0; }
   .pillar-row:last-child { border-bottom: 1px solid var(--line); }
-  .pillar-row-num { font-family: 'Inter', sans-serif; font-size: 1.6rem; font-weight: 800; font-style: italic; color: rgba(var(--fg-rgb),0.14); }
+  .pillar-row-num { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 1.6rem; font-weight: 800; font-style: italic; color: rgba(var(--fg-rgb),0.14); }
   .pillar-row h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
   .pillar-row p { font-size: 0.85rem; font-weight: 300; color: var(--grey-4); line-height: 1.6; max-width: 560px; }
 

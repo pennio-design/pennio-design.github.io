@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.facebook.com https://*.facebook.net; media-src 'self'; connect-src 'self' https://formsubmit.co https://*.facebook.com https://*.facebook.net; frame-src https://*.facebook.com; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Let's Create Network · PENNIO</title>
+  <title>Let's Create · PENNIO</title>
   <meta name="description" content="Let's Create is a learning group for African creatives, run by Paul Oyatowo. Build real work in a team and get honest feedback." />
-  <meta property="og:title" content="The Let's Create Network · PENNIO" />
+  <meta property="og:title" content="Let's Create · PENNIO" />
   <meta property="og:description" content="Let's Create is a learning group for African creatives, run by Paul Oyatowo." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://pennio.agency/og-cover.jpg" />
   <link rel="icon" href="/favicon.ico" sizes="any" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script>
+  <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<style>/* Inter, hosted on this domain so it loads on slow or blocked networks. */@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/inter-300.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-500.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/inter-600.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-700.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/inter-800.woff2') format('woff2')}</style>
+<script>
   /* Applies the stored theme before first paint; a deferred script would flash. */
   (function(){try{if(localStorage.getItem('pennio-theme')==='light'){document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();
   </script>
@@ -62,7 +61,7 @@
       --radius-sm: .5rem; --radius-md: .9rem; --radius-lg: 1.25rem; --radius-xl: 1.8rem; --radius-full: 999px;
       --shadow-md: 0 18px 40px rgba(0,0,0,.28);
       --shadow-lg: 0 28px 80px rgba(0,0,0,.45);
-      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       --content: 1180px;
       --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     }
@@ -553,7 +552,7 @@
         </div>
         <div class="apply-panel">
           <form class="form-grid" id="applyForm">
-            <input type="hidden" name="_subject" value="New The Let's Create Network application" />
+            <input type="hidden" name="_subject" value="New Let's Create application" />
             <input type="hidden" name="_captcha" value="false" />
             <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
             <div class="field"><label for="lc-name">Full Name</label><input id="lc-name" name="name" required placeholder="Your name" autocomplete="name" maxlength="200"/></div>
@@ -589,7 +588,7 @@
             </div>
             <div class="field full"><label for="lc-reason">Why do you want to join?</label><textarea id="lc-reason" name="reason" required placeholder="Be specific. Generic answers get generic results." maxlength="2000"></textarea></div>
             <div class="field full">
-              <button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%;">Submit Application</button>
+              <button type="submit" id="submitBtn" class="btn btn-primary" style="width:100%;">Submit application</button>
               <p style="text-align: center; font-size: var(--text-xs); color: #6c635b; margin-top: var(--space-2);">I read every application myself. I do not send spam or share your details.</p>
             </div>
             <p class="hero-sub" id="formStatus" style="text-align:center; max-width:none;">I reply by email if there is a fit.</p>
@@ -697,7 +696,7 @@
             </div>
             <div>
               <form class="form-grid" id="partnerForm" style="grid-template-columns:1fr;">
-                <input type="hidden" name="_subject" value="New Let's Create Network Partner Alignment Inquiry" />
+                <input type="hidden" name="_subject" value="New Let's Create partner enquiry" />
                 <input type="hidden" name="_captcha" value="false" />
                 <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
                 <div class="field"><label style="font-size:.65rem;">Organization Name</label><input name="org_name" required placeholder="Company or Studio name" style="min-height:48px; padding:.75rem;" maxlength="200"/></div>
@@ -796,7 +795,7 @@
           formStatus.textContent = 'Submission failed. Please try again or email contact@pennio.agency.';
           formStatus.className = 'hero-sub error';
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit Application';
+          submitBtn.textContent = 'Submit application';
         }
       });
     }

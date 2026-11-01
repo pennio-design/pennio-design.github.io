@@ -1,0 +1,5 @@
+Inter
+Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
+
+These font files are subsets of Inter, used under the SIL Open Font License, Version 1.1.
+Full licence text: https://openfontlicense.org/open-font-license-official-text/
