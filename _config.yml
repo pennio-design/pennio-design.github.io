@@ -7,4 +7,6 @@ exclude:
   - scripts
   - skills-lock.json
   - portfolio-src
+  - campaign
+  - reel-studio
   - _config.yml
