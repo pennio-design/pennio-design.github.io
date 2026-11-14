@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://formsubmit.co https://app.kit.com; worker-src 'self' blob:; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://formsubmit.co https://app.kit.com https://rgkxqcmfejglfslhrpsm.supabase.co; worker-src 'self' blob:; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>pennio.studio · PENNIO</title>
@@ -204,6 +204,15 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
 .countin{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;pointer-events:none;background:rgba(5,5,5,.55);font-size:min(46vw,260px);font-weight:800;letter-spacing:-.06em;color:var(--orange)}
 .countin.on{display:flex}
 .countin.go{color:var(--text);font-size:min(22vw,120px)}
+/* cloud saving */
+.cloud{margin-top:16px;padding:14px;border:1px solid var(--line2);border-radius:16px;background:var(--black)}
+.cloud h3{font-size:15px;font-weight:600}
+.cloud p{font-size:13px}
+.cloud .note{font-size:12px;color:var(--dim)}
+.crow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.crow input{flex:1;min-width:170px;background:var(--off);border:1px solid var(--line2);border-radius:12px;color:var(--text);font-family:inherit;font-size:16px;padding:11px 13px;outline:none;min-height:44px}
+.crow input:focus{border-color:var(--orange)}
+.linkbtn{font-size:13px;color:var(--mute);text-decoration:underline;min-height:44px;margin-top:6px}
 /* backup reminder */
 .bkp{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:#17110c;border:1px solid var(--m);border-radius:16px;padding:14px;margin:0 0 18px}
 .bkp[hidden]{display:none}
@@ -413,7 +422,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
 </main>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to pennio.studio.</h2>
-  <p>No password and no login. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your beats, recordings and words save only in this browser on this device. Clearing your browser data removes them, so download a backup from My work now and then.</p>
+  <p>No password. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your work saves in this browser, and you can turn on cloud saving in My work to keep it on any device.</p>
   <form id="obForm" novalidate>
     <div class="field"><label for="obName">Your name</label><input id="obName" autocomplete="name" maxlength="60"></div>
     <div class="field"><label for="obEmail">Email</label><input id="obEmail" type="email" autocomplete="email" maxlength="120"></div>
@@ -422,6 +431,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
     <div class="err" id="obErr"></div>
     <button class="btn primary" type="submit" style="width:100%;margin-top:6px;padding:13px">Enter the studio</button>
   </form>
+  <button class="btn" id="obReturn" style="width:100%;margin-top:10px">I have used pennio.studio before: restore my work</button>
 </div></div>
 
 <div class="sheet" id="work"><div class="panel">
@@ -434,6 +444,23 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
     <button class="btn primary" id="newProj">New project</button>
     <button class="btn" id="backup">Download backup</button>
     <label class="btn file">Restore backup<input type="file" id="restoreFile" accept=".json,application/json"></label>
+  </div>
+  <div class="cloud" id="cloud">
+    <h3>Cloud saving</h3>
+    <div id="cloudOut">
+      <p>Keep your projects, recordings and words in your PENNIO account, and open them on any phone or computer. No password: we email you a sign-in link and a code.</p>
+      <div class="crow"><input id="sbEmail" type="email" placeholder="Your email" maxlength="120" autocomplete="email" aria-label="Email for cloud saving"><button class="btn primary" id="sbSend">Send sign-in link</button></div>
+      <div id="sbCodeRow" hidden>
+        <p>Check your email. Tap the link in it on this device, or type the code from the email here.</p>
+        <div class="crow"><input id="sbCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Code" aria-label="Sign-in code"><button class="btn primary" id="sbVerify">Sign in</button></div>
+      </div>
+    </div>
+    <div id="cloudIn" hidden>
+      <p><b id="cloudWho"></b><br><span id="cloudStat"></span></p>
+      <div class="crow"><button class="btn" id="sbSync">Sync now</button><button class="btn" id="sbOut">Sign out</button></div>
+      <button class="linkbtn" id="sbWipe">Delete my cloud copy</button>
+    </div>
+    <p class="note" id="cloudNote">Stored with Supabase in London, United Kingdom. Only you can open your projects and recordings. To have your cloud copy removed, use Delete my cloud copy or email contact@pennio.agency.</p>
   </div>
   <div class="plist" id="plist"></div>
   <p id="storeNote" style="margin-top:14px"></p>
@@ -1306,8 +1333,9 @@ async function saveNow(){
   const rec={id:currentId, name:document.getElementById("pname").value.trim()||"Untitled beat", updated:Date.now(), state:JSON.parse(JSON.stringify(stateNow())), audio:currentAudio};
   const old=await tx("projects","readonly",st=>st.get(currentId)); rec.created=(old&&old.created)||Date.now();
   const ok=await tx("projects","readwrite",st=>st.put(rec));
+  if(ok) cloudQueue(rec.id);
   lsSet("ps.last",{id:currentId,name:rec.name,state:rec.state}); lsSet("ps.current",currentId);
-  document.getElementById("savedNote").textContent= ok? "Saved" : "Saved (beat only)";
+  document.getElementById("savedNote").textContent= ok? (sbSess? "Saved · syncing" : "Saved") : "Saved (beat only)";
 }
 async function openProject(rec){
   restoring=true;
@@ -1356,10 +1384,11 @@ async function renderWork(){
     d.querySelector(".op").onclick=async()=>{ await saveNow(); await openProject(r); ready=true; workEl.classList.remove("on"); toast("Opened "+r.name); };
     const del=d.querySelector(".del");
     del.onclick=async()=>{ if(!del.classList.contains("arm")){ del.classList.add("arm"); del.textContent="Tap again"; setTimeout(()=>{del.classList.remove("arm");del.textContent="Delete";},3000); return; }
-      await tx("projects","readwrite",st=>st.delete(r.id)); if(r.id===currentId){ await newProject(); } renderWork(); };
+      await tx("projects","readwrite",st=>st.delete(r.id)); cloudDeleteProject(r.id); if(r.id===currentId){ await newProject(); } renderWork(); };
     el.appendChild(d);
   });
-  let note="Projects live in this browser only, and PENNIO cannot see or recover them. Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
+  renderCloud();
+  let note= sbSess&&sbSess.user? "Projects are saved in this browser and in your PENNIO account. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Projects live in this browser only, and PENNIO cannot see or recover them unless you turn on cloud saving. Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
   try{ if(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted()) note+=" This browser has agreed to keep them."; }catch(e){}
   if(!db) note="This browser is blocking storage here, so only the current beat is kept. Download a backup to keep your work.";
   document.getElementById("storeNote").textContent=note;
@@ -1387,7 +1416,7 @@ document.getElementById("backup").onclick=doBackup;
 /* backup reminders: after each new recording, and weekly while there is work worth keeping */
 const DAY=86400000;
 function agoText(t){ if(!t) return "never"; const d=Math.floor((Date.now()-t)/DAY); return d<1?"today": d===1?"yesterday": d+" days ago"; }
-function showBkp(title,text){ if(!downloads) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
+function showBkp(title,text){ if(!downloads || (sbSess && lsGet("ps.lastSync"))) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
 function nudgeAfterRecording(){ showBkp("New recording added", "It lives only in this browser until you back it up. Last backup: "+agoText(lsGet("ps.lastBackup"))+". PENNIO cannot recover it if it is lost."); }
 async function nudgeWeekly(){
   if(!document.getElementById("bkpBar").hidden) return;
@@ -1416,7 +1445,7 @@ async function saveWord(text){
   if(!text) return; const list=(await kvGet("words"))||lsGet("ps.words")||[];
   const i=list.findIndex(w=>w.text===text); if(i>=0) list.splice(i,1);
   list.unshift({text, at:Date.now()}); list.length=Math.min(list.length,200);
-  await kvSet("words",list); lsSet("ps.words",list); renderWords();
+  await kvSet("words",list); lsSet("ps.words",list); renderWords(); cloudPutData("words",list);
 }
 async function renderWords(){
   const list=(await kvGet("words"))||lsGet("ps.words")||[];
@@ -1441,6 +1470,179 @@ document.getElementById("obForm").onsubmit=async e=>{
   ob.classList.remove("on"); toast("Ẹ kú àbọ̀, "+name.split(" ")[0]+".");
 };
 
+/* ---------- cloud saving: Supabase, called over plain HTTPS (no third-party script) ---------- */
+const SB_URL="https://rgkxqcmfejglfslhrpsm.supabase.co", SB_KEY="sb_publishable_LyoN0Fi7EQPagzBHyHuR9Q_8O8mhp2x";
+let sbSess=lsGet("ps.sb"), sbSyncing=false, cloudDirty=new Set(), cloudT=null;
+function setSession(d){ sbSess={access_token:d.access_token, refresh_token:d.refresh_token, expires_at:Date.now()+(+d.expires_in||3600)*1000, user: d.user? {id:d.user.id,email:d.user.email} : (sbSess&&sbSess.user)||null}; lsSet("ps.sb",sbSess); }
+function sbClear(){ sbSess=null; try{ localStorage.removeItem("ps.sb"); localStorage.removeItem("ps.lastSync"); }catch(e){} }
+async function sbRefresh(){
+  if(!sbSess||!sbSess.refresh_token) return false;
+  try{
+    const r=await fetch(SB_URL+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:sbSess.refresh_token})});
+    if(!r.ok){ if(r.status===400||r.status===401){ sbClear(); renderCloud(); } return false; }
+    setSession(await r.json()); return true;
+  }catch(e){ return false; }
+}
+async function sbFetch(path,opts){
+  if(!sbSess) throw new Error("signed-out");
+  if(Date.now()>sbSess.expires_at-60000) await sbRefresh();
+  if(!sbSess) throw new Error("signed-out");
+  const o=Object.assign({},opts||{}); o.headers=Object.assign({apikey:SB_KEY,Authorization:"Bearer "+sbSess.access_token},(opts&&opts.headers)||{});
+  let r=await fetch(SB_URL+path,o);
+  if(r.status===401 && await sbRefresh()){ o.headers.Authorization="Bearer "+sbSess.access_token; r=await fetch(SB_URL+path,o); }
+  return r;
+}
+async function sbLoadUser(){ const r=await sbFetch("/auth/v1/user"); if(r.ok){ const u=await r.json(); sbSess.user={id:u.id,email:u.email}; lsSet("ps.sb",sbSess); } return r.ok; }
+async function sbSendLink(email){
+  const r=await fetch(SB_URL+"/auth/v1/otp?redirect_to="+encodeURIComponent(location.origin+"/studio/"),{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({email,create_user:true})});
+  if(!r.ok){ const t=await r.text().catch(()=> ""); throw new Error(r.status===429||/rate/i.test(t)? "rate" : "send"); }
+}
+async function sbVerify(email,code){
+  const r=await fetch(SB_URL+"/auth/v1/verify",{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({type:"email",email,token:code})});
+  if(!r.ok) throw new Error("code");
+  setSession(await r.json()); if(!sbSess.user) await sbLoadUser();
+}
+/* a sign-in link lands here with the session in the address */
+async function sbFromLink(){
+  const h=location.hash||""; if(!/access_token=|error_description=/.test(h)) return false;
+  const q=new URLSearchParams(h.slice(1));
+  try{ history.replaceState(null,"",location.pathname); }catch(e){}
+  if(q.get("error_description")){ toast("That sign-in link has expired. Send a new one from My work."); return false; }
+  setSession({access_token:q.get("access_token"),refresh_token:q.get("refresh_token"),expires_in:q.get("expires_in")});
+  await sbLoadUser(); return true;
+}
+function agoShort(t){ if(!t) return "not yet"; const s=Math.round((Date.now()-t)/1000); return s<60? "just now" : s<3600? Math.round(s/60)+" min ago" : s<86400? Math.round(s/3600)+" h ago" : Math.round(s/86400)+" days ago"; }
+function setCloudStat(t){ const el=document.getElementById("cloudStat"); if(el) el.textContent=t; }
+function renderCloud(){
+  if(inClaude){ document.getElementById("cloud").hidden=true; document.getElementById("obReturn").hidden=true; return; }
+  const signed=!!(sbSess&&sbSess.user);
+  document.getElementById("cloudOut").hidden=signed; document.getElementById("cloudIn").hidden=!signed;
+  if(signed){ document.getElementById("cloudWho").textContent="Signed in as "+sbSess.user.email; setCloudStat("Last synced: "+agoShort(lsGet("ps.lastSync"))); }
+  else { const pf=lsGet("ps.profile"); const e=document.getElementById("sbEmail"); if(pf&&pf.email&&!e.value) e.value=pf.email; }
+}
+function markSynced(){ lsSet("ps.lastSync",Date.now()); setCloudStat("Last synced: just now"); const n=document.getElementById("savedNote"); if(n) n.textContent="Saved to cloud"; document.getElementById("bkpBar").hidden=true; }
+function cloudQueue(id){ if(!sbSess) return; cloudDirty.add(id); clearTimeout(cloudT); cloudT=setTimeout(cloudFlush,2500); }
+async function cloudFlush(){
+  if(!sbSess) return; if(sbSyncing){ clearTimeout(cloudT); cloudT=setTimeout(cloudFlush,2500); return; }
+  const ids=[...cloudDirty]; cloudDirty.clear();
+  try{ for(const id of ids){ const rec=await tx("projects","readonly",st=>st.get(id)); if(rec) await cloudPushProject(rec); } markSynced(); }
+  catch(e){ ids.forEach(i=>cloudDirty.add(i)); setCloudStat(cloudErr(e)); const n=document.getElementById("savedNote"); if(n) n.textContent="Saved (cloud retry)"; clearTimeout(cloudT); cloudT=setTimeout(cloudFlush,30000); }
+}
+function cloudErr(e){ const m=String(e&&e.message||e); return /404|42P01|relation/.test(m)? "Cloud saving is not set up on the server yet." : /signed-out/.test(m)? "Signed out." : "Could not reach the cloud. Your work is safe here and will sync later."; }
+async function cloudPushProject(rec){
+  const uid=sbSess.user.id, sigs=lsGet("ps.cloudAudio")||{}; let audio_path=null;
+  if(rec.audio&&rec.audio.bytes){
+    const sig=rec.audio.name+":"+rec.audio.bytes.byteLength, path=uid+"/"+rec.id;
+    if(sigs[rec.id]!==sig){
+      const r=await sbFetch("/storage/v1/object/recordings/"+path,{method:"POST",headers:{"x-upsert":"true","Content-Type":"application/octet-stream"},body:rec.audio.bytes});
+      if(!r.ok) throw new Error("upload "+r.status);
+      sigs[rec.id]=sig; lsSet("ps.cloudAudio",sigs);
+    }
+    audio_path=path;
+  }
+  const row={user_id:uid,id:rec.id,name:rec.name||"Untitled beat",state:rec.state||null,audio_name:rec.audio?rec.audio.name:null,audio_path,updated_at:new Date(rec.updated||Date.now()).toISOString()};
+  const r=await sbFetch("/rest/v1/projects?on_conflict=user_id,id",{method:"POST",headers:{"Content-Type":"application/json",Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify(row)});
+  if(!r.ok) throw new Error("save "+r.status+" "+(await r.text().catch(()=> "")));
+}
+async function cloudPutData(key,value){
+  if(!sbSess||!sbSess.user) return;
+  try{ await sbFetch("/rest/v1/user_data?on_conflict=user_id,key",{method:"POST",headers:{"Content-Type":"application/json",Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({user_id:sbSess.user.id,key,value,updated_at:new Date().toISOString()})}); }catch(e){}
+}
+async function cloudGetData(key){ const r=await sbFetch("/rest/v1/user_data?select=value&key=eq."+encodeURIComponent(key)); if(!r.ok) return null; const a=await r.json(); return a.length? a[0].value : null; }
+async function cloudDeleteProject(id){
+  if(!sbSess||!sbSess.user) return;
+  try{
+    await sbFetch("/rest/v1/projects?id=eq."+encodeURIComponent(id),{method:"DELETE"});
+    await sbFetch("/storage/v1/object/recordings",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({prefixes:[sbSess.user.id+"/"+id]})});
+    const sigs=lsGet("ps.cloudAudio")||{}; delete sigs[id]; lsSet("ps.cloudAudio",sigs);
+  }catch(e){}
+}
+/* two-way sync: newest copy of each project wins; recordings travel with their project */
+async function cloudSyncAll(opts){
+  if(!sbSess||!sbSess.user||sbSyncing) return;
+  sbSyncing=true; setCloudStat("Syncing…");
+  try{
+    const r=await sbFetch("/rest/v1/projects?select=*"); if(!r.ok) throw new Error("list "+r.status+" "+(await r.text().catch(()=> "")));
+    const remote=await r.json(), local=(await allProjects())||[], lmap=new Map(local.map(x=>[x.id,x])), sigs=lsGet("ps.cloudAudio")||{};
+    let reopen=null;
+    for(const row of remote){
+      const l=lmap.get(row.id), rt=Date.parse(row.updated_at);
+      if(l && l.updated>=rt-1000) continue;
+      let audio=null;
+      if(row.audio_path){ const ar=await sbFetch("/storage/v1/object/authenticated/recordings/"+row.audio_path); if(ar.ok){ audio={name:row.audio_name||"Recording",bytes:await ar.arrayBuffer()}; sigs[row.id]=audio.name+":"+audio.bytes.byteLength; } else if(l&&l.audio) audio=l.audio; }
+      const rec={id:row.id,name:row.name,state:row.state,audio,created:(l&&l.created)||rt,updated:rt};
+      await tx("projects","readwrite",st=>st.put(rec));
+      if(row.id===currentId) reopen=rec;
+    }
+    lsSet("ps.cloudAudio",sigs);
+    const rmap=new Map(remote.map(x=>[x.id,x]));
+    const fresh=!!(opts&&opts.fresh&&remote.length);
+    const isStarter=l=>!l.audio && Date.now()-(l.created||0)<15*60000 && !rmap.has(l.id);
+    for(const l of local){ if(fresh&&isStarter(l)) continue; const row=rmap.get(l.id); if(!row || l.updated>Date.parse(row.updated_at)+1000) await cloudPushProject(l); }
+    // written words and profile
+    const cw=await cloudGetData("words"); const lw=(await kvGet("words"))||lsGet("ps.words")||[];
+    if(cw&&cw.length){ const all=lw.concat(cw.filter(w=>!lw.some(x=>x.text===w.text))).sort((a,b)=>b.at-a.at).slice(0,200); await kvSet("words",all); lsSet("ps.words",all); renderWords(); }
+    await cloudPutData("words",(await kvGet("words"))||lsGet("ps.words")||[]);
+    const cp=await cloudGetData("profile"), lp=lsGet("ps.profile");
+    if(cp && !lp){ lsSet("ps.profile",Object.assign({},cp,{sent:true,kit:true})); await kvSet("profile",cp); ob.classList.remove("on"); }
+    else if(lp) await cloudPutData("profile",{name:lp.name,email:lp.email,make:lp.make,joined:lp.joined});
+    // on a fresh device, open the newest project from the cloud
+    if(fresh){
+      const newest=remote.slice().sort((a,b)=>Date.parse(b.updated_at)-Date.parse(a.updated_at))[0];
+      const rec=await tx("projects","readonly",st=>st.get(newest.id));
+      if(rec){ ready=false; await openProject(rec); ready=true; for(const l of local) if(isStarter(l)) await tx("projects","readwrite",st=>st.delete(l.id)); toast("Restored "+remote.length+" project"+(remote.length>1?"s":"")+" from the cloud"); }
+    }
+    else if(reopen){ await openProject(reopen); ready=true; }
+    markSynced();
+  }catch(e){ setCloudStat(cloudErr(e)); }
+  sbSyncing=false;
+  if(workEl.classList.contains("on")) renderWork();
+}
+async function cloudBoot(){
+  if(inClaude){ renderCloud(); return; }
+  const fromLink=await sbFromLink();
+  renderCloud();
+  if(sbSess&&sbSess.user){
+    const fresh=fromLink && (((await allProjects())||[]).every(p=>!p.audio && Date.now()-(p.created||0)<15*60000));
+    await cloudSyncAll({fresh});
+    if(fromLink) toast("Cloud saving is on for "+sbSess.user.email);
+  }
+}
+document.getElementById("sbSend").onclick=async()=>{
+  const email=document.getElementById("sbEmail").value.trim(), btn=document.getElementById("sbSend");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ toast("Add a valid email."); return; }
+  btn.disabled=true; btn.textContent="Sending…";
+  try{ await sbSendLink(email); lsSet("ps.sbEmail",email); document.getElementById("sbCodeRow").hidden=false; btn.textContent="Send again"; toast("Sign-in email sent to "+email); }
+  catch(e){ btn.textContent="Send sign-in link"; toast(e.message==="rate"? "Too many sign-in emails just now. Try again in a little while." : "Could not send the email. Check your connection and try again."); }
+  btn.disabled=false;
+};
+document.getElementById("sbVerify").onclick=async()=>{
+  const email=(lsGet("ps.sbEmail")||document.getElementById("sbEmail").value).trim(), code=document.getElementById("sbCode").value.replace(/\s/g,"");
+  if(!code){ toast("Type the code from the email."); return; }
+  const btn=document.getElementById("sbVerify"); btn.disabled=true; btn.textContent="Signing in…";
+  try{ await sbVerify(email,code); renderCloud(); const fresh=((await allProjects())||[]).every(p=>!p.audio && Date.now()-(p.created||0)<15*60000); await cloudSyncAll({fresh}); toast("Cloud saving is on"); }
+  catch(e){ toast("That code did not work. Check it, or send a new email."); }
+  btn.disabled=false; btn.textContent="Sign in";
+};
+document.getElementById("sbSync").onclick=()=>cloudSyncAll();
+document.getElementById("sbOut").onclick=async()=>{ try{ await sbFetch("/auth/v1/logout",{method:"POST"}); }catch(e){} sbClear(); renderCloud(); toast("Signed out. Your work stays in this browser."); };
+document.getElementById("sbWipe").onclick=async()=>{
+  const b=document.getElementById("sbWipe");
+  if(!b.dataset.arm){ b.dataset.arm="1"; b.textContent="Tap again to delete every project and recording from the cloud"; setTimeout(()=>{ delete b.dataset.arm; b.textContent="Delete my cloud copy"; },4000); return; }
+  try{
+    const uid=sbSess.user.id;
+    const lr=await sbFetch("/storage/v1/object/list/recordings",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prefix:uid,limit:1000})});
+    const files=lr.ok? await lr.json() : [];
+    if(files.length) await sbFetch("/storage/v1/object/recordings",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({prefixes:files.map(f=>uid+"/"+f.name)})});
+    await sbFetch("/rest/v1/projects?user_id=eq."+uid,{method:"DELETE"});
+    await sbFetch("/rest/v1/user_data?user_id=eq."+uid,{method:"DELETE"});
+    try{ localStorage.removeItem("ps.cloudAudio"); }catch(e){}
+    await sbFetch("/auth/v1/logout",{method:"POST"}).catch(()=>{}); sbClear(); renderCloud();
+    toast("Your cloud copy is deleted. Your work is still in this browser.");
+  }catch(e){ toast("Could not delete right now. Email contact@pennio.agency and we will remove it."); }
+};
+document.getElementById("obReturn").onclick=()=>{ ob.classList.remove("on"); renderWork(); workEl.classList.add("on"); renderCloud(); setTimeout(()=>{ document.getElementById("cloud").scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("sbEmail").focus(); },200); };
+
 /* boot */
 (async()=>{
   db=await idb();
@@ -1453,6 +1655,7 @@ document.getElementById("obForm").onsubmit=async e=>{
   if(rec){ await openProject(rec); ready=true; document.getElementById("savedNote").textContent="Restored"; }
   else { await newProject(); }
   renderWords(); sendProfileIfNeeded(); setTimeout(nudgeWeekly,1500);
+  await cloudBoot();
   window.addEventListener("pagehide",()=>{ if(ready) saveNow(); });
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"&&ready) saveNow(); });
 })();
