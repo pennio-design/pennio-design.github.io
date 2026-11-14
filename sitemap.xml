@@ -11,6 +11,11 @@
   <!-- /studio ships in this same commit as studio/index.html. Trailing slash
        matches the page's canonical tag. -->
   <url>
+    <loc>https://pennio.agency/oju-gbooro/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://pennio.agency/studio/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
