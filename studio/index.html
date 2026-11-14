@@ -187,6 +187,11 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
 .cast input{background:var(--black);border:1px solid var(--line2);border-radius:12px;color:var(--text);font-family:inherit;font-size:16px;padding:11px 13px;outline:none;width:100%}
 .cast input:focus{border-color:var(--m)}
 .cast .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cast select{background:var(--black);border:1px solid var(--line2);border-radius:12px;color:var(--text);font-family:inherit;font-size:16px;padding:11px 13px;outline:none;width:100%;min-height:46px;-webkit-appearance:none;appearance:none}
+.cast select:focus{border-color:var(--m)}
+.cast .chk{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--text);min-height:40px;cursor:pointer}
+.cast .chk input{width:20px;height:20px;accent-color:var(--orange);flex:none}
+@media (max-width:420px){.cast .two{grid-template-columns:1fr}}
 .cast .addr{font-size:12px;color:var(--mute);margin-top:8px}
 /* film */
 .phases{display:grid;gap:12px;margin-top:22px}
@@ -348,18 +353,25 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
     <div class="phase"><div class="n">Later</div><div><h3>Story and production tools</h3><p>Script, shot lists and cultural reference checks so the story is told right: names, proverbs, dress and setting reviewed by people who carry the culture.</p></div></div>
   </div>
 </section>
-<section class="wrap" style="padding:0" id="castWrap">
+<section class="wrap" style="padding:0" id="oju-gbooro">
   <div class="cast" id="cast">
     <div class="k">Ojú Gbòòrò · now casting</div>
     <div class="yo">A ń wá onídìrí ìbílẹ̀ tó dáńgájíá.</div>
     <p>Ojú Gbòòrò is looking for skilled traditional hairdressers, and for models to wear their work. Tell us who you are and we will reach out.</p>
     <form id="castForm" novalidate>
       <div class="seg" id="castRole" style="width:max-content"><button type="button" data-k="Hairdresser" class="on">Hairdresser</button><button type="button" data-k="Model">Model</button><button type="button" data-k="Both">Both</button></div>
-      <div class="two"><input id="cName" placeholder="Your name" maxlength="60" autocomplete="name"><input id="cCity" placeholder="City" maxlength="40"></div>
-      <input id="cContact" placeholder="Phone, WhatsApp or Instagram" maxlength="80">
+      <div class="two"><input id="cName" placeholder="Full name" maxlength="60" autocomplete="name" aria-label="Full name"><input id="cCity" placeholder="City" maxlength="40" aria-label="City"></div>
+      <div class="two"><input id="cPhone" type="tel" placeholder="Phone or WhatsApp" maxlength="30" autocomplete="tel" aria-label="Phone or WhatsApp"><input id="cEmail" type="email" placeholder="Email (optional)" maxlength="120" autocomplete="email" aria-label="Email"></div>
+      <input id="cLink" placeholder="Instagram or link to your photos" maxlength="160" aria-label="Instagram or photo link">
+      <div class="two" id="cHair">
+        <input id="cStyles" placeholder="Styles you do best" maxlength="120" aria-label="Styles you do best">
+        <select id="cYears" aria-label="Years doing hair"><option value="">Years doing hair</option><option>Under 1</option><option>1 to 3</option><option>4 to 9</option><option>10 or more</option></select>
+      </div>
+      <label class="chk"><input type="checkbox" id="cAdult"> I am 18 or older</label>
+      <label class="chk"><input type="checkbox" id="cOk"> PENNIO may contact me about Ojú Gbòòrò casting</label>
       <input type="text" id="cHoney" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="err" id="cErr" style="margin:0"></div>
-      <button class="btn primary" type="submit">Apply</button>
+      <button class="btn primary" type="submit">Send my entry</button>
     </form>
     <div class="addr" id="cAddr">Applications go to contact@pennio.agency</div>
   </div>
@@ -1290,24 +1302,30 @@ async function sendProfileIfNeeded(){
 
 /* ---------- Ojú Gbòòrò casting ---------- */
 let castRole="Hairdresser";
-document.querySelectorAll("#castRole button").forEach(b=>b.onclick=()=>{ castRole=b.dataset.k; document.querySelectorAll("#castRole button").forEach(x=>x.classList.toggle("on",x===b)); });
+document.querySelectorAll("#castRole button").forEach(b=>b.onclick=()=>{ castRole=b.dataset.k; document.querySelectorAll("#castRole button").forEach(x=>x.classList.toggle("on",x===b)); document.getElementById("cHair").style.display= castRole==="Model"?"none":""; });
+try{ const pf=JSON.parse(localStorage.getItem("ps.profile")||"null"); if(pf){ if(pf.email) document.getElementById("cEmail").value=pf.email; if(pf.name) document.getElementById("cName").value=pf.name; } }catch(e){}
 document.getElementById("castForm").onsubmit=async e=>{
   e.preventDefault();
-  const name=document.getElementById("cName").value.trim(), city=document.getElementById("cCity").value.trim(), contact=document.getElementById("cContact").value.trim(), err=document.getElementById("cErr");
-  if(!name||!contact){ err.textContent="Add your name and a way to reach you."; return; }
+  const v=id=>document.getElementById(id).value.trim(), err=document.getElementById("cErr");
+  const app={role:castRole, name:v("cName"), city:v("cCity"), phone:v("cPhone"), email:v("cEmail"), link:v("cLink"),
+    styles: castRole==="Model"?"":v("cStyles"), years: castRole==="Model"?"":v("cYears"), at:Date.now()};
+  if(!app.name){ err.textContent="Add your full name."; return; }
+  if(!app.phone && !app.email){ err.textContent="Add a phone number or an email so we can reach you."; return; }
+  if(app.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(app.email)){ err.textContent="That email does not look right."; return; }
+  if(!document.getElementById("cAdult").checked){ err.textContent="Entries are open to people aged 18 or older."; return; }
+  if(!document.getElementById("cOk").checked){ err.textContent="Tick the box so we can contact you."; return; }
   err.textContent="";
-  const prof=lsGet("ps.profile")||{};
-  const app={role:castRole,name,city,contact,email:prof.email||"",at:Date.now()};
   const list=(await kvGet("casting"))||lsGet("ps.casting")||[]; list.unshift(app); await kvSet("casting",list); lsSet("ps.casting",list);
   if(document.getElementById("cHoney").value) return;
-  const sendBtn=e.target.querySelector("button[type=submit]"); sendBtn.disabled=true; sendBtn.textContent="Sending…";
-  const sent=await sendForm({_subject:"Ojú Gbòòrò casting: "+castRole+", "+name, role:castRole, name, city, contact, email:app.email, page:"pennio.agency/studio"});
-  sendBtn.disabled=false; sendBtn.textContent="Apply";
-  if(sent){ e.target.reset(); document.getElementById("cAddr").textContent="Received. Ẹ ṣé! We will reach out to you."; toast("Application sent"); return; }
-  const body="Ojú Gbòòrò application%0A%0ARole: "+encodeURIComponent(castRole)+"%0AName: "+encodeURIComponent(name)+"%0ACity: "+encodeURIComponent(city)+"%0AContact: "+encodeURIComponent(contact)+(app.email?"%0AEmail: "+encodeURIComponent(app.email):"");
-  const href="mailto:contact@pennio.agency?subject="+encodeURIComponent("Ojú Gbòòrò: "+castRole+" application, "+name)+"&body="+body;
-  const a=document.createElement("a"); a.href=href; a.target="_blank"; a.rel="noopener"; document.body.appendChild(a); a.click(); a.remove();
-  document.getElementById("cAddr").innerHTML="Your email app should open with the application filled in: press send. If it did not open, email contact@pennio.agency with your role, name, city and contact.";
+  const btn=e.target.querySelector("button[type=submit]"); btn.disabled=true; btn.textContent="Sending…";
+  const fields={_subject:"Ojú Gbòòrò casting: "+app.role+", "+app.name, role:app.role, name:app.name, city:app.city, phone:app.phone, email:app.email, photos:app.link, styles:app.styles, years_doing_hair:app.years, age_18_plus:"yes", page:"pennio.agency/studio"};
+  const sent=(typeof sendForm==="function")? await sendForm(fields) : false;
+  btn.disabled=false; btn.textContent="Send my entry";
+  if(sent){ e.target.reset(); document.getElementById("cAddr").textContent="Entry received. Ẹ ṣé! We will reach out to you."; toast("Entry sent"); return; }
+  const lines=["Ojú Gbòòrò casting entry","","Role: "+app.role,"Name: "+app.name,"City: "+app.city,"Phone: "+app.phone,"Email: "+app.email,"Photos: "+app.link].concat(app.role!=="Model"?["Styles: "+app.styles,"Years doing hair: "+app.years]:[]).concat(["Aged 18 or older: yes"]);
+  const href="mailto:contact@pennio.agency?subject="+encodeURIComponent("Ojú Gbòòrò casting: "+app.role+", "+app.name)+"&body="+encodeURIComponent(lines.join("\n"));
+  const l=document.createElement("a"); l.href=href; l.target="_blank"; l.rel="noopener"; document.body.appendChild(l); l.click(); l.remove();
+  document.getElementById("cAddr").textContent="Your email app should open with the entry filled in: press send. If it did not open, email contact@pennio.agency with these details.";
   toast("Saved. Press send in your email app.");
 };
 
