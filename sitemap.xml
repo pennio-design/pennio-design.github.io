@@ -8,6 +8,13 @@
   <!-- Confirmed live via direct fetch on 2026-08-19. Ogbifo intentionally excluded —
        confirmed still in build, not yet public. Re-check before every deploy;
        a sitemap entry is a promise to search engines that the page resolves. -->
+  <!-- /studio ships in this same commit as studio/index.html. Trailing slash
+       matches the page's canonical tag. -->
+  <url>
+    <loc>https://pennio.agency/studio/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url>
     <loc>https://pennio.agency/letscreate</loc>
     <changefreq>weekly</changefreq>
