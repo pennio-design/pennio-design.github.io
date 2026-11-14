@@ -206,6 +206,13 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
 .layer .lh{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:40px}
 .layer .lh b{font-size:14px;font-weight:600}
 .layer .lh small{display:block;font-size:11px;color:var(--mute);font-weight:300}
+.layer .la{display:flex;gap:8px;margin-top:8px}
+.layer .la .btn{min-height:44px;font-size:13px;padding:0 14px}
+.take{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--black)}
+.take[hidden]{display:none}
+.take .tk{flex:1 1 100%;font-size:13px}
+.take .tk small{display:block;color:var(--mute);font-weight:300;font-size:11px}
+.take .btn{min-height:44px}
 .layer .ls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
 .layer .ls label{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
 .layer .ls label b{color:var(--text);font-weight:600;letter-spacing:0;text-transform:none}
@@ -328,8 +335,13 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
       <label class="btn primary file" id="vfileLbl">Add recording<input type="file" id="vfile" accept="audio/*"></label>
       <div class="seg" id="ab"><button data-k="raw">Before</button><button data-k="pro" class="on">Enhanced</button></div>
       <button class="btn" id="vprev" disabled>Preview</button>
-      <button class="btn" id="vdel" disabled>Delete recording</button>
+      <button class="btn" id="vdel" disabled hidden>Delete recording</button>
       <button class="btn primary" id="vbeat" disabled>Make a beat from my voice</button>
+    </div>
+    <div class="take" id="take" hidden>
+      <div class="tk"><b>Your recording</b> <span id="takeLen"></span><small>Not happy with it? Record again to replace it, or delete it. The beat stays.</small></div>
+      <button class="btn" id="takeRe">Re-record</button>
+      <button class="btn" id="takeDel">Delete</button>
     </div>
     <div class="recopts" id="recOpts" hidden>
       <div class="sw-row"><button class="sw on" id="swOver" role="switch" aria-checked="true"><i></i></button><span><b>Record over the beat</b> the groove plays while you sing</span></div>
@@ -877,7 +889,7 @@ async function loadVoice(bytes,name,fromRestore){
     if(!pattern.vox.some(Boolean)){ pattern.vox=new Array(16).fill(0); for(let i=0;i<N;i+=4) pattern.vox[i]=1; pattern.vox[N-2]=1; }
     vocalOffset=0; vocalNudge=0; drumBuf=null; LAY.drum=false;
   }
-  render(); renderLayers(); drawWave(); vprev.disabled=false; document.getElementById("vbeat").disabled=false; document.getElementById("vdel").disabled=false;
+  render(); renderLayers(); drawWave(); vprev.disabled=false; document.getElementById("vbeat").disabled=false; document.getElementById("vdel").disabled=false; if(typeof updateTake==="function") updateTake();
   document.getElementById('toDrum').disabled=false; document.getElementById('sayNote').textContent='Ready. Works best with clear speech or singing, one voice, little background noise.';
   vmeta.textContent=name+" · "+rawBuf.duration.toFixed(1)+"s · "+slices.length+" chops found. Enhanced: rumble cut, mud reduced, presence and air lifted, levelled, light room, loudness normalised.";
   saveSoon(true);
@@ -1078,6 +1090,14 @@ function renderLayers(){
       : '<div><label>Tune <b>'+(tuneV[d.id]>0?"+":"")+tuneV[d.id]+'</b></label><input type="range" min="-12" max="12" step="1" value="'+tuneV[d.id]+'" data-k="tune" aria-label="'+d.name+' tune in semitones"></div>';
     el.innerHTML='<div class="lh"><div><b></b><small></small></div><button class="sw'+(on?" on":"")+'" role="switch" aria-checked="'+on+'" aria-label="'+d.name+' on or off"'+(avail?"":" disabled")+'><i></i></button></div>'+
       '<div class="ls"><div><label>Volume <b>'+Math.round(gainsV[d.id]*100)+'</b></label><input type="range" min="0" max="150" value="'+Math.round(gainsV[d.id]*100)+'" data-k="vol" aria-label="'+d.name+' volume"></div>'+second+'</div>';
+    if(d.kind==="full" && avail){
+      const la=document.createElement("div"); la.className="la";
+      la.innerHTML='<button class="btn">Re-record</button><button class="btn">Delete</button>';
+      const [re,del]=la.querySelectorAll("button");
+      re.onclick=reRecord;
+      del.onclick=()=>{ if(armDelete(del,"Delete")) deleteRecording(); };
+      el.appendChild(la);
+    }
     el.querySelector("b").textContent=d.name;
     el.querySelector("small").textContent= avail? d.sub : (d.kind==="drumv"? "Use Ìlù below to make it first" : "Add or record your voice first");
     el.querySelector(".sw").onclick=()=>{
@@ -1101,6 +1121,7 @@ function renderLayers(){
     });
     layersEl.appendChild(el);
   });
+  if(typeof updateTake==="function") updateTake();
 }
 renderLayers();
 
@@ -1384,9 +1405,17 @@ document.getElementById("latTest").onclick=async()=>{
 
 /* ---------- delete the recording from this project ---------- */
 const vdel=document.getElementById("vdel");
-vdel.onclick=async()=>{
-  if(!vdel.dataset.arm){ vdel.dataset.arm="1"; vdel.textContent="Tap again to delete"; setTimeout(()=>{ delete vdel.dataset.arm; vdel.textContent="Delete recording"; },3000); return; }
-  delete vdel.dataset.arm; vdel.textContent="Delete recording";
+function armDelete(btn,label){
+  if(!btn.dataset.arm){ btn.dataset.arm="1"; btn.textContent="Tap again to delete"; setTimeout(()=>{ if(btn.dataset.arm){ delete btn.dataset.arm; btn.textContent=label; } },3000); return false; }
+  delete btn.dataset.arm; btn.textContent=label; return true;
+}
+function reRecord(){
+  const card=document.getElementById("voiceCard"); card.scrollIntoView({behavior:"smooth",block:"start"});
+  if(vrec.style.display!=="none"){ setTimeout(()=>vrec.click(),350); }
+  else { document.getElementById("vfile").click(); }
+}
+vdel.onclick=()=>{ if(armDelete(vdel,"Delete recording")) deleteRecording(); };
+async function deleteRecording(){
   stopTracks(); try{ prevSrc&&prevSrc.stop(); }catch(e){} try{ drumPrev&&drumPrev.stop(); }catch(e){}
   rawBuf=proBuf=drumBuf=null; slices=[]; currentAudio=null; vocalOffset=0; vocalNudge=0;
   LAY.full=false; LAY.drum=false; LAY.vox=true;
@@ -1396,7 +1425,17 @@ vdel.onclick=async()=>{
   await saveNow();
   if(typeof CLOUD_ON!=="undefined" && CLOUD_ON && sbSess && sbSess.user){ try{ await sbFetch("/storage/v1/object/recordings",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({prefixes:[sbSess.user.id+"/"+currentId]})}); const sg=lsGet("ps.cloudAudio")||{}; delete sg[currentId]; lsSet("ps.cloudAudio",sg); }catch(e){} }
   toast("Recording deleted");
-};
+  updateTake();
+}
+function updateTake(){
+  const t=document.getElementById("take"); if(!t) return;
+  t.hidden=!rawBuf;
+  if(rawBuf){ const sec=Math.round(rawBuf.duration); document.getElementById("takeLen").textContent="· "+Math.floor(sec/60)+":"+String(sec%60).padStart(2,"0"); }
+}
+const takeDel=document.getElementById("takeDel");
+takeDel.onclick=()=>{ if(armDelete(takeDel,"Delete")) deleteRecording(); };
+document.getElementById("takeRe").onclick=reRecord;
+updateTake();
 
 /* ---------- make a beat from the recording ---------- */
 const NOTE=["C","C♯","D","E♭","E","F","F♯","G","A♭","A","B♭","B"];
