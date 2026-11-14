@@ -177,6 +177,12 @@ input[type=range]::-webkit-slider-thumb{width:24px;height:24px;margin-top:-10.5p
 input[type=range]::-moz-range-track{height:3px;background:var(--line2);border-radius:3px}
 input[type=range]::-moz-range-thumb{width:24px;height:24px}
 .sylrow button{min-height:40px}
+/* backup reminder */
+.bkp{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:#17110c;border:1px solid var(--m);border-radius:16px;padding:14px;margin:0 0 18px}
+.bkp[hidden]{display:none}
+.bkp b{display:block;font-size:14px;font-weight:600}
+.bkp span{display:block;font-size:13px;color:var(--mute);margin-top:3px;line-height:1.45}
+.bkp-btns{display:flex;gap:8px}
 /* film + casting */
 .soon{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--black);background:var(--m);border-radius:999px;padding:5px 10px;margin-bottom:14px}
 .cast{margin-top:16px;border-radius:18px;padding:18px;background:linear-gradient(160deg,#17110c,#0d0d0d 60%);border:1px solid #2b2017}
@@ -232,6 +238,10 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
     <span class="saved" id="savedNote"></span>
     <a class="btn" href="/studio/guide/" id="guideLink" style="display:inline-flex;align-items:center;text-decoration:none;color:inherit">Guide</a>
     <button class="btn" id="openWork">My work</button>
+  </div>
+  <div class="bkp" id="bkpBar" hidden>
+    <div><b id="bkpTitle">Back up your work</b><span id="bkpText">Your work lives only in this browser. PENNIO cannot recover it if it is lost.</span></div>
+    <div class="bkp-btns"><button class="btn primary" id="bkpNow">Download backup</button><button class="btn" id="bkpLater">Later</button></div>
   </div>
   <h1>Bring your voice. Leave with a record.</h1>
   <p class="sub">Àyàn is the studio. Add a voice note or any sound, enhance it in one tap, chop it onto the grid with Yoruba percussion under it, let the talking drum answer in your own intonation, then remix until it feels right.</p>
@@ -703,7 +713,7 @@ async function loadVoice(bytes,name,fromRestore){
 document.getElementById("vfile").onchange=async e=>{
   const f=e.target.files&&e.target.files[0]; if(!f) return;
   vmeta.textContent="Reading "+f.name+"…";
-  try{ pushHist(); await loadVoice(await f.arrayBuffer(), f.name, false); toast("Voice added and saved. Press play."); }
+  try{ pushHist(); await loadVoice(await f.arrayBuffer(), f.name, false); toast("Voice added and saved. Press play."); nudgeAfterRecording(); }
   catch(err){ vmeta.textContent="That file could not be read. Try an .m4a, .mp3 or .wav file."; }
   e.target.value="";
 };
@@ -1057,7 +1067,7 @@ vrec.onclick=async()=>{
     mrec.onstop=async()=>{
       clearInterval(mtimer); mstream.getTracks().forEach(t=>t.stop()); vrec.textContent="● Record";
       const blob=new Blob(mchunks,{type:mrec.mimeType||"audio/webm"});
-      try{ pushHist(); await loadVoice(await blob.arrayBuffer(),"Recording "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}),false); toast("Recorded and saved. Press play."); }
+      try{ pushHist(); await loadVoice(await blob.arrayBuffer(),"Recording "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}),false); toast("Recorded and saved. Press play."); nudgeAfterRecording(); }
       catch(e){ vmeta.textContent="That recording could not be read. Try again."; }
     };
     mrec.start(); mstart=Date.now();
@@ -1192,7 +1202,7 @@ async function renderWork(){
       await tx("projects","readwrite",st=>st.delete(r.id)); if(r.id===currentId){ await newProject(); } renderWork(); };
     el.appendChild(d);
   });
-  let note="Projects live in this browser only. Clearing site data, or a private window, removes them.";
+  let note="Projects live in this browser only, and PENNIO cannot see or recover them. Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
   try{ if(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted()) note+=" This browser has agreed to keep them."; }catch(e){}
   if(!db) note="This browser is blocking storage here, so only the current beat is kept. Download a backup to keep your work.";
   document.getElementById("storeNote").textContent=note;
@@ -1206,15 +1216,33 @@ document.getElementById("newProj").onclick=async()=>{ await saveNow(); await new
 /* backup and restore */
 function b64(buf){ let s="",u=new Uint8Array(buf); for(let i=0;i<u.length;i+=32768) s+=String.fromCharCode.apply(null,u.subarray(i,i+32768)); return btoa(s); }
 function unb64(str){ const s=atob(str), u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u.buffer; }
-document.getElementById("backup").onclick=async()=>{
+async function doBackup(){
   await saveNow();
   if(!downloads){ toast("Download is not available in this view."); return; }
   const list=(await allProjects())||[];
   const data={app:"pennio.studio", version:1, at:new Date().toISOString(), profile:lsGet("ps.profile"), words:(await kvGet("words"))||lsGet("ps.words")||[],
     projects:list.map(r=>({...r, audio:r.audio? {name:r.audio.name, b64:b64(r.audio.bytes)} : null}))};
-  try{ await downloads.save({filename:"pennio-studio-backup-"+new Date().toISOString().slice(0,10)+".json", data:new Blob([JSON.stringify(data)],{type:"application/json"})}); toast("Backup saved"); }
+  try{ await downloads.save({filename:"pennio-studio-backup-"+new Date().toISOString().slice(0,10)+".json", data:new Blob([JSON.stringify(data)],{type:"application/json"})}); lsSet("ps.lastBackup",Date.now()); document.getElementById("bkpBar").hidden=true; toast("Backup saved. Keep the file somewhere safe."); }
   catch(e){ toast("Backup was cancelled or blocked."); }
-};
+}
+document.getElementById("backup").onclick=doBackup;
+
+/* backup reminders: after each new recording, and weekly while there is work worth keeping */
+const DAY=86400000;
+function agoText(t){ if(!t) return "never"; const d=Math.floor((Date.now()-t)/DAY); return d<1?"today": d===1?"yesterday": d+" days ago"; }
+function showBkp(title,text){ if(!downloads) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
+function nudgeAfterRecording(){ showBkp("New recording added", "It lives only in this browser until you back it up. Last backup: "+agoText(lsGet("ps.lastBackup"))+". PENNIO cannot recover it if it is lost."); }
+async function nudgeWeekly(){
+  if(!document.getElementById("bkpBar").hidden) return;
+  const last=lsGet("ps.lastBackup")||0, snooze=lsGet("ps.bkpSnooze")||0;
+  if(Date.now()<snooze || Date.now()-last<7*DAY) return;
+  const list=(await allProjects())||[];
+  const worth=list.some(r=>r.audio || (r.state&&r.state.pattern&&Object.values(r.state.pattern).some(a=>a.some(Boolean)) && r.updated>last));
+  if(!worth) return;
+  showBkp("Time to back up", "Last backup: "+agoText(last)+". Your work lives only in this browser, and PENNIO cannot recover it if it is lost.");
+}
+document.getElementById("bkpNow").onclick=doBackup;
+document.getElementById("bkpLater").onclick=()=>{ lsSet("ps.bkpSnooze",Date.now()+2*DAY); document.getElementById("bkpBar").hidden=true; };
 document.getElementById("restoreFile").onchange=async e=>{
   const f=e.target.files&&e.target.files[0]; if(!f) return;
   try{
@@ -1267,7 +1295,7 @@ document.getElementById("obForm").onsubmit=async e=>{
   if(!rec && !db){ const last=lsGet("ps.last"); if(last) rec={id:last.id,name:last.name,state:last.state,audio:null}; }
   if(rec){ await openProject(rec); ready=true; document.getElementById("savedNote").textContent="Restored"; }
   else { await newProject(); }
-  renderWords(); sendProfileIfNeeded();
+  renderWords(); sendProfileIfNeeded(); setTimeout(nudgeWeekly,1500);
   window.addEventListener("pagehide",()=>{ if(ready) saveNow(); });
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"&&ready) saveNow(); });
 })();
