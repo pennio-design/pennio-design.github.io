@@ -230,6 +230,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
   <div class="projbar">
     <input id="pname" value="Untitled beat" aria-label="Project name" maxlength="60">
     <span class="saved" id="savedNote"></span>
+    <a class="btn" href="/studio/guide/" id="guideLink" style="display:inline-flex;align-items:center;text-decoration:none;color:inherit">Guide</a>
     <button class="btn" id="openWork">My work</button>
   </div>
   <h1>Bring your voice. Leave with a record.</h1>
@@ -376,7 +377,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
     <div class="addr" id="cAddr">Applications go to contact@pennio.agency</div>
   </div>
 </section>
-<p class="foot">pennio.studio by PENNIO</p>
+<p class="foot"><a href="/studio/guide/" style="color:inherit">How to use pennio.studio</a> · pennio.studio by PENNIO</p>
 </main>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to pennio.studio.</h2>
@@ -403,6 +404,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
   </div>
   <div class="plist" id="plist"></div>
   <p id="storeNote" style="margin-top:14px"></p>
+  <p style="margin-top:8px"><a href="/studio/guide/#history" style="color:var(--text)">Where your work lives, and how backups work</a></p>
 </div></div>
 
 <div class="toast" id="toast"></div>
@@ -1296,7 +1298,7 @@ async function sendForm(fields){
 async function sendProfileIfNeeded(){
   const prof=lsGet("ps.profile"); if(!prof||prof.sent) return;
   const ok=await sendForm({_subject:"New pennio.studio sign-up", name:prof.name, email:prof.email, making:prof.make, page:"pennio.agency/studio", joined:new Date(prof.joined).toISOString(),
-    _autoresponse:"Ẹ kú àbọ̀ to pennio.studio, "+prof.name.split(" ")[0]+".\n\nYour studio lives in the browser you signed up on. Open it any time at https://pennio.agency/studio and your beats, recordings and words will be where you left them.\n\nOne habit worth keeping: open My work and tap Download backup now and then. Clearing your browser data removes everything stored there.\n\nReply to this email if anything breaks or if you make something you want us to hear.\n\nPENNIO"});
+    _autoresponse:"Ẹ kú àbọ̀ to pennio.studio, "+prof.name.split(" ")[0]+".\n\nYour studio lives in the browser you signed up on. Open it any time at https://pennio.agency/studio and your beats, recordings and words will be where you left them.\n\nOne habit worth keeping: open My work and tap Download backup now and then. Clearing your browser data removes everything stored there.\n\nThe guide shows how to make a beat, bring your voice, write Yoruba with its tones and find your saved work: https://pennio.agency/studio/guide/\n\nReply to this email if anything breaks or if you make something you want us to hear.\n\nPENNIO"});
   if(ok){ prof.sent=true; lsSet("ps.profile",prof); kvSet("profile",prof); }
 }
 

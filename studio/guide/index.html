@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://formsubmit.co; worker-src 'self' blob:; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to use pennio.studio · PENNIO</title>
+<meta name="description" content="Make a beat, bring your voice, let the talking drum answer, write Yoruba with tone marks, and find everything you have saved. The pennio.studio guide.">
+<meta name="theme-color" content="#050505">
+<link rel="canonical" href="https://pennio.agency/studio/guide/">
+<meta property="og:title" content="How to use pennio.studio">
+<meta property="og:description" content="Make a beat, bring your voice, let the talking drum answer, and find everything you have saved.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://pennio.agency/studio/guide/">
+<meta property="og:image" content="https://pennio.agency/studio/og-studio.jpg">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<style>/* Inter, hosted on this domain so it loads on slow or blocked networks. */@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/inter-300.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-500.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/inter-600.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-700.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/inter-800.woff2') format('woff2')}</style>
+<style>
+:root{--orange:#F26522;--black:#050505;--off:#0A0A0A;--surface:#121212;--line:#1E1E1E;--line2:#2A2A2A;--text:#F2F2F2;--mute:#8A8A8A;--dim:#5a5a5a;--h:#F26522;--m:#C9A27A;--l:#6E3B31}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--black);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:10;background:rgba(5,5,5,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar{display:flex;justify-content:space-between;align-items:center;height:56px}
+.logo{display:flex;gap:10px;align-items:center;min-height:44px;font-weight:600;font-size:15px;color:var(--text);text-decoration:none}
+.logo i{width:9px;height:9px;border-radius:50%;background:var(--orange)}
+.open{font-size:13px;font-weight:600;color:var(--black);background:var(--text);border-radius:999px;padding:0 16px;min-height:40px;display:inline-flex;align-items:center;text-decoration:none}
+.hero{padding:44px 0 26px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:600}
+h1{font-size:clamp(32px,8vw,52px);font-weight:700;letter-spacing:-.035em;line-height:1.04;margin-top:12px}
+.lead{color:var(--mute);font-weight:300;font-size:17px;margin-top:14px;max-width:560px}
+.toc{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:22px 0 4px}
+.toc a{display:flex;gap:10px;align-items:center;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);text-decoration:none;font-size:14px;font-weight:500}
+.toc a b{color:var(--orange);font-weight:600;font-size:12px;min-width:18px}
+section{padding:34px 0;border-bottom:1px solid var(--line)}
+h2{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.2;display:flex;gap:12px;align-items:baseline}
+h2 span{font-size:13px;color:var(--orange);font-weight:600;letter-spacing:.04em}
+h3{font-size:16px;font-weight:600;margin-top:20px}
+p{margin-top:10px;color:#cfcfcf;font-weight:400}
+p.note{color:var(--mute);font-size:14px}
+ol,ul{margin:12px 0 0 0;padding-left:0;list-style:none;counter-reset:s}
+ol li{counter-increment:s;position:relative;padding:10px 0 10px 44px;border-top:1px solid #151515;color:#d6d6d6}
+ol li:first-child{border-top:0}
+ol li::before{content:counter(s);position:absolute;left:0;top:10px;width:28px;height:28px;border-radius:50%;background:var(--surface);border:1px solid var(--line2);display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--text)}
+ul li{position:relative;padding:6px 0 6px 20px;color:#d6d6d6}
+ul li::before{content:"";position:absolute;left:2px;top:15px;width:6px;height:6px;border-radius:50%;background:var(--orange)}
+.ui{display:inline-block;font-size:13px;font-weight:600;padding:1px 9px;border-radius:7px;background:var(--surface);border:1px solid var(--line2);color:var(--text);white-space:nowrap;line-height:1.7}
+.tone{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:6px;color:var(--black)}
+.tH{background:var(--h)}.tM{background:var(--m)}.tL{background:var(--l);color:var(--text)}
+.tip{margin-top:16px;padding:14px 16px;border-radius:14px;background:var(--off);border:1px solid var(--line2);font-size:14px;color:#cfcfcf}
+.tip b{color:var(--text)}
+.where{display:grid;gap:8px;margin-top:14px}
+.where div{display:grid;grid-template-columns:140px 1fr;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;font-size:14px}
+.where div b{font-weight:600}
+.where div span{color:#cfcfcf}
+.end{padding:40px 0 60px;text-align:center}
+.end a.go{display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:14px;background:var(--orange);color:var(--black);font-weight:600;text-decoration:none}
+.end p{color:var(--mute);font-size:13px;margin-top:16px}
+a{color:var(--text)}
+@media (max-width:480px){.toc{grid-template-columns:1fr}.where div{grid-template-columns:1fr;gap:2px}}
+@page{size:A4;margin:14mm 0;background:#050505}
+@media print{
+  html,body{background:#050505}
+  header{position:static;background:var(--black)}
+  .open{display:none}
+  section{break-inside:auto}
+  h2,h3{break-after:avoid}
+  ol li,.tip,.where div{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap bar"><a class="logo" href="/studio/"><i></i>pennio.studio</a><a class="open" href="/studio/">Open the studio</a></div></header>
+<main class="wrap">
+<div class="hero">
+  <div class="eyebrow">The guide</div>
+  <h1>How to use pennio.studio</h1>
+  <p class="lead">Everything the studio does, in the order you will want it: a first beat, your own voice, the talking drum, Yoruba with its tones, and where your work is kept.</p>
+  <nav class="toc" aria-label="Contents">
+    <a href="#start"><b>01</b>Before you start</a>
+    <a href="#first-beat"><b>02</b>Your first beat</a>
+    <a href="#voice"><b>03</b>Bring your voice</a>
+    <a href="#beat-from-voice"><b>04</b>A beat from your voice</a>
+    <a href="#ilu"><b>05</b>Ìlù: the drum speaks</a>
+    <a href="#remix"><b>06</b>Remix, mix, export</a>
+    <a href="#write"><b>07</b>Write Yoruba with tones</a>
+    <a href="#history"><b>08</b>Where your work lives</a>
+    <a href="#casting"><b>09</b>Ojú Gbòòrò casting</a>
+    <a href="#help"><b>10</b>When something goes wrong</a>
+  </nav>
+</div>
+
+<section id="start">
+  <h2><span>01</span>Before you start</h2>
+  <p>Open <b>pennio.agency/studio</b> on your phone or laptop. Chrome, Safari and Edge all work. The first time, you add your name and email and pick what you will make. There is no password and nothing to install.</p>
+  <ul>
+    <li>Your beats, recordings and written words save in the browser you are using, on that device. Open the studio in a different browser or on another phone and you start fresh there.</li>
+    <li>Turn your phone's volume up and, on iPhone, flip the silent switch off. iPhones mute the studio while the switch is on.</li>
+    <li>Use headphones when you record over a beat, so the drums do not leak into your voice.</li>
+  </ul>
+</section>
+
+<section id="first-beat">
+  <h2><span>02</span>Your first beat</h2>
+  <p>The studio opens on <span class="ui">Àyàn</span>, the music studio. The grid has one row per drum and one square per step. A lit square plays when the playhead passes it.</p>
+  <ol>
+    <li>Tap a starter groove under the controls, such as <span class="ui">Afro pulse</span> or <span class="ui">Standard bell 12/8</span>.</li>
+    <li>Press the orange play button. Press it again to stop.</li>
+    <li>Tap any square to add a hit. Tap the same square again to change it, and keep tapping to clear it. On the dùndún row the taps cycle through <span class="tone tH">H</span> high, <span class="tone tM">M</span> mid and <span class="tone tL">L</span> low. On the bàtá, agogo, ṣẹ̀kẹ̀rẹ̀ and udu rows the second tap gives a softer or second sound.</li>
+    <li>Drag <span class="ui">Tempo</span> to speed up or slow down. Drag <span class="ui">Swing</span> to make the groove lean and sway.</li>
+    <li>Switch between <span class="ui">12</span> and <span class="ui">16</span> steps. Twelve suits the bell patterns that count in threes; sixteen suits most modern grooves.</li>
+    <li>Tap a drum's name on the left to mute it. Tap again to bring it back.</li>
+  </ol>
+  <div class="tip"><b>Made a mistake?</b> <span class="ui">Undo</span> sits next to <span class="ui">Clear</span> and takes back any change, one step at a time, including Clear itself.</div>
+  <p class="note">On a phone the grid scrolls sideways. Swipe the grid left to reach the later steps.</p>
+</section>
+
+<section id="voice">
+  <h2><span>03</span>Bring your voice</h2>
+  <p>Your voice, a hum, a chant, a guitar line or a sound from the market can all go into the studio.</p>
+  <ol>
+    <li>In <b>Your voice</b>, tap <span class="ui">● Record</span>, allow the microphone, perform, and tap <span class="ui">■ Stop</span>. Recordings stop on their own at 60 seconds.</li>
+    <li>Prefer your phone's voice recorder? Record there, then tap <span class="ui">Add recording</span> and pick the file. .m4a, .mp3 and .wav all work.</li>
+    <li>The studio cleans the recording up straight away: it cuts low rumble and muddiness, lifts clarity, evens out the level and adds a light room sound. Switch between <span class="ui">Before</span> and <span class="ui">Enhanced</span> to hear the difference.</li>
+    <li>Tap <span class="ui">Preview</span> to hear the recording on its own.</li>
+  </ol>
+  <h3>Three ways to use it over the beat</h3>
+  <ul>
+    <li><span class="ui">Chops on grid</span> cuts your recording at each word or hit and places the pieces on the <b>Vox</b> row. Light up Vox squares to play the pieces in rhythm.</li>
+    <li><span class="ui">Full vocal over beat</span> plays your whole recording on top of the groove, starting on beat one.</li>
+    <li><span class="ui">Drum speaks it</span> plays the talking-drum version of your voice. You make it in section 05.</li>
+  </ul>
+</section>
+
+<section id="beat-from-voice">
+  <h2><span>04</span>A beat from your voice</h2>
+  <p>Sing or speak something with a rhythm, add it, then tap <span class="ui">Make a beat from my voice</span>.</p>
+  <ul>
+    <li>The studio finds the tempo of what you sang and sets the beat to it.</li>
+    <li>It finds the note your voice sits around and tunes the udu and dùndún to it, so the drums sit in your key.</li>
+    <li>The bàtá fills the gaps where you pause, and the dùndún answers with the tones of your own voice.</li>
+  </ul>
+  <p>Tap the button again for a different take. <span class="ui">Undo</span> brings back the one before.</p>
+  <div class="tip"><b>Tempo feels twice too fast or too slow?</b> Drag <span class="ui">Tempo</span> to double or halve it. Both readings fit the same rhythm, and the studio cannot always tell which one you meant.</div>
+</section>
+
+<section id="ilu">
+  <h2><span>05</span>Ìlù: the drum speaks your voice</h2>
+  <p>Yoruba is a tonal language, and the dùndún talking drum carries those tones. Ìlù listens to the rise and fall of your voice and plays it back on the drum.</p>
+  <ol>
+    <li>Add a recording of yourself speaking or singing in Yoruba. Speak clearly, one voice, somewhere quiet.</li>
+    <li>Tap <span class="ui">Translate my voice to drum</span>. Each syllable appears as high, mid or low, measured against your own voice, and lands on the dùndún row.</li>
+    <li>Tap <span class="ui">Hear the drum alone</span> to listen to the full drum line.</li>
+    <li>In <b>Your voice</b>, pick <span class="ui">Drum speaks it</span> to play that drum line over the beat.</li>
+  </ol>
+  <p class="note">Try "Ojú gbooro", meaning a wide view, then "Ojú gbòòrò", the greeting to hairdressers at work. Same letters, different tones, and the drum plays them differently.</p>
+</section>
+
+<section id="remix">
+  <h2><span>06</span>Remix, mix and export</h2>
+  <h3>Remix</h3>
+  <p>Each tap of <span class="ui">Remix</span> writes a new version: drum hits move, the dùndún line shifts and your vocal chops change order. Hits on the main beats stay where they are so the groove holds. The version number counts up as you go, and <span class="ui">Undo</span> walks back.</p>
+  <h3>Mix</h3>
+  <p>Each drum, the Vox chops and the full vocal have their own level, from 0 to 150. Pull a drum down to make room for your voice.</p>
+  <h3>Export</h3>
+  <p>Tap <span class="ui">Export WAV</span> to save the groove as a .wav file. It holds four rounds of the pattern, or the full length of your vocal if that runs longer. Muted drums stay silent in the export.</p>
+</section>
+
+<section id="write">
+  <h2><span>07</span>Write Yoruba with its tones</h2>
+  <p>Typing ẹ́ or ọ̀ on a phone is slow. In the <span class="ui">Write</span> tab you type plain letters and your voice supplies the tone marks.</p>
+  <ol>
+    <li><b>Calibrate once.</b> Sing do, re, mi slowly with a short pause between each note and add the recording. This shows the studio where your low, mid and high sit.</li>
+    <li><b>Type</b> a word or short phrase without tone marks, for example <i>oju gbooro</i>. Type ẹ, ọ and ṣ if you can: the voice decides tones, while the dots below are sounds the studio does not detect yet.</li>
+    <li><b>Say it</b> at a normal pace, record it, and add the recording.</li>
+    <li>The phrase comes back with its tone marks. Tap any syllable to correct it. Where a word has several meanings, such as ìlù (drum) and ìlú (town), pick the one you meant from the list.</li>
+    <li>Tap <span class="ui">Copy</span> to paste it anywhere, or <span class="ui">Play on dùndún</span> to hear it on the drum.</li>
+  </ol>
+  <p class="note">The studio writes standard Yoruba. Tones differ between dialects, so check anything you will publish.</p>
+</section>
+
+<section id="history">
+  <h2><span>08</span>Where your work lives</h2>
+  <p>The studio saves as you work. Close the page, come back tomorrow, and it opens where you left off.</p>
+  <div class="where">
+    <div><b>Your beats</b><span>Tap <span class="ui">My work</span> at the top of Àyàn. Every project is listed with the date it last changed and whether it has a recording. Tap <span class="ui">Open</span> to go back to one.</span></div>
+    <div><b>A new project</b><span><span class="ui">My work</span> → <span class="ui">New project</span>. Rename it in the name field at the top of Àyàn.</span></div>
+    <div><b>Your recordings</b><span>Saved inside the project you made them in, and they come back when you open it.</span></div>
+    <div><b>Your written words</b><span>In the <span class="ui">Write</span> tab under <b>Your words</b>. Tap one to copy it again.</span></div>
+    <div><b>Undo history</b><span>Covers the project you have open. It starts over when you open another project.</span></div>
+    <div><b>Deleting</b><span>In <span class="ui">My work</span>, tap <span class="ui">Delete</span> and then tap again to confirm.</span></div>
+  </div>
+  <h3>Keep a backup</h3>
+  <p>Everything lives in this browser on this device. Clearing your browser data, using a private window, or a browser tidying up sites you have not visited in a while can remove it.</p>
+  <ol>
+    <li>Open <span class="ui">My work</span> and tap <span class="ui">Download backup</span>. You get one file holding every project, recording and written word.</li>
+    <li>Keep that file somewhere safe, such as Google Drive or your email.</li>
+    <li>To bring your work back, on any device, open <span class="ui">My work</span>, tap <span class="ui">Restore backup</span> and pick the file.</li>
+  </ol>
+</section>
+
+<section id="casting">
+  <h2><span>09</span>Ojú Gbòòrò casting</h2>
+  <p>Ojú Gbòòrò is a hair culture brand bringing the greeting to hairdressers back into everyday life, and bringing African hair back as culture. A ń wá onídìrí ìbílẹ̀ tó dáńgájíá: we are looking for skilled traditional hairdressers, and for models to wear their work.</p>
+  <p>The entry form is at the bottom of every page of the studio. Pick Hairdresser, Model or Both, add how to reach you and a link to your photos, and send. Entries are open to people aged 18 or older.</p>
+</section>
+
+<section id="help">
+  <h2><span>10</span>When something goes wrong</h2>
+  <ul>
+    <li><b>No sound.</b> Turn the volume up, flip the iPhone silent switch off, and tap play again.</li>
+    <li><b>Record does nothing.</b> Your browser has blocked the microphone. Allow it in the browser's site settings, or use your phone's recorder and <span class="ui">Add recording</span>.</li>
+    <li><b>"That file could not be read".</b> Save the recording as .m4a, .mp3 or .wav and try again.</li>
+    <li><b>The drum reads the wrong tone.</b> Record closer to the phone in a quieter room, calibrate in the Write tab, and correct syllables by tapping them.</li>
+    <li><b>My work is gone.</b> You may be in a different browser, a private window, or your browser data was cleared. Restore your latest backup from My work.</li>
+  </ul>
+  <p>Still stuck? Email <b>contact@pennio.agency</b> and say what you tapped and what happened.</p>
+</section>
+
+<div class="end">
+  <a class="go" href="/studio/">Open the studio</a>
+  <p>pennio.studio by PENNIO · pennio.agency/studio</p>
+</div>
+</main>
+</body>
+</html>
