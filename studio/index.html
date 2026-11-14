@@ -322,7 +322,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
       <span><i style="background:var(--l)"></i>low</span>
       <span><i style="background:var(--text)"></i>hit</span>
       <span><i style="background:#9a9a9a"></i>soft / second tone</span>
-      <span><i style="background:#e8c9a3"></i>bass R 5 8 · keys · thumb piano 1 to 5</span>
+      <span><i style="background:#e8c9a3"></i>bass R 5 8 · keys · kalimba 1 to 5</span>
       <span>Tap a row name to mute it</span>
     </div>
   </div>
@@ -512,7 +512,7 @@ const LANES = [
   {id:"clap", name:"Pàtẹ́wọ́", sub:"hand clap", states:1},
   {id:"bass", name:"Bass", sub:"root / fifth / octave", states:3},
   {id:"keys", name:"Keys", sub:"chord hit / held chord", states:2},
-  {id:"pluck", name:"Thumb piano", sub:"melody, notes 1 to 5", states:5},
+  {id:"pluck", name:"Kalimba", sub:"melody, notes 1 to 5", states:5},
   {id:"vox", name:"Vox", sub:"your voice, chopped", states:1}
 ];
 const gainsV={dd:.9,bata:.85,agogo:.7,shek:.6,udu:1,clap:.7,bass:.95,keys:.55,pluck:.6,vox:1,full:.9,drumv:.9};
@@ -687,7 +687,7 @@ const V = {
       });
     });
   },
-  pluck(ctx,out,t,v){ // thumb piano: bright attack, a few inharmonic overtones, quick decay
+  pluck(ctx,out,t,v){ // kalimba: bright attack, a few inharmonic overtones, quick decay
     const pent=PENTA[H.scale]; let m=60+H.key+pent[(v-1)%5]; if(m>76) m-=12; m+=tuneV.pluck; const f=mtof(m);
     [[1,.34,.7],[2.01,.09,.28],[5.43,.035,.09]].forEach(([r,a,d])=>{
       const o=ctx.createOscillator(); o.type="sine"; o.frequency.value=f*r;
@@ -1488,7 +1488,7 @@ function beatFromVoice(){
   const tones=sy.slice(0,4).map(x=>x.tone==="H"?1:x.tone==="M"?2:3);
   let bs=8,bq=1e9; for(let st=8;st<=12;st++){ const q=hist16.slice(st,st+4).reduce((a,b)=>a+b,0); if(q<bq){bq=q;bs=st;} }
   p.dd=new Array(16).fill(0); tones.forEach((t,i)=>{ if(bs+i<16) p.dd[bs+i]=t; });
-  // harmony in the singer's key: bass follows the udu, keys hold each chord, the thumb piano leaves room for the voice
+  // harmony in the singer's key: bass follows the udu, keys hold each chord, the kalimba leaves room for the voice
   H.key=((Math.round(12*Math.log2(f0/440)+69)%12)+12)%12; H.scale="minor"; H.prog=rnd([0,1,2]);
   p.bass=p.udu.map(v=>v===1?1:v===2?3:0); if(Math.random()<.5) p.bass[8]=p.bass[8]||2;
   p.keys=new Array(16).fill(0); p.keys[0]=2; p.keys[8]=2;
