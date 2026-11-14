@@ -309,7 +309,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
     <p>Record on your phone's voice recorder, or pick any audio file: a hum, a chant, a guitar line, a market sound. The studio cleans it up and cuts it into pieces you can play on the grid.</p>
     <div class="voice-top">
       <button class="btn primary" id="vrec" style="display:none">● Record</button>
-      <label class="btn primary file" id="vfileLbl">Add recording<input type="file" id="vfile" accept="audio/*" capture></label>
+      <label class="btn primary file" id="vfileLbl">Add recording<input type="file" id="vfile" accept="audio/*"></label>
       <div class="seg" id="ab"><button data-k="raw">Before</button><button data-k="pro" class="on">Enhanced</button></div>
       <button class="btn" id="vprev" disabled>Preview</button>
       <button class="btn primary" id="vbeat" disabled>Make a beat from my voice</button>
@@ -365,7 +365,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
       <div class="k">Step 1 · once</div>
       <h3>Calibrate your voice</h3>
       <p>Sing do, re, mi slowly, with a short pause between each note, and add the recording. This tells the studio where your low, mid and high sit. You can skip it, but results are steadier with it.</p>
-      <div class="row2"><label class="btn file">Add do re mi<input type="file" id="wcal" accept="audio/*" capture></label><span class="vmeta" id="wcalNote" style="margin:0">Not calibrated</span></div>
+      <div class="row2"><button class="btn primary wmic" id="wcalRec" hidden>● Record do re mi</button><label class="btn file">Add do re mi<input type="file" id="wcal" accept="audio/*"></label><span class="vmeta" id="wcalNote" style="margin:0">Not calibrated</span></div>
     </div>
     <div class="stp">
       <div class="k">Step 2</div>
@@ -378,7 +378,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
       <div class="k">Step 3</div>
       <h3>Say it and add the recording</h3>
       <p>Say the phrase at a normal pace, close to the phone, somewhere quiet. Short phrases work best.</p>
-      <div class="row2"><label class="btn primary file">Add recording<input type="file" id="wrec" accept="audio/*" capture></label><span class="vmeta" id="wrecNote" style="margin:0"></span></div>
+      <div class="row2"><button class="btn primary wmic" id="wrecRec" hidden>● Record</button><label class="btn file">Add recording<input type="file" id="wrec" accept="audio/*"></label><span class="vmeta" id="wrecNote" style="margin:0"></span></div>
     </div>
   </div>
   <div class="result" id="wres">
@@ -1085,17 +1085,21 @@ function fitRuns(runs,fr,n){
   }
   return runs.map(r=>{ const fs=r.idx.map(i=>fr[i].f).filter(Boolean).sort((a,b)=>a-b); const core=fs.slice(Math.floor(fs.length*.2),Math.ceil(fs.length*.8)||1); const f=core.length?core[Math.floor(core.length/2)]:fs[0]; return {f, st:12*Math.log2(f), t:fr[r.idx[0]].t}; });
 }
+function readFail(f){ const ext=(f&&f.name&&f.name.split(".").pop()||"").toLowerCase(); return "This phone saved the recording"+(ext?" as ."+ext:"")+", which this browser cannot read. Use the Record button here instead."; }
+function calibrateFrom(b){
+  const note=document.getElementById("wcalNote");
+  const {frames}=analysePitch(b); const segs=fitRuns(voicedRuns(frames),frames,3);
+  if(segs.length<3){ note.textContent="Could not hear three notes. Leave a short pause between do, re and mi."; return; }
+  const st=segs.map(s=>s.st);
+  if(!(st[0]<st[1]&&st[1]<st[2])){ note.textContent="The notes did not rise from do to mi. Try again, slowly."; return; }
+  wcal={L:st[0],M:st[1],H:st[2]}; lsSet("ps.wcal",wcal);
+  note.textContent="Calibrated: low "+Math.round(segs[0].f)+" Hz · mid "+Math.round(segs[1].f)+" Hz · high "+Math.round(segs[2].f)+" Hz";
+}
 document.getElementById("wcal").onchange=async e=>{
   const f=e.target.files&&e.target.files[0]; if(!f) return; const note=document.getElementById("wcalNote");
   note.textContent="Listening…";
-  try{
-    const b=await decodeFile(f); const {frames}=analysePitch(b); const segs=fitRuns(voicedRuns(frames),frames,3);
-    if(segs.length<3){ note.textContent="Could not hear three notes. Leave a short pause between do, re and mi."; return; }
-    const st=segs.map(s=>s.st);
-    if(!(st[0]<st[1]&&st[1]<st[2])){ note.textContent="The notes did not rise from do to mi. Try again, slowly."; return; }
-    wcal={L:st[0],M:st[1],H:st[2]};
-    note.textContent="Calibrated: low "+Math.round(segs[0].f)+" Hz · mid "+Math.round(segs[1].f)+" Hz · high "+Math.round(segs[2].f)+" Hz";
-  }catch(err){ note.textContent="That file could not be read."; }
+  let b=null; try{ b=await decodeFile(f); }catch(err){ note.textContent=readFail(f); e.target.value=""; return; }
+  calibrateFrom(b); e.target.value="";
 };
 function classifyTones(segs){
   if(wcal){
@@ -1143,25 +1147,52 @@ function buildWrite(){
   wState.final=out.join(" ");
 }
 function matchCase(typed,w){ return typed[0]&&typed[0]===typed[0].toUpperCase()&&typed[0]!==typed[0].toLowerCase()? w[0].toUpperCase()+w.slice(1) : w; }
-document.getElementById("wrec").onchange=async e=>{
-  const f=e.target.files&&e.target.files[0]; if(!f) return; const note=document.getElementById("wrecNote");
+function phraseFrom(b){
+  const note=document.getElementById("wrecNote");
   const words=wtext.value.trim().split(/\s+/).filter(Boolean);
   if(!words.length){ note.textContent="Type the phrase first."; return; }
   const sylls=words.map(w=>syllabify(w)), n=sylls.reduce((a,s)=>a+s.length,0);
+  const {frames}=analysePitch(b);
+  const runs=voicedRuns(frames);
+  if(!runs.length){ note.textContent="No voice heard. Record closer to the phone, somewhere quiet."; return; }
+  const segs=fitRuns(runs,frames,n);
+  if(segs.length<n){ note.textContent="Heard fewer syllables than you typed. Say it a little slower."; return; }
+  const tones=classifyTones(segs);
+  let k=0; wState={words:words.map((w,i)=>{ const sy=sylls[i], t=tones.slice(k,k+sy.length); k+=sy.length; const ch=chooseWord(w,t); return {typed:w, syl:sy, tones:t, cands:ch.cands, pick: ch.cands? ch.best : null}; })};
+  note.textContent=n+" syllables heard";
+  buildWrite(); saveWord(wState.final); document.getElementById("wres").classList.add("on");
+  document.getElementById("wres").scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.getElementById("wrec").onchange=async e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return; const note=document.getElementById("wrecNote");
+  if(!wtext.value.trim()){ note.textContent="Type the phrase first."; e.target.value=""; return; }
   note.textContent="Listening…";
-  try{
-    const b=await decodeFile(f); const {frames}=analysePitch(b);
-    const runs=voicedRuns(frames);
-    if(!runs.length){ note.textContent="No voice heard. Record closer to the phone, somewhere quiet."; return; }
-    const segs=fitRuns(runs,frames,n);
-    if(segs.length<n){ note.textContent="Heard fewer syllables than you typed. Say it a little slower."; return; }
-    const tones=classifyTones(segs);
-    let k=0; wState={words:words.map((w,i)=>{ const sy=sylls[i], t=tones.slice(k,k+sy.length); k+=sy.length; const ch=chooseWord(w,t); return {typed:w, syl:sy, tones:t, cands:ch.cands, pick: ch.cands? ch.best : null}; })};
-    note.textContent=n+" syllables heard";
-    buildWrite(); saveWord(wState.final); document.getElementById("wres").classList.add("on");
-    document.getElementById("wres").scrollIntoView({behavior:"smooth",block:"start"});
-  }catch(err){ note.textContent="That file could not be read. Try .m4a, .mp3 or .wav."; }
+  let b=null; try{ b=await decodeFile(f); }catch(err){ note.textContent=readFail(f); e.target.value=""; return; }
+  phraseFrom(b); e.target.value="";
 };
+/* record straight from the microphone in Write */
+async function micTake(btn,label,maxSec,onDone,noteEl){
+  if(btn._rec&&btn._rec.state==="recording"){ btn._rec.stop(); return; }
+  ensureAudio();
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:true,autoGainControl:true}});
+    const r=new MediaRecorder(stream), chunks=[]; btn._rec=r; const t0=Date.now();
+    r.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
+    r.onstop=async()=>{ clearInterval(btn._t); stream.getTracks().forEach(t=>t.stop()); btn.textContent=label; btn._rec=null;
+      noteEl.textContent="Listening…";
+      try{ const ab=await new Blob(chunks,{type:r.mimeType||"audio/webm"}).arrayBuffer(); const b=await new Promise((res,rej)=>{ const p=ac.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); }); onDone(b); }
+      catch(err){ noteEl.textContent="That recording could not be read. Try again."; } };
+    r.start(); btn._t=setInterval(()=>{ const s=Math.floor((Date.now()-t0)/1000); btn.textContent="■ Stop · "+s+"s"; if(s>=maxSec) r.stop(); },250);
+  }catch(e){ btn.hidden=true; noteEl.textContent="Microphone is not available here. Use Add recording."; }
+}
+if(!inClaude && navigator.mediaDevices && window.MediaRecorder){
+  const wc=document.getElementById("wcalRec"), wr=document.getElementById("wrecRec");
+  wc.hidden=false; wr.hidden=false;
+  wc.onclick=()=>micTake(wc,"● Record do re mi",10,calibrateFrom,document.getElementById("wcalNote"));
+  wr.onclick=()=>{ if(!wtext.value.trim()&&!wr._rec){ document.getElementById("wrecNote").textContent="Type the phrase first."; return; } micTake(wr,"● Record",15,phraseFrom,document.getElementById("wrecNote")); };
+}
+/* remember calibration between visits */
+(function(){ const c=lsGet("ps.wcal"); if(c){ wcal=c; document.getElementById("wcalNote").textContent="Calibrated earlier on this device. Record again to update it."; } })();
 document.getElementById("wcopy").onclick=async()=>{ saveWord(wState.final); try{ await navigator.clipboard.writeText(wState.final); toast("Copied: "+wState.final); }catch(e){ toast("Copy was blocked. Select the text and copy it."); } };
 document.getElementById("wdrum").onclick=()=>{
   if(!wState) return; ensureAudio(); let t=ac.currentTime+.05; const gap=.24;
