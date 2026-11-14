@@ -422,7 +422,7 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
 </main>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to pennio.studio.</h2>
-  <p>No password. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your work saves in this browser, and you can turn on cloud saving in My work to keep it on any device.</p>
+  <p id="obIntro">No password. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your work saves in this browser on this device, so download a backup from My work now and then.</p>
   <form id="obForm" novalidate>
     <div class="field"><label for="obName">Your name</label><input id="obName" autocomplete="name" maxlength="60"></div>
     <div class="field"><label for="obEmail">Email</label><input id="obEmail" type="email" autocomplete="email" maxlength="120"></div>
@@ -1388,7 +1388,7 @@ async function renderWork(){
     el.appendChild(d);
   });
   renderCloud();
-  let note= sbSess&&sbSess.user? "Projects are saved in this browser and in your PENNIO account. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Projects live in this browser only, and PENNIO cannot see or recover them unless you turn on cloud saving. Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
+  let note= CLOUD_ON&&sbSess&&sbSess.user? "Projects are saved in this browser and in your PENNIO account. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Projects live in this browser only, and PENNIO cannot see or recover them"+(CLOUD_ON?" unless you turn on cloud saving":"")+". Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
   try{ if(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted()) note+=" This browser has agreed to keep them."; }catch(e){}
   if(!db) note="This browser is blocking storage here, so only the current beat is kept. Download a backup to keep your work.";
   document.getElementById("storeNote").textContent=note;
@@ -1416,7 +1416,7 @@ document.getElementById("backup").onclick=doBackup;
 /* backup reminders: after each new recording, and weekly while there is work worth keeping */
 const DAY=86400000;
 function agoText(t){ if(!t) return "never"; const d=Math.floor((Date.now()-t)/DAY); return d<1?"today": d===1?"yesterday": d+" days ago"; }
-function showBkp(title,text){ if(!downloads || (sbSess && lsGet("ps.lastSync"))) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
+function showBkp(title,text){ if(!downloads || (CLOUD_ON && sbSess && lsGet("ps.lastSync"))) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
 function nudgeAfterRecording(){ showBkp("New recording added", "It lives only in this browser until you back it up. Last backup: "+agoText(lsGet("ps.lastBackup"))+". PENNIO cannot recover it if it is lost."); }
 async function nudgeWeekly(){
   if(!document.getElementById("bkpBar").hidden) return;
@@ -1471,6 +1471,8 @@ document.getElementById("obForm").onsubmit=async e=>{
 };
 
 /* ---------- cloud saving: Supabase, called over plain HTTPS (no third-party script) ---------- */
+/* Cloud saving stays hidden until a real email sender (SMTP) is connected in Supabase. Set to true to switch it on. */
+const CLOUD_ON=false;
 const SB_URL="https://rgkxqcmfejglfslhrpsm.supabase.co", SB_KEY="sb_publishable_LyoN0Fi7EQPagzBHyHuR9Q_8O8mhp2x";
 let sbSess=lsGet("ps.sb"), sbSyncing=false, cloudDirty=new Set(), cloudT=null;
 function setSession(d){ sbSess={access_token:d.access_token, refresh_token:d.refresh_token, expires_at:Date.now()+(+d.expires_in||3600)*1000, user: d.user? {id:d.user.id,email:d.user.email} : (sbSess&&sbSess.user)||null}; lsSet("ps.sb",sbSess); }
@@ -1514,7 +1516,7 @@ async function sbFromLink(){
 function agoShort(t){ if(!t) return "not yet"; const s=Math.round((Date.now()-t)/1000); return s<60? "just now" : s<3600? Math.round(s/60)+" min ago" : s<86400? Math.round(s/3600)+" h ago" : Math.round(s/86400)+" days ago"; }
 function setCloudStat(t){ const el=document.getElementById("cloudStat"); if(el) el.textContent=t; }
 function renderCloud(){
-  if(inClaude){ document.getElementById("cloud").hidden=true; document.getElementById("obReturn").hidden=true; return; }
+  if(inClaude||!CLOUD_ON){ document.getElementById("cloud").hidden=true; document.getElementById("obReturn").hidden=true; return; }
   const signed=!!(sbSess&&sbSess.user);
   document.getElementById("cloudOut").hidden=signed; document.getElementById("cloudIn").hidden=!signed;
   if(signed){ document.getElementById("cloudWho").textContent="Signed in as "+sbSess.user.email; setCloudStat("Last synced: "+agoShort(lsGet("ps.lastSync"))); }
@@ -1599,7 +1601,7 @@ async function cloudSyncAll(opts){
   if(workEl.classList.contains("on")) renderWork();
 }
 async function cloudBoot(){
-  if(inClaude){ renderCloud(); return; }
+  if(inClaude||!CLOUD_ON){ renderCloud(); return; }
   const fromLink=await sbFromLink();
   renderCloud();
   if(sbSess&&sbSess.user){
