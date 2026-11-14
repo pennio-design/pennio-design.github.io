@@ -5,11 +5,11 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://formsubmit.co; worker-src 'self' blob:; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ojú Gbòòrò · now casting</title>
-<meta name="description" content="A ń wá onídìrí ìbílẹ̀ tó dáńgájíá. Ojú Gbòòrò is looking for skilled traditional hairdressers, and for models to wear their work.">
+<title>Ojú Gbooro · now casting</title>
+<meta name="description" content="A ń wá onídìrí ìbílẹ̀ tó dáńgájíá. Ojú Gbooro is looking for skilled traditional hairdressers, and for models to wear their work.">
 <meta name="theme-color" content="#0d0a07">
 <link rel="canonical" href="https://pennio.agency/oju-gbooro/">
-<meta property="og:title" content="Ojú Gbòòrò · now casting">
+<meta property="og:title" content="Ojú Gbooro · now casting">
 <meta property="og:description" content="A ń wá onídìrí ìbílẹ̀ tó dáńgájíá. Skilled traditional hairdressers, and models to wear their work.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pennio.agency/oju-gbooro/">
@@ -60,12 +60,12 @@ footer a{color:var(--text)}
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><div class="brand">Ojú Gbòòrò</div><a href="/studio/">pennio.studio →</a></div>
+  <div class="top"><div class="brand">Ojú Gbooro</div><a href="/studio/">pennio.studio →</a></div>
   <div class="hero">
     <div class="k">Now casting</div>
     <h1>A ń wá onídìrí ìbílẹ̀ tó dáńgájíá.</h1>
     <p class="tr">We are looking for skilled traditional hairdressers, and for models to wear their work.</p>
-    <div class="why">Ojú gbòòrò is what Yoruba people say to a hairdresser at work. Ojú Gbòòrò brings that greeting back into everyday life, and African hair back as culture.</div>
+    <div class="why">Ojú gbooro is what Yoruba people say to a hairdresser at work. Ojú Gbooro brings that greeting back into everyday life, and African hair back as culture.</div>
     <div class="who">
       <div><b>Hairdressers</b><span>You plait, thread or braid traditional styles and can show your work.</span></div>
       <div><b>Models</b><span>Men and women, 18 or older, ready to wear the work on camera.</span></div>
@@ -83,7 +83,7 @@ footer a{color:var(--text)}
       <select id="cYears" aria-label="Years doing hair"><option value="">Years doing hair</option><option>Under 1</option><option>1 to 3</option><option>4 to 9</option><option>10 or more</option></select>
     </div>
     <label class="chk"><input type="checkbox" id="cAdult"> I am 18 or older</label>
-    <label class="chk"><input type="checkbox" id="cOk"> Ojú Gbòòrò may contact me about casting</label>
+    <label class="chk"><input type="checkbox" id="cOk"> Ojú Gbooro may contact me about casting</label>
     <input type="text" id="cHoney" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
     <div class="err" id="cErr" role="alert"></div>
     <button class="send" type="submit">Send my entry</button>
@@ -91,7 +91,7 @@ footer a{color:var(--text)}
   </form>
   <div class="done" id="done"><b>Ẹ ṣé. Your entry is in.</b><p>We read every entry and will reach out by phone, WhatsApp or email. Share this page with an onídìrí you know: pennio.agency/oju-gbooro</p></div>
 
-  <footer>Ojú Gbòòrò · with <a href="/">PENNIO</a><br>Questions: contact@pennio.agency</footer>
+  <footer>Ojú Gbooro · with <a href="/">PENNIO</a><br>Questions: contact@pennio.agency</footer>
 </div>
 <script>
 (function(){
@@ -115,13 +115,13 @@ $("castForm").onsubmit=async e=>{
   const btn=e.target.querySelector(".send"); btn.disabled=true; btn.textContent="Sending…";
   let ok=false;
   try{
-    const res=await fetch(FS,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({_subject:"Ojú Gbòòrò casting: "+app.role+", "+app.name,_captcha:"false",_template:"table",role:app.role,name:app.name,city:app.city,phone:app.phone,email:app.email,photos:app.link,styles:app.styles,years_doing_hair:app.years,age_18_plus:"yes",page:"pennio.agency/oju-gbooro"})});
+    const res=await fetch(FS,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({_subject:"Ojú Gbooro casting: "+app.role+", "+app.name,_captcha:"false",_template:"table",role:app.role,name:app.name,city:app.city,phone:app.phone,email:app.email,photos:app.link,styles:app.styles,years_doing_hair:app.years,age_18_plus:"yes",page:"pennio.agency/oju-gbooro"})});
     const d=await res.json().catch(()=>({})); ok=res.ok && d.success!=="false" && d.success!==false;
   }catch(x){}
   btn.disabled=false; btn.textContent="Send my entry";
   if(ok){ $("castForm").style.display="none"; $("done").classList.add("on"); $("done").scrollIntoView({behavior:"smooth",block:"center"}); return; }
-  const lines=["Ojú Gbòòrò casting entry","","Role: "+app.role,"Name: "+app.name,"City: "+app.city,"Phone: "+app.phone,"Email: "+app.email,"Photos: "+app.link].concat(app.role!=="Model"?["Styles: "+app.styles,"Years doing hair: "+app.years]:[]).concat(["Aged 18 or older: yes"]);
-  const a=document.createElement("a"); a.href="mailto:contact@pennio.agency?subject="+encodeURIComponent("Ojú Gbòòrò casting: "+app.role+", "+app.name)+"&body="+encodeURIComponent(lines.join("\n")); document.body.appendChild(a); a.click(); a.remove();
+  const lines=["Ojú Gbooro casting entry","","Role: "+app.role,"Name: "+app.name,"City: "+app.city,"Phone: "+app.phone,"Email: "+app.email,"Photos: "+app.link].concat(app.role!=="Model"?["Styles: "+app.styles,"Years doing hair: "+app.years]:[]).concat(["Aged 18 or older: yes"]);
+  const a=document.createElement("a"); a.href="mailto:contact@pennio.agency?subject="+encodeURIComponent("Ojú Gbooro casting: "+app.role+", "+app.name)+"&body="+encodeURIComponent(lines.join("\n")); document.body.appendChild(a); a.click(); a.remove();
   $("cAddr").textContent="The entry did not send from here, so your email app should open with it filled in: press send. Or email contact@pennio.agency with these details.";
 };
 })();
