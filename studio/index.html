@@ -278,6 +278,18 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
 .phase h3{font-size:17px;font-weight:600;letter-spacing:-.015em}
 .phase p{font-size:14px;color:var(--mute);font-weight:300;line-height:1.55;margin-top:6px}
 .foot{color:var(--dim);font-size:12px;margin-top:28px;text-align:center}
+.np{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(560px,calc(100% - 24px));display:flex;align-items:center;gap:12px;padding:8px 8px 8px 16px;background:#161616;border:1px solid rgba(255,255,255,.12);border-radius:999px;box-shadow:0 12px 40px rgba(0,0,0,.6);z-index:40}
+.np[hidden]{display:none}
+.np-eq{display:flex;gap:3px;align-items:end;height:16px;flex:0 0 auto}
+.np-eq i{width:3px;background:var(--orange);border-radius:2px;animation:npb .9s ease-in-out infinite}
+.np-eq i:nth-child(2){animation-delay:-.3s}.np-eq i:nth-child(3){animation-delay:-.6s}
+@keyframes npb{0%,100%{height:30%}50%{height:100%}}
+@media (prefers-reduced-motion:reduce){.np-eq i{animation:none;height:70%}}
+.np-t{flex:1;min-width:0;font-size:13px;line-height:1.3}.np-t small{display:block;font-size:11px;color:var(--mute);font-weight:300}
+.np-t b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.np .btn{min-height:44px;border-radius:999px}
+body.np-on .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
+body.np-on main{padding-bottom:72px}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--black);font-size:13px;font-weight:500;padding:10px 16px;border-radius:999px;opacity:0;transition:.25s;pointer-events:none;z-index:50}
 .toast.on{opacity:1;transform:translateX(-50%)}
 @media (max-width:560px){
@@ -533,6 +545,11 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
 </div></div>
 
 <div class="countin" id="countin" aria-live="assertive"></div>
+<div class="np" id="np" hidden role="status" aria-live="polite">
+  <div class="np-eq" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="np-t"><small>Now playing</small><b id="npL"></b></div>
+  <button class="btn" id="npStop">Stop</button>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -770,9 +787,27 @@ function schedule(){
   }
 }
 function stopTracks(){ fullSrcs.forEach(s=>{ try{s.stop();}catch(e){} }); fullSrcs=[]; }
-function start(t0){ ensureAudio(); stopTracks(); playing=true; cur=0; loopIdx=0; barNow=0; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); setIcon(); }
-function stop(){ playing=false; clearInterval(timer); stopTracks(); mark(-1); setIcon(); paintStrip(-1); }
-function setIcon(){ document.getElementById("playIcon").innerHTML = playing ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>' : '<path d="M7 4l13 8-13 8z"/>'; }
+function start(t0){ ensureAudio(); stopPreviews(); stopTracks(); playing=true; cur=0; loopIdx=0; barNow=0; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); setIcon(); }
+function stop(){ playing=false; clearInterval(timer); stopTracks(); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
+/* ---------- one sound at a time, shown in the Now playing bar ---------- */
+let npKind=null, prevSrc=null, drumPrev=null;
+function npUpdate(){
+  const bar=document.getElementById("np"); if(!bar) return;
+  let k=null, label="";
+  let recording=false; try{ recording= !!(mrec && mrec.state==="recording"); }catch(e){}
+  if(prevSrc){ k="voice"; label="Your voice · "+(useEnhanced&&proBuf?"Enhanced":"Before"); }
+  else if(drumPrev){ k="drum"; label="Talking drum alone"; }
+  else if(playing){ k="beat"; label= recording? "Recording over the beat" : (((LAY.full&&rawBuf)||(LAY.drum&&drumBuf))? "Your track · beat and voice" : "The beat"); }
+  npKind=k; bar.hidden=!k; document.body.classList.toggle("np-on",!!k); document.getElementById("npL").textContent=label;
+}
+function stopPreviews(){
+  if(prevSrc){ const s=prevSrc; prevSrc=null; try{ s.onended=null; s.stop(); }catch(e){} vprev.textContent="Preview"; }
+  if(drumPrev){ const s=drumPrev; drumPrev=null; try{ s.onended=null; s.stop(); }catch(e){} hearDrum.textContent="Hear the drum alone"; }
+}
+function stopAll(){ stopPreviews(); if(playing) stop(); npUpdate(); }
+document.getElementById("npStop").onclick=stopAll;
+function setIcon(){ npUpdate();
+  document.getElementById("playIcon").innerHTML = playing ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>' : '<path d="M7 4l13 8-13 8z"/>'; }
 document.getElementById("play").onclick=()=>playing?stop():start();
 
 /* ---------- history: every change can be undone ---------- */
@@ -1083,12 +1118,11 @@ function drawWave(){
   c.fillStyle="rgba(242,242,242,.55)";
   slices.forEach((s,i)=>{ const x=s.start/b.duration*W; c.fillRect(x,0,1.5,H); c.font="18px Inter"; c.fillText(String(i+1),x+4,20); });
 }
-function setEnhanced(on){ useEnhanced=on; document.querySelectorAll("#ab button").forEach(x=>x.classList.toggle("on",(x.dataset.k==="pro")===on)); drawWave(); saveSoon(); }
+function setEnhanced(on){ const wasPrev=!!prevSrc; useEnhanced=on; if(wasPrev){ stopPreviews(); setTimeout(()=>vprev.click(),0); } document.querySelectorAll("#ab button").forEach(x=>x.classList.toggle("on",(x.dataset.k==="pro")===on)); drawWave(); saveSoon(); }
 document.querySelectorAll("#ab button").forEach(bn=>bn.onclick=()=>setEnhanced(bn.dataset.k==="pro"));
 function restartTracks(){ stopTracks(); loopIdx=0; }
-let prevSrc=null;
-vprev.onclick=()=>{ ensureAudio(); if(prevSrc){try{prevSrc.stop();}catch(e){} prevSrc=null; vprev.textContent="Preview"; return;}
-  prevSrc=playFull(ac,busses.full,ac.currentTime+.02,vbuf()); vprev.textContent="Stop preview"; prevSrc.onended=()=>{prevSrc=null; vprev.textContent="Preview";}; };
+vprev.onclick=()=>{ ensureAudio(); if(prevSrc){ stopPreviews(); npUpdate(); return; }
+  stopAll(); prevSrc=playFull(ac,busses.full,ac.currentTime+.02,vbuf()); if(!prevSrc) return; vprev.textContent="Stop preview"; prevSrc.onended=()=>{prevSrc=null; vprev.textContent="Preview"; npUpdate();}; npUpdate(); };
 
 /* ---------- voice to talking drum ---------- */
 function analysePitch(b){
@@ -1181,9 +1215,8 @@ toDrum.onclick=async()=>{
   }catch(e){ sayNote.textContent="Something went wrong reading the pitch. Try a shorter recording."; }
   toDrum.disabled=false; toDrum.textContent="Translate my voice to drum";
 };
-let drumPrev=null;
-hearDrum.onclick=()=>{ ensureAudio(); if(drumPrev){try{drumPrev.stop();}catch(e){} drumPrev=null; hearDrum.textContent="Hear the drum alone"; return;}
-  drumPrev=playFull(ac,busses.dd,ac.currentTime+.02,drumBuf); if(!drumPrev) return; hearDrum.textContent="Stop"; drumPrev.onended=()=>{drumPrev=null; hearDrum.textContent="Hear the drum alone";}; };
+hearDrum.onclick=()=>{ ensureAudio(); if(drumPrev){ stopPreviews(); npUpdate(); return; }
+  stopAll(); drumPrev=playFull(ac,busses.dd,ac.currentTime+.02,drumBuf); if(!drumPrev) return; hearDrum.textContent="Stop"; drumPrev.onended=()=>{drumPrev=null; hearDrum.textContent="Hear the drum alone"; npUpdate();}; npUpdate(); };
 
 /* ---------- remix ---------- */
 let version=1;
@@ -1507,7 +1540,7 @@ vrec.onclick=async()=>{
       }catch(e){ vmeta.textContent="That recording could not be read. Try again."; }
     };
     mstart=Date.now();
-    mtimer=setInterval(()=>{ const s=Math.floor((Date.now()-mstart)/1000); vrec.textContent="■ Stop · "+s+"s"; if(s>=60) mrec.stop(); },250);
+    npUpdate(); mtimer=setInterval(()=>{ const s=Math.floor((Date.now()-mstart)/1000); vrec.textContent="■ Stop · "+s+"s"; if(s>=60) mrec.stop(); },250);
   }catch(e){ vrec.style.display="none"; recOpts.hidden=true; toast("Microphone is not available here. Use Add recording."); }
 };
 /* measure the round trip: play clicks through the speaker, hear them on the mic */
@@ -1553,7 +1586,7 @@ function reRecord(){
 }
 vdel.onclick=()=>{ if(armDelete(vdel,"Delete recording")) deleteRecording(); };
 async function deleteRecording(){
-  stopTracks(); try{ prevSrc&&prevSrc.stop(); }catch(e){} try{ drumPrev&&drumPrev.stop(); }catch(e){}
+  stopAll();
   rawBuf=proBuf=drumBuf=null; slices=[]; currentAudio=null; vocalOffset=0; vocalNudge=0;
   LAY.full=false; LAY.drum=false; LAY.vox=true;
   drawWave(); renderLayers(); render();
