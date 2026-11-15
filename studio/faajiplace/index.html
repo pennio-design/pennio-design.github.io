@@ -2,40 +2,61 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://formsubmit.co; worker-src 'self' blob:; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fàájìplace · stories for the screen</title>
+<meta name="description" content="Fàájìplace is where I develop African stories for film. Five Yoruba story worlds are in development, and I am receiving stories from you.">
 <meta name="theme-color" content="#17130f">
-<meta name="description" content="Fàájìplace is a home for African movies and storytelling. Folklore, original stories, short films and screen culture, told with care.">
 <link rel="canonical" href="https://pennio.agency/studio/faajiplace/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PENNIO">
-<meta property="og:title" content="Fàájìplace — Movies & storytelling">
-<meta property="og:description" content="Stories with a place to go. A home for movies, folklore and original storytelling.">
+<meta property="og:title" content="Fàájìplace · stories for the screen">
+<meta property="og:description" content="Five Yoruba story worlds in development, and a place to send yours.">
 <meta property="og:url" content="https://pennio.agency/studio/faajiplace/">
-<title>Fàájìplace — Movies & storytelling</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta property="og:image" content="https://pennio.agency/og-cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="preload" href="/fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
+<style>/* Inter, hosted on this domain so it loads on slow or blocked networks. */@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/inter-300.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-500.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/inter-600.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-700.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/inter-800.woff2') format('woff2')}</style>
 <style>
-:root{--paper:#eee9df;--ink:#17130f;--muted:#a59b8d;--orange:#e66b36;--line:rgba(238,233,223,.17);--serif:"Source Serif 4",Georgia,serif;--display:"Syne",Arial,sans-serif;--mono:"DM Mono",monospace}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--serif);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}.shell{width:min(1440px,100% - 64px);margin:auto}.mono{font:10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}header{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.wordmark{font:700 18px var(--display);letter-spacing:-.06em}.wordmark span{color:var(--orange)}.nav{display:flex;gap:28px;align-items:center;font:11px var(--mono);color:#c2b9ac}.nav a:hover{color:var(--orange)}.nav .studio{border:1px solid var(--line);padding:10px 14px;border-radius:99px}
+:root{--paper:#eee9df;--ink:#17130f;--muted:#a59b8d;--orange:#e66b36;--line:rgba(238,233,223,.17);--serif:Inter,system-ui,sans-serif;--display:Inter,system-ui,sans-serif;--mono:Inter,system-ui,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--serif);-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}.shell{width:min(1440px,100% - 64px);margin:auto}.mono{font:600 10px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}header{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.wordmark{font:700 18px var(--display);letter-spacing:-.06em}.wordmark span{color:var(--orange)}.nav{display:flex;gap:28px;align-items:center;font:11px var(--mono);color:#c2b9ac}.nav a:hover{color:var(--orange)}.nav .studio{border:1px solid var(--line);padding:10px 14px;border-radius:99px}
 .hero{min-height:690px;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:5vw;padding:72px 0 88px}.eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:28px}.eyebrow:before{content:"";width:28px;height:1px;background:var(--orange)}h1{font:600 clamp(68px,10vw,150px)/.86 var(--display);letter-spacing:-.09em;margin:0;max-width:780px}h1 em{font:400 .88em var(--serif);letter-spacing:-.075em;color:var(--orange)}.hero-copy{font:400 clamp(20px,2.2vw,27px)/1.35 var(--serif);color:#d3c9bb;max-width:420px;margin:34px 0 0}.hero-aside{align-self:stretch;position:relative;min-height:460px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--line);background:radial-gradient(ellipse at 50% 48%,#68412d 0,#34251d 31%,#211a15 62%,#17130f 100%)}.hero-aside:before,.hero-aside:after{content:"";position:absolute;border:1px solid rgba(238,233,223,.19);border-radius:50%;width:72%;aspect-ratio:1}.hero-aside:after{width:48%;border-color:rgba(230,107,54,.6)}.sun{position:absolute;width:28%;aspect-ratio:1;border-radius:50%;background:linear-gradient(145deg,#f4bd7d,#c65a32);box-shadow:0 0 100px #d56b3d55}.arch{position:absolute;bottom:-12%;width:52%;height:75%;border:1px solid rgba(238,233,223,.45);border-bottom:0;border-radius:50% 50% 0 0}.arch:before{content:"";position:absolute;inset:12% 12% 0;border:1px solid rgba(238,233,223,.24);border-bottom:0;border-radius:50% 50% 0 0}.hero-note{position:absolute;left:24px;bottom:22px;z-index:2}.hero-index{position:absolute;right:24px;top:22px;z-index:2}.intro{display:grid;grid-template-columns:1fr 1fr;gap:8vw;padding:76px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.intro h2{font:500 clamp(34px,4.4vw,60px)/1.04 var(--display);letter-spacing:-.065em;margin:0;max-width:600px}.intro p{font:400 21px/1.5 var(--serif);color:#c1b7aa;margin:0;max-width:540px}.section-head{display:flex;justify-content:space-between;align-items:end;margin:90px 0 28px}.section-head h2{font:600 clamp(36px,5vw,66px)/.95 var(--display);letter-spacing:-.07em;margin:12px 0 0}.slate{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.story{position:relative;min-height:310px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:#28211b;border:1px solid var(--line)}.story:nth-child(1){grid-column:span 7;min-height:430px;background:radial-gradient(ellipse at 70% 30%,#8c5936 0,#4a3022 38%,#292019 78%)}.story:nth-child(2){grid-column:span 5;background:radial-gradient(ellipse at 70% 70%,#80523c 0,#35241d 65%)}.story:nth-child(3){grid-column:span 4;background:radial-gradient(ellipse at 50% 35%,#6c463c 0,#2b201d 72%)}.story:nth-child(4){grid-column:span 4;background:radial-gradient(ellipse at 65% 35%,#79643e 0,#332a1e 70%)}.story:nth-child(5){grid-column:span 4;background:radial-gradient(ellipse at 50% 45%,#8b6138 0,#30231b 70%)}.story:before{content:"";position:absolute;width:210px;height:210px;border:1px solid #eee9df38;border-radius:50%;right:-50px;top:35px}.story:after{content:"";position:absolute;width:135px;height:135px;border:1px solid #e66b3688;border-radius:50%;right:-12px;top:72px}.story>*{position:relative;z-index:1}.story-top{display:flex;justify-content:space-between;gap:12px}.story h3{font:500 clamp(25px,3vw,40px)/1.02 var(--display);letter-spacing:-.055em;max-width:500px;margin:0 0 12px}.story p{font:16px/1.4 var(--serif);color:#d1c5b6;max-width:390px;margin:0}.story .kind{color:#f0b18a}.story .number{font:11px var(--mono);color:#e9c3a8}.note{font:13px var(--mono);color:var(--muted);margin-top:18px}.manifesto{margin:100px 0 90px;padding:58px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr 2fr;gap:8vw}.manifesto blockquote{font:500 clamp(30px,4.4vw,58px)/1.08 var(--display);letter-spacing:-.06em;margin:0;max-width:850px}.manifesto blockquote span{color:var(--orange)}.manifesto p{font:17px/1.5 var(--serif);color:#bdb2a4;max-width:430px;margin:26px 0 0}.closing{padding:48px 0 72px;display:flex;justify-content:space-between;align-items:end;gap:30px}.closing h2{font:600 clamp(42px,7vw,88px)/.9 var(--display);letter-spacing:-.08em;margin:14px 0 0}.closing a{font:11px var(--mono);padding:16px 20px;border:1px solid var(--orange);border-radius:99px;color:#f3b18e;white-space:nowrap}.closing a:hover{background:var(--orange);color:var(--ink)}footer{border-top:1px solid var(--line);padding:22px 0 30px;display:flex;justify-content:space-between;gap:20px;color:var(--muted);font:10px var(--mono);letter-spacing:.06em}footer nav{display:flex;gap:20px}footer a:hover{color:var(--paper)}
 @media(max-width:760px){.shell{width:min(100% - 36px,600px)}header{height:64px}.nav{gap:14px}.nav a:nth-child(2){display:none}.nav .studio{padding:8px 11px}.hero{grid-template-columns:1fr;padding:66px 0 54px;gap:34px;min-height:auto}h1{font-size:clamp(66px,17vw,112px)}.hero-aside{min-height:330px}.intro{grid-template-columns:1fr;gap:24px;padding:54px 0}.intro p{font-size:19px}.section-head{margin:65px 0 22px}.slate{grid-template-columns:1fr 1fr;gap:9px}.story,.story:nth-child(n){grid-column:span 1;min-height:270px;padding:17px}.story:nth-child(1){grid-column:span 2;min-height:350px}.story h3{font-size:26px}.story p{font-size:15px}.manifesto{grid-template-columns:1fr;gap:28px;margin:70px 0;padding:40px 0}.closing{display:block;padding:36px 0 54px}.closing a{display:inline-block;margin-top:28px}footer{flex-direction:column}footer nav{flex-wrap:wrap}}@media(max-width:390px){.story,.story:nth-child(n){min-height:290px}.story:nth-child(1){min-height:340px}.story h3{font-size:23px}}
+.story{text-align:left;color:inherit;font:inherit;cursor:pointer;width:100%;min-height:310px;border-radius:0;appearance:none;-webkit-appearance:none}
+.story:hover,.story:focus-visible{border-color:var(--orange)}
+.story:focus-visible,.cta:focus-visible,.x:focus-visible,.nav a:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+.story>span:nth-child(2){display:block}.story h3{font-weight:600}.open{display:block;margin-top:16px;color:#f0b18a}
+.cta{display:inline-flex;align-items:center;min-height:48px;margin-top:30px;padding:0 22px;border:1px solid var(--orange);border-radius:99px;background:var(--orange);color:#17130f;font:700 11px var(--mono);letter-spacing:.1em}
+.cta:hover{background:transparent;color:#f3b18e}
+.nav a,.wordmark,footer nav a{min-height:44px;display:inline-flex;align-items:center}
+h1{font-weight:700;letter-spacing:-.06em}h1 em{font-style:normal;font-weight:300}
+dialog{border:1px solid var(--line);background:#211a15;color:var(--paper);padding:0;width:min(560px,calc(100% - 28px));max-height:calc(100% - 40px);overflow:auto}
+dialog::backdrop{background:rgba(10,7,5,.78)}
+.dbox{padding:30px 26px 28px;position:relative}.dbox h3{font:600 clamp(28px,6vw,38px)/1.05 var(--display);letter-spacing:-.05em;margin:14px 0 16px;padding-right:40px}
+.dbox p{font:400 16px/1.55 var(--serif);color:#d3c9bb;margin:0 0 6px}.dl{margin:22px 0 8px}
+.x{position:absolute;right:10px;top:10px;width:48px;height:48px;background:none;border:0;color:var(--paper);font-size:30px;cursor:pointer}
+.hero-copy{font-weight:300}
+@media(max-width:760px){.story{min-height:270px}.story:nth-child(1){min-height:350px}.cta{width:100%;justify-content:center}.closing a.cta,.closing a{width:auto}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 <div class="shell">
 <header>
 <a class="wordmark" href="/studio/faajiplace/" aria-label="Fàájìplace home">FÀÁJÌ<span>PLACE</span></a>
-<nav class="nav" aria-label="Main navigation"><a href="#stories">STORY WORLDS</a><a href="#about">ABOUT</a><a class="studio" href="/studio/">PENNIO STUDIO ↗</a></nav>
+<nav class="nav" aria-label="Main navigation"><a href="#stories">STORIES</a><a href="/faajiplace/">SEND A STORY</a><a class="studio" href="/studio/">PENNIO STUDIO ↗</a></nav>
 </header>
 <main>
 <section class="hero">
 <div>
-<div class="eyebrow mono">A PENNIO STORY HOUSE · 001</div>
+<div class="eyebrow mono">FÀÁJÌPLACE · 001</div>
 <h1>Stories<br>live <em>here.</em></h1>
-<p class="hero-copy">A home for movies and storytelling. Folklore, original stories and screen experiences shaped by the worlds we know.</p>
+<p class="hero-copy">I develop African stories for film. Five Yoruba story worlds are in development, and I am receiving yours.</p>
+<a class="cta" href="/faajiplace/">SEND ME YOUR STORY →</a>
 </div>
-<div class="hero-aside" role="img" aria-label="Abstract cinematic illustration of a warm-lit doorway">
+<div class="hero-aside" role="img" aria-label="Abstract illustration of a warm-lit doorway">
 <div class="sun"></div><div class="arch"></div>
 <div class="hero-index mono">CINEMA / CULTURE / MEMORY</div>
 <div class="hero-note mono">MADE OF STORIES. MADE TO BE SHARED.</div>
@@ -43,30 +64,37 @@
 </section>
 <section class="intro" id="about">
 <div><div class="mono">01 / THE PLACE</div><h2>Every story carries a world with it.</h2></div>
-<p>Fàájìplace is where those worlds find a screen, a stage and an audience. We are building a home for African movies and storytelling, with room for folklore, new voices, short films and dramatic work.</p>
+<p>I am building a home for African movies and storytelling, with room for folklore, new voices and short films. I read every story people send, and I write back within 14 days.</p>
 </section>
 <section id="stories">
-<div class="section-head"><div><div class="mono">02 / STORY WORLDS</div><h2>Stories to return to.</h2></div><div class="mono">THE DEVELOPMENT SLATE · 01—05</div></div>
+<div class="section-head"><div><div class="mono">02 / STORY WORLDS</div><h2>Stories to return to.</h2></div><div class="mono">IN DEVELOPMENT · 01 TO 05</div></div>
 <div class="slate">
-<article class="story"><div class="story-top"><span class="mono kind">ORIGIN / ILE-IFE</span><span class="number">01</span></div><div><h3>The chain at Ilé-Ifẹ̀</h3><p>Ọbàtálá, Odùduwà and the sand. An origin story carried across generations.</p></div></article>
-<article class="story"><div class="story-top"><span class="mono kind">HISTORY / COURAGE</span><span class="number">02</span></div><div><h3>Mọ́remí Àjàṣorò</h3><p>The queen who let herself be taken.</p></div></article>
-<article class="story"><div class="story-top"><span class="mono kind">LEGEND / CONSEQUENCE</span><span class="number">03</span></div><div><h3>Ṣàngó, Ọya and Ọba</h3><p>The king, the storm and the ear.</p></div></article>
-<article class="story"><div class="story-top"><span class="mono kind">RESISTANCE / MEMORY</span><span class="number">04</span></div><div><h3>Lísàbí and the aró</h3><p>A revolt hidden inside farm work.</p></div></article>
-<article class="story"><div class="story-top"><span class="mono kind">COVENANT / OSOGBO</span><span class="number">05</span></div><div><h3>Ọ̀ṣun and Larooye</h3><p>The covenant behind Òṣogbo.</p></div></article>
+<button class="story" type="button" data-i="0"><span class="story-top"><span class="mono kind">ORIGIN / ILE-IFE</span><span class="number">01</span></span><span><h3>The chain at Ilé-Ifẹ̀</h3><p>Ọbàtálá, Odùduwà and the sand. An origin story carried across generations.</p><span class="open mono">READ THE NOTE +</span></span></button>
+<button class="story" type="button" data-i="1"><span class="story-top"><span class="mono kind">HISTORY / COURAGE</span><span class="number">02</span></span><span><h3>Mọ́remí Àjàṣorò</h3><p>The queen who let herself be taken.</p><span class="open mono">READ THE NOTE +</span></span></button>
+<button class="story" type="button" data-i="2"><span class="story-top"><span class="mono kind">LEGEND / CONSEQUENCE</span><span class="number">03</span></span><span><h3>Ṣàngó, Ọya and Ọba</h3><p>The king, the storm and the ear.</p><span class="open mono">READ THE NOTE +</span></span></button>
+<button class="story" type="button" data-i="3"><span class="story-top"><span class="mono kind">RESISTANCE / MEMORY</span><span class="number">04</span></span><span><h3>Lísàbí and the aró</h3><p>A revolt hidden inside farm work.</p><span class="open mono">READ THE NOTE +</span></span></button>
+<button class="story" type="button" data-i="4"><span class="story-top"><span class="mono kind">COVENANT / OSOGBO</span><span class="number">05</span></span><span><h3>Ọ̀ṣun and Larooye</h3><p>The covenant behind Òṣogbo.</p><span class="open mono">READ THE NOTE +</span></span></button>
 </div>
-<p class="note">These are story properties in development, not released films. Retellings will be researched, attributed and reviewed with cultural care.</p>
+<p class="note">Tap a story for the note on where the tellings differ. These are in development, not released films, and none has been reviewed by an elder yet.</p>
 </section>
 <section class="manifesto">
-<div class="mono">03 / OUR POINT OF VIEW</div>
-<div><blockquote>We make room for the stories that <span>make a place</span> feel like home.</blockquote><p>Stories deserve craft. The people, places and traditions behind them deserve care. Fàájìplace will bring both into the frame.</p></div>
+<div class="mono">03 / HOW I WORK</div>
+<div><blockquote>Stories that <span>make a place</span> feel like home.</blockquote><p>The people, places and traditions behind a story come first. Where a tradition is still practised, I ask before I write.</p></div>
 </section>
 <section class="closing">
-<div><div class="mono">FÀÁJÌPLACE · PENNIO STUDIO</div><h2>The story<br>continues.</h2></div>
-<a href="mailto:hello@pennio.agency?subject=F%C3%A0%C3%A1j%C3%ACplace">START A CONVERSATION ↗</a>
+<div><div class="mono">FÀÁJÌPLACE · PENNIO STUDIO</div><h2>Your story<br>next.</h2></div>
+<a href="/faajiplace/">SEND ME YOUR STORY →</a>
 </section>
 </main>
-<footer><span>© <span id="year">2026</span> PENNIO · FÀÁJÌPLACE</span><nav><a href="/studio/">PENNIO STUDIO</a><a href="/oju-gbooro/">OJÚ GBOORO</a><a href="https://pennio.agency/">PENNIO</a></nav></footer>
+<footer><span>© <span id="year">2026</span> PENNIO · FÀÁJÌPLACE · contact@pennio.agency</span><nav><a href="/studio/">PENNIO STUDIO</a><a href="/oju-gbooro/">OJÚ GBOORO</a><a href="https://pennio.agency/">PENNIO</a></nav></footer>
 </div>
-<script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+<dialog id="dlg" aria-labelledby="dT"><div class="dbox"><button class="x" id="dX" type="button" aria-label="Close">×</button><div class="mono" id="dK"></div><h3 id="dT"></h3><p id="dF"></p><div class="mono dl">WHERE THE TELLINGS DIFFER</div><p id="dD"></p><div class="mono dl">STATUS</div><p>In development. Not released, not yet reviewed by an elder.</p><a class="cta" href="/faajiplace/">KNOW A DIFFERENT TELLING? SEND IT →</a></div></dialog>
+<script>document.getElementById('year').textContent=new Date().getFullYear();
+(function(){var S=[{"k": "ORIGIN / ILE-IFE", "t": "The chain at Ilé-Ifẹ̀", "full": "Ọbàtálá is sent down a chain to make the earth. He stops to drink, falls asleep, and Odùduwà finishes the work. The story is about who gets credit for a world, and it is still held sacred today.", "diff": "Tellings differ across Ifẹ̀ families and priesthoods. I will write down which one I follow before anything is filmed."}, {"k": "HISTORY / COURAGE", "t": "Mọ́remí Àjàṣorò", "full": "Mọ́remí lets raiders capture her so she can learn how to beat them, then carries that knowledge home.", "diff": "Sources disagree on who the raiders were. Some say Igbo, some say Ugbo, and in Ugbo Ilaje she is remembered quite differently."}, {"k": "LEGEND / CONSEQUENCE", "t": "Ṣàngó, Ọya and Ọba", "full": "The king, his three river-wives and a jealousy that costs an ear. A story about power and what it does to the people closest to it.", "diff": "Most sources call Ṣàngó the third Alaafin of Ọyọ́, but one older account says fourth."}, {"k": "RESISTANCE / MEMORY", "t": "Lísàbí and the aró", "full": "A revolt planned inside ordinary neighbourly farm labour, where nobody thinks to look.", "diff": "The date moves between sources: the 1760s in one, 1775 to 1780 in another."}, {"k": "COVENANT / OSOGBO", "t": "Ọ̀ṣun and Larooye", "full": "The agreement between the river goddess and the founders of Òṣogbo, and what the town owes her.", "diff": "Ọ̀ṣun is worshipped today. I will speak with her devotees before I write a scene."}],d=document.getElementById('dlg'),last=null;
+function open(i){var s=S[i];document.getElementById('dK').textContent=s.k;document.getElementById('dT').textContent=s.t;document.getElementById('dF').textContent=s.full;document.getElementById('dD').textContent=s.diff;if(d.showModal){d.showModal()}else{d.setAttribute('open','')}}
+function close(){if(d.close){d.close()}else{d.removeAttribute('open')}if(last)last.focus()}
+document.querySelectorAll('.story').forEach(function(b){b.addEventListener('click',function(){last=b;open(+b.dataset.i)})});
+document.getElementById('dX').addEventListener('click',close);
+d.addEventListener('click',function(e){if(e.target===d)close()});})();</script>
 </body>
 </html>
