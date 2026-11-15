@@ -2,6 +2,10 @@
 # the public site. They stay in the repository but are no longer served at
 # pennio.agency/<file>.
 exclude:
+  - .agents
+  - .claude
+  - .mcp.json
+  - audit/checklist-source.html
   - CLAUDE.md
   - README.md
   - scripts
