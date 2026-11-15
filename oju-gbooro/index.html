@@ -60,7 +60,14 @@ input:focus,select:focus{border-color:var(--m)}
 .done p{color:var(--mute);margin-top:8px;font-size:15px;line-height:1.5}
 footer{padding:40px 0 50px;color:var(--mute);font-size:13px;line-height:1.7}
 footer a{color:var(--text)}
-@media (max-width:440px){.two,.who{grid-template-columns:1fr}}
+.greet{margin:34px 0 8px;padding:22px;border:1px solid var(--line);border-radius:18px}
+.greet .k{margin-bottom:14px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pair div{padding:14px;border-radius:14px;background:rgba(255,255,255,.04)}
+.pair span{display:block;font-size:12px;color:var(--mute);margin-bottom:6px}
+.pair b{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.greet p{color:var(--mute);margin-top:14px;font-size:15px;line-height:1.6}
+@media (max-width:440px){.two,.who,.pair{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -76,6 +83,16 @@ footer a{color:var(--text)}
       <div><b>Models</b><span>Men and women, 18 or older, ready to wear the work on camera.</span></div>
     </div>
   </div>
+
+  <section class="greet" aria-labelledby="greetH">
+    <div class="k" id="greetH">The greeting</div>
+    <div class="pair">
+      <div><span>You say to the hairdresser</span><b lang="yo">Ojú gbooro</b></div>
+      <div><span>The onídìrí answers</span><b lang="yo">Òòyà á yà</b></div>
+    </div>
+    <p>Òòyà is the traditional comb an onídìrí works with. Òòyà á yà means the comb will do its work well: the hair will come out right.</p>
+    <p>It is an everyday greeting, the kind Yoruba people give to anyone at their craft, like the traditional textile weaver at the loom. Ojú Gbooro brings it back for the people who make our hair.</p>
+  </section>
 
   <form id="castForm" novalidate>
     <h2>Send your entry</h2>
