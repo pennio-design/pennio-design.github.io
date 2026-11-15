@@ -452,11 +452,13 @@ body.np-on main{padding-bottom:72px}
       <h3>Calibrate your voice</h3>
       <p>Sing do, re, mi slowly, with a short pause between each note, and add the recording. This tells the studio where your low, mid and high sit. You can skip it, but results are steadier with it.</p>
       <div class="row2"><button class="btn primary wmic" id="wcalRec" hidden>● Record do re mi</button><label class="btn file">Add do re mi<input type="file" id="wcal" accept="audio/*"></label><span class="vmeta" id="wcalNote" style="margin:0">Not calibrated</span></div>
+      <p style="margin-top:12px">Then say the seven vowels, one at a time with a short pause: <b>a · e · ẹ · i · o · ọ · u</b>. This teaches the studio your e and ẹ, o and ọ, so it can add the dots below from your voice.</p>
+      <div class="row2"><button class="btn primary wmic" id="wvowRec" hidden>● Record the vowels</button><label class="btn file">Add vowels<input type="file" id="wvow" accept="audio/*"></label><span class="vmeta" id="wvowNote" style="margin:0">Vowels not learned yet</span></div>
     </div>
     <div class="stp">
       <div class="k">Step 2</div>
       <h3>Type without tone marks</h3>
-      <p>Plain letters are fine. Type ẹ, ọ and ṣ if you can: the voice decides high, mid and low, while the dots below are vowel and consonant sounds the studio does not detect yet.</p>
+      <p>Plain letters are fine. Your voice decides high, mid and low. Once it has learned your vowels, it also decides e or ẹ and o or ọ. Type ṣ yourself: the studio cannot hear s from ṣ yet. Anything you type with a dot stays as you typed it.</p>
       <div class="row2"><input type="text" id="wtext" value="oju gbooro" autocomplete="off" spellcheck="false" aria-label="Text without tone marks"></div>
       <div class="vmeta" id="wsylNote"></div>
     </div>
@@ -1466,7 +1468,7 @@ function fitRuns(runs,fr,n){
     for(let k=Math.floor(r.length*.25);k<Math.ceil(r.length*.75);k++){ const e=fr[r[k]].e; if(e<me){me=e;cut=k;} }
     runs.splice(li,1,{idx:r.slice(0,cut)},{idx:r.slice(cut)});
   }
-  return runs.map(r=>{ const fs=r.idx.map(i=>fr[i].f).filter(Boolean).sort((a,b)=>a-b); const core=fs.slice(Math.floor(fs.length*.2),Math.ceil(fs.length*.8)||1); const f=core.length?core[Math.floor(core.length/2)]:fs[0]; return {f, st:12*Math.log2(f), t:fr[r.idx[0]].t}; });
+  return runs.map(r=>{ const fs=r.idx.map(i=>fr[i].f).filter(Boolean).sort((a,b)=>a-b); const core=fs.slice(Math.floor(fs.length*.2),Math.ceil(fs.length*.8)||1); const f=core.length?core[Math.floor(core.length/2)]:fs[0]; return {f, st:12*Math.log2(f), t:fr[r.idx[0]].t, t1:fr[r.idx[r.idx.length-1]].t}; });
 }
 function readFail(f){ const ext=(f&&f.name&&f.name.split(".").pop()||"").toLowerCase(); return "This phone saved the recording"+(ext?" as ."+ext:"")+", which this browser cannot read. Use the Record button here instead."; }
 function calibrateFrom(b){
@@ -1484,6 +1486,49 @@ document.getElementById("wcal").onchange=async e=>{
   let b=null; try{ b=await decodeFile(f); }catch(err){ note.textContent=readFail(f); e.target.value=""; return; }
   calibrateFrom(b); e.target.value="";
 };
+/* ---------- vowels: learn the speaker's a e ẹ i o ọ u, then decide e/ẹ and o/ọ ---------- */
+function formantsAt(b,t0,t1){
+  const sr0=b.sampleRate, ds=Math.max(1,Math.round(sr0/11025)), sr=sr0/ds, d=b.getChannelData(0), P=12;
+  const len=Math.max(.06,t1+.04-t0), a0=Math.floor((t0+len*.2)*sr0), a1=Math.floor((t0+len*.8)*sr0);
+  const N=Math.floor(.025*sr), hop=Math.floor(.01*sr)*ds, F1s=[], F2s=[], x=new Float64Array(N);
+  for(let st=a0; st+N*ds<a1 && st+N*ds<d.length; st+=hop){
+    let en=0; for(let i=0;i<N;i++){ const v=d[st+i*ds]-.97*(i? d[st+(i-1)*ds]:0); x[i]=v*(.54-.46*Math.cos(2*Math.PI*i/(N-1))); en+=x[i]*x[i]; }
+    if(en<1e-7) continue;
+    const R=new Float64Array(P+1); for(let k=0;k<=P;k++){ let z=0; for(let i=k;i<N;i++) z+=x[i]*x[i-k]; R[k]=z; }
+    const A=new Float64Array(P+1); A[0]=1; let E=R[0]; if(E<=0) continue;
+    for(let i=1;i<=P;i++){ let acc=R[i]; for(let j=1;j<i;j++) acc+=A[j]*R[i-j]; const kk=-acc/E; const tmp=A.slice(); for(let j=1;j<i;j++) A[j]=tmp[j]+kk*tmp[i-j]; A[i]=kk; E*=1-kk*kk; if(E<=0) break; }
+    const env=[]; for(let f=150;f<=3600;f+=15){ const w=2*Math.PI*f/sr; let re=0,im=0; for(let k=0;k<=P;k++){ re+=A[k]*Math.cos(w*k); im-=A[k]*Math.sin(w*k); } env.push({f, m:1/Math.sqrt(re*re+im*im)}); }
+    const pk=[]; for(let i=1;i<env.length-1;i++) if(env[i].m>env[i-1].m && env[i].m>=env[i+1].m) pk.push(env[i].f);
+    const f1=pk.find(f=>f>=200&&f<=1100); if(!f1) continue; const f2=pk.find(f=>f>f1+150&&f<=3200); if(!f2) continue;
+    F1s.push(f1); F2s.push(f2);
+  }
+  if(F1s.length<2) return null;
+  const med=a=>a.slice().sort((p,q)=>p-q)[Math.floor(a.length/2)];
+  return [med(F1s),med(F2s)];
+}
+const VOW7=["a","e","ẹ","i","o","ọ","u"];
+let wvow=lsGet("ps.wvow");
+function vowelsFrom(b){
+  const note=document.getElementById("wvowNote");
+  const {frames}=analysePitch(b); const segs=fitRuns(voicedRuns(frames),frames,7);
+  if(segs.length<7){ note.textContent="Could not hear seven vowels. Leave a short pause after each one."; return; }
+  const F=segs.map(sg=>formantsAt(b,sg.t,sg.t1));
+  if(F.some(v=>!v)){ note.textContent="Some vowels were too quiet or short. Hold each one a little longer and try again."; return; }
+  const V={}; VOW7.forEach((v,i)=>V[v]=F[i]);
+  const okE=V["ẹ"][0]>V.e[0]*1.06, okO=V["ọ"][0]>V.o[0]*1.06;
+  if(!(V.a[0]>V.i[0] && V.a[0]>V.u[0])){ note.textContent="The vowels did not come out in order. Say a, e, ẹ, i, o, ọ, u in that order, slowly."; return; }
+  wvow={...V, okE, okO}; lsSet("ps.wvow",wvow);
+  note.textContent="Vowels learned."+(okE?"":" Your e and ẹ sounded alike, so e/ẹ stays as you type it.")+(okO?"":" Your o and ọ sounded alike, so o/ọ stays as you type it.");
+}
+function vowelDot(b,seg,base){ // base is "e" or "o"; returns true to add a dot below
+  if(!wvow) return null; const open= base==="e"? "ẹ":"ọ"; if(!(base==="e"? wvow.okE : wvow.okO)) return null;
+  const F=formantsAt(b,seg.t,seg.t1); if(!F) return null;
+  const dist=c=>2*Math.abs(Math.log(F[0]/c[0]))+Math.abs(Math.log(F[1]/c[1]));
+  const dc=dist(wvow[base]), dop=dist(wvow[open]);
+  if(Math.abs(dc-dop)<.04) return null;
+  return dop<dc;
+}
+function addDot(sy){ const r=sy.raw, k=sy.vi+1; if(r[k]==="\u0323") return sy; const raw=r.slice(0,k)+"\u0323"+r.slice(k); return {...sy, raw, text:raw.normalize("NFC"), dotted:true}; }
 function classifyTones(segs){
   if(wcal){
     // speech tones are narrower than sung steps, so compare against the calibrated spacing scaled by the phrase's own spread
@@ -1526,7 +1571,7 @@ function buildWrite(){
   });
   const known=wState.words.filter(w=>w.cands).length;
   document.getElementById("wexplain").textContent= (wcal?"Read against your calibration. ":"Read relative to this phrase (calibrate for steadier results). ")+
-    (known? known+" of "+wState.words.length+" words matched to the wordlist, so dots below come from it. ":"")+"Dialect tones can differ: this writes standard Yoruba.";
+    (known? known+" of "+wState.words.length+" words matched to the wordlist, so dots below come from it. ":"")+(wState.dots? wState.dots+" dot"+(wState.dots>1?"s":"")+" below came from your voice. ":(wvow?"":"Learn your vowels in step 1 and the studio can add dots below from your voice. "))+"Dialect tones can differ: this writes standard Yoruba.";
   wState.final=out.join(" ");
 }
 function matchCase(typed,w){ return typed[0]&&typed[0]===typed[0].toUpperCase()&&typed[0]!==typed[0].toLowerCase()? w[0].toUpperCase()+w.slice(1) : w; }
@@ -1541,7 +1586,9 @@ function phraseFrom(b){
   const segs=fitRuns(runs,frames,n);
   if(segs.length<n){ note.textContent="Heard fewer syllables than you typed. Say it a little slower."; return; }
   const tones=classifyTones(segs);
-  let k=0; wState={words:words.map((w,i)=>{ const sy=sylls[i], t=tones.slice(k,k+sy.length); k+=sy.length; const ch=chooseWord(w,t); return {typed:w, syl:sy, tones:t, cands:ch.cands, pick: ch.cands? ch.best : null}; })};
+  let dots=0;
+  if(wvow){ let q=0; sylls.forEach((sy,wi)=>sy.forEach((s,si)=>{ const seg=segs[q++]; const base=(s.raw[s.vi]||"").toLowerCase(); if((base==="e"||base==="o") && s.raw[s.vi+1]!=="\u0323"){ const dv=vowelDot(b,seg,base); if(dv){ sy[si]=addDot(s); if(s.raw[s.vi]!==s.raw[s.vi].toLowerCase()) {} dots++; } } })); }
+  let k=0; wState={dots, words:words.map((w,i)=>{ const sy=sylls[i], t=tones.slice(k,k+sy.length); k+=sy.length; const ch=chooseWord(w,t); return {typed:w, syl:sy, tones:t, cands:ch.cands, pick: ch.cands? ch.best : null}; })};
   note.textContent=n+" syllables heard";
   buildWrite(); saveWord(wState.final); document.getElementById("wres").classList.add("on");
   document.getElementById("wres").scrollIntoView({behavior:"smooth",block:"start"});
@@ -1574,6 +1621,13 @@ if(!inClaude && navigator.mediaDevices && window.MediaRecorder){
   wc.onclick=()=>micTake(wc,"● Record do re mi",10,calibrateFrom,document.getElementById("wcalNote"));
   wr.onclick=()=>{ if(!wtext.value.trim()&&!wr._rec){ document.getElementById("wrecNote").textContent="Type the phrase first."; return; } micTake(wr,"● Record",15,phraseFrom,document.getElementById("wrecNote")); };
 }
+document.getElementById("wvow").onchange=async e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return; const note=document.getElementById("wvowNote"); note.textContent="Listening…";
+  let b=null; try{ b=await decodeFile(f); }catch(err){ note.textContent=readFail(f); e.target.value=""; return; }
+  vowelsFrom(b); e.target.value="";
+};
+if(!inClaude && navigator.mediaDevices && window.MediaRecorder){ const wv=document.getElementById("wvowRec"); wv.hidden=false; wv.onclick=()=>micTake(wv,"● Record the vowels",15,vowelsFrom,document.getElementById("wvowNote")); }
+if(wvow) document.getElementById("wvowNote").textContent="Vowels learned earlier on this device. Record again to update them.";
 /* remember calibration between visits */
 (function(){ const c=lsGet("ps.wcal"); if(c){ wcal=c; document.getElementById("wcalNote").textContent="Calibrated earlier on this device. Record again to update it."; } })();
 document.getElementById("wcopy").onclick=async()=>{ saveWord(wState.final); try{ await navigator.clipboard.writeText(wState.final); toast("Copied: "+wState.final); }catch(e){ toast("Copy was blocked. Select the text and copy it."); } };
