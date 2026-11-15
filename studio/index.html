@@ -66,6 +66,15 @@ h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.025em;line-he
 .inst-t{flex:1;min-width:0;font-size:12px;color:var(--mute);font-weight:300;line-height:1.4}.inst-t b{display:block;font-size:14px;color:var(--text);font-weight:600}
 .inst .btn{min-height:44px}
 .inst-x{flex:0 0 44px;height:44px;border:0;background:none;color:var(--mute);font-size:22px;cursor:pointer}
+.ogb-h{display:flex;align-items:baseline;gap:10px}
+.ogb-tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);font-weight:600}
+.ogb textarea{width:100%;margin-top:10px;background:var(--black);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:16px;line-height:1.45;resize:vertical}
+.ogb-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.ogb-row .btn{min-height:44px}
+.ogb-det{flex:1;min-width:160px;font-size:13px;color:var(--mute)}.ogb-det b{color:var(--text);font-weight:600}
+.ogb-lab{display:block;margin-top:14px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.ogb-pair{display:block;width:100%;text-align:left;background:var(--black);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--text);font:inherit;font-size:14px;cursor:pointer;min-height:44px}
+.ogb-pair small{display:block;color:var(--mute);font-size:13px;margin-top:2px}
 .transport{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 14px}
 .play{width:54px;height:54px;border-radius:50%;background:var(--orange);display:grid;place-items:center;flex:none}
 .play:active{background:var(--orange-dk)}
@@ -468,6 +477,28 @@ body.np-on main{padding-bottom:72px}
       <button class="btn" id="wdrum">Play on dùndún</button>
     </div>
     <div class="vmeta" id="wexplain"></div>
+  </div>
+  <div class="card ogb" id="ogbCard">
+    <div class="ogb-h"><h3>Ogbifọ̀</h3><span class="ogb-tag">translate · beta</span></div>
+    <p>Type or speak a line in Yoruba or English. Ogbifọ̀ works out which language it is and translates it to the other one.</p>
+    <textarea id="ogbIn" rows="3" maxlength="400" placeholder="Ẹ kú àbọ̀ sí ilé wa" aria-label="Line to translate"></textarea>
+    <div class="ogb-row">
+      <div class="ogb-det" id="ogbDet" aria-live="polite">Type something to start</div>
+      <button class="btn" id="ogbSwap" aria-label="Swap the translation direction">⇄ Swap</button>
+    </div>
+    <div class="ogb-row">
+      <button class="btn" id="ogbMic" hidden>● Speak</button>
+      <button class="btn" id="ogbUse">Use my Write result</button>
+      <button class="btn primary" id="ogbGo">Translate</button>
+    </div>
+    <p class="vmeta" id="ogbNote"></p>
+    <label class="ogb-lab" for="ogbOut" id="ogbOutLab">English</label>
+    <textarea id="ogbOut" rows="3" maxlength="600" placeholder="The translation appears here. Until live translation switches on, write your own." aria-label="Translation"></textarea>
+    <div class="ogb-row">
+      <button class="btn" id="ogbSave">Save the pair</button>
+      <button class="btn" id="ogbCopy">Copy both</button>
+    </div>
+    <div class="wlist" id="ogbList"></div>
   </div>
   <div class="card" id="wHistCard" style="display:none">
     <h3>Your words</h3>
@@ -983,6 +1014,72 @@ async function mp3(buf){
   const e=enc.flush(); if(e.length) out.push(new Uint8Array(e));
   return new Blob(out,{type:"audio/mpeg"});
 }
+/* ---------- OGBIFỌ̀: detect Yoruba or English, translate to the other ----------
+   Detection runs on the phone. Live translation is not connected yet: when it is,
+   set OGB_ENDPOINT to the Supabase function URL and ogbTranslate() will use it. */
+const OGB_ENDPOINT="";
+const YO_WORDS=new Set("ni ti si sí wa wà mo mi o ó ò a à e ẹ ẹ́ ko kò kì ki ati àti fun fún pe pé rẹ re wọn won naa náà yii yìí yen gbogbo se ṣé ṣe şe ba bá lo lọ nko ńkọ́ bawo báwo nibo níbo kini kí kilode ojo ọjọ ile ilé omo ọmọ oko ọkọ́ owo owó eyin ẹyin awa àwa emi èmi iwo ìwọ oun òun dada dáadáa jowo jọ̀wọ́ e kaaro ẹ káàárọ̀ ku kú abo àbọ̀ olorun ọlọ́run nigba nígbà tabi tàbí sugbon ṣùgbọ́n o. ooo jare".split(" "));
+const EN_WORDS=new Set("the and is are was were to of in on at for with you your my me i we they he she it this that what why how when where who not no yes be have has do does did will would can could should a an from by as but or so if all just like love go come good day welcome home thank thanks please".split(" "));
+function ogbDetect(t){
+  const raw=(t||"").trim(); if(!raw) return {lang:null};
+  const low=raw.toLowerCase(), words=low.normalize("NFC").split(/[^\p{L}\p{M}']+/u).filter(Boolean);
+  let yo=0,en=0;
+  if(/[ẹọṣẸỌṢ]|[\u0300\u0301\u0323]/.test(raw.normalize("NFD"))) yo+=3;
+  words.forEach(w=>{ const b=w.normalize("NFD").replace(/[\u0300-\u036f]/g,""); if(YO_WORDS.has(w)||YO_WORDS.has(b)) yo+=1; if(EN_WORDS.has(b)) en+=1;
+    if(/(th|sh|ck|tion|ing|ed$|ly$|[cqvxz])/.test(b)) en+=.6;
+    if(/[aeioun]$/.test(b) && !/[cqvxz]|th|sh|ck|wh|ph|[bcdfghjklmprstvwxyz]{2}(?<!gb|kp)/.test(b) && !EN_WORDS.has(b)) yo+=.5; });
+  const tot=yo+en; if(tot<1) return {lang:null,yo,en};
+  if(yo>0 && en>0 && Math.min(yo,en)/tot>.3) return {lang:"mixed",yo,en};
+  return {lang: yo>=en? "yo":"en", yo, en, sure: Math.max(yo,en)/tot};
+}
+const OGB_NAME={yo:"Yorùbá",en:"English"};
+let ogbFrom=null, ogbManual=false;
+const ogbIn=document.getElementById("ogbIn"), ogbOut=document.getElementById("ogbOut"), ogbDet=document.getElementById("ogbDet"), ogbNote=document.getElementById("ogbNote");
+function ogbTo(){ return ogbFrom==="en"?"yo":"en"; }
+function ogbPaint(){
+  const d=ogbDetect(ogbIn.value);
+  if(!ogbManual) ogbFrom= d.lang==="mixed"? "yo" : d.lang;
+  if(!ogbFrom){ ogbDet.textContent= ogbIn.value.trim()? "Not sure yet. Type a few more words." : "Type something to start"; document.getElementById("ogbOutLab").textContent="Translation"; return; }
+  const mix= d.lang==="mixed"? " · mixed Yorùbá and English, read as Yorùbá" : "";
+  ogbDet.innerHTML="Detected <b>"+OGB_NAME[ogbFrom]+"</b> → <b>"+OGB_NAME[ogbTo()]+"</b>"+(ogbManual?" (you set this)":mix);
+  document.getElementById("ogbOutLab").textContent=OGB_NAME[ogbTo()];
+}
+ogbIn.addEventListener("input",()=>{ ogbManual=false; ogbPaint(); });
+document.getElementById("ogbSwap").onclick=()=>{ if(!ogbFrom) ogbFrom="yo"; ogbFrom=ogbTo(); ogbManual=true; ogbPaint(); };
+document.getElementById("ogbUse").onclick=()=>{ const w=(document.getElementById("wout").textContent||"").trim(); if(!w){ toast("Make a line in Write first, above."); return; } ogbIn.value=w; ogbManual=false; ogbPaint(); };
+async function ogbTranslate(text,from,to){
+  if(!OGB_ENDPOINT) return null;
+  const r=await fetch(OGB_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,from,to})});
+  if(!r.ok) throw new Error("ogb"); const j=await r.json(); return j.translation||null;
+}
+document.getElementById("ogbGo").onclick=async()=>{
+  const t=ogbIn.value.trim(); if(!t){ toast("Type or speak a line first."); return; } ogbPaint(); if(!ogbFrom) ogbFrom="yo";
+  const go=document.getElementById("ogbGo"); go.disabled=true; go.textContent="Translating…";
+  try{ const out=await ogbTranslate(t,ogbFrom,ogbTo());
+    if(out){ ogbOut.value=out; ogbNote.textContent="Machine translation. Check it before you publish it."; }
+    else { ogbNote.textContent="Live translation switches on soon. For now, write your own "+OGB_NAME[ogbTo()]+" below and save the pair: every pair you save helps teach Ogbifọ̀."; ogbOut.focus(); } }
+  catch(e){ ogbNote.textContent="Translation is not reachable right now. Write your own below, or try again later."; }
+  go.disabled=false; go.textContent="Translate";
+};
+function ogbLoad(){ return lsGet("ps.ogb")||[]; }
+function ogbRender(){ const L=document.getElementById("ogbList"); L.innerHTML=""; ogbLoad().slice(0,20).forEach(x=>{ const b=document.createElement("button"); b.className="ogb-pair"; b.innerHTML="<span></span><small></small>"; b.firstChild.textContent=x.src; b.lastChild.textContent=OGB_NAME[x.to]+": "+x.out; b.onclick=()=>{ navigator.clipboard&&navigator.clipboard.writeText(x.src+"\n"+x.out).then(()=>toast("Copied both lines")).catch(()=>{}); }; L.appendChild(b); }); }
+document.getElementById("ogbSave").onclick=()=>{ const src=ogbIn.value.trim(), out=ogbOut.value.trim(); if(!src||!out){ toast("Add the line and its translation first."); return; } if(!ogbFrom) ogbPaint();
+  const L=ogbLoad(); L.unshift({src,out,from:ogbFrom||"yo",to:ogbTo(),t:Date.now()}); lsSet("ps.ogb",L.slice(0,200)); ogbRender(); toast("Pair saved in this browser."); };
+document.getElementById("ogbCopy").onclick=()=>{ const t=ogbIn.value.trim()+(ogbOut.value.trim()?"\n"+ogbOut.value.trim():""); if(!t.trim()) return; navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>toast("Copied")).catch(()=>toast("Select the text and copy it.")); };
+(function(){ const SR=window.SpeechRecognition||window.webkitSpeechRecognition, mic=document.getElementById("ogbMic"); if(!SR||inClaude) return; mic.hidden=false; let rec=null;
+  mic.onclick=()=>{ if(rec){ rec.stop(); return; }
+    const lang= ogbFrom==="en"? "en-NG" : "yo-NG";
+    rec=new SR(); rec.lang=lang; rec.interimResults=true; rec.continuous=false;
+    const base=ogbIn.value.trim()? ogbIn.value.trim()+" " : "";
+    mic.textContent="■ Stop"; ogbNote.textContent="Listening in "+(lang==="en-NG"?"English":"Yorùbá")+"… This is a first draft: correct the words, then translate. Tap Swap first to change the language you speak.";
+    rec.onresult=e=>{ let t=""; for(let i=0;i<e.results.length;i++) t+=e.results[i][0].transcript; ogbIn.value=base+t; ogbPaint(); };
+    rec.onerror=e=>{ ogbNote.textContent= e.error==="language-not-supported"? "Your phone cannot hear "+(lang==="en-NG"?"English":"Yorùbá")+" yet. Type the line instead." : e.error==="not-allowed"? "Microphone is blocked. Allow it in your browser settings, or type the line." : "Could not hear that. Try again, closer to the phone, or type it."; };
+    rec.onend=()=>{ rec=null; mic.textContent="● Speak"; };
+    try{ rec.start(); }catch(e){ rec=null; mic.textContent="● Speak"; }
+  };
+})();
+ogbRender(); ogbPaint();
+
 /* ---------- install as an app (Chrome "Install", iPhone "Add to Home Screen") ---------- */
 (function(){
   const box=document.getElementById("inst"), go=document.getElementById("instGo"), x=document.getElementById("instX"), txt=document.getElementById("instTxt");
