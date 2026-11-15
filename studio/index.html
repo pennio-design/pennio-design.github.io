@@ -16,7 +16,12 @@
 <meta property="og:image" content="https://pennio.agency/studio/og-studio.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/studio/icons/apple-touch-icon.png">
+<link rel="manifest" href="/studio/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="pennio.studio">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>/* Inter, hosted on this domain so it loads on slow or blocked networks. */@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/inter-300.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-500.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/inter-600.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-700.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/inter-800.woff2') format('woff2')}</style>
 <style>
@@ -54,6 +59,13 @@ h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.025em;line-he
 .exp-row .btn{min-height:44px}
 .exp-note,.exp-meta{font-size:12px;color:var(--mute);font-weight:300}
 .exp-meta:empty{display:none}
+.inst{display:flex;align-items:center;gap:12px;margin:12px 0 22px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--black)}
+.inst[hidden]{display:none}
+.inst-ic{flex:0 0 44px;height:44px;border-radius:11px;background:#050505;border:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);gap:3px;align-items:end;padding:11px 8px}
+.inst-ic i{display:block;background:#fff;border-radius:2px;height:62%}.inst-ic i:nth-child(2){height:100%;background:var(--orange)}.inst-ic i:nth-child(3),.inst-ic i:nth-child(4){height:30%}
+.inst-t{flex:1;min-width:0;font-size:12px;color:var(--mute);font-weight:300;line-height:1.4}.inst-t b{display:block;font-size:14px;color:var(--text);font-weight:600}
+.inst .btn{min-height:44px}
+.inst-x{flex:0 0 44px;height:44px;border:0;background:none;color:var(--mute);font-size:22px;cursor:pointer}
 .transport{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 14px}
 .play{width:54px;height:54px;border-radius:50%;background:var(--orange);display:grid;place-items:center;flex:none}
 .play:active{background:var(--orange-dk)}
@@ -296,6 +308,12 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
     <span class="saved" id="savedNote"></span>
     <a class="btn" href="/studio/guide/" id="guideLink" style="display:inline-flex;align-items:center;text-decoration:none;color:inherit">Guide</a>
     <button class="btn" id="openWork">My work</button>
+  </div>
+  <div class="inst" id="inst" hidden>
+    <div class="inst-ic" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="inst-t"><b>Get the app</b><span id="instTxt">Put pennio.studio on your home screen. It opens full screen and still opens without data.</span></div>
+    <button class="btn primary" id="instGo">Install</button>
+    <button class="inst-x" id="instX" aria-label="Hide this">×</button>
   </div>
   <div class="bkp" id="bkpBar" hidden>
     <div><b id="bkpTitle">Back up your work</b><span id="bkpText">Your work lives only in this browser. PENNIO cannot recover it if it is lost.</span></div>
@@ -930,6 +948,27 @@ async function mp3(buf){
   const e=enc.flush(); if(e.length) out.push(new Uint8Array(e));
   return new Blob(out,{type:"audio/mpeg"});
 }
+/* ---------- install as an app (Chrome "Install", iPhone "Add to Home Screen") ---------- */
+(function(){
+  const box=document.getElementById("inst"), go=document.getElementById("instGo"), x=document.getElementById("instX"), txt=document.getElementById("instTxt");
+  const standalone=matchMedia("(display-mode: standalone)").matches || navigator.standalone===true;
+  if(!inClaude && "serviceWorker" in navigator) navigator.serviceWorker.register("/studio/sw.js",{scope:"/studio/"}).catch(()=>{});
+  if(inClaude || standalone || lsGet("ps.instHide")) return;
+  let deferred=null;
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+  addEventListener("beforeinstallprompt",e=>{ e.preventDefault(); deferred=e; box.hidden=false; });
+  addEventListener("appinstalled",()=>{ box.hidden=true; toast("pennio.studio is on your home screen."); });
+  if(ios){
+    box.hidden=false; go.textContent="How";
+    txt.textContent="On iPhone, open this page in Safari, tap Share, then Add to Home Screen. The app keeps its own copy of your work, so download a backup from My work first and restore it there.";
+  }
+  go.onclick=async()=>{
+    if(deferred){ deferred.prompt(); const c=await deferred.userChoice.catch(()=>null); deferred=null; if(c&&c.outcome==="accepted") box.hidden=true; }
+    else if(ios){ toast("Safari: tap Share, then Add to Home Screen."); }
+    else { toast("Open your browser menu and tap Install app or Add to Home screen."); }
+  };
+  x.onclick=()=>{ box.hidden=true; lsSet("ps.instHide",1); };
+})();
 const expPanel=document.getElementById("expPanel"), expGo=document.getElementById("expGo"), expShare=document.getElementById("expShare"), expMeta=document.getElementById("expMeta"), swLoud=document.getElementById("swLoud");
 let expFmt="mp3";
 expBtn.onclick=()=>{ expPanel.hidden=!expPanel.hidden; expBtn.setAttribute("aria-expanded",String(!expPanel.hidden)); };

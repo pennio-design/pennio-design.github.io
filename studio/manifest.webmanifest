@@ -1,0 +1,18 @@
+{
+  "name": "pennio.studio",
+  "short_name": "pennio.studio",
+  "description": "Record your voice and build a groove on Yoruba drums, the talking drum and melody. Write Yoruba with tone marks.",
+  "id": "/studio/",
+  "start_url": "/studio/?source=app",
+  "scope": "/studio/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    { "src": "/studio/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/studio/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/studio/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
