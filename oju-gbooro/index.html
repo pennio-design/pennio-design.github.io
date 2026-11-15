@@ -79,6 +79,7 @@ input:focus,select:focus{border-bottom-color:var(--bone)}
 .done{display:none;margin-top:26px;border-top:1px solid var(--bone);padding-top:22px}
 .done.on{display:block}
 .done b{font-size:28px;font-weight:700;letter-spacing:-.025em}
+.ref{font-size:15px;font-weight:600;letter-spacing:.14em;color:var(--wood);margin-top:12px}
 .done p{color:var(--mute);margin-top:10px;font-size:15px;line-height:1.6}
 footer{padding:150px 22px 64px;color:var(--mute);font-size:13px;line-height:1.8}
 footer .fin{font-size:clamp(28px,8vw,44px);font-weight:700;letter-spacing:-.035em;color:var(--text);line-height:1;margin-bottom:14px}
@@ -150,7 +151,7 @@ footer a{color:var(--text)}
     <div class="addr" id="cAddr">Entries go to contact@pennio.agency</div>
     </form>
   </section>
-  <div class="sec" data-line="l"><div class="done" id="done"><b>Ẹ ṣé. Your entry is in.</b><p>We read every entry and will reach out by phone, WhatsApp or email. Share this page with an onídìrí you know: pennio.agency/oju-gbooro</p></div></div>
+  <div class="sec" data-line="l"><div class="done" id="done"><b>Ẹ ṣé. Your entry is in.</b><div class="ref" id="doneRef"></div><p id="doneMail"></p><p>We read every entry and reply within 14 days, whether or not it is a fit this round. Nothing of yours is posted without asking you. Share this page with an onídìrí you know: pennio.agency/oju-gbooro</p></div></div>
 
 
   <footer data-line="end"><div class="fin" lang="yo">Òòyà á yà.</div>Ojú Gbooro · with <a href="/">PENNIO</a><br>Questions: contact@pennio.agency</footer>
@@ -198,10 +199,10 @@ footer a{color:var(--text)}
   addEventListener("load",build); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(build); build();
 })();
 </script>
+<script src="/entry.js"></script>
 <script>
 (function(){
 "use strict";
-const FS="https://formsubmit.co/ajax/385f3fed9367873e3a24fa92c673e010";
 let role="Hairdresser";
 const $=id=>document.getElementById(id);
 document.querySelectorAll("#castRole button").forEach(b=>b.onclick=()=>{ role=b.dataset.k; document.querySelectorAll("#castRole button").forEach(x=>x.classList.toggle("on",x===b)); $("cHair").style.display= role==="Model"?"none":""; });
@@ -218,16 +219,16 @@ $("castForm").onsubmit=async e=>{
   err.textContent="";
   if($("cHoney").value) return;
   const btn=e.target.querySelector(".send"); btn.disabled=true; btn.textContent="Sending…";
-  let ok=false;
-  try{
-    const res=await fetch(FS,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({_subject:"Ojú Gbooro casting: "+app.role+", "+app.name,_captcha:"false",_template:"table",role:app.role,name:app.name,city:app.city,phone:app.phone,email:app.email,photos:app.link,styles:app.styles,years_doing_hair:app.years,age_18_plus:"yes",page:"pennio.agency/oju-gbooro"})});
-    const d=await res.json().catch(()=>({})); ok=res.ok && d.success!=="false" && d.success!==false;
-  }catch(x){}
+  const fields={role:app.role,name:app.name,city:app.city,phone:app.phone,email:app.email,photos:app.link,styles:app.styles,years_doing_hair:app.years,age_18_plus:"yes"};
+  const r=await PennioEntry.send("ojugbooro",fields);
   btn.disabled=false; btn.textContent="Send my entry";
-  if(ok){ $("castForm").style.display="none"; $("done").classList.add("on"); $("done").scrollIntoView({behavior:"smooth",block:"center"}); return; }
-  const lines=["Ojú Gbooro casting entry","","Role: "+app.role,"Name: "+app.name,"City: "+app.city,"Phone: "+app.phone,"Email: "+app.email,"Photos: "+app.link].concat(app.role!=="Model"?["Styles: "+app.styles,"Years doing hair: "+app.years]:[]).concat(["Aged 18 or older: yes"]);
-  const a=document.createElement("a"); a.href="mailto:contact@pennio.agency?subject="+encodeURIComponent("Ojú Gbooro casting: "+app.role+", "+app.name)+"&body="+encodeURIComponent(lines.join("\n")); document.body.appendChild(a); a.click(); a.remove();
-  $("cAddr").textContent="The entry did not send from here, so your email app should open with it filled in: press send. Or email contact@pennio.agency with these details.";
+  if(r.ok){
+    $("castForm").style.display="none"; $("doneRef").textContent=r.ref;
+    $("doneMail").textContent= app.email ? "A confirmation is on its way to "+app.email+"." : "You gave no email, so keep this reference and quote it if you write to us.";
+    $("done").classList.add("on"); $("done").scrollIntoView({behavior:"smooth",block:"center"}); return;
+  }
+  const a=document.createElement("a"); a.href=PennioEntry.mailto("ojugbooro",fields,r.ref); document.body.appendChild(a); a.click(); a.remove();
+  $("cAddr").textContent="The entry did not send from here, so your email app should open with it filled in: press send. Or email contact@pennio.agency with these details. Reference: "+r.ref+".";
 };
 })();
 </script>
