@@ -627,6 +627,31 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 .remixbar .btn.ic{width:auto;min-height:44px;padding:0 14px;font-size:13px;gap:6px}
 .remixbar .btn.ic svg{width:16px;height:16px}
 .remixbar .btn.ic span{display:inline}
+
+/* finding saved work */
+.store-use{font-size:11px;color:var(--mute);font-variant-numeric:tabular-nums}
+.sfind{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px;align-items:center}
+.sfind input{background:var(--black);border:1px solid var(--line2);border-radius:10px;color:var(--text);font-family:inherit;font-size:16px;padding:9px 10px;outline:none;min-height:44px;min-width:0}
+.ssort{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mute);letter-spacing:.06em;text-transform:uppercase}
+.ssort select{background:var(--black);color:var(--text);border:1px solid var(--line2);border-radius:10px;font-family:inherit;font-size:14px;padding:0 8px;min-height:44px;text-transform:none;letter-spacing:0}
+.sfil{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.sfil .chip{font-family:inherit;font-size:12px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mute);cursor:pointer}
+.sfil .chip[aria-pressed="true"]{background:var(--tp,#F5F3EF);color:#0D0D0F;border-color:transparent}
+.scount{grid-column:1/-1;margin:0!important;font-size:12px!important}
+.pitem .bk{display:table;margin-top:4px;font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line2);color:var(--mute)}
+.pitem .bk.no{border-color:rgba(242,101,34,.5);color:var(--orange)}
+.bklog{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+.bklog summary{cursor:pointer;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);font-weight:600;min-height:36px;display:flex;align-items:center;gap:6px}
+.bkrow{padding:10px 0;border-bottom:1px solid var(--line)}
+.bkrow code{display:block;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--text);word-break:break-all}
+.bkrow small{font-size:11px;color:var(--mute)}
+.rprev{margin-top:14px;padding:14px;border:1px solid var(--line2);border-radius:16px;background:var(--surface)}
+.rprev h3{font-size:15px;font-weight:600}
+.rp-tools{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.rpi{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.rpi input{width:20px;height:20px;margin-top:2px;accent-color:var(--orange);flex:none}
+.rpi b{display:block;font-size:14px;font-weight:600}.rpi small{display:block;font-size:11px;color:var(--mute);margin-top:2px}
+.rpi .tag{color:var(--orange)}
 </style>
 </head>
 <body class="in-studio">
@@ -909,6 +934,13 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
     <button class="btn" id="backup">Download backup</button>
     <label class="btn file">Restore a backup file<input type="file" id="restoreFile" accept=".json,application/json"></label>
   </div>
+  <div class="rprev" id="rPrev" hidden>
+    <h3 id="rpTitle">In this backup file</h3>
+    <p id="rpInfo"></p>
+    <div class="rp-tools"><label class="ssort"><span>Sort</span><select id="rpSort" aria-label="Sort sessions in the file"><option value="updated">Last worked</option><option value="name">Name, A to Z</option><option value="oldest">Oldest first</option></select></label><button class="linkbtn" id="rpAll">Select all</button></div>
+    <div id="rpList"></div>
+    <div class="crow"><button class="btn primary" id="rpGo">Restore</button><button class="btn" id="rpCancel">Cancel</button></div>
+  </div>
   <div class="cloud" id="cloud">
     <h3>Cloud saving</h3>
     <div id="cloudOut">
@@ -927,8 +959,24 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
     <p class="note" id="cloudNote">Stored with Supabase in Stockholm, Sweden. Only you can open your projects and recordings. To have your cloud copy removed, use Delete my cloud copy or email contact@pennio.agency.</p>
   </div>
   <div class="cursess" id="curSess"></div>
-  <div class="sh-row"><h3>Previous sessions</h3><input id="sessFind" type="search" placeholder="Find a session" maxlength="60" aria-label="Find a session" hidden></div>
+  <div class="sh-row"><h3>Previous sessions</h3><span class="store-use" id="storeUse"></span></div>
+  <div class="sfind" id="sFind" hidden>
+    <input id="sessFind" type="search" placeholder="Find a session" maxlength="60" aria-label="Find a session">
+    <label class="ssort"><span>Sort</span><select id="sessSort" aria-label="Sort sessions">
+      <option value="updated">Last worked</option><option value="created">Newest started</option><option value="oldest">Oldest first</option><option value="name">Name, A to Z</option><option value="time">Most time spent</option><option value="size">Largest first</option>
+    </select></label>
+    <div class="sfil" role="group" aria-label="Filter sessions">
+      <button class="chip" data-f="rec" aria-pressed="false">With a recording</button>
+      <button class="chip" data-f="ck" aria-pressed="false">With checkpoints</button>
+      <button class="chip" data-f="nobk" aria-pressed="false">Not backed up</button>
+    </div>
+    <p class="scount" id="sCount" aria-live="polite"></p>
+  </div>
   <div class="plist" id="plist"></div>
+  <details class="bklog" id="bkLogBox" hidden><summary>Your backup files <span id="bkLogN"></span></summary>
+    <p>Every backup you download from this browser. On your phone, open Files or Downloads and search <b>pennio-studio</b>, then pick the file by its date and name below.</p>
+    <div id="bkLog"></div>
+  </details>
   <p id="storeNote" style="margin-top:14px"></p>
   <p style="margin-top:8px"><a href="/studio/guide/#history" style="color:var(--text)">Where your work lives, and how backups work</a></p>
 </div></div>
@@ -2641,19 +2689,31 @@ async function renderWork(){
     cs.querySelector("#csDup").onclick=async()=>{ await saveNow(); const rec={...cur, id:newId(), name:cur.name+" copy", created:Date.now(), updated:Date.now(), sittings:[]}; rec.state=JSON.parse(JSON.stringify(stateNow())); rec.audio=currentAudio; await tx("projects","readwrite",st=>st.put(rec)); toast("Duplicated as "+rec.name); renderWork(); };
   } else cs.innerHTML="";
   const list=all.filter(r=>r.id!==currentId);
-  const find=document.getElementById("sessFind"); find.hidden=list.length<6;
-  const q=(find.value||"").trim().toLowerCase();
+  const find=document.getElementById("sessFind"); document.getElementById("sFind").hidden=list.length<2;
+  const q=(find.value||"").trim().toLowerCase(), vw=sessView();
+  document.getElementById("sessSort").value=vw.sort;
+  document.querySelectorAll(".sfil .chip").forEach(c=>c.setAttribute("aria-pressed",String(!!vw.f[c.dataset.f])));
   const el=document.getElementById("plist"); el.innerHTML="";
-  const shown=list.filter(r=>!q||(r.name||"").toLowerCase().includes(q));
+  const metas=new Map(); for(const r of list) metas.set(r.id, {...(await sessionMeta(r)), size:await sessionSize(r), bk:bkState(r)});
+  let shown=list.filter(r=>{ const m=metas.get(r.id);
+    if(q && !((r.name||"")+" "+stateSummary(r.state,!!r.audio)).toLowerCase().includes(q)) return false;
+    if(vw.f.rec && !r.audio) return false; if(vw.f.ck && !m.n) return false; if(vw.f.nobk && m.bk.ok) return false; return true; });
+  const by={ updated:(a,b)=>b.updated-a.updated, created:(a,b)=>(b.created||0)-(a.created||0), oldest:(a,b)=>(a.created||a.updated)-(b.created||b.updated),
+    name:(a,b)=>(a.name||"").localeCompare(b.name||"",undefined,{numeric:true,sensitivity:"base"}), time:(a,b)=>metas.get(b.id).total-metas.get(a.id).total, size:(a,b)=>metas.get(b.id).size-metas.get(a.id).size };
+  shown.sort(by[vw.sort]||by.updated);
+  const filtering=q||Object.values(vw.f).some(Boolean);
+  document.getElementById("sCount").textContent= list.length? (filtering? "Showing "+shown.length+" of "+list.length+" sessions" : list.length+" previous session"+(list.length===1?"":"s")) : "";
   if(!list.length){ el.innerHTML='<p>No previous sessions yet. Start a new session and this one will be kept here. Have a backup file from another phone? Tap Restore a backup file above.</p>'; }
-  else if(!shown.length){ el.innerHTML='<p>No session matches that name.</p>'; }
+  else if(!shown.length){ el.innerHTML='<p>No session matches. <button class="linkbtn" id="sClear">Clear search and filters</button></p>'; el.querySelector("#sClear").onclick=()=>{ find.value=""; setSessView({sort:vw.sort,f:{}}); renderWork(); }; }
   for(const r of shown){
-    const m=await sessionMeta(r);
+    const m=metas.get(r.id);
     const d=document.createElement("div"); d.className="pitem";
     const when=new Date(r.updated).toLocaleString([], {dateStyle:"medium", timeStyle:"short"});
-    d.innerHTML='<div class="t"><b></b><small></small></div><div class="acts"><button class="op">Continue</button><button class="hs">History</button><button class="del">Delete</button></div>';
+    d.innerHTML='<div class="t"><b></b><small></small><span class="bk"></span></div><div class="acts"><button class="op">Continue</button><button class="hs">History</button><button class="bu">Back up</button><button class="del">Delete</button></div>';
+    const bk=d.querySelector(".bk"); bk.textContent=fmtSize(m.size)+" · "+m.bk.text; if(!m.bk.ok) bk.classList.add("no");
+    d.querySelector(".bu").onclick=()=>doBackup([r]);
     d.querySelector("b").textContent=r.name;
-    d.querySelector("small").textContent="Last worked "+when+" · "+(m.sits? m.sits+" sitting"+(m.sits===1?"":"s")+", "+fmtMin(m.total)+" · ":"")+(m.n? m.n+" checkpoints · ":"")+stateSummary(r.state,!!r.audio);
+    d.querySelector("small").textContent="Last worked "+when+" · "+(m.sits? m.sits+" sitting"+(m.sits===1?"":"s")+", "+fmtMin(m.total)+" · ":"")+(m.n? m.n+" checkpoint"+(m.n===1?"":"s")+" · ":"")+stateSummary(r.state,!!r.audio);
     d.querySelector(".op").onclick=async()=>{ await saveNow(); await openProject(r); ready=true; workEl.classList.remove("on"); toast("Continuing "+r.name); };
     d.querySelector(".hs").onclick=async()=>{ await saveNow(); await openProject(r); ready=true; workEl.classList.remove("on"); await renderHist(); histEl.classList.add("on"); };
     const del=d.querySelector(".del");
@@ -2667,7 +2727,33 @@ async function renderWork(){
   try{ if(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted()) note+=" This browser has agreed to keep them."; }catch(e){}
   if(!db) note="This browser is blocking storage here, so only the current beat is kept. Download a backup to keep your work.";
   document.getElementById("storeNote").textContent=note;
+  try{ const est=navigator.storage&&navigator.storage.estimate? await navigator.storage.estimate() : null; document.getElementById("storeUse").textContent= est&&est.usage!=null? fmtSize(est.usage)+" used in this browser" : ""; }catch(e){}
+  renderBkLog();
 }
+/* sort, filter and backup status for saved sessions */
+function sessView(){ const v=lsGet("ps.sessView")||{}; return {sort:v.sort||"updated", f:v.f||{}}; }
+function setSessView(v){ lsSet("ps.sessView",v); }
+document.getElementById("sessSort").onchange=e=>{ const v=sessView(); v.sort=e.target.value; setSessView(v); renderWork(); };
+document.querySelectorAll(".sfil .chip").forEach(c=>c.onclick=()=>{ const v=sessView(); v.f[c.dataset.f]=!v.f[c.dataset.f]; setSessView(v); renderWork(); });
+function fmtSize(b){ b=b||0; return b<1024? b+" B" : b<1048576? Math.round(b/1024)+" KB" : (b/1048576).toFixed(1)+" MB"; }
+const sizeCache=new Map();
+async function sessionSize(r){
+  const ck=r.id+":"+r.updated; if(sizeCache.has(ck)) return sizeCache.get(ck);
+  let n=JSON.stringify(r.state||{}).length+(r.audio&&r.audio.bytes? r.audio.bytes.byteLength : 0);
+  if(db){ const vs=(await tx("versions","readonly",st=>st.index("pid").getAll(r.id)))||[]; const keys=new Set(); vs.forEach(v=>{ n+=JSON.stringify(v.state||{}).length; if(v.audioKey && (!r.audio||audioKey(r.audio)!==v.audioKey)) keys.add(v.audioKey); });
+    for(const k of keys){ const b=await tx("audio","readonly",st=>st.get(k)); if(b) n+=b.byteLength; } }
+  sizeCache.set(ck,n); return n;
+}
+function bkState(r){ const m=lsGet("ps.bkMap")||{}, at=m[r.id];
+  if(at==null) return {ok:false, text:"Not in any backup"};
+  if(r.updated>at+2000) return {ok:false, text:"Changed since its last backup"};
+  return {ok:true, text:"Backed up "+agoText(at)}; }
+function renderBkLog(){ const log=lsGet("ps.bkLog")||[], box=document.getElementById("bkLogBox"); box.hidden=!log.length; if(!log.length) return;
+  document.getElementById("bkLogN").textContent="("+log.length+")";
+  const el=document.getElementById("bkLog"); el.innerHTML="";
+  log.forEach(x=>{ const d=document.createElement("div"); d.className="bkrow"; d.innerHTML="<code></code><small></small>"; d.querySelector("code").textContent=x.file;
+    d.querySelector("small").textContent=new Date(x.at).toLocaleString([], {dateStyle:"medium", timeStyle:"short"})+" · "+x.n+" session"+(x.n===1?"":"s")+(x.names&&x.names.length?": "+x.names.slice(0,4).join(", ")+(x.names.length>4?" and "+(x.names.length-4)+" more":""):"")+" · "+fmtSize(x.size); el.appendChild(d); }); }
+const slug=t=>(t||"session").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)||"session";
 document.getElementById("openWork").onclick=async()=>{ await saveNow(); await renderWork(); workEl.classList.add("on"); };
 document.getElementById("closeWork").onclick=()=>workEl.classList.remove("on");
 document.getElementById("editMe").onclick=()=>{ const pf=lsGet("ps.profile")||{}; document.getElementById("obName").value=pf.name||""; document.getElementById("obEmail").value=pf.email||""; workEl.classList.remove("on"); ob.classList.add("on"); };
@@ -2678,15 +2764,23 @@ document.getElementById("sessFind").oninput=()=>renderWork();
 /* backup and restore */
 function b64(buf){ let s="",u=new Uint8Array(buf); for(let i=0;i<u.length;i+=32768) s+=String.fromCharCode.apply(null,u.subarray(i,i+32768)); return btoa(s); }
 function unb64(str){ const s=atob(str), u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u.buffer; }
-async function doBackup(){
+async function doBackup(only){
   await saveNow();
   if(!downloads){ toast("Download is not available in this view."); return; }
-  const list=(await allProjects())||[];
+  const list= Array.isArray(only)? only : ((await allProjects())||[]);
   const data={app:"pennio.studio", version:1, at:new Date().toISOString(), profile:lsGet("ps.profile"), words:(await kvGet("words"))||lsGet("ps.words")||[],
     projects:list.map(r=>({...r, audio:r.audio? {name:r.audio.name, b64:b64(r.audio.bytes)} : null}))};
   const vers=[], keys=new Set(); for(const r of list){ const vs=(await tx("versions","readonly",st=>st.index("pid").getAll(r.id)))||[]; vs.forEach(v=>{ vers.push(v); if(v.audioKey) keys.add(v.audioKey); }); }
   data.versions=vers; data.audio={}; for(const k of keys){ const bytes=await tx("audio","readonly",st=>st.get(k)); if(bytes) data.audio[k]=b64(bytes); }
-  try{ await downloads.save({filename:"pennio-studio-backup-"+new Date().toISOString().slice(0,10)+".json", data:new Blob([JSON.stringify(data)],{type:"application/json"})}); lsSet("ps.lastBackup",Date.now()); document.getElementById("bkpBar").hidden=true; toast("Backup saved. Keep the file somewhere safe."); }
+  const now=new Date(), stamp=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+"-"+String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0");
+  const one=Array.isArray(only)&&list.length===1, filename= one? "pennio-studio-"+slug(list[0].name)+"-"+stamp+".json" : "pennio-studio-backup-"+stamp+"-"+list.length+"-session"+(list.length===1?"":"s")+".json";
+  const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+  try{ await downloads.save({filename, data:blob});
+    if(!one) lsSet("ps.lastBackup",Date.now());
+    const m=lsGet("ps.bkMap")||{}; list.forEach(r=>m[r.id]=Date.now()); lsSet("ps.bkMap",m);
+    const log=lsGet("ps.bkLog")||[]; log.unshift({file:filename, at:Date.now(), n:list.length, names:list.map(r=>r.name), size:blob.size}); log.length=Math.min(log.length,20); lsSet("ps.bkLog",log);
+    document.getElementById("bkpBar").hidden=true; toast((one? "Saved "+list[0].name+" as " : "Backup saved as ")+filename);
+    if(workEl.classList.contains("on")) renderWork(); }
   catch(e){ toast("Backup was cancelled or blocked."); }
 }
 document.getElementById("backup").onclick=doBackup;
@@ -2707,18 +2801,47 @@ async function nudgeWeekly(){
 }
 document.getElementById("bkpNow").onclick=doBackup;
 document.getElementById("bkpLater").onclick=()=>{ lsSet("ps.bkpSnooze",Date.now()+2*DAY); document.getElementById("bkpBar").hidden=true; };
+let rpData=null, rpPick=new Set(), rpHave=new Map();
+function rpRender(){
+  const el=document.getElementById("rpList"), sort=document.getElementById("rpSort").value, ps=[...(rpData.projects||[])];
+  ps.sort(sort==="name"? (a,b)=>(a.name||"").localeCompare(b.name||"",undefined,{numeric:true}) : sort==="oldest"? (a,b)=>(a.created||a.updated)-(b.created||b.updated) : (a,b)=>b.updated-a.updated);
+  el.innerHTML="";
+  ps.forEach(r=>{ const mine=rpHave.get(r.id), d=document.createElement("label"); d.className="rpi";
+    d.innerHTML='<input type="checkbox"><span><b></b><small></small></span>'; const cb=d.querySelector("input"); cb.checked=rpPick.has(r.id);
+    cb.onchange=()=>{ cb.checked? rpPick.add(r.id) : rpPick.delete(r.id); rpBtn(); };
+    d.querySelector("b").textContent=r.name;
+    const st= !mine? "New to this browser" : mine.updated>r.updated? "You have a newer copy here, so it stays" : mine.updated<r.updated? "Newer than your copy here" : "Same as your copy here";
+    d.querySelector("small").innerHTML='<span class="tag"></span> · '; d.querySelector(".tag").textContent=st; if(mine && mine.updated>=r.updated) d.querySelector(".tag").style.color="var(--mute)";
+    d.querySelector("small").append("Last worked "+new Date(r.updated).toLocaleDateString([], {dateStyle:"medium"})+" · "+stateSummary(r.state,!!r.audio));
+    el.appendChild(d); });
+  rpBtn(); }
+function rpBtn(){ const n=rpPick.size; const b=document.getElementById("rpGo"); b.disabled=!n; b.textContent= n? "Restore "+n+" session"+(n===1?"":"s") : "Pick sessions to restore"; }
+document.getElementById("rpSort").onchange=rpRender;
+document.getElementById("rpAll").onclick=()=>{ const all=(rpData.projects||[]).map(r=>r.id); if(rpPick.size===all.length) rpPick.clear(); else all.forEach(id=>rpPick.add(id)); rpRender(); };
+document.getElementById("rpCancel").onclick=()=>{ rpData=null; document.getElementById("rPrev").hidden=true; };
 document.getElementById("restoreFile").onchange=async e=>{
-  const f=e.target.files&&e.target.files[0]; if(!f) return;
-  try{
-    const data=JSON.parse(await f.text()); if(data.app!=="pennio.studio") throw 0;
-    const have=new Map(((await allProjects())||[]).map(x=>[x.id,x])); let added=0, newer=0;
-    for(const r of data.projects||[]){ const mine=have.get(r.id); if(mine && mine.updated>r.updated) continue; const rec={...r, audio:r.audio? {name:r.audio.name, bytes:unb64(r.audio.b64)} : null}; await tx("projects","readwrite",st=>st.put(rec)); if(mine) newer++; else added++; }
-    for(const [k,v] of Object.entries(data.audio||{})) await tx("audio","readwrite",st=>st.put(unb64(v),k));
-    for(const v of data.versions||[]) await tx("versions","readwrite",st=>st.put(v));
-    if(data.words&&data.words.length){ const cur=(await kvGet("words"))||[]; const merged=cur.concat(data.words.filter(w=>!cur.some(c=>c.text===w.text))); await kvSet("words",merged); lsSet("ps.words",merged); renderWords(); }
-    toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+" from the backup. Tap Continue on any of them."); renderWork();
+  const f=e.target.files&&e.target.files[0]; if(!f) return; e.target.value="";
+  try{ const data=JSON.parse(await f.text()); if(data.app!=="pennio.studio") throw 0;
+    rpData=data; rpHave=new Map(((await allProjects())||[]).map(x=>[x.id,x]));
+    rpPick=new Set((data.projects||[]).filter(r=>{ const m=rpHave.get(r.id); return !m || m.updated<r.updated; }).map(r=>r.id));
+    const n=(data.projects||[]).length;
+    document.getElementById("rpTitle").textContent=f.name;
+    document.getElementById("rpInfo").textContent="Made "+(data.at? new Date(data.at).toLocaleString([], {dateStyle:"medium", timeStyle:"short"}) : "at an unknown date")+" · "+n+" session"+(n===1?"":"s")+" · "+fmtSize(f.size)+". Sessions that are new or newer than yours are ticked.";
+    document.getElementById("rPrev").hidden=false; rpRender(); document.getElementById("rPrev").scrollIntoView({block:"nearest"});
   }catch(err){ toast("That is not a pennio.studio backup."); }
-  e.target.value="";
+};
+document.getElementById("rpGo").onclick=async()=>{
+  const data=rpData; if(!data) return;
+  try{
+    const have=rpHave; let added=0, newer=0; const keep=new Set();
+    for(const r of data.projects||[]){ if(!rpPick.has(r.id)) continue; keep.add(r.id); const mine=have.get(r.id); if(mine && mine.updated>r.updated) continue; const rec={...r, audio:r.audio? {name:r.audio.name, bytes:unb64(r.audio.b64)} : null}; await tx("projects","readwrite",st=>st.put(rec)); if(mine) newer++; else added++; }
+    const vers=(data.versions||[]).filter(v=>keep.has(v.pid)), keys=new Set(vers.map(v=>v.audioKey).filter(Boolean));
+    for(const [k,v] of Object.entries(data.audio||{})) if(keys.has(k)) await tx("audio","readwrite",st=>st.put(unb64(v),k));
+    for(const v of vers) await tx("versions","readwrite",st=>st.put(v));
+    if(data.words&&data.words.length){ const cur=(await kvGet("words"))||[]; const merged=cur.concat(data.words.filter(w=>!cur.some(c=>c.text===w.text))); await kvSet("words",merged); lsSet("ps.words",merged); renderWords(); }
+    toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+" from the backup. Tap Continue on any of them.");
+    rpData=null; document.getElementById("rPrev").hidden=true; renderWork();
+  }catch(err){ toast("Something in that file could not be restored."); }
 };
 
 /* words written in Write */
