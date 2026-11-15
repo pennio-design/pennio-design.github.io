@@ -887,6 +887,7 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
     <div class="ogb-row">
       <button class="btn" id="tgHear">▶ Hear it</button>
       <button class="btn primary" id="tgRec">● Say it</button>
+      <button class="btn" id="tgTeach" hidden>I said it right</button>
       <button class="btn" id="tgSkip">Skip</button>
     </div>
     <p class="tg-fb" id="tgFb" aria-live="polite"></p>
@@ -2135,11 +2136,14 @@ function fitRuns(runs,fr,n){
   while(runs.length<n && runs.length){ // split the longest at its deepest energy dip
     let li=0; runs.forEach((r,i)=>{ if(r.idx.length>runs[li].idx.length) li=i; });
     const r=runs[li].idx; if(r.length<6) break;
-    let cut=Math.floor(r.length/2), me=1e9;
+    let cut=Math.floor(r.length/2), me=1e9; const mean=r.reduce((a,i)=>a+fr[i].e,0)/r.length;
     for(let k=Math.floor(r.length*.25);k<Math.ceil(r.length*.75);k++){ const e=fr[r[k]].e; if(e<me){me=e;cut=k;} }
+    if(me>mean*.6){ // joined vowels with no real dip: cut where the pitch moves most
+      const sv=i=>fr[i].f? 12*Math.log2(fr[i].f) : null, avg=a=>{ const v=a.map(sv).filter(x=>x!=null); return v.length? v.reduce((p,q)=>p+q,0)/v.length : null; };
+      let bd=-1; for(let k=Math.floor(r.length*.25);k<Math.ceil(r.length*.75);k++){ const a=avg(r.slice(Math.max(0,k-6),k)), b=avg(r.slice(k,k+6)); if(a!=null&&b!=null&&Math.abs(b-a)>bd){ bd=Math.abs(b-a); cut=k; } } }
     runs.splice(li,1,{idx:r.slice(0,cut)},{idx:r.slice(cut)});
   }
-  return runs.map(r=>{ const fs=r.idx.map(i=>fr[i].f).filter(Boolean).sort((a,b)=>a-b); const core=fs.slice(Math.floor(fs.length*.2),Math.ceil(fs.length*.8)||1); const f=core.length?core[Math.floor(core.length/2)]:fs[0]; return {f, st:12*Math.log2(f), t:fr[r.idx[0]].t, t1:fr[r.idx[r.idx.length-1]].t}; });
+  return runs.map(r=>{ const fs=r.idx.map(i=>fr[i].f).filter(Boolean); const late=fs.slice(Math.floor(fs.length*.35),Math.ceil(fs.length*.9)).sort((a,b)=>a-b); const core=late.length? late : fs.slice().sort((a,b)=>a-b); const f=core.length?core[Math.floor(core.length/2)]:fs[0]; return {f, st:12*Math.log2(f), t:fr[r.idx[0]].t, t1:fr[r.idx[r.idx.length-1]].t}; });
 }
 function readFail(f){ const ext=(f&&f.name&&f.name.split(".").pop()||"").toLowerCase(); return "This phone saved the recording"+(ext?" as ."+ext:"")+", which this browser cannot read. Use the Record button here instead."; }
 function calibrateFrom(b){
@@ -2148,7 +2152,7 @@ function calibrateFrom(b){
   if(segs.length<3){ note.textContent="Could not hear three notes. Leave a short pause between do, re and mi."; return; }
   const st=segs.map(s=>s.st);
   if(!(st[0]<st[1]&&st[1]<st[2])){ note.textContent="The notes did not rise from do to mi. Try again, slowly."; return; }
-  wcal={L:st[0],M:st[1],H:st[2]}; lsSet("ps.wcal",wcal);
+  wcal={L:st[0],M:st[1],H:st[2]}; lsSet("ps.wcal",wcal); // a new calibration starts the speaking-voice learning again
   note.textContent="Calibrated: low "+Math.round(segs[0].f)+" Hz · mid "+Math.round(segs[1].f)+" Hz · high "+Math.round(segs[2].f)+" Hz";
 }
 document.getElementById("wcal").onchange=async e=>{
@@ -2200,6 +2204,37 @@ function vowelDot(b,seg,base){ // base is "e" or "o"; returns true to add a dot 
   return dop<dc;
 }
 function addDot(sy){ const r=sy.raw, k=sy.vi+1; if(r[k]==="\u0323") return sy; const raw=r.slice(0,k)+"\u0323"+r.slice(k); return {...sy, raw, text:raw.normalize("NFC"), dotted:true}; }
+/* Judge a short tone pattern the way a listener does: find where this speaker's voice sits (o), how far apart
+   their tones are (s) and how much the phrase drifts down (d), for every possible pattern, and keep the one that fits.
+   o and s are pulled gently towards what this speaker has done before, so a voice that sits higher or lower today still passes. */
+function fitPattern(st,lv,pr){
+  const n=st.length, wr=1/(0.55*0.55), wo=1/(pr.to*pr.to), wd=1/(0.45*0.45), ws=1/(pr.ts*pr.ts);
+  const solve=(fixS)=>{ // weighted least squares for o, d (and s unless fixed)
+    const k= fixS==null? 3 : 2, A=Array.from({length:k},()=>new Array(k).fill(0)), y=new Array(k).fill(0);
+    const add=(row,val,w)=>{ for(let a=0;a<k;a++){ y[a]+=w*row[a]*val; for(let b=0;b<k;b++) A[a][b]+=w*row[a]*row[b]; } };
+    for(let i=0;i<n;i++){ const row= k===3? [1,i,lv[i]] : [1,i]; add(row, st[i]-(k===2? fixS*lv[i] : 0), wr); }
+    add(k===3?[1,0,0]:[1,0], pr.mu, wo); add(k===3?[0,1,0]:[0,1], -0.3, wd); if(k===3) add([0,0,1], pr.sig, ws);
+    for(let c=0;c<k;c++){ let p=c; for(let r=c+1;r<k;r++) if(Math.abs(A[r][c])>Math.abs(A[p][c])) p=r; [A[c],A[p]]=[A[p],A[c]]; [y[c],y[p]]=[y[p],y[c]];
+      for(let r=0;r<k;r++){ if(r===c) continue; const f=A[r][c]/A[c][c]; for(let q=c;q<k;q++) A[r][q]-=f*A[c][q]; y[r]-=f*y[c]; } }
+    const x=y.map((v,i)=>v/A[i][i]); return k===3? {o:x[0],d:x[1],s:x[2]} : {o:x[0],d:x[1],s:fixS}; };
+  let f=solve(null); if(f.s<0.8) f=solve(0.8);
+  let cost=0; for(let i=0;i<n;i++){ const e=st[i]-(f.o+f.d*i+f.s*lv[i]); cost+=wr*e*e; }
+  cost+=wo*(f.o-pr.mu)**2 + wd*(f.d+0.3)**2 + ws*(f.s-pr.sig)**2;
+  return {cost, ...f};
+}
+function speakerPrior(){ const c=wcal||{}; const sig= c.sig || (c.H!=null&&c.L!=null? Math.max(1.2,(c.H-c.L)/2) : 2);
+  const P=window.__tgP||{}; return {mu: c.mu!=null? c.mu : (c.M!=null? c.M : null), sig, to: c.mu!=null? (P.to1||1.6) : 2.6, ts: P.ts||0.9}; }
+function judgePattern(segs,expected){
+  const st=segs.map(s=>s.st), n=st.length, pr=speakerPrior(); if(pr.mu==null) pr.mu=st.reduce((a,b)=>a+b,0)/n;
+  const L={L:-1,M:0,H:1}, all=[]; (function gen(p){ if(p.length===n){ all.push(p.slice()); return; } for(const t of "LMH"){ p.push(t); gen(p); p.pop(); } })([]);
+  const scored=all.map(p=>({p, ...fitPattern(st,p.map(t=>L[t]),pr)})).sort((a,b)=>a.cost-b.cost);
+  const exp=scored.find(x=>x.p.join("")===expected.join("")), best=scored[0];
+  // accept when the expected pattern explains the voice about as well as the best one
+  const P=window.__tgP||{}, learned=(wcal&&wcal.n)||0, m= P.m!=null? P.m : (learned>=3? 0.75 : 1.5), ok= exp.cost-best.cost <= m && exp.cost < 14*n;
+  return {ok, heard: ok? expected.slice() : best.p, fit: ok? exp : best, expFit: exp};
+}
+function learnSpeaker(fit){ if(!wcal) return; const a=wcal.mu==null? 1 : 0.35;
+  wcal.mu= wcal.mu==null? fit.o : wcal.mu*(1-a)+fit.o*a; wcal.sig= Math.min(4.5,Math.max(1.2,(wcal.sig||fit.s)*(1-a)+fit.s*a)); wcal.n=(wcal.n||0)+1; lsSet("ps.wcal",wcal); }
 function classifyTones(segs){
   if(wcal){
     // speech tones are narrower than sung steps, so compare against the calibrated spacing scaled by the phrase's own spread
@@ -2312,7 +2347,7 @@ if(wvow) document.getElementById("wvowNote").textContent="Vowels learned earlier
     {name:"Level 4 · real words", words:["ọkọ́","ọkọ̀","owó","ọwọ́","ìgbà","igbá","àyà","aya","oko","fàájì"], need:5}
   ];
   const st=Object.assign({lvl:0, open:1, score:0, best:0, streak:0, prog:0}, lsGet("ps.tgame")||{});
-  const $=id=>document.getElementById(id); let cur=null;
+  const $=id=>document.getElementById(id); let cur=null, lastTake=null;
   function save(){ lsSet("ps.tgame",{lvl:st.lvl,open:st.open,best:st.best,score:st.score}); }
   function pick(){
     const L=LEVELS[st.lvl];
@@ -2332,7 +2367,9 @@ if(wvow) document.getElementById("wvowNote").textContent="Vowels learned earlier
     const need=LEVELS[st.lvl].need; $("tgProg").innerHTML=Array.from({length:need},(_,i)=>'<i class="'+(i<st.prog?"on":"")+'"></i>').join("");
     $("tgLv").innerHTML=""; LEVELS.forEach((L,i)=>{ const b=document.createElement("button"); b.textContent=L.name; b.className=i===st.lvl?"on":""; b.disabled=i>=st.open; b.onclick=()=>{ st.lvl=i; st.prog=0; cur=pick(); $("tgFb").textContent=""; $("tgFb").className="tg-fb"; save(); paint(); }; $("tgLv").appendChild(b); });
   }
-  function next(){ cur=pick(); paint(); }
+  function next(){ cur=pick(); $("tgTeach").hidden=true; paint(); }
+  $("tgTeach").onclick=()=>{ if(!lastTake) return; learnSpeaker(lastTake.fit.expFit); $("tgTeach").hidden=true; st.prog++; st.score+=5; st.best=Math.max(st.best,st.score); save();
+    const fb=$("tgFb"); fb.className="tg-fb good"; fb.textContent="Thanks. The game has adjusted to your voice. +5"; $("tgScore").textContent=st.score; setTimeout(next,1300); };
   $("tgSkip").onclick=()=>{ st.streak=0; $("tgFb").textContent=""; $("tgFb").className="tg-fb"; next(); };
   $("tgHear").onclick=()=>{ // a hummed voice: low, mid and high four semitones apart
     ensureAudio(); stopAll(); const t0=ac.currentTime+.05, base=190, step=.36;
@@ -2350,12 +2387,16 @@ if(wvow) document.getElementById("wvowNote").textContent="Vowels learned earlier
     if(!runs.length){ fb.className="tg-fb bad"; fb.textContent="No voice heard. Try again, closer to the phone."; return; }
     const segs=fitRuns(runs,frames,cur.tones.length);
     if(segs.length<cur.tones.length){ fb.className="tg-fb bad"; fb.textContent="Heard fewer sounds than shown. Leave a tiny gap between them."; return; }
-    const heard=classifyTones(segs), ok=heard.every((t,i)=>t===cur.tones[i]); bars(cur.tones,heard);
+    const jr=judgePattern(segs,cur.tones), heard=jr.heard, ok=jr.ok; bars(cur.tones,heard); lastTake={segs,fit:jr};
+    if(ok) learnSpeaker(jr.fit);
+    const dir=a=>a.slice(1).map((t,i)=>Math.sign("LMH".indexOf(t)-"LMH".indexOf(a[i]))), segDir=segs.slice(1).map((x,i)=>{ const d=x.st-segs[i].st; return Math.abs(d)<0.5?0:Math.sign(d); });
+    const contourOk= dir(cur.tones).every((d,i)=> d===0? true : segDir[i]===d);
+    $("tgTeach").hidden= ok || !contourOk;
     if(ok){ st.streak++; st.prog++; const pts=10*cur.tones.length+Math.min(st.streak-1,5)*5; st.score+=pts; st.best=Math.max(st.best,st.score);
       fb.className="tg-fb good"; fb.textContent="Yes! +"+pts+(st.streak>2?" · streak "+st.streak:"");
       if(st.prog>=LEVELS[st.lvl].need){ st.prog=0; if(st.lvl+1<LEVELS.length){ st.open=Math.max(st.open,st.lvl+2); st.lvl++; fb.textContent="Level "+(st.lvl+1)+" unlocked: "+LEVELS[st.lvl].name.split(" · ")[1]+"."; } else fb.textContent="You finished every level. Keep your streak going."; }
       save(); setTimeout(next,1300);
-    } else { st.streak=0; fb.className="tg-fb bad"; fb.textContent="I heard "+heard.map(t=>({L:"low",M:"mid",H:"high"})[t]).join(", ")+". Listen, then try again."; save(); $("tgStreak").textContent=0; }
+    } else { st.streak=0; fb.className="tg-fb bad"; fb.textContent="I heard "+heard.map(t=>({L:"low",M:"mid",H:"high"})[t]).join(", ")+"."+(contourOk? " Your rise and fall matched. If you said it right, tap I said it right and the game will learn your voice." : " Listen, then try again."); save(); $("tgStreak").textContent=0; }
     $("tgScore").textContent=st.score; $("tgBest").textContent=st.best;
   }
   const rec=$("tgRec");
@@ -2363,7 +2404,10 @@ if(wvow) document.getElementById("wvowNote").textContent="Vowels learned earlier
   else rec.onclick=()=>{ stopAll(); if(!wcal){ micTake(rec,"● Sing it",10,calStart,$("tgFb")); return; } micTake(rec,"● Say it",5,judge,$("tgFb")); };
   function calStart(b){ calibrateFrom(b); const fb=$("tgFb"); if(wcal){ fb.className="tg-fb good"; fb.textContent="Got your voice. Now say what you see."; cur=pick(); paint(); } else { fb.className="tg-fb bad"; fb.textContent=document.getElementById("wcalNote").textContent; } }
   cur=pick(); paint();
-  if(/[?&]test=1/.test(location.search)){ window.__tgJudge=judge; window.__tgCal=calStart; }
+  if(/[?&]test=1/.test(location.search)){ window.__tgJudge=judge; window.__tgCal=calStart;
+    window.__tgCore=(buf,tones,learn)=>{ const {frames}=analysePitch(buf); const runs=voicedRuns(frames); if(!runs.length) return {ok:false,heard:[],why:"none"}; const segs=fitRuns(runs,frames,tones.length); if(segs.length<tones.length) return {ok:false,heard:[],why:"few"}; const jr=judgePattern(segs,tones); if(learn&&jr.ok) learnSpeaker(jr.fit); return {ok:jr.ok, heard:jr.heard, st:segs.map(s=>+s.st.toFixed(2))}; };
+    window.__resetLearn=()=>{ if(wcal){ delete wcal.mu; delete wcal.sig; } };
+    window.__setCal=c=>{ wcal=c; }; }
   if(/[?&]test=1/.test(location.search)) window.__voice=()=>({off:vocalOffset, raw:rawBuf&&rawBuf.getChannelData(0), pro:cleanCache&&cleanCache.buf.getChannelData(0), sr:rawBuf&&rawBuf.sampleRate});
 })();
 
