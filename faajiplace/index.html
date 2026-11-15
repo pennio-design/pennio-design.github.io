@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://formsubmit.co; worker-src 'self' blob:; form-action 'self' https://formsubmit.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://formsubmit.co https://rgkxqcmfejglfslhrpsm.supabase.co; worker-src 'self' blob:; form-action 'self' https://formsubmit.co https://rgkxqcmfejglfslhrpsm.supabase.co; base-uri 'self'; object-src 'none'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fàájìplace · send your story</title>
@@ -55,6 +55,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--bone)}
 .err{font-size:13px;color:#ff9a86;min-height:18px}
 .send{font-family:inherit;font-size:15px;font-weight:600;min-height:54px;border-radius:999px;border:0;background:var(--text);color:var(--black);cursor:pointer;margin-top:6px}
 .send:disabled{opacity:.5}
+.help{font-family:inherit;font-size:14px;font-weight:600;min-height:48px;border-radius:999px;border:1px solid var(--hair);background:transparent;color:var(--bone);cursor:pointer;padding:0 20px;align-self:flex-start}
+.help,.helpnote{display:none}.help.on,.helpnote.on{display:block}.help:disabled{opacity:.5}.helpnote{font-size:12px;line-height:1.5;color:var(--mute)}
+.helpout{white-space:pre-line;font-size:15px;line-height:1.6;color:#ddd3c8;border-left:2px solid var(--wood);padding-left:14px;display:none}.helpout.on{display:block}
 .addr{font-size:13px;color:var(--mute);line-height:1.5}
 .done{display:none;margin-top:26px;border-top:1px solid var(--bone);padding-top:22px}
 .done.on{display:block}
@@ -105,6 +108,9 @@ footer a{color:var(--text)}
       <select id="fStage" aria-label="Where the story is now"><option value="">Where the story is now</option><option>An idea</option><option>An outline</option><option>A written script</option><option>Already published or filmed</option></select>
       <textarea id="fStory" maxlength="4000" placeholder="Tell the story here: who it is about, where it happens, what changes. A page is plenty." aria-label="Your story"></textarea>
       <div class="count" id="fCount">0 / 4000</div>
+      <button type="button" class="help" id="fHelp">Get questions to strengthen it</button>
+      <div class="helpnote">Optional. This sends your text to Google's Gemini to get questions back. I do not keep it. It never rewrites your story.</div>
+      <div class="helpout" id="fHelpOut" role="status" aria-live="polite"></div>
       <input id="fLink" placeholder="Link to your script or outline (optional)" maxlength="200" aria-label="Link to the full script or outline">
       <label class="chk"><input type="checkbox" id="fOwn"> This story is mine to share</label>
       <label class="chk"><input type="checkbox" id="fOk"> Fàájìplace may contact me about it</label>
@@ -125,6 +131,20 @@ footer a{color:var(--text)}
 const $=id=>document.getElementById(id);
 try{ const pf=JSON.parse(localStorage.getItem("ps.profile")||"null"); if(pf){ if(pf.email) $("fEmail").value=pf.email; if(pf.name) $("fName").value=pf.name; } }catch(e){}
 $("fStory").oninput=()=>{ $("fCount").textContent=$("fStory").value.length+" / 4000"; };
+/* The helper appears only once the function is deployed: a live one answers a GET with 405. */
+fetch("https://rgkxqcmfejglfslhrpsm.supabase.co/functions/v1/faajiplace-assist").then(r=>{if(r.status===405){$("fHelp").classList.add("on");document.querySelector(".helpnote").classList.add("on");}}).catch(()=>{});
+$("fHelp").onclick=async()=>{
+  const b=$("fHelp"),o=$("fHelpOut"),t=$("fStory").value.trim();
+  o.classList.add("on");
+  if(t.length<60){o.textContent="Write a few more lines first, at least 60 characters.";return;}
+  b.disabled=true;o.textContent="Reading your story...";
+  try{
+    const r=await fetch("https://rgkxqcmfejglfslhrpsm.supabase.co/functions/v1/faajiplace-assist",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({story:t})});
+    const d=await r.json();
+    o.textContent=(r.ok&&d.questions)?d.questions:(r.status===429?"Too many requests right now. Try again in a few minutes, or send your story as it is.":"The helper is not available right now. You can still send your story as it is.");
+  }catch(e){o.textContent="The helper is not available right now. You can still send your story as it is.";}
+  b.disabled=false;
+};
 $("fForm").onsubmit=async e=>{
   e.preventDefault();
   const v=id=>$(id).value.trim(), err=$("fErr");

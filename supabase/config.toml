@@ -1,0 +1,4 @@
+# The browser calls this function with no login, so JWT checking is off.
+# The function protects itself with an origin check, size limits and a rate limit.
+[functions.faajiplace-assist]
+verify_jwt = false
