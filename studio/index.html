@@ -409,6 +409,26 @@ canvas#wave{border-color:var(--line);border-radius:14px;background:var(--off)}
 @media (min-width:760px){.transport{margin:26px 0 0;border:1px solid var(--line);border-radius:20px;top:68px}.layers{display:grid;grid-template-columns:1fr 1fr;column-gap:28px}}
 
 /* ===== spec v1.0: the grid is the product ===== */
+.btn.tapping{min-height:64px;min-width:200px;font-size:16px;background:var(--surface-2);border-color:var(--tp)}
+.tour{position:fixed;inset:0;z-index:90;pointer-events:none}
+.tour-ring{position:fixed;border-radius:10px;box-shadow:0 0 0 3px var(--tp),0 0 0 200vmax rgba(0,0,0,.6);transition:all .2s ease-out;pointer-events:none}
+.tour-ring.none{box-shadow:0 0 0 200vmax rgba(0,0,0,.6);width:0!important;height:0!important}
+.tour-card{position:fixed;left:12px;right:12px;max-width:380px;background:var(--surface-1);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:0 20px 50px rgba(0,0,0,.6);pointer-events:auto}
+.tour-card small{font-size:12px;color:var(--tt)}
+.tour-card p{font-size:15px;line-height:1.5;margin-top:4px;color:var(--tp)}
+.tour-btns{display:flex;gap:8px;align-items:center;margin-top:12px}
+.tour-btns .spacer{flex:1}
+@media (prefers-reduced-motion:reduce){.tour-ring{transition:none}}
+.tours{display:grid;gap:8px;margin-top:14px}
+.tours button{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:12px;min-height:56px;background:none;color:var(--tp)}
+.tours b{display:block;font-size:14px;font-weight:500}.tours small{display:block;font-size:12px;color:var(--tt);margin-top:2px}
+.tours .ok{font-size:12px;color:var(--ts);flex:none}
+.hero-go{margin-top:12px}
+.vstyle{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;align-items:center;flex:1 1 100%;scrollbar-width:none;margin-top:4px}
+.vstyle::-webkit-scrollbar{display:none}
+.vstyle span{font-size:12px;color:var(--ts);flex:none;margin-right:4px}
+.vstyle button{flex:none;font-size:13px;min-height:36px;padding:0 12px;border-radius:6px;border:1px solid var(--border);color:var(--ts)}
+.vstyle button.on{border-color:var(--tp);color:var(--tp);background:var(--surface-2)}
 :root{--bg-base:#0D0D0F;--surface-1:#16161A;--surface-2:#1E1E24;--border:#2A2A32;--tp:#F5F3EF;--ts:#A8A6A0;--tt:#8E8C87;--heritage:#E8590C;--danger:#E5484D;
   --black:#0D0D0F;--off:#16161A;--surface:#16161A;--line:#2A2A32;--line2:#33333C;--text:#F5F3EF;--mute:#A8A6A0;--dim:#8E8C87;--orange:#E8590C}
 html,body{background:var(--bg-base);font-variant-numeric:tabular-nums}
@@ -574,7 +594,7 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
   <div class="stabs" role="tablist" aria-label="Session">
     <button id="openWork" role="tab">Sessions</button>
     <button id="openHist" role="tab">History</button>
-    <a href="/studio/guide/" id="guideLink" role="tab">Guide</a>
+    <button id="guideLink" role="tab">Learn</button>
   </div>
   <div class="inst" id="inst" hidden>
     <div class="inst-ic" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -586,7 +606,7 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
     <div><b id="bkpTitle">Back up your work</b><span id="bkpText">Your work lives only in this browser. PENNIO cannot recover it if it is lost.</span></div>
     <div class="bkp-btns"><button class="btn primary" id="bkpNow">Download backup</button><button class="btn" id="bkpLater">Later</button></div>
   </div>
-  <div class="hero" id="hero" hidden><button class="hero-x" id="heroX" aria-label="Hide this">×</button>
+  <div class="hero" id="hero" hidden><button class="hero-x" id="heroX" aria-label="Hide this">×</button><button class="btn primary hero-go" id="heroGo">Show me around · 1 min</button>
   <h1>Bring your voice. Leave with a record.</h1>
   <p class="sub">Àyàn is the studio. Add a voice note or any sound, enhance it in one tap, chop it onto the grid with Yoruba percussion under it, let the talking drum answer in your own intonation, then remix until it feels right.</p></div>
 
@@ -638,9 +658,11 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
       <button class="btn primary" id="vrec" style="display:none">● Record</button>
       <label class="btn primary file" id="vfileLbl">Add recording<input type="file" id="vfile" accept="audio/*"></label>
       <div class="seg" id="ab"><button data-k="raw">Before</button><button data-k="pro" class="on">Enhanced</button></div>
+      <div class="vstyle" id="vstyle" aria-label="Voice style"><span>Voice style</span><button data-s="natural">Natural</button><button data-s="studio" class="on">Studio</button><button data-s="radio">Radio</button><button data-s="afro">Afro vocal</button><button data-s="hall">Hall</button></div>
       <button class="btn" id="vprev" disabled>Preview</button>
       <button class="btn" id="vdel" disabled hidden>Delete recording</button>
       <button class="btn primary" id="vbeat" disabled>Make a beat from my voice</button>
+      <button class="btn" id="vtap" disabled>Tap along</button>
     </div>
     <div class="take" id="take" hidden>
       <div class="tk"><b>Your recording</b> <span id="takeLen"></span><small>Not happy with it? Record again to replace it, or delete it. The beat stays.</small></div>
@@ -857,6 +879,15 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
   <button class="btn" id="npStop">Stop</button>
 </div>
 <div class="toast" id="toast"></div>
+<div class="tour" id="tour" hidden><div class="tour-ring" id="tourRing"></div>
+  <div class="tour-card" id="tourCard" role="dialog" aria-live="polite" aria-labelledby="tourText"><small id="tourStep"></small><p id="tourText"></p>
+    <div class="tour-btns"><button class="btn ghost" id="tourSkip">End</button><span class="spacer"></span><button class="btn" id="tourBack">Back</button><button class="btn primary" id="tourNext">Next</button></div></div></div>
+<div class="sheet" id="learn"><div class="panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Learn the studio</h2><button class="btn" id="closeLearn">Close</button></div>
+  <p>Short walkthroughs that point at each button. Tap what is highlighted and the next step appears.</p>
+  <div class="tours" id="tourList"></div>
+  <p style="margin-top:14px"><a href="/studio/guide/" style="color:var(--text)">Read the full guide</a></p>
+</div></div>
 
 <script>
 (function(){
@@ -1357,8 +1388,8 @@ async function lufsOf(buf){
   return L(g.reduce((a,b)=>a+b,0)/g.length);
 }
 function peakOf(buf){ let p=0; for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++){ const a=Math.abs(d[i]); if(a>p) p=a; } } return p; }
-async function matchLoudness(buf){
-  const target=-14, ceil=Math.pow(10,-1/20);
+async function matchLoudness(buf,tgt){
+  const target= tgt==null? -14 : tgt, ceil=Math.pow(10,-1/20);
   const before=await lufsOf(buf); let gain=Math.pow(10,(target-before)/20);
   const pk=peakOf(buf); gain=Math.min(gain, ceil*2/(pk||1e-9));
   for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c);
@@ -1536,9 +1567,9 @@ async function loadVoice(bytes,name,fromRestore){
     if(!pattern.vox.some(Boolean)){ pattern.vox=new Array(16).fill(0); for(let i=0;i<N;i+=4) pattern.vox[i]=1; pattern.vox[N-2]=1; }
     vocalOffset=0; vocalNudge=0; drumBuf=null; LAY.drum=false;
   }
-  render(); renderLayers(); drawWave(); vprev.disabled=false; document.getElementById("vbeat").disabled=false; document.getElementById("vdel").disabled=false; if(typeof updateTake==="function") updateTake();
+  render(); renderLayers(); drawWave(); vprev.disabled=false; document.getElementById("vbeat").disabled=false; document.getElementById("vtap").disabled=false; document.getElementById("vdel").disabled=false; if(typeof updateTake==="function") updateTake();
   document.getElementById('toDrum').disabled=false; document.getElementById('sayNote').textContent='Ready. Works best with clear speech or singing, one voice, little background noise.';
-  vmeta.textContent=name+" · "+rawBuf.duration.toFixed(1)+"s · "+slices.length+" chops found. Enhanced: rumble cut, mud reduced, presence and air lifted, levelled, light room, loudness normalised.";
+  vmeta.textContent=voiceMeta();
   saveSoon(true);
 }
 document.getElementById("vfile").onchange=async e=>{
@@ -1550,28 +1581,83 @@ document.getElementById("vfile").onchange=async e=>{
 };
 function trim(b,sec){ const n=Math.floor(sec*b.sampleRate); const o=ac.createBuffer(b.numberOfChannels,n,b.sampleRate); for(let c=0;c<b.numberOfChannels;c++) o.getChannelData(c).set(b.getChannelData(c).subarray(0,n)); return o; }
 function impulse(ctx,sec){ const n=Math.floor(sec*ctx.sampleRate), b=ctx.createBuffer(2,n,ctx.sampleRate); for(let c=0;c<2;c++){const d=b.getChannelData(c); for(let i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3.2);} return b; }
-async function enhance(b){
-  const sr=b.sampleRate, OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
-  const oc=new OC(2,b.length+Math.floor(sr*1.2),sr);
-  const src=oc.createBufferSource(); src.buffer=b;
-  const hp=oc.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=85; hp.Q.value=.7;
-  const mud=oc.createBiquadFilter(); mud.type="peaking"; mud.frequency.value=320; mud.Q.value=1; mud.gain.value=-3.5;
-  const pres=oc.createBiquadFilter(); pres.type="peaking"; pres.frequency.value=3400; pres.Q.value=.9; pres.gain.value=3.5;
-  const ess=oc.createBiquadFilter(); ess.type="peaking"; ess.frequency.value=7200; ess.Q.value=3; ess.gain.value=-2.5;
-  const air=oc.createBiquadFilter(); air.type="highshelf"; air.frequency.value=10000; air.gain.value=3;
-  const comp=oc.createDynamicsCompressor(); comp.threshold.value=-22; comp.ratio.value=3.2; comp.attack.value=.006; comp.release.value=.12; comp.knee.value=8;
-  const dry=oc.createGain(); dry.gain.value=1;
-  const conv=oc.createConvolver(); conv.buffer=impulse(oc,1.1);
-  const wet=oc.createGain(); wet.gain.value=.12;
-  src.connect(hp); hp.connect(mud); mud.connect(pres); pres.connect(ess); ess.connect(air); air.connect(comp);
-  comp.connect(dry); dry.connect(oc.destination); comp.connect(conv); conv.connect(wet); wet.connect(oc.destination);
+/* ---------- voice clean-up: noise removal, levelling, then a voice style ---------- */
+function fft(re,im){ const n=re.length; for(let i=1,j=0;i<n;i++){ let bit=n>>1; for(;j&bit;bit>>=1) j^=bit; j^=bit; if(i<j){ let t=re[i]; re[i]=re[j]; re[j]=t; t=im[i]; im[i]=im[j]; im[j]=t; } }
+  for(let len=2;len<=n;len<<=1){ const ang=-2*Math.PI/len, wr=Math.cos(ang), wi=Math.sin(ang);
+    for(let i=0;i<n;i+=len){ let cr=1,ci=0; for(let k=0;k<len/2;k++){ const a=i+k, b=a+len/2, xr=re[b]*cr-im[b]*ci, xi=re[b]*ci+im[b]*cr; re[b]=re[a]-xr; im[b]=im[a]-xi; re[a]+=xr; im[a]+=xi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } } }
+async function denoise(b){
+  const sr=b.sampleRate, n=b.length, chs=b.numberOfChannels, x=new Float32Array(n);
+  for(let c=0;c<chs;c++){ const d=b.getChannelData(c); for(let i=0;i<n;i++) x[i]+=d[i]/chs; }
+  const N=2048, H=512, B=N/2+1, win=new Float32Array(N); for(let i=0;i<N;i++) win[i]=.5-.5*Math.cos(2*Math.PI*i/N);
+  const F=Math.max(1,Math.ceil((n+N)/H)); const mags=new Float32Array(F*B), phs=new Float32Array(F*B), energy=new Float32Array(F);
+  const re=new Float64Array(N), im=new Float64Array(N);
+  for(let f=0;f<F;f++){ const st=f*H-N/2; for(let i=0;i<N;i++){ const k=st+i; re[i]=(k>=0&&k<n? x[k]:0)*win[i]; im[i]=0; } fft(re,im);
+    let e=0; for(let k=0;k<B;k++){ const m=Math.hypot(re[k],im[k]); mags[f*B+k]=m; phs[f*B+k]=Math.atan2(im[k],re[k]); e+=m*m; } energy[f]=e;
+    if(f%400===399) await new Promise(r=>setTimeout(r,0)); }
+  // noise profile: per bin, the quiet end of what the recording holds (works with or without pauses)
+  // noise profile: average power of the quietest fifth of the recording, per frequency
+  const ord=[...Array(F).keys()].sort((p,q)=>energy[p]-energy[q]), quiet=ord.slice(0,Math.max(4,Math.floor(F*.2))), noise=new Float32Array(B);
+  for(let k=0;k<B;k++){ let s=0; for(const f of quiet) s+=mags[f*B+k]*mags[f*B+k]; noise[k]=Math.sqrt(s/quiet.length)+1e-9; }
+  // onset strength for the beat finder (spectral flux, 100 Hz to 4 kHz)
+  const k0=Math.floor(100*N/sr), k1=Math.floor(4000*N/sr), flux=new Float32Array(F);
+  for(let f=1;f<F;f++){ let s=0; for(let k=k0;k<k1;k++){ const d=Math.log(1+mags[f*B+k]/noise[k])-Math.log(1+mags[(f-1)*B+k]/noise[k]); if(d>0) s+=d; } flux[f]=s; }
+  // spectral gate with smoothing, so speech stays natural and the hiss goes
+  const G=new Float32Array(B), floor=.1, y=new Float32Array(n+N), wsum=new Float32Array(n+N);
+  for(let f=0;f<F;f++){
+    for(let k=0;k<B;k++){ const m=mags[f*B+k], snr=(m*m)/(noise[k]*noise[k]); let g=Math.max(floor,Math.sqrt(Math.max(0,1-1.6/(snr+1e-9)))); g=Math.min(1,g); G[k]= g>G[k]? g : G[k]*.55+g*.45; }
+    for(let k=0;k<B;k++){ const g=(k>0&&k<B-1)? (G[k-1]+2*G[k]+G[k+1])/4 : G[k]; const m=mags[f*B+k]*g, ph=phs[f*B+k]; re[k]=m*Math.cos(ph); im[k]=m*Math.sin(ph); if(k>0&&k<N/2){ re[N-k]=re[k]; im[N-k]=-im[k]; } }
+    for(let i=0;i<N;i++) im[i]=-im[i]; fft(re,im);
+    const st=f*H-N/2; for(let i=0;i<N;i++){ const k=st+i; if(k<0||k>=n) continue; y[k]+=re[i]/N*win[i]; wsum[k]+=win[i]*win[i]; }
+    if(f%400===399) await new Promise(r=>setTimeout(r,0));
+  }
+  for(let i=0;i<n;i++) y[i]= wsum[i]>1e-6? y[i]/wsum[i] : 0;
+  // levelling: bring quiet and loud phrases together, without lifting the gaps
+  const w=Math.floor(sr*.05), rms=[]; for(let i=0;i<n;i+=w){ let e=0; for(let j=i;j<Math.min(n,i+w);j++) e+=y[j]*y[j]; rms.push(Math.sqrt(e/w)+1e-9); }
+  const sorted=rms.slice().sort((p,q)=>p-q), loud=sorted[Math.floor(sorted.length*.9)], gate=Math.max(loud*.1, sorted[Math.floor(sorted.length*.2)]*3);
+  let gs=1; const gains=rms.map(v=>{ const tgt= v<gate? Math.max(.35,v/gate) : Math.min(3,Math.max(.6,loud*.7/v)); gs= tgt<gs? gs*.6+tgt*.4 : gs*.85+tgt*.15; return gs; });
+  const out=new Float32Array(n); for(let i=0;i<n;i++){ const q=i/w, a=Math.floor(q), t=q-a, g=(gains[a]||1)*(1-t)+(gains[a+1]||gains[a]||1)*t; out[i]=y[i]*g; }
+  ensureAudio(); const res=ac.createBuffer(1,n,sr); res.getChannelData(0).set(out);
+  return {buf:res, flux, hop:H/sr, noiseDb: 20*Math.log10(1/floor)};
+}
+const VSTYLES={
+  natural:{n:"Natural",hp:80,mud:-2,pres:2,air:1.5,ess:-2,th:-24,ra:2.5,rev:0,wet:0},
+  studio:{n:"Studio",hp:85,mud:-3.5,pres:3.5,air:3,ess:-3,th:-22,ra:3.2,rev:1.1,wet:.12},
+  radio:{n:"Radio",hp:130,mud:-2,pres:5,air:0,ess:-3,th:-28,ra:5,rev:0,wet:0,lp:8500},
+  afro:{n:"Afro vocal",hp:90,mud:-3,pres:4,air:4,ess:-3,th:-22,ra:3.5,rev:1.4,wet:.14,dl:.11,dlw:.12},
+  hall:{n:"Hall",hp:85,mud:-3,pres:2.5,air:3,ess:-2.5,th:-22,ra:3,rev:2.6,wet:.28}
+};
+let vstyle="studio", cleanCache=null;
+async function styleVoice(clean,key){
+  const P=VSTYLES[key]||VSTYLES.studio, sr=clean.sampleRate, OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  const oc=new OC(2,clean.length+Math.floor(sr*(P.rev?P.rev+.4:.3)),sr);
+  const src=oc.createBufferSource(); src.buffer=clean;
+  const f=(type,fr,g,q)=>{ const x=oc.createBiquadFilter(); x.type=type; x.frequency.value=fr; if(g!=null) x.gain.value=g; if(q!=null) x.Q.value=q; return x; };
+  const chain=[f("highpass",P.hp,null,.7),f("peaking",320,P.mud,1),f("peaking",3400,P.pres,.9),f("peaking",7200,P.ess,3),f("highshelf",10000,P.air)];
+  if(P.lp) chain.push(f("lowpass",P.lp,null,.7));
+  const comp=oc.createDynamicsCompressor(); comp.threshold.value=P.th; comp.ratio.value=P.ra; comp.attack.value=.006; comp.release.value=.12; comp.knee.value=8; chain.push(comp);
+  let node=src; chain.forEach(c=>{ node.connect(c); node=c; });
+  node.connect(oc.destination);
+  if(P.rev){ const cv=oc.createConvolver(); cv.buffer=impulse(oc,P.rev); const wg=oc.createGain(); wg.gain.value=P.wet; node.connect(cv); cv.connect(wg); wg.connect(oc.destination); }
+  if(P.dl){ const d=oc.createDelay(1); d.delayTime.value=P.dl; const fb=oc.createGain(); fb.gain.value=.15; const dw=oc.createGain(); dw.gain.value=P.dlw; node.connect(d); d.connect(fb); fb.connect(d); d.connect(dw); dw.connect(oc.destination); }
   src.start(0);
   const out=await oc.startRendering();
-  // normalise peak to -1 dBFS
-  let pk=0; for(let c=0;c<out.numberOfChannels;c++){const d=out.getChannelData(c); for(let i=0;i<d.length;i++){const a=Math.abs(d[i]); if(a>pk) pk=a;}}
-  const g= pk>0? .89/pk : 1; for(let c=0;c<out.numberOfChannels;c++){const d=out.getChannelData(c); for(let i=0;i<d.length;i++) d[i]*=g;}
+  try{ await matchLoudness(out,-16); }catch(e){}
   return out;
 }
+async function enhance(b){
+  vmeta.textContent="Removing background noise…";
+  const dn=await denoise(b); cleanCache=dn;
+  vmeta.textContent="Applying the "+(VSTYLES[vstyle]||VSTYLES.studio).n+" voice style…";
+  return styleVoice(dn.buf,vstyle);
+}
+async function setVoiceStyle(key){
+  if(!VSTYLES[key]) return; vstyle=key; document.querySelectorAll("#vstyle button").forEach(x=>x.classList.toggle("on",x.dataset.s===key));
+  if(!rawBuf||!cleanCache) { saveSoon(); return; }
+  const was=!!prevSrc; stopPreviews(); vmeta.textContent="Applying the "+VSTYLES[key].n+" voice style…";
+  proBuf=await styleVoice(cleanCache.buf,key); slices=findSlices(proBuf); drawWave(); restartTracks&&restartTracks(); saveSoon();
+  vmeta.textContent=voiceMeta(); if(was||true){ setEnhanced(true); vprev.click(); }
+}
+function voiceMeta(){ return (currentAudio?currentAudio.name+" · ":"")+(rawBuf?rawBuf.duration.toFixed(1)+"s · ":"")+slices.length+" chops · background noise removed, levels evened out, "+(VSTYLES[vstyle]||VSTYLES.studio).n+" style, loudness set for playback."; }
 function findSlices(b){
   const d=b.getChannelData(0), sr=b.sampleRate, hop=Math.floor(sr*.01), fr=[];
   for(let i=0;i+hop<d.length;i+=hop){ let e=0; for(let j=0;j<hop;j++) e+=d[i+j]*d[i+j]; fr.push(Math.sqrt(e/hop)); }
@@ -1593,6 +1679,7 @@ function drawWave(){
   c.fillStyle="rgba(242,242,242,.55)";
   slices.forEach((s,i)=>{ const x=s.start/b.duration*W; c.fillRect(x,0,1.5,H); c.font="18px Inter"; c.fillText(String(i+1),x+4,20); });
 }
+document.querySelectorAll("#vstyle button").forEach(b=>b.onclick=()=>setVoiceStyle(b.dataset.s));
 function setEnhanced(on){ const wasPrev=!!prevSrc; useEnhanced=on; if(wasPrev){ stopPreviews(); setTimeout(()=>vprev.click(),0); } document.querySelectorAll("#ab button").forEach(x=>x.classList.toggle("on",(x.dataset.k==="pro")===on)); drawWave(); saveSoon(); }
 document.querySelectorAll("#ab button").forEach(bn=>bn.onclick=()=>setEnhanced(bn.dataset.k==="pro"));
 function restartTracks(){ stopTracks(); loopIdx=0; }
@@ -2075,6 +2162,7 @@ if(wvow) document.getElementById("wvowNote").textContent="Vowels learned earlier
   function calStart(b){ calibrateFrom(b); const fb=$("tgFb"); if(wcal){ fb.className="tg-fb good"; fb.textContent="Got your voice. Now say what you see."; cur=pick(); paint(); } else { fb.className="tg-fb bad"; fb.textContent=document.getElementById("wcalNote").textContent; } }
   cur=pick(); paint();
   if(/[?&]test=1/.test(location.search)){ window.__tgJudge=judge; window.__tgCal=calStart; }
+  if(/[?&]test=1/.test(location.search)) window.__voice=()=>({off:vocalOffset, raw:rawBuf&&rawBuf.getChannelData(0), pro:cleanCache&&cleanCache.buf.getChannelData(0), sr:rawBuf&&rawBuf.sampleRate});
 })();
 
 document.getElementById("wcopy").onclick=async()=>{ saveWord(wState.final); try{ await navigator.clipboard.writeText(wState.final); toast("Copied: "+wState.final); }catch(e){ toast("Copy was blocked. Select the text and copy it."); } };
@@ -2215,25 +2303,61 @@ document.getElementById("vbeat").onclick=()=>{
   const btn=document.getElementById("vbeat"); btn.disabled=true; btn.textContent="Listening…";
   setTimeout(()=>{ try{ beatFromVoice(); }catch(e){ toast("Could not read a rhythm from this recording."); } btn.disabled=false; btn.textContent="Make another beat from my voice"; },30);
 };
-function beatFromVoice(){
+/* tempo and downbeat from the voice's onset strength, or from the user's own taps */
+function tempoFromFlux(flux,hop){
+  const n=flux.length; if(n<40) return null;
+  const sm=new Float32Array(n); for(let i=0;i<n;i++){ let s=0,c=0; for(let j=Math.max(0,i-1);j<=Math.min(n-1,i+1);j++){ s+=flux[j]; c++; } sm[i]=s/c; }
+  const W=Math.max(8,Math.round(1/hop)), e=new Float32Array(n);
+  for(let i=0;i<n;i++){ let s=0,c=0; for(let j=Math.max(0,i-W);j<=Math.min(n-1,i+W);j+=2){ s+=sm[j]; c++; } e[i]=Math.max(0,sm[i]-s/c); }
+  const acf=lag=>{ const L=Math.floor(lag), fr=lag-L; let s=0; for(let i=0;i+L+1<n;i++) s+=e[i]*(e[i+L]*(1-fr)+e[i+L+1]*fr); return s/(n-L); };
+  let best={sc:-1,bpm:100};
+  for(let bpm=60;bpm<=180;bpm+=.5){ const lag=60/bpm/hop; let sc=0; for(let m=1;m<=4;m++) sc+=acf(lag*m)/m; sc+=.5*acf(lag/2);
+    const prior=Math.exp(-.5*Math.pow(Math.log2(bpm/110)/.7,2)); sc*=prior; if(sc>best.sc) best={sc,bpm}; }
+  let bpm=best.bpm; while(bpm<75) bpm*=2; while(bpm>150) bpm/=2; bpm=Math.round(bpm);
+  const P=60/bpm/hop, at=x=>{ const L=Math.floor(x); return L+1<n? e[L]*(1-(x-L))+e[L+1]*(x-L) : 0; };
+  let bo=0,bs=-1; for(let o=0;o<P;o+=.25){ let s=0; for(let x=o;x<n;x+=P) s+=at(x); if(s>bs){ bs=s; bo=o; } }
+  const sums=[0,1,2,3].map(j=>{ let s=0; for(let x=bo+j*P;x<n;x+=4*P) s+=at(x); return s; }), mx=Math.max(...sums);
+  // beats 1 and 3 often tie: among the strong candidates, start the bar where the voice first comes in strongly
+  let first=0; for(let i=0;i<n;i++) if(e[i]>mx/Math.max(1,n/(4*P))*.25){ first=i; break; }
+  let db=0, bestT=1e9; sums.forEach((sm,j)=>{ if(sm<mx*.8) return; let x=bo+j*P; while(x+4*P<=first-P*.25) x+=4*P; while(x<first-P*.25) x+=4*P; if(x<bestT){ bestT=x; db=j; } });
+  const peaks=[]; let mean=0; for(let i=0;i<n;i++) mean+=e[i]; mean/=n; let sd=0; for(let i=0;i<n;i++) sd+=(e[i]-mean)**2; sd=Math.sqrt(sd/n);
+  for(let i=1;i<n-1;i++) if(e[i]>e[i-1]&&e[i]>=e[i+1]&&e[i]>mean+.5*sd&&(!peaks.length||(i-peaks[peaks.length-1])*hop>.08)) peaks.push(i);
+  return {bpm, downbeat:(bo+db*P)*hop, beat:P*hop, onsets:peaks.map(i=>i*hop), conf:bs};
+}
+let tapFit=null;
+/* Tap along: the voice plays, you tap on the beat from the first strong one, the beat locks to your taps */
+(function(){
+  const bt=document.getElementById("vtap"); let taps=null, t0=0, src=null, done=null;
+  function finish(){
+    if(!taps) return; const ts=taps; taps=null; bt.classList.remove("tapping"); bt.textContent="Tap along"; if(src){ try{ src.onended=null; src.stop(); }catch(e){} src=null; prevSrc=null; npUpdate(); }
+    if(ts.length<5){ toast("Tap at least 5 times on the beat. Try again."); return; }
+    const iv=[]; for(let i=1;i<ts.length;i++) iv.push(ts[i]-ts[i-1]); iv.sort((a,b)=>a-b);
+    let beat=iv[Math.floor(iv.length/2)]; let bpm=60/beat; while(bpm<75){ bpm*=2; beat/=2; } while(bpm>150){ bpm/=2; beat*=2; } bpm=Math.round(bpm); beat=60/bpm;
+    const ph=ts.map(t=>t-Math.round((t-ts[0])/beat)*beat).sort((a,b)=>a-b), downbeat=ph[Math.floor(ph.length/2)];
+    const det=cleanCache? tempoFromFlux(cleanCache.flux,cleanCache.hop) : null;
+    try{ beatFromVoice({bpm, downbeat, beat, onsets: det? det.onsets : []}); toast("Locked to your taps: "+bpm+" BPM."); }catch(e){ toast("Could not build a beat from those taps."); }
+  }
+  bt.onclick=()=>{
+    if(!rawBuf) return; ensureAudio();
+    if(!taps){ stopAll(); taps=[]; bt.classList.add("tapping"); bt.textContent="Tap on the beat · 0";
+      t0=ac.currentTime+.15; src=playFull(ac,busses.full,t0,vbuf()); prevSrc=src; npUpdate(); src.onended=()=>{ src=null; prevSrc=null; npUpdate(); finish(); };
+      toast("Tap this button on every beat, starting from the first strong one. It finishes after 12 taps or when the voice ends."); return; }
+    taps.push(ac.currentTime-t0); bt.textContent="Tap on the beat · "+taps.length; if(taps.length>=12) finish();
+  };
+})();
+function beatFromVoice(fit){
   checkpoint("Before a beat from your voice");
   const {frames}=analysePitch(rawBuf);
-  // onsets: where voice starts, plus sharp hits for non-sung sounds
-  let on=[]; let prev=false, last=-99;
-  frames.forEach((f,i)=>{ const v=!!f.f; if(v&&!prev&&i-last>8){ on.push(f.t); last=i; } prev=v; });
-  if(on.length<6) on=on.concat(findSlices(rawBuf).map(s=>s.start));
+  let det= fit || (cleanCache? tempoFromFlux(cleanCache.flux,cleanCache.hop) : null);
+  let on= det&&det.onsets&&det.onsets.length>=3? det.onsets.slice() : [];
+  if(on.length<3){ let prev=false, last=-99; frames.forEach((f,i)=>{ const v=!!f.f; if(v&&!prev&&i-last>8){ on.push(f.t); last=i; } prev=v; }); on=on.concat(findSlices(rawBuf).map(s=>s.start)); }
   on=[...new Set(on.map(t=>Math.round(t*100)/100))].sort((a,b)=>a-b);
-  if(on.length<3){ toast("Not enough rhythm in this recording. Try a longer phrase."); return; }
-  // tempo: the eighth-note grid that the onsets agree with most
-  let best={sc:-1,bpm:100,ph:0};
-  for(let bpm=72;bpm<=138;bpm++){
-    const per=60/bpm/2; let re=0,im=0; on.forEach(t=>{ const a=2*Math.PI*t/per; re+=Math.cos(a); im+=Math.sin(a); });
-    const sc=Math.hypot(re,im)/on.length*(1-Math.abs(bpm-104)/260);
-    if(sc>best.sc) best={sc,bpm,ph:Math.atan2(im,re)};
-  }
-  const bpm=best.bpm, per=60/bpm/2, grid0=((best.ph/(2*Math.PI))*per+per)%per;
-  // first sung onset lands on beat one
-  const first=on[0]; vocalOffset=Math.max(0, grid0+Math.round((first-grid0)/per)*per);
+  if(on.length<3 && !fit){ toast("Not enough rhythm in this recording. Try a longer phrase, or tap along."); return; }
+  if(!det){ toast("Could not hear a steady pulse. Use Tap along to set it yourself."); return; }
+  const bpm=det.bpm, beat=60/bpm;
+  // the strongest downbeat in the first bars lands on beat one; anything before it is a pickup
+  let db=det.downbeat; while(db-4*beat>=-.02) db-=4*beat; if(db<0) db+=4*beat;
+  vocalOffset=Math.max(0,db);
   const sixteenth=60/bpm/4, hist16=new Array(16).fill(0);
   on.forEach(t=>{ const k=Math.round((t-vocalOffset)/sixteenth); if(k>=0) hist16[((k%16)+16)%16]++; });
   // pitch centre of the voice, so the drums sit in the singer's key
@@ -2282,7 +2406,7 @@ const kvSet=(k,v)=>tx("kv","readwrite",st=>st.put(v,k));
 const allProjects=()=>tx("projects","readonly",st=>st.getAll());
 function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
 function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
-function stateNow(){ banks[bank]=pattern; return {bank, banks, shown:[...shownRows], pattern, chopOrder, bpm:+bpmEl.value, sw:+swEl.value, n:N, muted, gains:gainsV, tune:tuneV, lay:LAY, nudge:vocalNudge, ddBase, uduBase, vocalOffset, useEnhanced, harm:H}; }
+function stateNow(){ banks[bank]=pattern; return {bank, banks, shown:[...shownRows], pattern, chopOrder, bpm:+bpmEl.value, sw:+swEl.value, n:N, muted, gains:gainsV, tune:tuneV, lay:LAY, nudge:vocalNudge, ddBase, uduBase, vocalOffset, useEnhanced, vstyle, harm:H}; }
 function saveSoon(withAudio){
   if(!ready||restoring) return;
   clearTimeout(saveT); saveT=setTimeout(saveNow,500);
@@ -2325,7 +2449,7 @@ async function openProject(rec,keepSitting){
   LAY.drum=false; renderLayers(); setN(st.n||16); markPresets(-1);
   hist.length=0; undoBtn.disabled=true; redoStack.length=0; redoBtn.disabled=true;
   restoring=false;
-  if(rec.audio&&rec.audio.bytes){ vmeta.textContent="Loading your recording…"; try{ await loadVoice(rec.audio.bytes,rec.audio.name,true); setEnhanced(st.useEnhanced!==false); }catch(e){ vmeta.textContent="The saved recording could not be loaded."; } }
+  if(rec.audio&&rec.audio.bytes){ vmeta.textContent="Loading your recording…"; try{ vstyle=VSTYLES[st.vstyle]? st.vstyle : "studio"; document.querySelectorAll("#vstyle button").forEach(x=>x.classList.toggle("on",x.dataset.s===vstyle)); await loadVoice(rec.audio.bytes,rec.audio.name,true); setEnhanced(st.useEnhanced!==false); }catch(e){ vmeta.textContent="The saved recording could not be loaded."; } }
   lsSet("ps.current",currentId); kvSet("current",currentId);
   if(!keepSitting){ startSitting(); if(rec.state) checkpoint("Opened"); }
 }
@@ -2748,6 +2872,75 @@ async function sendProfileIfNeeded(){
   const ok=await sendForm({_subject:"New pennio.studio sign-up", name:prof.name, email:prof.email, making:prof.make, page:"pennio.agency/studio", joined:new Date(prof.joined).toISOString()});
   if(ok){ prof.sent=true; lsSet("ps.profile",prof); kvSet("profile",prof); }
 }
+
+/* ---------- walkthroughs: point at a button, wait for the tap, move on ---------- */
+const mobile=()=>innerWidth<=768;
+const TOURS=[
+  {id:"beat", n:"Your first beat", d:"1 minute · groove, squares, play, banks", steps:[
+    {sel:"#presets .chip:nth-child(4)", t:"Start with a groove. Tap Afrobeats.", tap:true},
+    {sel:'#rows .row[data-l="clap"] .step[data-i="6"]', t:"Each square is one step of the bar. Tap it to add a hit, tap again to change it. Hold it for a soft ghost hit.", tap:true},
+    {sel:"#play", t:"Press play. On a computer the space bar works too.", tap:true},
+    {sel:()=>mobile()?"#tpVal":"#bpm", t:()=>mobile()? "Tap the BPM to open tempo, swing, undo and clear." : "Slide the tempo to speed the groove up or slow it down.", tap:()=>mobile()},
+    {sel:"#bank button[data-b=B]", t:"Bank B copies this beat so you can make a variation. Tap it, change a few squares, then switch between A and B while it plays.", tap:true},
+    {sel:"#export", t:"When it feels right, Export makes an MP3 or WAV, shares to WhatsApp, or copies a link to your groove."}]},
+  {id:"voice", n:"A beat from your voice", d:"2 minutes · record, voice style, beat, tap along", steps:[
+    {sel:"#voiceCard", t:"Your voice comes in here. Use a quiet room and hold the phone close."},
+    {sel:()=>document.getElementById("vrec").style.display!=="none"?"#vrec":"#voiceCard .file", t:"Record a short phrase, 8 to 20 seconds, or add a voice note you already have. The studio removes background noise and evens out your level.", until:()=>!!rawBuf},
+    {sel:"#vstyle", t:"Pick a voice style. Studio is the default. Natural keeps it plain, Radio is close and punchy, Afro vocal adds a slap echo, Hall adds space."},
+    {sel:"#vbeat", t:"Make a beat from my voice finds your tempo and puts beat one where you come in.", tap:true},
+    {sel:"#vtap", t:"If the beat feels off, tap Tap along and tap on every beat while your voice plays. The beat locks to your taps."}]},
+  {id:"melody", n:"Melody and chords", d:"1 minute · key, chords, guitar, more instruments", steps:[
+    {sel:"#hKey", t:"Choose a key. Every melody instrument follows it, so nothing clashes."},
+    {sel:"#hProg", t:"Choose the chords. One chord plays per bar, and the chord names light up as they play."},
+    {sel:'#rows .row[data-l="gtr"] .step[data-i="2"]', t:"Guitar picks the notes of each chord. Tap a square: R is the root, tap again for 3, 5, 8 and 10.", tap:true},
+    {sel:"#addRows", t:"Bring in Flute, Vox and other rows from here when you want them."}]},
+  {id:"save", n:"Sessions, history and backups", d:"1 minute · name, go back, start new", steps:[
+    {sel:"#pname", t:"Name your session here. It saves as you work."},
+    {sel:"#openHist", t:"History keeps checkpoints. You can go back to any of them, or copy one into a new session."},
+    {sel:"#openWork", t:"Sessions is where you start a new session, continue an old one, and download or restore a backup."}]},
+  {id:"write", n:"Write Yoruba with tones", d:"2 minutes · calibrate, type, say it, tone game", view:"write", steps:[
+    {sel:()=>document.getElementById("wcalRec").hidden?"#wcal":"#wcalRec", t:"Once, sing do re mi slowly so the studio learns your low, mid and high."},
+    {sel:"#wtext", t:"Type a word or phrase without tone marks."},
+    {sel:()=>document.getElementById("wrecRec").hidden?"#wrec":"#wrecRec", t:"Say it and record. Your voice decides the tone marks."},
+    {sel:"#tgCard", t:"Practise with the tone game: say what you see and open new levels."}]}
+];
+let tour=null;
+const tourEl=document.getElementById("tour"), ring=document.getElementById("tourRing"), card=document.getElementById("tourCard");
+const val=x=>typeof x==="function"? x() : x;
+function tourTarget(){ const st=tour.t.steps[tour.i]; const q=val(st.sel); let el=q? document.querySelector(q) : null; if(el && el.closest("label") && el.type==="file") el=el.closest("label"); return el&&el.getClientRects().length? el : null; }
+function tourPlace(){
+  if(!tour) return; const el=tourTarget();
+  if(el){ const r=el.getBoundingClientRect(), pad=6; ring.classList.remove("none"); Object.assign(ring.style,{left:(r.left-pad)+"px",top:(r.top-pad)+"px",width:(r.width+pad*2)+"px",height:(r.height+pad*2)+"px"});
+    const ch=card.offsetHeight, below=r.bottom+14+ch < innerHeight-(mobile()?90:10); card.style.top=(below? r.bottom+14 : Math.max(10,r.top-14-ch))+"px";
+    card.style.left=Math.max(12,Math.min(innerWidth-card.offsetWidth-12, r.left))+"px"; }
+  else { ring.classList.add("none"); card.style.top="30%"; card.style.left=Math.max(12,(innerWidth-card.offsetWidth)/2)+"px"; }
+  tour.raf=requestAnimationFrame(tourPlace);
+}
+function tourShow(){
+  const st=tour.t.steps[tour.i]; const el0=(()=>{ const q=val(st.sel); return q? document.querySelector(q):null; })();
+  if(mobile() && el0 && el0.closest("#tp")) tpOpen(!!el0.closest(".x"));
+  const el=tourTarget(); if(el && !el.closest("#tp") && !el.closest("header")) el.scrollIntoView({block:"center",behavior:"smooth"});
+  document.getElementById("tourStep").textContent=tour.t.n+" · "+(tour.i+1)+" of "+tour.t.steps.length;
+  document.getElementById("tourText").textContent=val(st.t);
+  const waits=val(st.tap)||st.until; document.getElementById("tourNext").textContent= tour.i===tour.t.steps.length-1? "Done" : waits? "Skip step" : "Next";
+  document.getElementById("tourBack").hidden=tour.i===0;
+  clearInterval(tour.poll); if(st.until) tour.poll=setInterval(()=>{ if(st.until()) tourGo(1); },400);
+}
+function tourGo(d){ if(!tour) return; clearInterval(tour.poll); tour.i+=d; if(tour.i>=tour.t.steps.length){ tourEnd(true); return; } if(tour.i<0) tour.i=0; tourShow(); }
+function tourStart(id){ const t=TOURS.find(x=>x.id===id); if(!t) return; tourEnd(false); document.getElementById("learn").classList.remove("on"); document.querySelectorAll(".sheet.on").forEach(x=>x.classList.remove("on"));
+  show(t.view||"ayan"); tour={t,i:0,raf:0,poll:0}; tourEl.hidden=false; tourShow(); cancelAnimationFrame(tour.raf); tour.raf=requestAnimationFrame(tourPlace); }
+function tourEnd(done){ if(!tour) return; cancelAnimationFrame(tour.raf); clearInterval(tour.poll); if(done){ const d=lsGet("ps.tours")||{}; d[tour.t.id]=1; lsSet("ps.tours",d); toast("Walkthrough done. More are under Learn."); } tour=null; tourEl.hidden=true; }
+document.addEventListener("click",e=>{ if(!tour) return; const st=tour.t.steps[tour.i]; if(!val(st.tap)) return; const el=tourTarget(); if(el && el.contains(e.target)) setTimeout(()=>tourGo(1),350); },true);
+document.getElementById("tourNext").onclick=()=>tourGo(1);
+document.getElementById("tourBack").onclick=()=>tourGo(-1);
+document.getElementById("tourSkip").onclick=()=>tourEnd(false);
+addEventListener("keydown",e=>{ if(tour&&e.key==="Escape") tourEnd(false); });
+function renderTours(){ const d=lsGet("ps.tours")||{}, box=document.getElementById("tourList"); box.innerHTML="";
+  TOURS.forEach(t=>{ const b=document.createElement("button"); b.innerHTML="<div><b></b><small></small></div><span class='ok'></span>"; b.querySelector("b").textContent=t.n; b.querySelector("small").textContent=t.d; b.querySelector(".ok").textContent=d[t.id]?"Done ✓":"Start"; b.onclick=()=>tourStart(t.id); box.appendChild(b); }); }
+document.getElementById("guideLink").onclick=()=>{ renderTours(); document.getElementById("learn").classList.add("on"); };
+document.getElementById("closeLearn").onclick=()=>document.getElementById("learn").classList.remove("on");
+document.getElementById("learn").onclick=e=>{ if(e.target.id==="learn") e.target.classList.remove("on"); };
+document.getElementById("heroGo").onclick=()=>{ document.getElementById("hero").hidden=true; tourStart("beat"); };
 
 /* ---------- views ---------- */
 const moreBtn=document.getElementById("moreBtn"), navEl=document.getElementById("nav");
