@@ -48,6 +48,12 @@ h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.025em;line-he
 .sub{color:var(--mute);font-weight:300;font-size:15px;line-height:1.5;margin-top:10px;max-width:560px}
 
 /* transport */
+.exp{margin:0 0 14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--black);display:grid;gap:12px}
+.exp[hidden]{display:none}
+.exp-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.exp-row .btn{min-height:44px}
+.exp-note,.exp-meta{font-size:12px;color:var(--mute);font-weight:300}
+.exp-meta:empty{display:none}
 .transport{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 14px}
 .play{width:54px;height:54px;border-radius:50%;background:var(--orange);display:grid;place-items:center;flex:none}
 .play:active{background:var(--orange-dk)}
@@ -305,9 +311,21 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
     <div class="seg" id="len"><button data-n="12">12</button><button data-n="16" class="on">16</button></div>
     <button class="btn" id="undo" disabled>Undo</button>
     <button class="btn" id="clear">Clear</button>
-    <button class="btn primary" id="export">Export WAV</button>
+    <button class="btn primary" id="export" aria-expanded="false" aria-controls="expPanel">Export</button>
   </div>
 
+  <div class="exp" id="expPanel" hidden>
+    <div class="exp-row">
+      <div class="seg" id="expFmt"><button data-f="mp3" class="on">MP3</button><button data-f="wav">WAV</button></div>
+      <span class="exp-note" id="expNote">Small file, right for WhatsApp and Instagram.</span>
+    </div>
+    <div class="sw-row"><button class="sw on" id="swLoud" role="switch" aria-checked="true"><i></i></button><span><b>Match loudness</b> sets your track to the level streaming apps play at, so it is not quieter than other songs</span></div>
+    <div class="exp-row">
+      <button class="btn primary" id="expGo">Download</button>
+      <button class="btn" id="expShare">Share to WhatsApp</button>
+    </div>
+    <p class="exp-meta" id="expMeta"></p>
+  </div>
   <div class="presets" id="presets"></div>
   <div class="harm" id="harm">
     <label class="hsel">Key <select id="hKey" aria-label="Key"></select></label>
@@ -856,32 +874,101 @@ if(inClaude){
   // on pennio's own site: a normal browser download
   downloads={ save: async ({filename,data})=>{ const url=URL.createObjectURL(data instanceof Blob? data : new Blob([data])); const a=document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000); } };
 }
-expBtn.onclick=async()=>{
-  if(!downloads){ toast("Export is not available in this view."); return; }
-  expBtn.disabled=true; expBtn.textContent="Rendering…";
-  try{
-    const tracks=fullTracks();
-    const vb = tracks.length? Math.max(...tracks.map(barsFor)) : 1;
-    const pl=progD().length, base=Math.max(4,pl);
-    const loops = Math.max(base, Math.ceil(base/vb)*vb), sd=stepDur(), total=loops*N*sd+1.6, sr=44100;
-    const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
-    const oc=new OC(2,Math.ceil((total+.2)*sr),sr); const m=makeMaster(oc); const bs=makeBusses(oc,m);
-    for(let L=0;L<loops;L++){
-      barNow=L;
-      tracks.forEach(tr=>{ if(L%barsFor(tr)===0) playTrack(oc,bs[tr.bus],L*N*sd+.02+.2,tr); });
-      for(let i=0;i<N;i++){
-        const t=(L*N+i)*sd + swingOffset(i) + .02 + .2;
-        LANES.forEach(l=>{const v=pattern[l.id][i]; if(v&&!muted[l.id]&&!(l.id==="vox"&&!LAY.vox)) trigger(l.id,oc,bs[l.id],t,v,i);});
-      }
+async function renderMix(){
+  const tracks=fullTracks();
+  const vb = tracks.length? Math.max(...tracks.map(barsFor)) : 1;
+  const pl=progD().length, base=Math.max(4,pl);
+  const loops = Math.max(base, Math.ceil(base/vb)*vb), sd=stepDur(), total=loops*N*sd+1.6, sr=44100;
+  const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  const oc=new OC(2,Math.ceil((total+.2)*sr),sr); const m=makeMaster(oc); const bs=makeBusses(oc,m);
+  for(let L=0;L<loops;L++){
+    barNow=L;
+    tracks.forEach(tr=>{ if(L%barsFor(tr)===0) playTrack(oc,bs[tr.bus],L*N*sd+.02+.2,tr); });
+    for(let i=0;i<N;i++){
+      const t=(L*N+i)*sd + swingOffset(i) + .02 + .2;
+      LANES.forEach(l=>{const v=pattern[l.id][i]; if(v&&!muted[l.id]&&!(l.id==="vox"&&!LAY.vox)) trigger(l.id,oc,bs[l.id],t,v,i);});
     }
-    const buf=await oc.startRendering();
-    const bytes=wav(buf);
-    let ok=false;
-    try{ await downloads.save({filename:"pennio-studio-groove.wav", data:new Blob([bytes],{type:"audio/wav"})}); ok=true; }
-    catch(e1){ try{ await downloads.save({filename:"pennio-studio-groove.wav", data:bytes}); ok=true; }catch(e2){ throw e2; } }
-    if(ok) toast("Groove exported.");
-  }catch(e){ toast("Export was cancelled or blocked."); }
-  expBtn.disabled=false; expBtn.textContent="Export WAV";
+  }
+  return oc.startRendering();
+}
+/* loudness (ITU BS.1770 style: K-weighting, 400 ms blocks, gating) */
+async function lufsOf(buf){
+  const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+  const oc=new OC(buf.numberOfChannels,buf.length,buf.sampleRate);
+  const src=oc.createBufferSource(); src.buffer=buf;
+  const hs=oc.createBiquadFilter(); hs.type="highshelf"; hs.frequency.value=1681; hs.gain.value=4;
+  const hp=oc.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=38; hp.Q.value=-6.02; // Web Audio takes Q in dB here: linear 0.5
+  src.connect(hs); hs.connect(hp); hp.connect(oc.destination); src.start();
+  const k=await oc.startRendering(), sr=k.sampleRate, blk=Math.round(.4*sr), hop=Math.round(.1*sr), chs=[...Array(k.numberOfChannels).keys()].map(c=>k.getChannelData(c));
+  const ms=[]; for(let i=0;i+blk<=k.length;i+=hop){ let z=0; chs.forEach(d=>{ for(let j=i;j<i+blk;j++) z+=d[j]*d[j]; }); ms.push(z/blk); }
+  const L=x=>-0.691+10*Math.log10(x||1e-12);
+  let g=ms.filter(x=>L(x)>-70); if(!g.length) return -70;
+  const rel=L(g.reduce((a,b)=>a+b,0)/g.length)-10; g=g.filter(x=>L(x)>rel);
+  return L(g.reduce((a,b)=>a+b,0)/g.length);
+}
+function peakOf(buf){ let p=0; for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++){ const a=Math.abs(d[i]); if(a>p) p=a; } } return p; }
+async function matchLoudness(buf){
+  const target=-14, ceil=Math.pow(10,-1/20);
+  const before=await lufsOf(buf); let gain=Math.pow(10,(target-before)/20);
+  const pk=peakOf(buf); gain=Math.min(gain, ceil*2/(pk||1e-9));
+  for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c);
+    for(let i=0;i<d.length;i++){ let x=d[i]*gain; const ax=Math.abs(x); if(ax>ceil*.7){ const over=ax-ceil*.7, room=ceil*.3; x=Math.sign(x)*(ceil*.7+room*Math.tanh(over/room)); } d[i]=x; } }
+  return {before, after: await lufsOf(buf), peakDb: 20*Math.log10(peakOf(buf)||1e-9)};
+}
+let lameP=null;
+function loadLame(){ if(window.lamejs) return Promise.resolve(); if(lameP) return lameP;
+  lameP=new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="vendor/lame.min.js"; sc.onload=()=>res(); sc.onerror=()=>{ lameP=null; rej(new Error("encoder")); }; document.head.appendChild(sc); }); return lameP; }
+async function mp3(buf){
+  await loadLame();
+  const enc=new lamejs.Mp3Encoder(2,buf.sampleRate,192), L=buf.getChannelData(0), R=buf.numberOfChannels>1?buf.getChannelData(1):L, n=L.length, out=[], blk=1152, l=new Int16Array(blk), rr=new Int16Array(blk);
+  const s16=v=>Math.max(-32768,Math.min(32767,Math.round(v*32767)));
+  for(let i=0;i<n;i+=blk){
+    const m=Math.min(blk,n-i); for(let j=0;j<m;j++){ l[j]=s16(L[i+j]); rr[j]=s16(R[i+j]); }
+    const o=enc.encodeBuffer(m<blk?l.subarray(0,m):l, m<blk?rr.subarray(0,m):rr); if(o.length) out.push(new Uint8Array(o));
+    if(i%(blk*200)===0) await new Promise(r=>setTimeout(r,0));
+  }
+  const e=enc.flush(); if(e.length) out.push(new Uint8Array(e));
+  return new Blob(out,{type:"audio/mpeg"});
+}
+const expPanel=document.getElementById("expPanel"), expGo=document.getElementById("expGo"), expShare=document.getElementById("expShare"), expMeta=document.getElementById("expMeta"), swLoud=document.getElementById("swLoud");
+let expFmt="mp3";
+expBtn.onclick=()=>{ expPanel.hidden=!expPanel.hidden; expBtn.setAttribute("aria-expanded",String(!expPanel.hidden)); };
+document.querySelectorAll("#expFmt button").forEach(b=>b.onclick=()=>{ expFmt=b.dataset.f; document.querySelectorAll("#expFmt button").forEach(x=>x.classList.toggle("on",x===b)); document.getElementById("expNote").textContent= expFmt==="mp3"? "Small file, right for WhatsApp and Instagram." : "Full quality, for a producer or another music app."; });
+swLoud.onclick=()=>{ const on=!swLoud.classList.contains("on"); swLoud.classList.toggle("on",on); swLoud.setAttribute("aria-checked",String(on)); };
+if(inClaude) expShare.hidden=true;
+async function buildExport(){
+  const buf=await renderMix(); let info="";
+  if(swLoud.classList.contains("on")){ const m=await matchLoudness(buf); info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
+  const isMp3=expFmt==="mp3"; const blob= isMp3? await mp3(buf) : new Blob([wav(buf)],{type:"audio/wav"});
+  const name="pennio-studio-"+(new Date().toISOString().slice(0,10))+(isMp3?".mp3":".wav");
+  info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB.";
+  return {blob,name,info};
+}
+expGo.onclick=async()=>{
+  if(!downloads){ toast("Export is not available in this view."); return; }
+  expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…";
+  try{ const x=await buildExport(); expMeta.textContent=x.info;
+    try{ await downloads.save({filename:x.name, data:x.blob}); }catch(e1){ await downloads.save({filename:x.name, data:new Uint8Array(await x.blob.arrayBuffer())}); }
+    toast("Track exported."); }
+  catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : "Export was cancelled or blocked."); }
+  expGo.disabled=expShare.disabled=false; expGo.textContent="Download";
+};
+expShare.onclick=async()=>{
+  expGo.disabled=expShare.disabled=true; expShare.textContent="Rendering…";
+  const text="I made this on pennio.studio. Make yours free: https://pennio.agency/studio/";
+  try{
+    const x=await buildExport(); expMeta.textContent=x.info;
+    const file=new File([x.blob],x.name,{type:x.blob.type});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file],text}); toast("Pick WhatsApp in the share sheet."); }
+      catch(e){ if(e&&e.name!=="AbortError") throw e; }
+    } else {
+      if(downloads){ try{ await downloads.save({filename:x.name, data:x.blob}); }catch(e){} }
+      window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank","noopener");
+      toast("Your track downloaded. Attach it in WhatsApp with the paperclip.");
+    }
+  }catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : "Sharing did not work here. Use Download, then send the file in WhatsApp."); }
+  expGo.disabled=expShare.disabled=false; expShare.textContent="Share to WhatsApp";
 };
 
 /* ---------- voice: load, slice, enhance ---------- */
