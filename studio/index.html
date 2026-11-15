@@ -66,6 +66,15 @@ h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.025em;line-he
 .inst-t{flex:1;min-width:0;font-size:12px;color:var(--mute);font-weight:300;line-height:1.4}.inst-t b{display:block;font-size:14px;color:var(--text);font-weight:600}
 .inst .btn{min-height:44px}
 .inst-x{flex:0 0 44px;height:44px;border:0;background:none;color:var(--mute);font-size:22px;cursor:pointer}
+.tg-stats{display:flex;gap:16px;font-size:12px;color:var(--mute);margin-top:6px}.tg-stats b{color:var(--text);font-weight:700;font-size:14px}
+.tg-prompt{font-size:64px;font-weight:800;letter-spacing:.04em;text-align:center;margin:18px 0 6px;line-height:1.1}
+.tg-bars{display:flex;justify-content:center;gap:10px;align-items:end;height:56px}
+.tg-bars i{width:34px;border-radius:6px;background:rgba(255,255,255,.85);display:block}
+.tg-bars i.H{height:100%;background:var(--orange)}.tg-bars i.M{height:60%}.tg-bars i.L{height:28%;background:#7a4a33}
+.tg-bars i.ok{outline:2px solid #6fcf97;outline-offset:3px}.tg-bars i.no{outline:2px solid #eb5757;outline-offset:3px}
+.tg-prog{display:flex;gap:6px;justify-content:center;margin:14px 0 4px}.tg-prog i{width:22px;height:6px;border-radius:3px;background:rgba(255,255,255,.12);display:block}.tg-prog i.on{background:var(--orange)}
+.tg-fb{min-height:20px;font-size:14px;text-align:center;margin-top:10px}.tg-fb.good{color:#6fcf97}.tg-fb.bad{color:#f2994a}
+.tg-lv{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.tg-lv button{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--black);color:var(--mute);font:inherit;font-size:13px;cursor:pointer}.tg-lv button.on{border-color:var(--orange);color:var(--text)}.tg-lv button:disabled{opacity:.35}
 .ogb-h{display:flex;align-items:baseline;gap:10px}
 .ogb-tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);font-weight:600}
 .ogb textarea{width:100%;margin-top:10px;background:var(--black);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:16px;line-height:1.45;resize:vertical}
@@ -479,6 +488,21 @@ body.np-on main{padding-bottom:72px}
       <button class="btn" id="wdrum">Play on dùndún</button>
     </div>
     <div class="vmeta" id="wexplain"></div>
+  </div>
+  <div class="card tg" id="tgCard">
+    <div class="ogb-h"><h3>Tone game</h3><span class="ogb-tag" id="tgLvlTag">Level 1</span></div>
+    <p>Say what you see. Low à, mid a, high á. Get five right to open the next level.</p>
+    <div class="tg-stats"><span>Score <b id="tgScore">0</b></span><span>Streak <b id="tgStreak">0</b></span><span>Best <b id="tgBest">0</b></span></div>
+    <div class="tg-prompt" id="tgPrompt">àá</div>
+    <div class="tg-bars" id="tgBars" aria-hidden="true"></div>
+    <div class="tg-prog" id="tgProg" aria-label="Progress to the next level"></div>
+    <div class="ogb-row">
+      <button class="btn" id="tgHear">▶ Hear it</button>
+      <button class="btn primary" id="tgRec">● Say it</button>
+      <button class="btn" id="tgSkip">Skip</button>
+    </div>
+    <p class="tg-fb" id="tgFb" aria-live="polite"></p>
+    <div class="tg-lv" id="tgLv"></div>
   </div>
   <div class="card ogb" id="ogbCard">
     <div class="ogb-h"><h3>Ogbifọ̀</h3><span class="ogb-tag">translate · beta</span></div>
@@ -1630,6 +1654,71 @@ if(!inClaude && navigator.mediaDevices && window.MediaRecorder){ const wv=docume
 if(wvow) document.getElementById("wvowNote").textContent="Vowels learned earlier on this device. Record again to update them.";
 /* remember calibration between visits */
 (function(){ const c=lsGet("ps.wcal"); if(c){ wcal=c; document.getElementById("wcalNote").textContent="Calibrated earlier on this device. Record again to update it."; } })();
+/* ---------- TONE GAME: say a, à, á and their combinations ---------- */
+(function(){
+  const V={a:["à","a","á"],e:["è","e","é"],"ẹ":["ẹ̀","ẹ","ẹ́"],i:["ì","i","í"],o:["ò","o","ó"],"ọ":["ọ̀","ọ","ọ́"],u:["ù","u","ú"]};
+  const T=["L","M","H"], mk=(v,ts)=>ts.map(t=>V[v][T.indexOf(t)]).join("");
+  const LEVELS=[
+    {name:"Level 1 · two sounds", n:2, vowels:["a"], need:5},
+    {name:"Level 2 · all vowels", n:2, vowels:["a","e","ẹ","i","o","ọ","u"], need:5},
+    {name:"Level 3 · three sounds", n:3, vowels:["a","o","ẹ"], need:5},
+    {name:"Level 4 · real words", words:["ọkọ́","ọkọ̀","owó","ọwọ́","ìgbà","igbá","àyà","aya","oko","fàájì"], need:5}
+  ];
+  const st=Object.assign({lvl:0, open:1, score:0, best:0, streak:0, prog:0}, lsGet("ps.tgame")||{});
+  const $=id=>document.getElementById(id); let cur=null;
+  function save(){ lsSet("ps.tgame",{lvl:st.lvl,open:st.open,best:st.best,score:st.score}); }
+  function pick(){
+    const L=LEVELS[st.lvl];
+    if(L.words){ const w=L.words[Math.floor(Math.random()*L.words.length)]; return {text:w, tones:tonesOfWord(w)}; }
+    const v=L.vowels[Math.floor(Math.random()*L.vowels.length)];
+    // not calibrated: avoid all-same patterns, which need calibration to tell apart
+    let ts; do{ ts=Array.from({length:L.n},()=>T[Math.floor(Math.random()*3)]); } while(cur && ts.join()===cur.tones.join());
+    return {text:mk(v,ts), tones:ts};
+  }
+  function bars(ts,res){ $("tgBars").innerHTML=ts.map((t,i)=>'<i class="'+t+(res?(res[i]===t?" ok":" no"):"")+'"></i>').join(""); }
+  function paint(){
+    const needCal=!wcal; $("tgHear").hidden=needCal; $("tgSkip").hidden=needCal; $("tgLv").hidden=needCal; $("tgProg").hidden=needCal;
+    if(needCal){ $("tgPrompt").textContent="do · re · mi"; bars(["L","M","H"]); $("tgRec").textContent="● Sing it"; if(!$("tgFb").textContent) $("tgFb").textContent="First, sing do re mi slowly so the game learns your low, mid and high."; return; }
+    if(!$("tgRec")._rec) $("tgRec").textContent="● Say it";
+    $("tgScore").textContent=st.score; $("tgStreak").textContent=st.streak; $("tgBest").textContent=st.best; $("tgLvlTag").textContent="Level "+(st.lvl+1);
+    $("tgPrompt").textContent=cur.text; bars(cur.tones);
+    const need=LEVELS[st.lvl].need; $("tgProg").innerHTML=Array.from({length:need},(_,i)=>'<i class="'+(i<st.prog?"on":"")+'"></i>').join("");
+    $("tgLv").innerHTML=""; LEVELS.forEach((L,i)=>{ const b=document.createElement("button"); b.textContent=L.name; b.className=i===st.lvl?"on":""; b.disabled=i>=st.open; b.onclick=()=>{ st.lvl=i; st.prog=0; cur=pick(); $("tgFb").textContent=""; $("tgFb").className="tg-fb"; save(); paint(); }; $("tgLv").appendChild(b); });
+  }
+  function next(){ cur=pick(); paint(); }
+  $("tgSkip").onclick=()=>{ st.streak=0; $("tgFb").textContent=""; $("tgFb").className="tg-fb"; next(); };
+  $("tgHear").onclick=()=>{ // a hummed voice: low, mid and high four semitones apart
+    ensureAudio(); stopAll(); const t0=ac.currentTime+.05, base=190, step=.36;
+    const o=ac.createOscillator(), f=ac.createBiquadFilter(), g=ac.createGain(), lfo=ac.createOscillator(), lg=ac.createGain();
+    o.type="sawtooth"; f.type="bandpass"; f.frequency.value=900; f.Q.value=1.2; lfo.frequency.value=5; lg.gain.value=2;
+    lfo.connect(lg); lg.connect(o.frequency); o.connect(f); f.connect(g); g.connect(ac.destination);
+    g.gain.setValueAtTime(0,t0);
+    cur.tones.forEach((t,i)=>{ const hz=base*Math.pow(2,({L:-4,M:0,H:4})[t]/12), a=t0+i*step;
+      if(i===0) o.frequency.setValueAtTime(hz,a); else o.frequency.linearRampToValueAtTime(hz,a+.06);
+      g.gain.linearRampToValueAtTime(.28,a+.04); g.gain.setValueAtTime(.28,a+step-.07); g.gain.linearRampToValueAtTime(i<cur.tones.length-1?.12:0,a+step-.01); });
+    const end=t0+cur.tones.length*step+.05; o.start(t0); lfo.start(t0); o.stop(end); lfo.stop(end);
+  };
+  function judge(b){
+    const {frames}=analysePitch(b); const runs=voicedRuns(frames), fb=$("tgFb");
+    if(!runs.length){ fb.className="tg-fb bad"; fb.textContent="No voice heard. Try again, closer to the phone."; return; }
+    const segs=fitRuns(runs,frames,cur.tones.length);
+    if(segs.length<cur.tones.length){ fb.className="tg-fb bad"; fb.textContent="Heard fewer sounds than shown. Leave a tiny gap between them."; return; }
+    const heard=classifyTones(segs), ok=heard.every((t,i)=>t===cur.tones[i]); bars(cur.tones,heard);
+    if(ok){ st.streak++; st.prog++; const pts=10*cur.tones.length+Math.min(st.streak-1,5)*5; st.score+=pts; st.best=Math.max(st.best,st.score);
+      fb.className="tg-fb good"; fb.textContent="Yes! +"+pts+(st.streak>2?" · streak "+st.streak:"");
+      if(st.prog>=LEVELS[st.lvl].need){ st.prog=0; if(st.lvl+1<LEVELS.length){ st.open=Math.max(st.open,st.lvl+2); st.lvl++; fb.textContent="Level "+(st.lvl+1)+" unlocked: "+LEVELS[st.lvl].name.split(" · ")[1]+"."; } else fb.textContent="You finished every level. Keep your streak going."; }
+      save(); setTimeout(next,1300);
+    } else { st.streak=0; fb.className="tg-fb bad"; fb.textContent="I heard "+heard.map(t=>({L:"low",M:"mid",H:"high"})[t]).join(", ")+". Listen, then try again."; save(); $("tgStreak").textContent=0; }
+    $("tgScore").textContent=st.score; $("tgBest").textContent=st.best;
+  }
+  const rec=$("tgRec");
+  if(inClaude || !navigator.mediaDevices || !window.MediaRecorder){ rec.disabled=true; rec.textContent="Mic needed"; }
+  else rec.onclick=()=>{ stopAll(); if(!wcal){ micTake(rec,"● Sing it",10,calStart,$("tgFb")); return; } micTake(rec,"● Say it",5,judge,$("tgFb")); };
+  function calStart(b){ calibrateFrom(b); const fb=$("tgFb"); if(wcal){ fb.className="tg-fb good"; fb.textContent="Got your voice. Now say what you see."; cur=pick(); paint(); } else { fb.className="tg-fb bad"; fb.textContent=document.getElementById("wcalNote").textContent; } }
+  cur=pick(); paint();
+  if(/[?&]test=1/.test(location.search)){ window.__tgJudge=judge; window.__tgCal=calStart; }
+})();
+
 document.getElementById("wcopy").onclick=async()=>{ saveWord(wState.final); try{ await navigator.clipboard.writeText(wState.final); toast("Copied: "+wState.final); }catch(e){ toast("Copy was blocked. Select the text and copy it."); } };
 document.getElementById("wdrum").onclick=()=>{
   if(!wState) return; ensureAudio(); let t=ac.currentTime+.05; const gap=.24;
