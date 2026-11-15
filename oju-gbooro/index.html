@@ -31,7 +31,8 @@ body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-ser
 .part{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible}
 .part .track{fill:none;stroke:var(--faint);stroke-width:1.25}
 .part .drawn{fill:none;stroke:var(--bone);stroke-width:1.5;stroke-linecap:round}
-.part .tip{fill:var(--wood)}
+.part .comb path,.part .comb ellipse{fill:var(--bg);stroke:var(--wood);stroke-width:1.4;stroke-linejoin:round}
+.part .comb .cut{fill:none;stroke-width:1}
 .part .end{fill:var(--bone)}
 .page>*:not(.part){position:relative;z-index:1}
 .top{display:flex;justify-content:space-between;align-items:center;min-height:68px}
@@ -88,7 +89,13 @@ footer a{color:var(--text)}
 </head>
 <body>
 <div class="page" id="page">
-  <svg class="part" id="part" aria-hidden="true"><path class="track" id="pTrack"/><path class="drawn" id="pDrawn"/><circle class="end" id="pStart" r="3"/><circle class="tip" id="pTip" r="4.5"/><circle class="end" id="pEnd" r="4"/></svg>
+  <svg class="part" id="part" aria-hidden="true"><path class="track" id="pTrack"/><path class="drawn" id="pDrawn"/><circle class="end" id="pStart" r="3"/><g id="pComb" class="comb">
+    <path d="M-30 -8 L0 -6.2 L-30 -4.4 Z M-30 -1.8 L2 0 L-30 1.8 Z M-30 4.4 L0 6.2 L-30 8 Z"/>
+    <path d="M-30 -8.6 L-47 -7 Q-50 -6.6 -50 -3.4 L-50 3.4 Q-50 6.6 -47 7 L-30 8.6 Z"/>
+    <path class="cut" d="M-33.5 -5.6 L-33.5 5.6"/>
+    <path d="M-50 -2.8 L-54 -2.4 L-54 2.4 L-50 2.8 Z"/>
+    <ellipse cx="-61" cy="0" rx="7.5" ry="6.6"/>
+  </g><circle class="end" id="pEnd" r="4"/></svg>
 
   <div class="top" data-line="start"><div class="brand">Ojú Gbooro</div><a href="/studio/">pennio.studio →</a></div>
 
@@ -151,7 +158,7 @@ footer a{color:var(--text)}
 <script>
 /* The parting: one line from the top of the page to the end, drawn as you scroll. */
 (function(){
-  const page=document.getElementById("page"), svg=document.getElementById("part"), track=document.getElementById("pTrack"), drawn=document.getElementById("pDrawn"), tip=document.getElementById("pTip"), st=document.getElementById("pStart"), en=document.getElementById("pEnd");
+  const page=document.getElementById("page"), svg=document.getElementById("part"), track=document.getElementById("pTrack"), drawn=document.getElementById("pDrawn"), comb=document.getElementById("pComb"), st=document.getElementById("pStart"), en=document.getElementById("pEnd");
   const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
   let len=0, look=[], raf=0;
   function build(){
@@ -180,8 +187,10 @@ footer a{color:var(--text)}
     let l=len;
     if(!reduce){ const target=scrollY+innerHeight*.62, py=page.getBoundingClientRect().top+scrollY; const y=target-py; l=0; for(const [yy,ll] of look){ if(yy<=y) l=ll; else break; } if(scrollY+innerHeight>=document.documentElement.scrollHeight-4) l=len; }
     drawn.style.strokeDashoffset=(len-l);
-    const q=track.getPointAtLength(l); tip.setAttribute("cx",q.x); tip.setAttribute("cy",q.y);
-    tip.style.opacity= l>=len-1? 0 : 1; en.style.opacity= l>=len-1? 1 : .25;
+    const q=track.getPointAtLength(l), a=track.getPointAtLength(Math.max(0,l-3)), b=track.getPointAtLength(Math.min(len,l+3));
+    const ang=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI;
+    comb.setAttribute("transform","translate("+q.x.toFixed(1)+" "+q.y.toFixed(1)+") rotate("+ang.toFixed(1)+")");
+    en.style.opacity= l>=len-1? 1 : .25;
   }
   addEventListener("scroll",()=>{ if(!raf) raf=requestAnimationFrame(paint); },{passive:true});
   addEventListener("resize",()=>requestAnimationFrame(build));
