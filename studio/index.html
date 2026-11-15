@@ -652,6 +652,37 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 .rpi input{width:20px;height:20px;margin-top:2px;accent-color:var(--orange);flex:none}
 .rpi b{display:block;font-size:14px;font-weight:600}.rpi small{display:block;font-size:11px;color:var(--mute);margin-top:2px}
 .rpi .tag{color:var(--orange)}
+
+.sgrp{grid-column:1/-1;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sgrp .chip,.sproj .chip{font-family:inherit;font-size:12px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--mute);cursor:pointer}
+.sgrp .chip[aria-pressed="true"],.sproj .chip[aria-pressed="true"]{background:var(--tp,#F5F3EF);color:#0D0D0F;border-color:transparent}
+.sproj{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.sproj:empty{display:none}
+.sproj .chip.pj{border-color:rgba(242,101,34,.45);color:var(--text)}
+.cmeta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.cmeta label{min-width:0;display:flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.cmeta select,.cmeta input{width:100%;box-sizing:border-box;background:var(--black);color:var(--text);border:1px solid var(--line2);border-radius:10px;font-family:inherit;font-size:16px;padding:0 10px;min-height:44px;text-transform:none;letter-spacing:0;min-width:0}
+.ptags{display:block;font-size:11px;color:var(--orange);font-weight:600;letter-spacing:.02em;margin:2px 0}
+.pgh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 0 4px;border-bottom:1px solid var(--line)}
+.pgh b{font-size:15px;font-weight:600}.pgh small{font-size:11px;color:var(--mute);flex:1}
+.pgh .btn{min-height:40px;font-size:12px;padding:0 12px}
+/* songwriting hacks */
+.hk-prompt{margin-top:12px;padding:14px;border:1px solid rgba(242,101,34,.4);border-radius:14px;background:rgba(242,101,34,.06);font-size:16px;line-height:1.45;min-height:56px}
+.hk-prompt:empty{display:none}
+.hk-l{display:grid;grid-template-columns:52px 1fr;gap:8px;padding:3px 0}.hk-l small{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);font-weight:600;padding-top:4px}.hk-l b{font-weight:600}
+.hk-list{display:grid;gap:0;margin-top:14px;border-top:1px solid var(--line)}
+.hk-list details{border-bottom:1px solid var(--line)}
+.hk-list summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;padding:12px 0;min-height:44px;font-size:15px;font-weight:600}
+.hk-list summary::-webkit-details-marker{display:none}
+.hk-list summary i{font-style:normal;font-size:11px;color:var(--orange);font-variant-numeric:tabular-nums;width:20px;flex:none}
+.hk-list details p{margin:0 0 12px 30px!important}
+.hk-list .hk-go{margin:0 0 14px 30px;min-height:40px;font-size:12px}
+.syl-in{width:100%;min-height:96px;margin-top:10px;background:var(--black);color:var(--text);border:1px solid var(--line2);border-radius:12px;font-family:inherit;font-size:16px;line-height:1.5;padding:10px 12px;resize:vertical;outline:none}
+.syl-out{margin-top:8px;display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+.syl-out div{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--mute);border-bottom:1px solid var(--line);padding:6px 0}
+.syl-out div b{color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.syl-out div span{white-space:nowrap;font-variant-numeric:tabular-nums}
+.syl-out div.long span{color:var(--orange)}
 </style>
 </head>
 <body class="in-studio">
@@ -835,6 +866,17 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
     </div>
     <div class="vmeta" id="wexplain"></div>
   </div>
+  <div class="card" id="hkCard">
+    <div class="ogb-h"><h3>Songwriting hacks</h3><span class="ogb-tag">for stuck days</span></div>
+    <p>Short moves that get a line written. Start with a prompt, check the line fits the beat, then try a hack.</p>
+    <div class="remixbar"><button class="btn primary" id="hkGo">Give me a prompt</button><button class="btn" id="hkCopy" hidden>Copy prompt</button></div>
+    <div class="hk-prompt" id="hkPrompt" aria-live="polite"></div>
+    <h3 style="margin-top:22px">Will it fit the beat?</h3>
+    <p>Type your lines, one per line. The studio counts syllables, roughly, and tells you how many bars each line needs at <b id="sylBpm">100</b> BPM, singing two syllables a beat.</p>
+    <textarea class="syl-in" id="sylIn" maxlength="2000" placeholder="One line per row" aria-label="Lines to count"></textarea>
+    <div class="syl-out" id="sylOut"></div>
+    <div class="hk-list" id="hkList"></div>
+  </div>
   <div class="card tg" id="tgCard">
     <div class="ogb-h"><h3>Tone game</h3><span class="ogb-tag" id="tgLvlTag">Level 1</span></div>
     <p>Say what you see. Low à, mid a, high á. Get five right to open the next level.</p>
@@ -959,12 +1001,16 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
     <p class="note" id="cloudNote">Stored with Supabase in Stockholm, Sweden. Only you can open your projects and recordings. To have your cloud copy removed, use Delete my cloud copy or email contact@pennio.agency.</p>
   </div>
   <div class="cursess" id="curSess"></div>
+  <datalist id="projNames"></datalist>
   <div class="sh-row"><h3>Previous sessions</h3><span class="store-use" id="storeUse"></span></div>
   <div class="sfind" id="sFind" hidden>
     <input id="sessFind" type="search" placeholder="Find a session" maxlength="60" aria-label="Find a session">
     <label class="ssort"><span>Sort</span><select id="sessSort" aria-label="Sort sessions">
       <option value="updated">Last worked</option><option value="created">Newest started</option><option value="oldest">Oldest first</option><option value="name">Name, A to Z</option><option value="time">Most time spent</option><option value="size">Largest first</option>
     </select></label>
+    <div class="sgrp"><label class="ssort"><span>Type</span><select id="sessType" aria-label="Show sessions of one type"><option value="">All types</option></select></label>
+      <button class="chip" id="sessGroup" aria-pressed="false">Group by project</button></div>
+    <div class="sproj" id="sProj" role="group" aria-label="Projects"></div>
     <div class="sfil" role="group" aria-label="Filter sessions">
       <button class="chip" data-f="rec" aria-pressed="false">With a recording</button>
       <button class="chip" data-f="ck" aria-pressed="false">With checkpoints</button>
@@ -1041,6 +1087,10 @@ let vocalNudge=0; // ms, + plays the vocal later
 let busses=null;
 function makeBusses(ctx,out){ const b={}; Object.keys(gainsV).forEach(k=>{const g=ctx.createGain(); g.gain.value=gainsV[k]; g.connect(out); b[k]=g;}); return b; }
 /* voice state */
+/* what a session is for, and which project it belongs to */
+const KINDS=[{id:"song",name:"Song"},{id:"beat",name:"Beat only"},{id:"jingle",name:"Jingle or ad"},{id:"chant",name:"Chant or oríkì"},{id:"score",name:"Score for video"},{id:"practice",name:"Practice"}];
+const kindName=id=>{ const k=KINDS.find(k=>k.id===id); return k? k.name : ""; };
+let curMeta={kind:"", group:""};
 let rawBuf=null, proBuf=null, useEnhanced=true, slices=[], chopOrder=[...Array(16).keys()];
 function vbuf(){ return useEnhanced && proBuf ? proBuf : rawBuf; }
 let N = 16;
@@ -2571,6 +2621,7 @@ async function saveNow(){
   if(!currentId) return; const sn=document.getElementById("savedNote"); if(sn) sn.textContent="Saving…";
   const rec={id:currentId, name:document.getElementById("pname").value.trim()||"Untitled beat", updated:Date.now(), state:JSON.parse(JSON.stringify(stateNow())), audio:currentAudio};
   const old=await tx("projects","readonly",st=>st.get(currentId)); rec.created=(old&&old.created)||Date.now();
+  if(curMeta.kind) rec.kind=curMeta.kind; if(curMeta.group) rec.group=curMeta.group;
   rec.sittings=((old&&old.sittings)||[]).filter(x=>x.start!==sitting.start); if(sitting.start){ sitting.end=Date.now(); rec.sittings.push({...sitting}); rec.sittings=rec.sittings.slice(-100); }
   edits++; maybeAutoCheckpoint();
   const ok=await tx("projects","readwrite",st=>st.put(rec));
@@ -2579,7 +2630,7 @@ async function saveNow(){
   savedAt=Date.now(); savedOk=ok; paintSaved();
 }
 async function openProject(rec,keepSitting){
-  restoring=true;
+  restoring=true; curMeta={kind:rec.kind||"", group:rec.group||""};
   stopTracks();
   currentId=rec.id; document.getElementById("pname").value=rec.name||"Untitled beat";
   const st=rec.state||{};
@@ -2668,6 +2719,7 @@ document.getElementById("ckSave").onclick=async()=>{ const nm=document.getElemen
 async function newProject(){
   const list=(await allProjects())||[];
   const rec={id:newId(), name:"Session "+(list.length+1), created:Date.now(), updated:Date.now(), state:null, audio:null};
+  if(curMeta.group){ rec.group=curMeta.group; if(curMeta.kind) rec.kind=curMeta.kind; }
   await openProject(rec); loadPreset(0); ready=true; await saveNow();
 }
 document.getElementById("pname").oninput=()=>saveSoon();
@@ -2683,6 +2735,13 @@ async function renderWork(){
   if(cur){ const m=await sessionMeta(cur);
     cs.innerHTML='<div class="k2">Current session</div><b></b><small></small><div class="crow"><button class="btn" id="csHist">History</button><button class="btn" id="csCk">Save checkpoint</button><button class="btn" id="csDup">Duplicate</button></div>';
     cs.querySelector("b").textContent=cur.name;
+    const mrow=document.createElement("div"); mrow.className="cmeta";
+    mrow.innerHTML='<label><span>Type</span><select id="csKind"></select></label><label><span>Project</span><input id="csGroup" list="projNames" maxlength="40" placeholder="e.g. Ọjà EP"></label>';
+    cs.insertBefore(mrow, cs.querySelector(".crow"));
+    const ks=mrow.querySelector("#csKind"); ks.innerHTML='<option value="">No type yet</option>'+KINDS.map(k=>'<option value="'+k.id+'">'+k.name+'</option>').join(""); ks.value=curMeta.kind||"";
+    const gi=mrow.querySelector("#csGroup"); gi.value=curMeta.group||"";
+    ks.onchange=async()=>{ curMeta.kind=ks.value; await saveNow(); renderWork(); toast(ks.value? "Marked as "+kindName(ks.value) : "Type cleared"); };
+    gi.onchange=async()=>{ curMeta.group=gi.value.trim(); await saveNow(); renderWork(); toast(curMeta.group? "Added to "+curMeta.group : "Removed from its project"); };
     cs.querySelector("small").textContent="This sitting: "+fmtMin(Date.now()-sitting.start)+" · worked "+m.sits+" time"+(m.sits===1?"":"s")+", "+fmtMin(m.total)+" in all · "+m.n+" checkpoint"+(m.n===1?"":"s");
     cs.querySelector("#csHist").onclick=async()=>{ workEl.classList.remove("on"); await renderHist(); histEl.classList.add("on"); };
     cs.querySelector("#csCk").onclick=async()=>{ await saveNow(); await checkpoint("Saved by you",true); toast("Checkpoint saved"); renderWork(); };
@@ -2695,17 +2754,32 @@ async function renderWork(){
   document.querySelectorAll(".sfil .chip").forEach(c=>c.setAttribute("aria-pressed",String(!!vw.f[c.dataset.f])));
   const el=document.getElementById("plist"); el.innerHTML="";
   const metas=new Map(); for(const r of list) metas.set(r.id, {...(await sessionMeta(r)), size:await sessionSize(r), bk:bkState(r)});
+  const groups=new Map(); all.forEach(r=>{ if(r.group) groups.set(r.group,(groups.get(r.group)||0)+1); });
+  document.getElementById("projNames").innerHTML=[...groups.keys()].sort().map(g=>'<option value="'+g.replace(/"/g,"&quot;")+'">').join("");
+  const ts=document.getElementById("sessType"); if(ts.options.length<2) ts.innerHTML='<option value="">All types</option>'+KINDS.map(k=>'<option value="'+k.id+'">'+k.name+'</option>').join("")+'<option value="none">No type yet</option>'; ts.value=vw.kind||"";
+  document.getElementById("sessGroup").setAttribute("aria-pressed",String(!!vw.group));
+  const sp=document.getElementById("sProj"); sp.innerHTML="";
+  if(groups.size){ [...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0])).forEach(([g,n])=>{ const c=document.createElement("button"); c.className="chip pj"; c.setAttribute("aria-pressed",String(vw.proj===g)); c.textContent=g+" · "+n; c.onclick=()=>{ const v=sessView(); v.proj= v.proj===g? "" : g; setSessView(v); renderWork(); }; sp.appendChild(c); }); }
   let shown=list.filter(r=>{ const m=metas.get(r.id);
-    if(q && !((r.name||"")+" "+stateSummary(r.state,!!r.audio)).toLowerCase().includes(q)) return false;
+    if(vw.kind==="none" ? r.kind : (vw.kind && r.kind!==vw.kind)) return false; if(vw.proj && r.group!==vw.proj) return false;
+    if(q && !((r.name||"")+" "+(r.group||"")+" "+kindName(r.kind)+" "+stateSummary(r.state,!!r.audio)).toLowerCase().includes(q)) return false;
     if(vw.f.rec && !r.audio) return false; if(vw.f.ck && !m.n) return false; if(vw.f.nobk && m.bk.ok) return false; return true; });
   const by={ updated:(a,b)=>b.updated-a.updated, created:(a,b)=>(b.created||0)-(a.created||0), oldest:(a,b)=>(a.created||a.updated)-(b.created||b.updated),
     name:(a,b)=>(a.name||"").localeCompare(b.name||"",undefined,{numeric:true,sensitivity:"base"}), time:(a,b)=>metas.get(b.id).total-metas.get(a.id).total, size:(a,b)=>metas.get(b.id).size-metas.get(a.id).size };
   shown.sort(by[vw.sort]||by.updated);
-  const filtering=q||Object.values(vw.f).some(Boolean);
+  const filtering=q||Object.values(vw.f).some(Boolean)||vw.kind||vw.proj;
   document.getElementById("sCount").textContent= list.length? (filtering? "Showing "+shown.length+" of "+list.length+" sessions" : list.length+" previous session"+(list.length===1?"":"s")) : "";
   if(!list.length){ el.innerHTML='<p>No previous sessions yet. Start a new session and this one will be kept here. Have a backup file from another phone? Tap Restore a backup file above.</p>'; }
-  else if(!shown.length){ el.innerHTML='<p>No session matches. <button class="linkbtn" id="sClear">Clear search and filters</button></p>'; el.querySelector("#sClear").onclick=()=>{ find.value=""; setSessView({sort:vw.sort,f:{}}); renderWork(); }; }
-  for(const r of shown){
+  else if(!shown.length){ el.innerHTML='<p>No session matches. <button class="linkbtn" id="sClear">Clear search and filters</button></p>'; el.querySelector("#sClear").onclick=()=>{ find.value=""; setSessView({sort:vw.sort,f:{},group:vw.group}); renderWork(); }; }
+  // group by project: headers with a count and a one-tap backup of the whole project
+  const order= vw.group? [...new Set(shown.map(r=>r.group||""))].sort((a,b)=> !a? 1 : !b? -1 : a.localeCompare(b)) : [null];
+  for(const gname of order){
+  const part= gname===null? shown : shown.filter(r=>(r.group||"")===gname);
+  if(gname!==null){ const h=document.createElement("div"); h.className="pgh"; h.innerHTML='<b></b><small></small>'+(gname?'<button class="btn">Back up project</button>':'');
+    h.querySelector("b").textContent=gname||"No project"; h.querySelector("small").textContent=part.length+" session"+(part.length===1?"":"s")+" · "+fmtSize(part.reduce((a,r)=>a+metas.get(r.id).size,0));
+    if(gname){ const pjAll=all.filter(r=>r.group===gname); h.querySelector("button").onclick=()=>doBackup(pjAll, gname); }
+    el.appendChild(h); }
+  for(const r of part){
     const m=metas.get(r.id);
     const d=document.createElement("div"); d.className="pitem";
     const when=new Date(r.updated).toLocaleString([], {dateStyle:"medium", timeStyle:"short"});
@@ -2713,6 +2787,7 @@ async function renderWork(){
     const bk=d.querySelector(".bk"); bk.textContent=fmtSize(m.size)+" · "+m.bk.text; if(!m.bk.ok) bk.classList.add("no");
     d.querySelector(".bu").onclick=()=>doBackup([r]);
     d.querySelector("b").textContent=r.name;
+    if(r.kind||r.group){ const tg=document.createElement("span"); tg.className="ptags"; tg.textContent=[kindName(r.kind),r.group].filter(Boolean).join(" · "); d.querySelector(".t").insertBefore(tg,d.querySelector("small")); }
     d.querySelector("small").textContent="Last worked "+when+" · "+(m.sits? m.sits+" sitting"+(m.sits===1?"":"s")+", "+fmtMin(m.total)+" · ":"")+(m.n? m.n+" checkpoint"+(m.n===1?"":"s")+" · ":"")+stateSummary(r.state,!!r.audio);
     d.querySelector(".op").onclick=async()=>{ await saveNow(); await openProject(r); ready=true; workEl.classList.remove("on"); toast("Continuing "+r.name); };
     d.querySelector(".hs").onclick=async()=>{ await saveNow(); await openProject(r); ready=true; workEl.classList.remove("on"); await renderHist(); histEl.classList.add("on"); };
@@ -2721,6 +2796,7 @@ async function renderWork(){
       await tx("projects","readwrite",st=>st.delete(r.id)); const vs=(await tx("versions","readonly",st=>st.index("pid").getAll(r.id)))||[]; for(const v of vs) await tx("versions","readwrite",st=>st.delete(v.id));
       cloudDeleteProject(r.id); renderWork(); };
     el.appendChild(d);
+  }
   }
   renderCloud();
   let note= CLOUD_ON&&sbSess&&sbSess.user? "Projects are saved in this browser and in your PENNIO account. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Projects live in this browser only, and PENNIO cannot see or recover them"+(CLOUD_ON?" unless you turn on cloud saving":"")+". Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
@@ -2731,7 +2807,9 @@ async function renderWork(){
   renderBkLog();
 }
 /* sort, filter and backup status for saved sessions */
-function sessView(){ const v=lsGet("ps.sessView")||{}; return {sort:v.sort||"updated", f:v.f||{}}; }
+function sessView(){ const v=lsGet("ps.sessView")||{}; return {sort:v.sort||"updated", f:v.f||{}, kind:v.kind||"", proj:v.proj||"", group:!!v.group}; }
+document.getElementById("sessType").onchange=e=>{ const v=sessView(); v.kind=e.target.value; setSessView(v); renderWork(); };
+document.getElementById("sessGroup").onclick=()=>{ const v=sessView(); v.group=!v.group; setSessView(v); renderWork(); };
 function setSessView(v){ lsSet("ps.sessView",v); }
 document.getElementById("sessSort").onchange=e=>{ const v=sessView(); v.sort=e.target.value; setSessView(v); renderWork(); };
 document.querySelectorAll(".sfil .chip").forEach(c=>c.onclick=()=>{ const v=sessView(); v.f[c.dataset.f]=!v.f[c.dataset.f]; setSessView(v); renderWork(); });
@@ -2764,7 +2842,7 @@ document.getElementById("sessFind").oninput=()=>renderWork();
 /* backup and restore */
 function b64(buf){ let s="",u=new Uint8Array(buf); for(let i=0;i<u.length;i+=32768) s+=String.fromCharCode.apply(null,u.subarray(i,i+32768)); return btoa(s); }
 function unb64(str){ const s=atob(str), u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u.buffer; }
-async function doBackup(only){
+async function doBackup(only,projName){
   await saveNow();
   if(!downloads){ toast("Download is not available in this view."); return; }
   const list= Array.isArray(only)? only : ((await allProjects())||[]);
@@ -2773,13 +2851,13 @@ async function doBackup(only){
   const vers=[], keys=new Set(); for(const r of list){ const vs=(await tx("versions","readonly",st=>st.index("pid").getAll(r.id)))||[]; vs.forEach(v=>{ vers.push(v); if(v.audioKey) keys.add(v.audioKey); }); }
   data.versions=vers; data.audio={}; for(const k of keys){ const bytes=await tx("audio","readonly",st=>st.get(k)); if(bytes) data.audio[k]=b64(bytes); }
   const now=new Date(), stamp=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+"-"+String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0");
-  const one=Array.isArray(only)&&list.length===1, filename= one? "pennio-studio-"+slug(list[0].name)+"-"+stamp+".json" : "pennio-studio-backup-"+stamp+"-"+list.length+"-session"+(list.length===1?"":"s")+".json";
+  const one=Array.isArray(only)&&list.length===1&&!projName, filename= projName? "pennio-studio-project-"+slug(projName)+"-"+stamp+"-"+list.length+"-session"+(list.length===1?"":"s")+".json" : one? "pennio-studio-"+slug(list[0].name)+"-"+stamp+".json" : "pennio-studio-backup-"+stamp+"-"+list.length+"-session"+(list.length===1?"":"s")+".json";
   const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
   try{ await downloads.save({filename, data:blob});
     if(!one) lsSet("ps.lastBackup",Date.now());
     const m=lsGet("ps.bkMap")||{}; list.forEach(r=>m[r.id]=Date.now()); lsSet("ps.bkMap",m);
     const log=lsGet("ps.bkLog")||[]; log.unshift({file:filename, at:Date.now(), n:list.length, names:list.map(r=>r.name), size:blob.size}); log.length=Math.min(log.length,20); lsSet("ps.bkLog",log);
-    document.getElementById("bkpBar").hidden=true; toast((one? "Saved "+list[0].name+" as " : "Backup saved as ")+filename);
+    document.getElementById("bkpBar").hidden=true; toast((projName? "Saved the project "+projName+" as " : one? "Saved "+list[0].name+" as " : "Backup saved as ")+filename);
     if(workEl.classList.contains("on")) renderWork(); }
   catch(e){ toast("Backup was cancelled or blocked."); }
 }
@@ -2812,7 +2890,7 @@ function rpRender(){
     d.querySelector("b").textContent=r.name;
     const st= !mine? "New to this browser" : mine.updated>r.updated? "You have a newer copy here, so it stays" : mine.updated<r.updated? "Newer than your copy here" : "Same as your copy here";
     d.querySelector("small").innerHTML='<span class="tag"></span> · '; d.querySelector(".tag").textContent=st; if(mine && mine.updated>=r.updated) d.querySelector(".tag").style.color="var(--mute)";
-    d.querySelector("small").append("Last worked "+new Date(r.updated).toLocaleDateString([], {dateStyle:"medium"})+" · "+stateSummary(r.state,!!r.audio));
+    d.querySelector("small").append([kindName(r.kind),r.group].filter(Boolean).map(x=>x+" · ").join("")+"Last worked "+new Date(r.updated).toLocaleDateString([], {dateStyle:"medium"})+" · "+stateSummary(r.state,!!r.audio));
     el.appendChild(d); });
   rpBtn(); }
 function rpBtn(){ const n=rpPick.size; const b=document.getElementById("rpGo"); b.disabled=!n; b.textContent= n? "Restore "+n+" session"+(n===1?"":"s") : "Pick sessions to restore"; }
@@ -2946,7 +3024,7 @@ async function cloudPushProject(rec){
     }
     audio_path=path;
   }
-  const row={user_id:uid,id:rec.id,name:rec.name||"Untitled beat",state:rec.state||null,audio_name:rec.audio?rec.audio.name:null,audio_path,updated_at:new Date(rec.updated||Date.now()).toISOString()};
+  const row={user_id:uid,id:rec.id,name:rec.name||"Untitled beat",state:rec.state? Object.assign({},rec.state,{_meta:{kind:rec.kind||"",group:rec.group||""}}) : null,audio_name:rec.audio?rec.audio.name:null,audio_path,updated_at:new Date(rec.updated||Date.now()).toISOString()};
   const r=await sbFetch("/rest/v1/projects?on_conflict=user_id,id",{method:"POST",headers:{"Content-Type":"application/json",Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify(row)});
   if(!r.ok) throw new Error("save "+r.status+" "+(await r.text().catch(()=> "")));
 }
@@ -2977,6 +3055,7 @@ async function cloudSyncAll(opts){
       let audio=null;
       if(row.audio_path){ const ar=await sbFetch("/storage/v1/object/authenticated/recordings/"+row.audio_path); if(ar.ok){ audio={name:row.audio_name||"Recording",bytes:await ar.arrayBuffer()}; sigs[row.id]=audio.name+":"+audio.bytes.byteLength; } else if(l&&l.audio) audio=l.audio; }
       const rec={id:row.id,name:row.name,state:row.state,audio,created:(l&&l.created)||rt,updated:rt};
+      if(row.state&&row.state._meta){ if(row.state._meta.kind) rec.kind=row.state._meta.kind; if(row.state._meta.group) rec.group=row.state._meta.group; }
       await tx("projects","readwrite",st=>st.put(rec));
       if(row.id===currentId) reopen=rec;
     }
@@ -3201,7 +3280,54 @@ window.addEventListener("hashchange",()=>{const x=location.hash.replace("#","");
 let tt=null;
 function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove("on"),2600); }
 
+/* ---------- songwriting hacks ---------- */
+const HACKS=[
+ ["Write the hook first","Write the line people will sing back before any verse. If you cannot say it in one breath, cut words until you can."],
+ ["Let the melody follow the tones","In Yoruba, a word sung against its tones can be heard as a different word. Put high-tone syllables on higher notes and low-tone ones lower. Type the line at the top of this tab, say it, and read the marks before you set a melody.","tones"],
+ ["Call, then answer","Write a call of one bar and an answer of two or three words a crowd can shout back. Leave the answer's bar free of your own voice so there is room for theirs."],
+ ["Borrow the shape of oríkì","Praise poetry stacks names and titles for one person or one town. Write three titles for your subject, one per line, and you have the bones of a verse."],
+ ["Finish a proverb","Sing the first half of an òwe your listeners already know. They finish it in their heads, so your next line can go where its second half would have been."],
+ ["Rhyme on the vowel and the tone","Lines that end on the same vowel and the same tone land harder than lines that only rhyme on paper. Check the last syllable of each line with the counter above."],
+ ["Hum before you write","Record the melody on nonsense sounds, make a beat from it in Beat, then fit words to the hum. The counter tells you when a line is too long for its bar.","hum"],
+ ["One object per verse","Name one thing a listener can see, like a danfo at night or a pot left on the fire, instead of naming a feeling. The feeling comes from the thing."],
+ ["Switch language at the hook","Keep the verses in one language and turn the hook to the other: Yoruba verses with an English or Pidgin hook, or the reverse. The switch tells the ear the hook has arrived."],
+ ["Same count, new words","Keep a line's syllable count and replace every word. The rhythm stays and the meaning moves, which is a fast way to write a second verse."],
+ ["Leave the bar before the hook empty","Stop singing for one bar before the hook. The silence makes the hook feel louder without touching the mix."],
+ ["The one-hour test","Say the hook to someone once. An hour later, ask them to say it back. If they cannot, it is not the hook yet."]
+];
+const HK_FORM=["a hook of eight syllables or fewer","a call of one bar and an answer of two words","three praise titles in the shape of oríkì","a verse that names one object and no feelings","a hook that switches language halfway","four lines that all end on the same vowel"];
+const HK_SUBJ=["your mother's stall at the market","the last bus home","the light going off halfway through the song","a wedding where you know nobody","rain on a zinc roof","a friend who has just moved abroad","money that came a week late","the name of your town","the barber who knows everyone's business","your first phone","a phone call from home","the street you grew up on"];
+const HK_RULE=["Fit it into two bars at the current tempo.","Use only words you would say to your grandmother.","Start every line with the same word.","No English this time.","Put the most important word on beat one.","Write it in under five minutes, then stop."];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+document.getElementById("hkGo").onclick=()=>{ const subj=pick(HK_SUBJ), form=pick(HK_FORM), rule=pick(HK_RULE), el=document.getElementById("hkPrompt");
+  el.innerHTML='<div class="hk-l"><small>Topic</small><b></b></div><div class="hk-l"><small>Write</small><span></span></div><div class="hk-l"><small>Rule</small><span></span></div>';
+  el.querySelector("b").textContent=subj.charAt(0).toUpperCase()+subj.slice(1); const sp=el.querySelectorAll("span"); sp[0].textContent=form.charAt(0).toUpperCase()+form.slice(1)+"."; sp[1].textContent=rule;
+  el.dataset.text="Topic: "+subj+". Write "+form+". "+rule; document.getElementById("hkCopy").hidden=false; };
+document.getElementById("hkCopy").onclick=()=>{ const t=document.getElementById("hkPrompt").dataset.text||""; (navigator.clipboard? navigator.clipboard.writeText(t) : Promise.reject()).then(()=>toast("Prompt copied"),()=>toast("Copy is blocked here")); };
+(function(){ const el=document.getElementById("hkList");
+  HACKS.forEach(([t,body,act],i)=>{ const d=document.createElement("details"); d.innerHTML='<summary><i>'+String(i+1).padStart(2,"0")+'</i><span></span></summary><p></p>'; d.querySelector("span").textContent=t; d.querySelector("p").textContent=body;
+    if(act==="tones"){ const b=document.createElement("button"); b.className="btn hk-go"; b.textContent="Go to the tone marks"; b.onclick=()=>{ const x=document.querySelector("#v-write .steps3"); x&&x.scrollIntoView({behavior:"smooth",block:"start"}); }; d.appendChild(b); }
+    if(act==="hum"){ const b=document.createElement("button"); b.className="btn hk-go"; b.textContent="Add a hum in the studio"; b.onclick=()=>{ show("ayan"); const v=document.getElementById("vfileLbl"); setTimeout(()=>v&&v.scrollIntoView({behavior:"smooth",block:"center"}),150); }; d.appendChild(b); }
+    el.appendChild(d); }); })();
+/* rough syllable count: Yoruba words count every vowel and a syllabic n or m; other words count vowel groups */
+function sylCount(word){
+  const plain=word.normalize("NFD"), yo=/[̣̀́]/.test(plain)||/[ẹọṣ]/i.test(word);
+  const w=plain.replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z']/g,""); if(!w) return 0;
+  if(yo){ let n=(w.match(/[aeiou]/g)||[]).length; n+=(w.match(/[nm](?![aeiou])/g)||[]).length; return Math.max(1,n); }
+  let n=(w.match(/[aeiouy]+/g)||[]).length; if(/[^aeiouy]e$/.test(w) && !/le$/.test(w) && n>1) n--; return Math.max(1,n);
+}
+function sylRender(){
+  const bpm=+(document.getElementById("bpm")||{value:100}).value||100; document.getElementById("sylBpm").textContent=bpm;
+  const out=document.getElementById("sylOut"); out.innerHTML="";
+  document.getElementById("sylIn").value.split("\n").map(l=>l.trim()).filter(Boolean).slice(0,40).forEach(l=>{
+    const n=l.split(/\s+/).reduce((a,w)=>a+sylCount(w),0), bars=n/8, d=document.createElement("div");
+    d.innerHTML="<b></b><span></span>"; d.querySelector("b").textContent=l;
+    d.querySelector("span").textContent=n+" syllable"+(n===1?"":"s")+" · "+(bars<=1? "fits one bar" : "about "+(Math.round(bars*2)/2)+" bars");
+    if(bars>2) d.classList.add("long"); out.appendChild(d); });
+}
+document.getElementById("sylIn").oninput=sylRender;
 })();
+
 </script>
 </body>
 </html>
