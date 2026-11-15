@@ -232,8 +232,8 @@ canvas#wave{width:100%;height:96px;display:block;margin-top:12px;background:var(
 .strip{display:flex;gap:6px;flex-wrap:wrap;width:100%}
 .strip span{font-size:13px;font-weight:600;padding:6px 10px;border-radius:9px;border:1px solid var(--line2);color:var(--mute);min-width:44px;text-align:center}
 .strip span.on{border-color:var(--orange);color:var(--text)}
-.row.bass .step[class*=" v"],.row.keys .step[class*=" v"],.row.pluck .step[class*=" v"],.row.flute .step[class*=" v"]{background:#c9a27a;color:#050505}
-.row.bass .step.v1,.row.keys .step.v2,.row.pluck .step.v1,.row.flute .step.v1{background:#e8c9a3}
+.row.gtr .step[class*=" v"],.row.bass .step[class*=" v"],.row.keys .step[class*=" v"],.row.pluck .step[class*=" v"],.row.flute .step[class*=" v"]{background:#c9a27a;color:#050505}
+.row.gtr .step.v1,.row.bass .step.v1,.row.keys .step.v2,.row.pluck .step.v1,.row.flute .step.v1{background:#e8c9a3}
 /* touch targets: 44px rule for the live site */
 nav button{min-height:40px}
 .seg button{min-height:40px}
@@ -871,12 +871,13 @@ const LANES = [
   {id:"clap", name:"Pàtẹ́wọ́", sub:"hand clap", states:1},
   {id:"bass", name:"Bass", sub:"root / fifth / octave", states:3},
   {id:"keys", name:"Keys", sub:"chord hit / held chord", states:2},
+  {id:"gtr", name:"Guitar", sub:"highlife picking: chord tones R 3 5 8 10", states:5},
   {id:"pluck", name:"Kalimba", sub:"melody, notes 1 to 5", states:5},
   {id:"flute", name:"Flute", sub:"breathy held notes 1 to 5", states:5},
   {id:"vox", name:"Vox", sub:"your voice, chopped", states:1}
 ];
-const gainsV={dd:.9,bata:.85,agogo:.7,shek:.6,udu:1,clap:.7,bass:.95,keys:.55,pluck:.6,flute:.7,vox:1,full:.9,drumv:.9};
-const tuneV={dd:0,bata:0,agogo:0,shek:0,udu:0,clap:0,bass:0,keys:0,pluck:0,flute:0,vox:0};
+const gainsV={dd:.9,bata:.85,agogo:.7,shek:.6,udu:1,clap:.7,bass:.95,keys:.55,gtr:.62,pluck:.6,flute:.7,vox:1,full:.9,drumv:.9};
+const tuneV={dd:0,bata:0,agogo:0,shek:0,udu:0,clap:0,bass:0,keys:0,gtr:0,pluck:0,flute:0,vox:0};
 /* ---------- harmony: key, scale and a chord progression that moves one chord per bar ---------- */
 const KEYN=["C","C♯","D","E♭","E","F","F♯","G","A♭","A","B♭","B"];
 const SCALES={major:[0,2,4,5,7,9,11],minor:[0,2,3,5,7,8,10]};
@@ -925,10 +926,34 @@ const PRESETS = [
     udu:  P("1.....1....."), bata:P("..1..2..1.2."),
     clap: P("............"), dd:  P("H..M..L..M..")}},
   {name:"Highlife sway", bpm:118, n:16, sw:20, h:{key:7,scale:"major",prog:3}, p:{
-    bass: P("1...2...1...3..."), keys:P(".1.1.1.1.1.1.1.1"), pluck:P("3.2.1...3.2.5..."), flute:P("5.......4...3..."),
+    bass: P("1...2...1...3..."), keys:P("................"), gtr:P(".3.4.3.5.3.4.3.2"), pluck:P("3.2.1...3.2.5..."), flute:P("5.......4...3..."),
     agogo:P("1.1..1.1.1.1..1."), shek:P("1212121212121212"),
     udu:  P("1.....1.1.....1."), clap:P("....1.......1..."),
     bata: P("...1...2...1...2"), dd:  P("................")}},
+  {name:"Afrobeats", bpm:104, n:16, sw:10, h:{key:9,scale:"minor",prog:1}, p:{
+    udu:  P("1..1..1...1.1..."), clap:P("....1.......1..."), shek:P("2121212121212121"),
+    bata: P("...1..2....1..2."), agogo:P("..1...1...1...1."), dd:P("..............M."),
+    bass: P("1..1..3...1.1..2"), keys:P("2.......2......."), gtr:P("..2.3.2...4.3.2.")}},
+  {name:"Afrobeat (Fela)", bpm:112, n:16, sw:0, h:{key:2,scale:"minor",prog:2}, p:{
+    udu:  P("1.....1...1.....") , bata:P("..1.2...1.2.1.2."), shek:P("1212121212121212"),
+    agogo:P("1.1.11.1.1.1.11."), clap:P("................"), dd:P("................"),
+    bass: P("1.1..3..1..2.3.."), keys:P(".1...1...1...1.."), gtr:P("1.21.3.21.2.13.2")}},
+  {name:"Jùjú", bpm:118, n:16, sw:14, h:{key:0,scale:"major",prog:2}, p:{
+    dd:   P("H.M.L...H.HM..L."), agogo:P("1.2.1.2.1.2.1.2."), shek:P("2.1.2.1.2.1.2.1."),
+    udu:  P("1.......1......."), bata:P("....2.......2..."), clap:P("................"),
+    bass: P("1...2...1...3..."), keys:P("................"), gtr:P("1.3.4.3.1.3.5.3."), pluck:P("............5.4.")}},
+  {name:"Fújì", bpm:124, n:16, sw:6, h:{key:5,scale:"minor",prog:2}, p:{
+    dd:   P("H.HM.LH.M.HL.M.L"), bata:P("1.2.1.21.2.1.2.1"), shek:P("2121212121212121"),
+    agogo:P("1...1.1.1...1.1."), udu:P("1..1....1..1...."), clap:P("....1.......1..."),
+    bass: P("1.......1......."), keys:P("2..............."), gtr:P("................")}},
+  {name:"Àpàlà", bpm:96, n:16, sw:12, h:{key:7,scale:"minor",prog:3}, p:{
+    dd:   P("H..M.L..H.M..L.."), agogo:P("1..2..1.1..2..1."), shek:P("..2...2...2...2."),
+    udu:  P("1.......1..1...."), bata:P("................"), clap:P("................"),
+    bass: P("1.......2......."), keys:P("................"), pluck:P("3.2.1...3.4.3...")}},
+  {name:"Amapiano", bpm:112, n:16, sw:16, h:{key:5,scale:"minor",prog:1}, p:{
+    udu:  P("1...1...1...1..."), clap:P("....1.......1..."), shek:P("2121212121212121"),
+    agogo:P("......1.......1."), bata:P("..1.....1.1....."), dd:P("................"),
+    bass: P("1..3..1...3.1..."), keys:P("2.......2......."), gtr:P("................")}},
   {name:"Talking drum call", bpm:92, n:16, sw:8, h:{key:5,scale:"minor",prog:2}, p:{
     bass: P("1.......1......."), keys:P("2..............."),
     dd:   P("H.HL..M.H.ML.L.."), udu:P("1.......1......."),
@@ -937,6 +962,18 @@ const PRESETS = [
 ];
 
 /* ---------- audio ---------- */
+const ksCache=new WeakMap();
+function ksBuf(ctx,f){ // Karplus-Strong string, rendered in JS so it can reach guitar pitches
+  let m=ksCache.get(ctx); if(!m){ m=new Map(); ksCache.set(ctx,m); }
+  const key=Math.round(f*4); if(m.has(key)) return m.get(key);
+  const sr=ctx.sampleRate, len=Math.floor(sr*1.0), b=ctx.createBuffer(1,len,sr), d=b.getChannelData(0);
+  const P=sr/f, Ni=Math.floor(P), fr=P-Ni, buf=new Float32Array(Ni+2);
+  let last=0; for(let i=0;i<buf.length;i++){ const n=Math.random()*2-1; last=last*.72+n*.28; buf[i]=last; }
+  let idx=0, prev=0;
+  for(let i=0;i<len;i++){ const a=buf[idx], bb=buf[(idx+1)%buf.length]; const y=a*(1-fr)+bb*fr; const o=.996*(.5*(y+prev)); prev=y; buf[idx]=o; d[i]=y; idx=(idx+1)%Ni; }
+  let pk=0; for(let i=0;i<len;i++) pk=Math.max(pk,Math.abs(d[i])); if(pk) for(let i=0;i<len;i++) d[i]/=pk;
+  m.set(key,b); return b;
+}
 let ac=null, master=null;
 const noiseCache = new WeakMap();
 function noise(ctx){
@@ -1052,6 +1089,15 @@ const V = {
       });
     });
   },
+  gtr(ctx,out,t,v){ // guitar: a plucked string on the current chord's tones, clean highlife tone
+    const c=chordSemis(barNow), k=(v-1)%5, tone=[c[0],c[1],c[2],c[0]+12,c[1]+12][k];
+    let m=48+H.key+tone; while(m>79) m-=12; while(m<52) m+=12; m+=tuneV.gtr;
+    const s=ctx.createBufferSource(); s.buffer=ksBuf(ctx,mtof(m));
+    const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=110;
+    const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=2400; lp.Q.value=.3;
+    const g=ctx.createGain(); g.gain.setValueAtTime(.55,t); g.gain.setValueAtTime(.55,t+.42); g.gain.exponentialRampToValueAtTime(.0001,t+.9);
+    s.connect(hp); hp.connect(lp); lp.connect(g); g.connect(out); s.start(t); s.stop(t+.95);
+  },
   pluck(ctx,out,t,v){ // kalimba: bright attack, a few inharmonic overtones, quick decay
     const pent=PENTA[H.scale]; let m=60+H.key+pent[(v-1)%5]; if(m>76) m-=12; m+=tuneV.pluck; const f=mtof(m);
     [[1,.34,.7],[2.01,.09,.28],[5.43,.035,.09]].forEach(([r,a,d])=>{
@@ -1138,7 +1184,7 @@ redoBtn.onclick=()=>{ const s=redoStack.pop(); if(!s) return; hist.push(snap());
 /* ---------- grid UI ---------- */
 const rowsEl=document.getElementById("rows");
 const TONE_LBL={1:"H",2:"M",3:"L"};
-const LANE_LBL={bass:{1:"R",2:"5",3:"8"},keys:{1:"•",2:"—"},pluck:{1:"1",2:"2",3:"3",4:"4",5:"5"},flute:{1:"1",2:"2",3:"3",4:"4",5:"5"}};
+const LANE_LBL={gtr:{1:"R",2:"3",3:"5",4:"8",5:"10"},bass:{1:"R",2:"5",3:"8"},keys:{1:"•",2:"—"},pluck:{1:"1",2:"2",3:"3",4:"4",5:"5"},flute:{1:"1",2:"2",3:"3",4:"4",5:"5"}};
 function laneUsed(id){ return Object.values(banks).some(bk=>bk&&bk[id]&&bk[id].some(Boolean)) || (id==="vox"&&!!rawBuf); }
 function cellText(id,v){ const a=Math.abs(v); if(!a) return ""; if(id==="dd") return TONE_LBL[a]; return LANE_LBL[id]? LANE_LBL[id][a] : ""; }
 function cellDesc(id,v){ if(!v) return "empty"; const t=cellText(id,v); return (v<0?"ghost ":"hit")+(t?" "+t:""); }
@@ -1248,7 +1294,7 @@ PRESETS.forEach((p,i)=>{
 function markPresets(i){ presetsEl.querySelectorAll(".chip").forEach((c,j)=>c.classList.toggle("on",j===i)); }
 function loadPreset(i){
   const p=PRESETS[i]; if(ready) checkpoint("Before preset: "+p.name);
-  const MEL=["bass","keys","pluck","flute"], keepMel=MEL.some(id=>pattern[id]&&pattern[id].some(Boolean));
+  const MEL=["bass","keys","gtr","pluck","flute"], keepMel=MEL.some(id=>pattern[id]&&pattern[id].some(Boolean));
   LANES.forEach(l=>{ if(l.id==='vox' || (keepMel && MEL.includes(l.id))) return; const a=new Array(16).fill(0); (p.p[l.id]||[]).forEach((v,k)=>a[k]=v); pattern[l.id]=a; });
   bpmEl.value=p.bpm; bpmEl.oninput(); swEl.value=p.sw; swEl.oninput();
   if(p.h && !keepMel){ Object.assign(H,p.h); renderHarm(); }
@@ -2215,6 +2261,7 @@ function beatFromVoice(){
   H.key=((Math.round(12*Math.log2(f0/440)+69)%12)+12)%12; H.scale="minor"; H.prog=rnd([0,1,2]);
   p.bass=p.udu.map(v=>v===1?1:v===2?3:0); if(Math.random()<.5) p.bass[8]=p.bass[8]||2;
   p.keys=new Array(16).fill(0); p.keys[0]=2; p.keys[8]=2;
+  p.gtr=new Array(16).fill(0); [[2,2],[6,3],[10,2],[14,4]].forEach(([i,v])=>{ if(!hist16[i]) p.gtr[i]=v; });
   p.flute=new Array(16).fill(0); p.pluck=new Array(16).fill(0); quiet.filter(i=>i>=12).slice(0,2).forEach((i,k)=>p.pluck[i]=k?3:5);
   renderHarm();
   LANES.forEach(l=>{ if(l.id!=="vox") pattern[l.id]=p[l.id]; });
