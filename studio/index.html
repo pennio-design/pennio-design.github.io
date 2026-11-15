@@ -174,6 +174,26 @@ canvas#wave{width:100%;height:96px;display:block;margin-top:12px;background:var(
 .pitem .t b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pitem .t small{font-size:11px;color:var(--mute)}
 .pitem button{font-size:12px;padding:7px 10px;border-radius:9px;border:1px solid var(--line2)}
+.cursess{margin-top:16px;padding:14px;border:1px solid var(--orange);border-radius:16px;background:rgba(242,101,34,.06)}
+.cursess .k2{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);font-weight:600}
+.cursess b{display:block;font-size:16px;margin-top:4px}
+.cursess small{display:block;font-size:12px;color:var(--mute);margin-top:2px}
+.cursess .crow,.panel .crow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.panel .crow input{flex:1;min-width:150px;background:var(--black);border:1px solid var(--line2);border-radius:12px;color:var(--text);font-family:inherit;font-size:16px;padding:10px 12px;min-height:44px;outline:none}
+.panel .btn{min-height:44px}
+.sh-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:20px}
+.sh-row h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.sh-row input{max-width:52%;background:var(--black);border:1px solid var(--line2);border-radius:10px;color:var(--text);font-family:inherit;font-size:16px;padding:8px 10px;outline:none}
+.pitem{flex-wrap:wrap}
+.pitem .t{flex:1 1 100%}
+.pitem .acts{display:flex;gap:6px;flex-wrap:wrap}
+.pitem button{min-height:40px}
+.hgroup{margin-top:18px}
+.hgroup h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:600;margin-bottom:8px}
+.ck{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.ck .t{flex:1 1 100%;min-width:0}.ck b{display:block;font-size:14px;font-weight:600}.ck b.named{color:var(--orange)}
+.ck small{display:block;font-size:11px;color:var(--mute);margin-top:2px}
+.ck button{font-size:12px;padding:0 10px;min-height:40px;border-radius:9px;border:1px solid var(--line2);background:none;color:var(--text);font-family:inherit;cursor:pointer}
 .pitem button.del.arm{border-color:#c0392b;color:#ff8a7a}
 .field{display:grid;gap:6px;margin-top:14px}
 .field label{font-size:12px;color:var(--mute)}
@@ -342,7 +362,8 @@ body.np-on main{padding-bottom:72px}
     <input id="pname" value="Untitled beat" aria-label="Project name" maxlength="60">
     <span class="saved" id="savedNote"></span>
     <a class="btn" href="/studio/guide/" id="guideLink" style="display:inline-flex;align-items:center;text-decoration:none;color:inherit">Guide</a>
-    <button class="btn" id="openWork">My work</button>
+    <button class="btn" id="openHist">History</button>
+    <button class="btn" id="openWork">Sessions</button>
   </div>
   <div class="inst" id="inst" hidden>
     <div class="inst-ic" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -363,6 +384,7 @@ body.np-on main{padding-bottom:72px}
     <div class="ctl"><label>Swing <b id="swV">0%</b></label><input type="range" id="swing" min="0" max="60" value="0"></div>
     <div class="seg" id="len"><button data-n="12">12</button><button data-n="16" class="on">16</button></div>
     <button class="btn" id="undo" disabled>Undo</button>
+    <button class="btn" id="redo" disabled>Redo</button>
     <button class="btn" id="clear">Clear</button>
     <button class="btn primary" id="export" aria-expanded="false" aria-controls="expPanel">Export</button>
   </div>
@@ -573,16 +595,25 @@ body.np-on main{padding-bottom:72px}
   <button class="btn" id="obReturn" style="width:100%;margin-top:10px">I have used pennio.studio before: restore my work</button>
 </div></div>
 
+<div class="sheet" id="histSheet"><div class="panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+    <h2>History</h2><button class="btn" id="closeHist">Close</button>
+  </div>
+  <p id="histWho"></p>
+  <div class="crow" style="margin-top:12px"><input id="ckName" maxlength="40" placeholder="Name this point, e.g. verse idea" aria-label="Checkpoint name"><button class="btn primary" id="ckSave">Save checkpoint</button></div>
+  <p class="note">The studio also saves a checkpoint every few minutes while you work, before big changes like a preset or a new beat, and when you leave. Restoring never loses anything: your current state is saved first.</p>
+  <div id="histList"></div>
+</div></div>
 <div class="sheet" id="work"><div class="panel">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-    <h2>My work</h2><button class="btn" id="closeWork">Close</button>
+    <h2>Sessions</h2><button class="btn" id="closeWork">Close</button>
   </div>
   <p id="workWho"></p>
   <button class="btn" id="editMe" style="margin-top:10px">Edit my details</button>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-    <button class="btn primary" id="newProj">New project</button>
+    <button class="btn primary" id="newProj">Start new session</button>
     <button class="btn" id="backup">Download backup</button>
-    <label class="btn file">Restore backup<input type="file" id="restoreFile" accept=".json,application/json"></label>
+    <label class="btn file">Restore a backup file<input type="file" id="restoreFile" accept=".json,application/json"></label>
   </div>
   <div class="cloud" id="cloud">
     <h3>Cloud saving</h3>
@@ -601,6 +632,8 @@ body.np-on main{padding-bottom:72px}
     </div>
     <p class="note" id="cloudNote">Stored with Supabase in Stockholm, Sweden. Only you can open your projects and recordings. To have your cloud copy removed, use Delete my cloud copy or email contact@pennio.agency.</p>
   </div>
+  <div class="cursess" id="curSess"></div>
+  <div class="sh-row"><h3>Previous sessions</h3><input id="sessFind" type="search" placeholder="Find a session" maxlength="60" aria-label="Find a session" hidden></div>
   <div class="plist" id="plist"></div>
   <p id="storeNote" style="margin-top:14px"></p>
   <p style="margin-top:8px"><a href="/studio/guide/#history" style="color:var(--text)">Where your work lives, and how backups work</a></p>
@@ -876,13 +909,15 @@ document.getElementById("play").onclick=()=>playing?stop():start();
 const hist=[]; let restoring=false;
 const undoBtn=document.getElementById("undo");
 function snap(){ return {p:JSON.parse(JSON.stringify(pattern)), c:chopOrder.slice(), bpm:+bpmEl.value, sw:+swEl.value, n:N, lay:{...LAY}, tune:{...tuneV}, nudge:vocalNudge, dd:ddBase, udu:uduBase, off:vocalOffset, harm:{...H}}; }
-function pushHist(){ hist.push(snap()); if(hist.length>80) hist.shift(); undoBtn.disabled=false; }
+const redoStack=[]; const redoBtn=document.getElementById("redo");
+function pushHist(){ hist.push(snap()); if(hist.length>80) hist.shift(); undoBtn.disabled=false; redoStack.length=0; redoBtn.disabled=true; }
 function applySnap(s){
   pattern=s.p; chopOrder=s.c; bpmEl.value=s.bpm; bpmEl.oninput(); swEl.value=s.sw; swEl.oninput();
   ddBase=s.dd||208; uduBase=s.udu||62; vocalOffset=s.off||0; vocalNudge=s.nudge||0;
   if(s.lay) Object.assign(LAY,s.lay); if(s.tune) Object.assign(tuneV,s.tune); if(s.harm) Object.assign(H,s.harm); renderHarm(); restartTracks(); renderLayers(); setN(s.n||16);
 }
-undoBtn.onclick=()=>{ const s=hist.pop(); if(!s) return; applySnap(s); undoBtn.disabled=!hist.length; markPresets(-1); toast("Undone"); };
+undoBtn.onclick=()=>{ const s=hist.pop(); if(!s) return; redoStack.push(snap()); applySnap(s); undoBtn.disabled=!hist.length; redoBtn.disabled=false; markPresets(-1); saveSoon(); toast("Undone"); };
+redoBtn.onclick=()=>{ const s=redoStack.pop(); if(!s) return; hist.push(snap()); applySnap(s); undoBtn.disabled=false; redoBtn.disabled=!redoStack.length; markPresets(-1); saveSoon(); toast("Redone"); };
 
 /* ---------- grid UI ---------- */
 const rowsEl=document.getElementById("rows");
@@ -959,7 +994,7 @@ PRESETS.forEach((p,i)=>{
 });
 function markPresets(i){ presetsEl.querySelectorAll(".chip").forEach((c,j)=>c.classList.toggle("on",j===i)); }
 function loadPreset(i){
-  const p=PRESETS[i];
+  const p=PRESETS[i]; if(ready) checkpoint("Before preset: "+p.name);
   LANES.forEach(l=>{ if(l.id==='vox') return; const a=new Array(16).fill(0); (p.p[l.id]||[]).forEach((v,k)=>a[k]=v); pattern[l.id]=a; });
   bpmEl.value=p.bpm; bpmEl.oninput(); swEl.value=p.sw; swEl.oninput();
   if(p.h){ Object.assign(H,p.h); renderHarm(); }
@@ -1123,7 +1158,7 @@ ogbRender(); ogbPaint();
   addEventListener("appinstalled",()=>{ box.hidden=true; toast("pennio.studio is on your home screen."); });
   if(ios){
     box.hidden=false; go.textContent="How";
-    txt.textContent="On iPhone, open this page in Safari, tap Share, then Add to Home Screen. The app keeps its own copy of your work, so download a backup from My work first and restore it there.";
+    txt.textContent="On iPhone, open this page in Safari, tap Share, then Add to Home Screen. The app keeps its own copy of your work, so download a backup from Sessions first and restore it there.";
   }
   go.onclick=async()=>{
     if(deferred){ deferred.prompt(); const c=await deferred.userChoice.catch(()=>null); deferred=null; if(c&&c.outcome==="accepted") box.hidden=true; }
@@ -1831,7 +1866,7 @@ function reRecord(){
 }
 vdel.onclick=()=>{ if(armDelete(vdel,"Delete recording")) deleteRecording(); };
 async function deleteRecording(){
-  stopAll();
+  stopAll(); await checkpoint("Before deleting the recording");
   rawBuf=proBuf=drumBuf=null; slices=[]; currentAudio=null; vocalOffset=0; vocalNudge=0;
   LAY.full=false; LAY.drum=false; LAY.vox=true;
   drawWave(); renderLayers(); render();
@@ -1863,6 +1898,7 @@ document.getElementById("vbeat").onclick=()=>{
   setTimeout(()=>{ try{ beatFromVoice(); }catch(e){ toast("Could not read a rhythm from this recording."); } btn.disabled=false; btn.textContent="Make another beat from my voice"; },30);
 };
 function beatFromVoice(){
+  checkpoint("Before a beat from your voice");
   const {frames}=analysePitch(rawBuf);
   // onsets: where voice starts, plus sharp hits for non-sung sounds
   let on=[]; let prev=false, last=-99;
@@ -1918,7 +1954,9 @@ function beatFromVoice(){
 
 /* ---------- storage: everything stays in this browser ---------- */
 let db=null, currentId=null, ready=false, saveT=null;
-function idb(){ return new Promise((res)=>{ try{ const r=indexedDB.open("pennio-studio",1); r.onupgradeneeded=()=>{ const d=r.result; d.createObjectStore("projects",{keyPath:"id"}); d.createObjectStore("kv"); }; r.onsuccess=()=>res(r.result); r.onerror=()=>res(null); }catch(e){ res(null); } }); }
+function idb(){ return new Promise((res)=>{ try{ const r=indexedDB.open("pennio-studio",2); r.onupgradeneeded=()=>{ const d=r.result; const has=n=>d.objectStoreNames.contains(n);
+    if(!has("projects")) d.createObjectStore("projects",{keyPath:"id"}); if(!has("kv")) d.createObjectStore("kv");
+    if(!has("versions")){ const v=d.createObjectStore("versions",{keyPath:"id"}); v.createIndex("pid","pid"); } if(!has("audio")) d.createObjectStore("audio"); }; r.onsuccess=()=>res(r.result); r.onerror=()=>res(null); }catch(e){ res(null); } }); }
 function tx(store,mode,fn){ return new Promise((res)=>{ if(!db) return res(null); try{ const t=db.transaction(store,mode), st=t.objectStore(store); const r=fn(st); t.oncomplete=()=>res(r? (r.result===undefined? null : r.result) : true); t.onerror=()=>res(null); }catch(e){ res(null); } }); }
 const kvGet=k=>tx("kv","readonly",st=>st.get(k));
 const kvSet=(k,v)=>tx("kv","readwrite",st=>st.put(v,k));
@@ -1934,12 +1972,14 @@ async function saveNow(){
   if(!currentId) return;
   const rec={id:currentId, name:document.getElementById("pname").value.trim()||"Untitled beat", updated:Date.now(), state:JSON.parse(JSON.stringify(stateNow())), audio:currentAudio};
   const old=await tx("projects","readonly",st=>st.get(currentId)); rec.created=(old&&old.created)||Date.now();
+  rec.sittings=((old&&old.sittings)||[]).filter(x=>x.start!==sitting.start); if(sitting.start){ sitting.end=Date.now(); rec.sittings.push({...sitting}); rec.sittings=rec.sittings.slice(-100); }
+  edits++; maybeAutoCheckpoint();
   const ok=await tx("projects","readwrite",st=>st.put(rec));
   if(ok) cloudQueue(rec.id);
   lsSet("ps.last",{id:currentId,name:rec.name,state:rec.state}); lsSet("ps.current",currentId);
   document.getElementById("savedNote").textContent= ok? (sbSess? "Saved · syncing" : "Saved") : "Saved (beat only)";
 }
-async function openProject(rec){
+async function openProject(rec,keepSitting){
   restoring=true;
   stopTracks();
   currentId=rec.id; document.getElementById("pname").value=rec.name||"Untitled beat";
@@ -1958,15 +1998,75 @@ async function openProject(rec){
   vmeta.textContent="No recording yet. The Vox lane stays silent until you add one.";
   Object.assign(H,{key:9,scale:"minor",prog:0}, st.harm||{}); renderHarm();
   LAY.drum=false; renderLayers(); setN(st.n||16); markPresets(-1);
-  hist.length=0; undoBtn.disabled=true;
+  hist.length=0; undoBtn.disabled=true; redoStack.length=0; redoBtn.disabled=true;
   restoring=false;
   if(rec.audio&&rec.audio.bytes){ vmeta.textContent="Loading your recording…"; try{ await loadVoice(rec.audio.bytes,rec.audio.name,true); setEnhanced(st.useEnhanced!==false); }catch(e){ vmeta.textContent="The saved recording could not be loaded."; } }
   lsSet("ps.current",currentId); kvSet("current",currentId);
+  if(!keepSitting){ startSitting(); if(rec.state) checkpoint("Opened"); }
 }
 function newId(){ return "p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+/* ---------- sessions and history: sittings, checkpoints, restore ---------- */
+let sitting={start:0,end:0}, edits=0, editsAtCk=0, lastCkAt=0;
+function startSitting(){ sitting={start:Date.now(),end:Date.now()}; edits=0; editsAtCk=0; lastCkAt=Date.now(); }
+const fmtMin=ms=>{ const m=Math.round(ms/60000); return m<1?"under a minute": m<60? m+" min" : Math.floor(m/60)+" h "+(m%60)+" min"; };
+const audioKey=a=> a&&a.bytes? (a.name||"rec")+"·"+a.bytes.byteLength : null;
+function stateSummary(st,hasAudio){ if(!st) return ""; const hn=["C","C♯","D","E♭","E","F","F♯","G","A♭","A","B♭","B"]; const h=st.harm||{}; return (st.bpm||100)+" BPM · "+(hn[h.key!=null?h.key:9])+" "+(h.scale||"minor")+(hasAudio?" · with recording":""); }
+async function checkpoint(label,named){
+  if(!db||!currentId) return null;
+  const state=JSON.parse(JSON.stringify(stateNow())), key=audioKey(currentAudio);
+  const list=((await tx("versions","readonly",st=>st.index("pid").getAll(currentId)))||[]).sort((a,b)=>b.at-a.at);
+  if(!named && list[0] && JSON.stringify(list[0].state)===JSON.stringify(state) && list[0].audioKey===key) return null;
+  if(key && !(await tx("audio","readonly",st=>st.get(key)))) await tx("audio","readwrite",st=>st.put(currentAudio.bytes.slice(0),key));
+  const v={id:newId(), pid:currentId, sit:sitting.start, at:Date.now(), label, named:!!named, state, audioKey:key, audioName:currentAudio&&currentAudio.name};
+  await tx("versions","readwrite",st=>st.put(v));
+  const autos=list.filter(x=>!x.named); if(autos.length>60) for(const x of autos.slice(60)) await tx("versions","readwrite",st=>st.delete(x.id));
+  lastCkAt=Date.now(); editsAtCk=edits; return v;
+}
+function maybeAutoCheckpoint(){ if(edits-editsAtCk>0 && Date.now()-lastCkAt>4*60000) checkpoint("Auto-save"); }
+async function sessionMeta(r){
+  const sits=r.sittings||[], total=sits.reduce((a,x)=>a+Math.max(0,(x.end||x.start)-x.start),0);
+  const n=db? ((await tx("versions","readonly",st=>st.index("pid").count(r.id)))||0) : 0;
+  return {sits:sits.length, total, n};
+}
+async function restoreVersion(v,asNew){
+  let audio=null; if(v.audioKey){ const bytes=await tx("audio","readonly",st=>st.get(v.audioKey)); if(bytes) audio={name:v.audioName||"recording", bytes}; }
+  const name=document.getElementById("pname").value.trim()||"Session";
+  const when=new Date(v.at).toLocaleString([], {dateStyle:"medium", timeStyle:"short"});
+  if(asNew){ await saveNow(); const rec={id:newId(), name:(v.named?v.label:name)+" (from "+when+")", created:Date.now(), updated:Date.now(), state:v.state, audio};
+    await openProject(rec); ready=true; await saveNow(); toast("New session started from "+when); return; }
+  await checkpoint("Before going back to "+when, false);
+  const rec={id:currentId, name, state:v.state, audio, created:Date.now()};
+  const keep=sitting; await openProject(rec,true); sitting=keep; ready=true; await saveNow(); toast("Back to "+when+". Your previous state is saved in History.");
+}
+const histEl=document.getElementById("histSheet");
+async function renderHist(){
+  document.getElementById("histWho").textContent=(document.getElementById("pname").value.trim()||"This session")+" · checkpoints are kept in this browser";
+  const box=document.getElementById("histList"); box.innerHTML="";
+  const list=((await tx("versions","readonly",st=>st.index("pid").getAll(currentId)))||[]).sort((a,b)=>b.at-a.at);
+  if(!list.length){ box.innerHTML='<p class="note">No checkpoints yet. Keep working, or save one above.</p>'; return; }
+  const groups=new Map(); list.forEach(v=>{ const k=v.sit||v.at; if(!groups.has(k)) groups.set(k,[]); groups.get(k).push(v); });
+  groups.forEach((vs,k)=>{
+    const g=document.createElement("div"); g.className="hgroup";
+    const t0=new Date(k), now=k===sitting.start;
+    g.innerHTML="<h4></h4>"; g.querySelector("h4").textContent=(now?"This sitting · ":"")+t0.toLocaleString([], {weekday:"short", day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"});
+    vs.forEach(v=>{ const row=document.createElement("div"); row.className="ck";
+      row.innerHTML='<div class="t"><b></b><small></small></div><button class="rs">Go back here</button><button class="cp">Copy as new session</button>';
+      const b=row.querySelector("b"); b.textContent=v.label; if(v.named) b.classList.add("named");
+      row.querySelector("small").textContent=new Date(v.at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})+" · "+stateSummary(v.state,!!v.audioKey);
+      row.querySelector(".rs").onclick=async()=>{ histEl.classList.remove("on"); await restoreVersion(v,false); };
+      row.querySelector(".cp").onclick=async()=>{ histEl.classList.remove("on"); await restoreVersion(v,true); };
+      g.appendChild(row); });
+    box.appendChild(g);
+  });
+}
+document.getElementById("openHist").onclick=async()=>{ await saveNow(); await renderHist(); histEl.classList.add("on"); };
+document.getElementById("closeHist").onclick=()=>histEl.classList.remove("on");
+histEl.onclick=e=>{ if(e.target===histEl) histEl.classList.remove("on"); };
+document.getElementById("ckSave").onclick=async()=>{ const nm=document.getElementById("ckName"); await saveNow(); await checkpoint(nm.value.trim()||"Saved by you", true); nm.value=""; await renderHist(); toast("Checkpoint saved"); };
 async function newProject(){
   const list=(await allProjects())||[];
-  const rec={id:newId(), name:"Untitled beat "+(list.length+1), created:Date.now(), updated:Date.now(), state:null, audio:null};
+  const rec={id:newId(), name:"Session "+(list.length+1), created:Date.now(), updated:Date.now(), state:null, audio:null};
   await openProject(rec); loadPreset(0); ready=true; await saveNow();
 }
 document.getElementById("pname").oninput=()=>saveSoon();
@@ -1976,20 +2076,39 @@ const workEl=document.getElementById("work");
 async function renderWork(){
   const prof=lsGet("ps.profile")||(await kvGet("profile"));
   document.getElementById("workWho").textContent= prof? (prof.name+" · "+prof.email+" · saved in this browser") : "Saved in this browser";
-  const list=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated);
+  const all=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated);
+  const cur=all.find(r=>r.id===currentId);
+  const cs=document.getElementById("curSess");
+  if(cur){ const m=await sessionMeta(cur);
+    cs.innerHTML='<div class="k2">Current session</div><b></b><small></small><div class="crow"><button class="btn" id="csHist">History</button><button class="btn" id="csCk">Save checkpoint</button><button class="btn" id="csDup">Duplicate</button></div>';
+    cs.querySelector("b").textContent=cur.name;
+    cs.querySelector("small").textContent="This sitting: "+fmtMin(Date.now()-sitting.start)+" · worked "+m.sits+" time"+(m.sits===1?"":"s")+", "+fmtMin(m.total)+" in all · "+m.n+" checkpoint"+(m.n===1?"":"s");
+    cs.querySelector("#csHist").onclick=async()=>{ workEl.classList.remove("on"); await renderHist(); histEl.classList.add("on"); };
+    cs.querySelector("#csCk").onclick=async()=>{ await saveNow(); await checkpoint("Saved by you",true); toast("Checkpoint saved"); renderWork(); };
+    cs.querySelector("#csDup").onclick=async()=>{ await saveNow(); const rec={...cur, id:newId(), name:cur.name+" copy", created:Date.now(), updated:Date.now(), sittings:[]}; rec.state=JSON.parse(JSON.stringify(stateNow())); rec.audio=currentAudio; await tx("projects","readwrite",st=>st.put(rec)); toast("Duplicated as "+rec.name); renderWork(); };
+  } else cs.innerHTML="";
+  const list=all.filter(r=>r.id!==currentId);
+  const find=document.getElementById("sessFind"); find.hidden=list.length<6;
+  const q=(find.value||"").trim().toLowerCase();
   const el=document.getElementById("plist"); el.innerHTML="";
-  if(!list.length){ el.innerHTML='<p>No projects yet.</p>'; }
-  list.forEach(r=>{
-    const d=document.createElement("div"); d.className="pitem"+(r.id===currentId?" cur":"");
+  const shown=list.filter(r=>!q||(r.name||"").toLowerCase().includes(q));
+  if(!list.length){ el.innerHTML='<p>No previous sessions yet. Start a new session and this one will be kept here. Have a backup file from another phone? Tap Restore a backup file above.</p>'; }
+  else if(!shown.length){ el.innerHTML='<p>No session matches that name.</p>'; }
+  for(const r of shown){
+    const m=await sessionMeta(r);
+    const d=document.createElement("div"); d.className="pitem";
     const when=new Date(r.updated).toLocaleString([], {dateStyle:"medium", timeStyle:"short"});
-    d.innerHTML='<div class="t"><b></b><small>'+when+(r.audio?" · with recording":"")+(r.id===currentId?" · open now":"")+'</small></div><button class="op">Open</button><button class="del">Delete</button>';
+    d.innerHTML='<div class="t"><b></b><small></small></div><div class="acts"><button class="op">Continue</button><button class="hs">History</button><button class="del">Delete</button></div>';
     d.querySelector("b").textContent=r.name;
-    d.querySelector(".op").onclick=async()=>{ await saveNow(); await openProject(r); ready=true; workEl.classList.remove("on"); toast("Opened "+r.name); };
+    d.querySelector("small").textContent="Last worked "+when+" · "+(m.sits? m.sits+" sitting"+(m.sits===1?"":"s")+", "+fmtMin(m.total)+" · ":"")+(m.n? m.n+" checkpoints · ":"")+stateSummary(r.state,!!r.audio);
+    d.querySelector(".op").onclick=async()=>{ await saveNow(); await openProject(r); ready=true; workEl.classList.remove("on"); toast("Continuing "+r.name); };
+    d.querySelector(".hs").onclick=async()=>{ await saveNow(); await openProject(r); ready=true; workEl.classList.remove("on"); await renderHist(); histEl.classList.add("on"); };
     const del=d.querySelector(".del");
     del.onclick=async()=>{ if(!del.classList.contains("arm")){ del.classList.add("arm"); del.textContent="Tap again"; setTimeout(()=>{del.classList.remove("arm");del.textContent="Delete";},3000); return; }
-      await tx("projects","readwrite",st=>st.delete(r.id)); cloudDeleteProject(r.id); if(r.id===currentId){ await newProject(); } renderWork(); };
+      await tx("projects","readwrite",st=>st.delete(r.id)); const vs=(await tx("versions","readonly",st=>st.index("pid").getAll(r.id)))||[]; for(const v of vs) await tx("versions","readwrite",st=>st.delete(v.id));
+      cloudDeleteProject(r.id); renderWork(); };
     el.appendChild(d);
-  });
+  }
   renderCloud();
   let note= CLOUD_ON&&sbSess&&sbSess.user? "Projects are saved in this browser and in your PENNIO account. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Projects live in this browser only, and PENNIO cannot see or recover them"+(CLOUD_ON?" unless you turn on cloud saving":"")+". Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
   try{ if(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted()) note+=" This browser has agreed to keep them."; }catch(e){}
@@ -2000,7 +2119,8 @@ document.getElementById("openWork").onclick=async()=>{ await saveNow(); await re
 document.getElementById("closeWork").onclick=()=>workEl.classList.remove("on");
 document.getElementById("editMe").onclick=()=>{ const pf=lsGet("ps.profile")||{}; document.getElementById("obName").value=pf.name||""; document.getElementById("obEmail").value=pf.email||""; workEl.classList.remove("on"); ob.classList.add("on"); };
 workEl.onclick=e=>{ if(e.target===workEl) workEl.classList.remove("on"); };
-document.getElementById("newProj").onclick=async()=>{ await saveNow(); await newProject(); workEl.classList.remove("on"); toast("New project started"); };
+document.getElementById("newProj").onclick=async()=>{ await saveNow(); if(edits>editsAtCk) await checkpoint("When you started a new session"); await newProject(); workEl.classList.remove("on"); toast("New session started. The last one is in Previous sessions."); };
+document.getElementById("sessFind").oninput=()=>renderWork();
 
 /* backup and restore */
 function b64(buf){ let s="",u=new Uint8Array(buf); for(let i=0;i<u.length;i+=32768) s+=String.fromCharCode.apply(null,u.subarray(i,i+32768)); return btoa(s); }
@@ -2011,6 +2131,8 @@ async function doBackup(){
   const list=(await allProjects())||[];
   const data={app:"pennio.studio", version:1, at:new Date().toISOString(), profile:lsGet("ps.profile"), words:(await kvGet("words"))||lsGet("ps.words")||[],
     projects:list.map(r=>({...r, audio:r.audio? {name:r.audio.name, b64:b64(r.audio.bytes)} : null}))};
+  const vers=[], keys=new Set(); for(const r of list){ const vs=(await tx("versions","readonly",st=>st.index("pid").getAll(r.id)))||[]; vs.forEach(v=>{ vers.push(v); if(v.audioKey) keys.add(v.audioKey); }); }
+  data.versions=vers; data.audio={}; for(const k of keys){ const bytes=await tx("audio","readonly",st=>st.get(k)); if(bytes) data.audio[k]=b64(bytes); }
   try{ await downloads.save({filename:"pennio-studio-backup-"+new Date().toISOString().slice(0,10)+".json", data:new Blob([JSON.stringify(data)],{type:"application/json"})}); lsSet("ps.lastBackup",Date.now()); document.getElementById("bkpBar").hidden=true; toast("Backup saved. Keep the file somewhere safe."); }
   catch(e){ toast("Backup was cancelled or blocked."); }
 }
@@ -2036,9 +2158,12 @@ document.getElementById("restoreFile").onchange=async e=>{
   const f=e.target.files&&e.target.files[0]; if(!f) return;
   try{
     const data=JSON.parse(await f.text()); if(data.app!=="pennio.studio") throw 0;
-    for(const r of data.projects||[]){ const rec={...r, audio:r.audio? {name:r.audio.name, bytes:unb64(r.audio.b64)} : null}; await tx("projects","readwrite",st=>st.put(rec)); }
+    const have=new Map(((await allProjects())||[]).map(x=>[x.id,x])); let added=0, newer=0;
+    for(const r of data.projects||[]){ const mine=have.get(r.id); if(mine && mine.updated>r.updated) continue; const rec={...r, audio:r.audio? {name:r.audio.name, bytes:unb64(r.audio.b64)} : null}; await tx("projects","readwrite",st=>st.put(rec)); if(mine) newer++; else added++; }
+    for(const [k,v] of Object.entries(data.audio||{})) await tx("audio","readwrite",st=>st.put(unb64(v),k));
+    for(const v of data.versions||[]) await tx("versions","readwrite",st=>st.put(v));
     if(data.words&&data.words.length){ const cur=(await kvGet("words"))||[]; const merged=cur.concat(data.words.filter(w=>!cur.some(c=>c.text===w.text))); await kvSet("words",merged); lsSet("ps.words",merged); renderWords(); }
-    toast("Restored "+(data.projects||[]).length+" projects"); renderWork();
+    toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+" from the backup. Tap Continue on any of them."); renderWork();
   }catch(err){ toast("That is not a pennio.studio backup."); }
   e.target.value="";
 };
@@ -2112,7 +2237,7 @@ async function sbFromLink(){
   const h=location.hash||""; if(!/access_token=|error_description=/.test(h)) return false;
   const q=new URLSearchParams(h.slice(1));
   try{ history.replaceState(null,"",location.pathname); }catch(e){}
-  if(q.get("error_description")){ toast("That sign-in link has expired. Send a new one from My work."); return false; }
+  if(q.get("error_description")){ toast("That sign-in link has expired. Send a new one from Sessions."); return false; }
   setSession({access_token:q.get("access_token"),refresh_token:q.get("refresh_token"),expires_in:q.get("expires_in")});
   await sbLoadUser(); return true;
 }
@@ -2262,7 +2387,7 @@ document.getElementById("obReturn").onclick=()=>{ ob.classList.remove("on"); ren
   renderWords(); sendProfileIfNeeded(); setTimeout(nudgeWeekly,1500);
   await cloudBoot();
   window.addEventListener("pagehide",()=>{ if(ready) saveNow(); });
-  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"&&ready) saveNow(); });
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"&&ready){ saveNow(); if(edits>editsAtCk) checkpoint("When you left"); } });
 })();
 
 /* ---------- send to PENNIO's inbox (FormSubmit, same alias as the rest of pennio.agency) ---------- */
