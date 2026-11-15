@@ -341,6 +341,72 @@ body.np-on main{padding-bottom:72px}
   nav button{padding:7px 10px;font-size:12px}
   .logo span{display:none}
 }
+
+/* ===== design pass: quieter surfaces, one accent, consistent controls ===== */
+[hidden]{display:none!important}
+:root{--black:#0b0a0c;--off:#0f0d10;--surface:#151317;--line:rgba(255,245,235,.07);--line2:rgba(255,245,235,.13);--text:#F4EFE9;--mute:#9a918a;--dim:#5d5651}
+html,body{background:var(--black)}
+header{background:rgba(11,10,12,.82);border-bottom-color:var(--line)}
+nav{background:transparent;border-color:var(--line2)}
+section.view{padding-top:18px}
+h1{font-size:clamp(28px,6vw,44px);font-weight:700;letter-spacing:-.035em;line-height:1.02;margin-top:6px}
+.sub{font-size:14px;line-height:1.6;color:var(--mute);max-width:540px}
+.btn{font-size:13px;font-weight:500;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line2);background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;color:var(--text);text-decoration:none;transition:background .15s,border-color .15s}
+.btn:hover{border-color:rgba(255,245,235,.28)}
+.btn.primary{background:var(--text);color:#0b0a0c;border-color:var(--text);font-weight:600}
+.btn:disabled{opacity:1;color:var(--dim);border-color:var(--line);background:transparent;cursor:default}
+.btn.ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.seg{background:transparent;border:1px solid var(--line2);border-radius:999px;padding:3px}
+.seg button{border-radius:999px;padding:0 13px;min-height:32px;font-size:12px}
+.seg button.on{background:var(--text);color:#0b0a0c;font-weight:600}
+.projbar{display:block;margin:4px 0 22px}
+.pb-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.pb-k{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);font-weight:600}
+.projbar input{flex:1 1 180px;font-size:20px;font-weight:600;letter-spacing:-.02em;padding:4px 6px;margin-left:-6px;border-radius:8px}
+.saved{font-size:11px;color:var(--mute)}
+.pb-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.transport{position:sticky;top:57px;z-index:15;display:grid;grid-template-columns:54px 1fr 1fr;gap:14px;align-items:center;margin:26px -16px 0;padding:12px 16px;background:rgba(11,10,12,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.play{width:54px;height:54px;box-shadow:0 6px 24px rgba(242,101,34,.35)}
+.ctl{background:none;border:0;padding:0;min-width:0;gap:12px}
+.ctl label{font-size:10px;letter-spacing:.12em}
+input[type=range]{height:2px;background:var(--line2)}
+input[type=range]::-webkit-slider-thumb{width:18px;height:18px;box-shadow:0 0 0 4px rgba(244,239,233,.08)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 18px}
+.tgroup{display:flex;gap:6px}
+.tools #export{margin-left:auto}
+.chip{border-color:var(--line2);min-height:36px;display:inline-flex;align-items:center;padding:0 14px}
+.chip.on{background:rgba(242,101,34,.1)}
+.harm{gap:10px 12px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:16px}
+.strip span{border-radius:999px;border-color:var(--line2);font-size:12px;padding:6px 12px}
+.strip span.on{background:rgba(242,101,34,.12)}
+.grid{background:var(--off);border-color:var(--line);border-radius:20px;padding:12px 10px}
+.row+.row{border-top-color:rgba(255,245,235,.04)}
+.name b{font-size:12.5px}
+.step{border-radius:6px;background:#19171b;border-color:transparent}
+.step.beat{background:#211e23}
+.step.now{outline-color:var(--orange)}
+.legend{gap:10px 14px}
+.card{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:28px 0 6px;margin-top:22px}
+.card h3{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.card p{font-size:13.5px;line-height:1.6}
+canvas#wave{border-color:var(--line);border-radius:14px;background:var(--off)}
+.sw{width:42px;height:26px;background:rgba(255,245,235,.12)}
+.sw i{width:20px;height:20px;background:#cfc7bf}
+.sw.on i{transform:translateX(16px)}
+.layers{gap:0;border-top:1px solid var(--line);margin-top:14px}
+.layer{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:12px 0}
+.layer.off{opacity:.5}
+.layer .lh{min-height:36px}
+.layers .more{margin-top:14px;grid-column:1/-1;justify-self:start}
+.layer[hidden]{display:none}
+.exp,.inst,.bkp{border-color:var(--line2);border-radius:20px;background:var(--off)}
+.panel{background:#100e11;border-color:var(--line2)}
+.pitem{background:transparent;border-color:var(--line);border-radius:16px}
+.cursess{background:rgba(242,101,34,.05);border-color:rgba(242,101,34,.5)}
+.footer,.foot{color:var(--mute)}
+@media (max-width:480px){.btn.ic{width:40px;padding:0;font-size:0;gap:0}.btn.ic svg{width:17px;height:17px}.tools{gap:6px}}
+@media (min-width:760px){.transport{margin:26px 0 0;border:1px solid var(--line);border-radius:20px;top:68px}.layers{display:grid;grid-template-columns:1fr 1fr;column-gap:28px}}
 </style>
 </head>
 <body>
@@ -359,11 +425,12 @@ body.np-on main{padding-bottom:72px}
 <!-- MUSIC -->
 <section class="view on" id="v-ayan">
   <div class="projbar">
-    <input id="pname" value="Untitled beat" aria-label="Project name" maxlength="60">
-    <span class="saved" id="savedNote"></span>
-    <a class="btn" href="/studio/guide/" id="guideLink" style="display:inline-flex;align-items:center;text-decoration:none;color:inherit">Guide</a>
-    <button class="btn" id="openHist">History</button>
-    <button class="btn" id="openWork">Sessions</button>
+    <div class="pb-title"><span class="pb-k">Session</span><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span></div>
+    <div class="pb-acts">
+      <button class="btn" id="openWork">Sessions</button>
+      <button class="btn" id="openHist">History</button>
+      <a class="btn" href="/studio/guide/" id="guideLink">Guide</a>
+    </div>
   </div>
   <div class="inst" id="inst" hidden>
     <div class="inst-ic" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -380,11 +447,12 @@ body.np-on main{padding-bottom:72px}
 
   <div class="transport">
     <button class="play" id="play" aria-label="Play"><svg viewBox="0 0 24 24" id="playIcon"><path d="M7 4l13 8-13 8z"/></svg></button>
-    <div class="ctl"><label>Tempo <b id="bpmV">100</b></label><input type="range" id="bpm" min="60" max="160" value="100"></div>
-    <div class="ctl"><label>Swing <b id="swV">0%</b></label><input type="range" id="swing" min="0" max="60" value="0"></div>
-    <div class="seg" id="len"><button data-n="12">12</button><button data-n="16" class="on">16</button></div>
-    <button class="btn" id="undo" disabled>Undo</button>
-    <button class="btn" id="redo" disabled>Redo</button>
+    <div class="ctl"><label>Tempo <b id="bpmV">100</b></label><input type="range" id="bpm" min="60" max="160" value="100" aria-label="Tempo"></div>
+    <div class="ctl"><label>Swing <b id="swV">0%</b></label><input type="range" id="swing" min="0" max="60" value="0" aria-label="Swing"></div>
+  </div>
+  <div class="tools">
+    <div class="seg" id="len" aria-label="Steps per bar"><button data-n="12">12</button><button data-n="16" class="on">16</button></div>
+    <div class="tgroup"><button class="btn ic" id="undo" disabled aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>Undo</button><button class="btn ic" id="redo" disabled aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg>Redo</button></div>
     <button class="btn" id="clear">Clear</button>
     <button class="btn primary" id="export" aria-expanded="false" aria-controls="expPanel">Export</button>
   </div>
@@ -583,7 +651,7 @@ body.np-on main{padding-bottom:72px}
 </main>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to pennio.studio.</h2>
-  <p id="obIntro">No password. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your work saves in this browser on this device, so download a backup from My work now and then.</p>
+  <p id="obIntro">No password. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your work saves in this browser on this device, so download a backup from Sessions now and then.</p>
   <form id="obForm" novalidate>
     <div class="field"><label for="obName">Your name</label><input id="obName" autocomplete="name" maxlength="60"></div>
     <div class="field"><label for="obEmail">Email</label><input id="obEmail" type="email" autocomplete="email" maxlength="120"></div>
@@ -1411,6 +1479,7 @@ const LAYER_DEFS=[
 ];
 function layerOn(d){ return d.kind==="drum"? !muted[d.id] : d.kind==="vox"? LAY.vox : d.kind==="full"? LAY.full : LAY.drum; }
 function layerAvail(d){ return d.kind==="drum" || (d.kind==="drumv"? !!drumBuf : !!rawBuf); }
+let layersAll=false;
 function renderLayers(){
   if(!layersEl) return;
   layersEl.innerHTML="";
@@ -1454,6 +1523,11 @@ function renderLayers(){
     });
     layersEl.appendChild(el);
   });
+  const items=[...layersEl.children];
+  if(items.length>6){ const avail=LAYER_DEFS.map(layerAvail);
+    items.forEach((el,i)=>{ if(!layersAll && i>=6 && !(i>=items.length-3 && avail[i])) el.hidden=true; });
+    const hid=items.filter(x=>x.hidden).length;
+    if(hid||layersAll){ const m=document.createElement("button"); m.className="btn more"; m.textContent= layersAll? "Show fewer layers" : "Show all "+items.length+" layers"; m.onclick=()=>{ layersAll=!layersAll; renderLayers(); }; layersEl.appendChild(m); } }
   if(typeof updateTake==="function") updateTake();
 }
 renderLayers();
@@ -2071,7 +2145,7 @@ async function newProject(){
 }
 document.getElementById("pname").oninput=()=>saveSoon();
 
-/* My work panel */
+/* Sessions panel */
 const workEl=document.getElementById("work");
 async function renderWork(){
   const prof=lsGet("ps.profile")||(await kvGet("profile"));
