@@ -624,6 +624,8 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 .nmb:has(.ilu-row){display:grid;grid-template-columns:auto 1fr;column-gap:6px;align-items:center}
 .nmb:has(.ilu-row) .ilu-row{grid-row:span 2;margin:0}
 @media (prefers-reduced-motion:reduce){.np-face .ilu-rip{animation:none}}
+.remixbar .btn.ic{width:auto;min-height:44px;padding:0 14px;font-size:13px;gap:6px}
+.remixbar .btn.ic svg{width:16px;height:16px}
 </style>
 </head>
 <body class="in-studio">
@@ -742,9 +744,11 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 
   <div class="card">
     <h3>Remix</h3>
-    <p>Each tap writes a new variation: drum hits move, the dùndún line shifts, and your vocal chops are reordered. Downbeats stay put so the groove holds. Undo, at the top, walks back any change, one step at a time.</p>
+    <p>Each tap writes a new variation: drum hits move, the dùndún line shifts, and your vocal chops are reordered. Downbeats stay put so the groove holds. Undo walks back one remix at a time; Redo brings it back.</p>
     <div class="remixbar">
       <button class="btn primary" id="remix">Remix</button>
+      <button class="btn ic" id="rxUndo" disabled aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Undo</span></button>
+      <button class="btn ic" id="rxRedo" disabled aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span>Redo</span></button>
       <span class="vmeta" id="ver" style="align-self:center;margin:0"></span>
     </div>
   </div>
@@ -1306,6 +1310,8 @@ function applySnap(s){
   if(s.lay) Object.assign(LAY,s.lay); if(s.tune) Object.assign(tuneV,s.tune); if(s.harm) Object.assign(H,s.harm); renderHarm(); restartTracks(); renderLayers(); setN(s.n||16);
 }
 undoBtn.onclick=()=>{ const s=hist.pop(); if(!s) return; redoStack.push(snap()); applySnap(s); undoBtn.disabled=!hist.length; redoBtn.disabled=false; markPresets(-1); saveSoon(); toast("Undone"); };
+/* Remix carries its own Undo and Redo: same history, mirrored state */
+[["rxUndo",undoBtn],["rxRedo",redoBtn]].forEach(([id,src])=>{ const b=document.getElementById(id); if(!b) return; b.onclick=()=>src.click(); const sync=()=>{ b.disabled=src.disabled; }; new MutationObserver(sync).observe(src,{attributes:true,attributeFilter:["disabled"]}); sync(); });
 redoBtn.onclick=()=>{ const s=redoStack.pop(); if(!s) return; hist.push(snap()); applySnap(s); undoBtn.disabled=false; redoBtn.disabled=!redoStack.length; markPresets(-1); saveSoon(); toast("Redone"); };
 
 /* ---------- grid UI ---------- */
