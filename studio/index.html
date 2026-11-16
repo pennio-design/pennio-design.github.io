@@ -3659,6 +3659,8 @@ function b64(buf){ let s="",u=new Uint8Array(buf); for(let i=0;i<u.length;i+=327
 function unb64(str){ const s=atob(str), u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u.buffer; }
 async function doBackup(only,projName){
   await saveNow();
+  await window.PennioDAWSession?.save?.();
+  window.PennioFilmWorkspace?.save?.();window.PennioWriteWorkspace?.save?.();
   if(!downloads){ toast("Download is not available in this view."); return; }
   const list= Array.isArray(only)? only : ((await allProjects())||[]);
   const data={app:"pennio.studio", version:2, at:new Date().toISOString(), profile:lsGet("ps.profile"), words:(await kvGet("words"))||lsGet("ps.words")||[],
@@ -4273,7 +4275,7 @@ document.getElementById("sylIn").oninput=sylRender;
       if(full&&full.blob){const playhead=Number(film.playhead)||0;useFilmBlob(full.blob,full.name,full.id,full.kind);film.playhead=playhead;saveFilm();}
     }catch(error){filmClipNote.textContent="Could not restore this project’s media: "+error.message;}
   }
-  window.PennioFilmWorkspace={restore:restoreFilmAsset};
+  window.PennioFilmWorkspace={restore:restoreFilmAsset,save:()=>{clearTimeout(filmTimer);saveFilm();}};
   window.addEventListener("pennio:film-media",event=>{
     const media=event.detail||{};if(!media.blob)return;
     useFilmBlob(media.blob,media.name,media.assetId,media.kind|| (media.blob.type.startsWith("audio/")?"audio":"video"));
@@ -4526,6 +4528,7 @@ document.getElementById("sylIn").oninput=sylRender;
     filmVideo.load();filmAudio.load();filmEmpty.hidden=false;
     filmClipNote.textContent="No media loaded. Choose a video clip or send audio from another Studio room.";
   }
+  window.PennioWriteWorkspace={save:()=>{clearTimeout(draftTimer);saveDraft();}};
   function switchRoomProject(project){
     clearTimeout(draftTimer);clearTimeout(filmTimer);saveDraft();saveFilm();
     activeRoomProjectId=project&&project.id||null;lastFilmPositionSaved=-1;
