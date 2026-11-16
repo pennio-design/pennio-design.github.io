@@ -1431,7 +1431,7 @@ A clear image or action.
             <label class="btn primary fr-file">Choose a clip<input id="filmFile" type="file" accept="video/*" aria-label="Choose a video clip"></label>
           </div>
         </div>
-        <div class="fr-privacy" id="filmClipNote" style="margin-top:8px">No clip loaded. Re-add it after a refresh; the video itself is not stored.</div>
+        <div class="fr-privacy" id="filmClipNote" style="margin-top:8px">No media loaded. Choose a video clip or send audio from another Studio room.</div>
       </div>
       <div class="fr-side">
         <label class="fr-logline"><span>Story note</span><textarea id="filmLogline" maxlength="1200" placeholder="What is changing in this story?"></textarea></label>
@@ -3034,14 +3034,21 @@ async function micTake(btn,label,maxSec,onDone,noteEl){
   ensureAudio();
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:true,autoGainControl:true}});
-    const r=new MediaRecorder(stream), chunks=[]; btn._rec=r; const t0=Date.now();
-    r.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
-    r.onstop=async()=>{ clearInterval(btn._t); stream.getTracks().forEach(t=>t.stop()); btn.textContent=label; btn._rec=null;
-      noteEl.textContent="Listening…";
-      try{ const ab=await new Blob(chunks,{type:r.mimeType||"audio/webm"}).arrayBuffer(); const b=await new Promise((res,rej)=>{ const p=ac.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); }); onDone(b); }
-      catch(err){ noteEl.textContent="That recording could not be read. Try again."; } };
-    r.start(); btn._t=setInterval(()=>{ const s=Math.floor((Date.now()-t0)/1000); btn.textContent="■ Stop · "+s+"s"; if(s>=maxSec) r.stop(); },250);
-  }catch(e){ btn.hidden=true; noteEl.textContent="Microphone is not available here. Use Add recording."; }
+    const r=new MediaRecorder(stream),chunks=[];btn._rec=r;const t0=Date.now();let resolveDone;
+    btn._recDone=new Promise(resolve=>{resolveDone=resolve;});
+    r.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+    r.onstop=async()=>{clearInterval(btn._t);stream.getTracks().forEach(t=>t.stop());btn.textContent=label;btn._rec=null;noteEl.textContent="Listening…";
+      try{const recordingBlob=new Blob(chunks,{type:r.mimeType||"audio/webm"}),ab=await recordingBlob.arrayBuffer();const b=await new Promise((res,rej)=>{const p=ac.decodeAudioData(ab,res,rej);if(p&&p.then)p.then(res,rej);});const mediaProjectId=activeWorkspaceAyanProjectId||window.PennioWorkspace?.activeProjectId||"__studio_default__";if(mediaProjectId==="__studio_default__"||window.PennioWorkspace?.getProject?.(mediaProjectId))window.dispatchEvent(new CustomEvent("pennio:workspace-media-save",{detail:{blob:recordingBlob,name:"Àyàn voice take",kind:"audio",projectId:mediaProjectId}}));await onDone(b);}
+      catch(err){noteEl.textContent="That recording could not be read. Try again.";}
+      finally{resolveDone();btn._recDone=null;}
+    };
+    r.start();btn._t=setInterval(()=>{const elapsed=Math.floor((Date.now()-t0)/1000);btn.textContent="■ Stop · "+elapsed+"s";if(elapsed>=maxSec)r.stop();},250);
+  }catch(e){btn.hidden=true;noteEl.textContent="Microphone is not available here. Use Add recording.";}
+}
+async function stopWorkspaceRecordings(){
+ const buttons=[...document.querySelectorAll("button")].filter(button=>button._rec||button._recDone);
+ buttons.forEach(button=>{if(button._rec&&button._rec.state==="recording")button._rec.stop();});
+ await Promise.all(buttons.map(button=>button._recDone).filter(Boolean));
 }
 if(!inClaude && navigator.mediaDevices && window.MediaRecorder){
   const wc=document.getElementById("wcalRec"), wr=document.getElementById("wrecRec");
@@ -3369,7 +3376,7 @@ function beatFromVoice(fit){
 }
 
 /* ---------- storage: everything stays in this browser ---------- */
-let db=null, currentId=null, ready=false, saveT=null;
+let db=null, currentId=null, ready=false, saveT=null, activeWorkspaceAyanProjectId=null;
 function idb(){ return new Promise((res)=>{ try{ const r=indexedDB.open("pennio-studio",2); r.onupgradeneeded=()=>{ const d=r.result; const has=n=>d.objectStoreNames.contains(n);
     if(!has("projects")) d.createObjectStore("projects",{keyPath:"id"}); if(!has("kv")) d.createObjectStore("kv");
     if(!has("versions")){ const v=d.createObjectStore("versions",{keyPath:"id"}); v.createIndex("pid","pid"); } if(!has("audio")) d.createObjectStore("audio"); }; r.onsuccess=()=>res(r.result); r.onerror=()=>res(null); }catch(e){ res(null); } }); }
@@ -3432,6 +3439,8 @@ function newId(){ return "p"+Date.now().toString(36)+Math.random().toString(36).
 async function openWorkspaceMusicProject(project){
   if(!project||!project.id) return false;
   if(window.__pennioAyanBoot)await window.__pennioAyanBoot;
+  if(activeWorkspaceAyanProjectId===project.id)return true;
+  await stopWorkspaceRecordings();
   if(!db) db=await idb();
   if(!db) throw new Error("Local music session storage is unavailable.");
   if(ready&&currentId) await saveNow();
@@ -3441,14 +3450,30 @@ async function openWorkspaceMusicProject(project){
   if(!rec){
     const list=(await allProjects())||[];
     rec={id:newId(),name:project.name||"Untitled project",created:Date.now(),updated:Date.now(),state:null,audio:null};
-    await openProject(rec);loadPreset(0);ready=true;await saveNow();await kvSet(mapKey,rec.id);
+    await openProject(rec);loadPreset(0);ready=true;await saveNow();await kvSet(mapKey,rec.id);activeWorkspaceAyanProjectId=project.id;
   }else{
     rec.name=project.name||rec.name;
-    await openProject(rec);ready=true;await saveNow();
+    await openProject(rec);ready=true;await saveNow();activeWorkspaceAyanProjectId=project.id;
   }
   return true;
 }
-window.PennioAyanWorkspace={open:openWorkspaceMusicProject};
+async function removeWorkspaceMusicProject(projectId){
+  if(window.__pennioAyanBoot)await window.__pennioAyanBoot;
+  await stopWorkspaceRecordings();
+  const mapKey="workspace.ayan."+projectId,mapped=await kvGet(mapKey);
+  if(!mapped){await tx("kv","readwrite",st=>st.delete(mapKey));return false;}
+  if(currentId===mapped){
+    stopTracks();ready=false;currentId=null;activeWorkspaceAyanProjectId=null;currentAudio=null;rawBuf=proBuf=drumBuf=null;
+    lsSet("ps.current",null);await tx("kv","readwrite",st=>st.delete("current"));
+  }
+  const versions=(await tx("versions","readonly",st=>st.index("pid").getAll(mapped)))||[];
+  for(const version of versions){await tx("versions","readwrite",st=>st.delete(version.id));if(version.audioKey)await tx("audio","readwrite",st=>st.delete(version.audioKey));}
+  await tx("projects","readwrite",st=>st.delete(mapped));
+  await tx("kv","readwrite",st=>st.delete(mapKey));
+  try{if(typeof cloudDeleteProject==="function")await cloudDeleteProject(mapped);}catch(error){console.warn("Cloud session cleanup:",error);}
+  return true;
+}
+window.PennioAyanWorkspace={open:openWorkspaceMusicProject,remove:removeWorkspaceMusicProject,stopRecordings:stopWorkspaceRecordings};
 
 
 /* ---------- sessions and history: sittings, checkpoints, restore ---------- */
@@ -3614,9 +3639,9 @@ async function renderWork(){
   }
   }
   renderCloud();
-  let note= CLOUD_ON&&sbSess&&sbSess.user? "Projects are saved in this browser and in your PENNIO account. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Projects live in this browser only, and PENNIO cannot see or recover them"+(CLOUD_ON?" unless you turn on cloud saving":"")+". Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
+  let note= CLOUD_ON&&sbSess&&sbSess.user? "Àyàn sessions sync to your PENNIO account. Studio project metadata, DAW sessions, Film media and room drafts remain in this browser until you back them up. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Studio projects, DAW sessions, recordings and room drafts live in this browser only. Clearing site data or using a private window can remove them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
   try{ if(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted()) note+=" This browser has agreed to keep them."; }catch(e){}
-  if(!db) note="This browser is blocking storage here, so only the current beat is kept. Download a backup to keep your work.";
+  if(!db) note="This browser is blocking local storage here. Download a backup and use a supported browser before creating important work.";
   document.getElementById("storeNote").textContent=note;
   try{ const est=navigator.storage&&navigator.storage.estimate? await navigator.storage.estimate() : null; document.getElementById("storeUse").textContent= est&&est.usage!=null? fmtSize(est.usage)+" used in this browser" : ""; }catch(e){}
   renderBkLog();
@@ -3658,11 +3683,38 @@ document.getElementById("sessFind").oninput=()=>renderWork();
 function b64(buf){ let s="",u=new Uint8Array(buf); for(let i=0;i<u.length;i+=32768) s+=String.fromCharCode.apply(null,u.subarray(i,i+32768)); return btoa(s); }
 function unb64(str){ const s=atob(str), u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u.buffer; }
 async function doBackup(only,projName){
+  await window.PennioWorkspace?.flushRoomTransitions?.();
+  await window.PennioAyanWorkspace?.stopRecordings?.();
   await saveNow();
+  let studioSaveError=null;try{await window.PennioDAWSession?.save?.();}catch(error){studioSaveError=error&&error.message||"DAW session could not be flushed.";}
+  window.PennioFilmWorkspace?.save?.();window.PennioWriteWorkspace?.save?.();
   if(!downloads){ toast("Download is not available in this view."); return; }
   const list= Array.isArray(only)? only : ((await allProjects())||[]);
-  const data={app:"pennio.studio", version:1, at:new Date().toISOString(), profile:lsGet("ps.profile"), words:(await kvGet("words"))||lsGet("ps.words")||[],
+  const data={app:"pennio.studio", version:2, at:new Date().toISOString(), profile:lsGet("ps.profile"), words:(await kvGet("words"))||lsGet("ps.words")||[],
+    studioSaveError,
     projects:list.map(r=>({...r, audio:r.audio? {name:r.audio.name, b64:b64(r.audio.bytes)} : null}))};
+  try{
+  if(window.PennioWorkspace?.exportProjectData){
+    const allStudio=(()=>{try{return JSON.parse(localStorage.getItem("ps.studio.projects.v1")||"[]")}catch(e){return[]}})();
+    let studioProjects=allStudio;
+    if(Array.isArray(only)){
+      const sessionIds=new Set(list.map(r=>r.id));studioProjects=[];
+      for(const project of allStudio){const mapped=await kvGet("workspace.ayan."+project.id);if(mapped&&sessionIds.has(mapped))studioProjects.push(project);}
+    }
+    const studioProjectIds=studioProjects.map(project=>project.id),storageIds=Array.isArray(only)?studioProjectIds:[...studioProjectIds,"__studio_default__"];
+    await window.PennioWorkspace.flushMediaWrites?.();
+    const payload=await window.PennioWorkspace.exportProjectData(storageIds);
+    const studioAssets=[];for(const asset of payload.assets){const {blob,...meta}=asset;studioAssets.push({...meta,b64:b64(await blob.arrayBuffer())});}
+    const studioSessions=[];for(const session of payload.sessions){const {audio,...meta}=session,encoded=[];for(const item of audio||[])encoded.push({id:item.id,type:item.blob.type||"audio/wav",b64:b64(await item.blob.arrayBuffer())});studioSessions.push({...meta,audio:encoded});}
+    const roomData={},roomBases=["ps.film.room","ps.write.draft","ps.film.activeCue","ps.ayan.writeCue"];
+    for(const id of storageIds)for(const base of roomBases){const key=base+"."+(id==="__studio_default__"?"default":id),raw=localStorage.getItem(key);if(raw!==null){try{roomData[key]=JSON.parse(raw)}catch(e){roomData[key]=raw;}}}
+    for(const base of roomBases){const raw=localStorage.getItem(base);if(raw!==null){try{roomData[base]=JSON.parse(raw)}catch(e){roomData[base]=raw;}}}
+    const ayanMap={};for(const id of (Array.isArray(only)?studioProjects.map(project=>project.id):[...studioProjects.map(project=>project.id),"__studio_default__"])){const mapped=await kvGet("workspace.ayan."+id);if(mapped)ayanMap[id]=mapped;}
+    const active=localStorage.getItem("ps.studio.activeProject.v1");
+    data.studio={projects:studioProjects,activeProjectId:studioProjectIds.includes(active)?active:null,ayanMap,roomData,assets:studioAssets,sessions:studioSessions};
+  }
+  }catch(error){data.studioError=error&&error.message||"Studio project data could not be read.";}
+
   const vers=[], keys=new Set(); for(const r of list){ const vs=(await tx("versions","readonly",st=>st.index("pid").getAll(r.id)))||[]; vs.forEach(v=>{ vers.push(v); if(v.audioKey) keys.add(v.audioKey); }); }
   data.versions=vers; data.audio={}; for(const k of keys){ const bytes=await tx("audio","readonly",st=>st.get(k)); if(bytes) data.audio[k]=b64(bytes); }
   const now=new Date(), stamp=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+"-"+String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0");
@@ -3673,7 +3725,7 @@ async function doBackup(only,projName){
     const m=lsGet("ps.bkMap")||{}; list.forEach(r=>m[r.id]=Date.now()); lsSet("ps.bkMap",m);
     const log=lsGet("ps.bkLog")||[]; log.unshift({file:filename, at:Date.now(), n:list.length, names:list.map(r=>r.name), size:blob.size}); log.length=Math.min(log.length,20); lsSet("ps.bkLog",log);
     document.getElementById("bkpBar").hidden=true; toast((projName? "Saved the project "+projName+" as " : one? "Saved "+list[0].name+" as " : "Backup saved as ")+filename);
-    if(workEl.classList.contains("on")) renderWork(); }
+    if(workEl.classList.contains("on")) renderWork();if(data.studioSaveError)toast("The latest DAW changes could not be saved before backup: "+data.studioSaveError);if(data.studioError)toast("Studio data was not included: "+data.studioError); }
   catch(e){ toast("Backup was cancelled or blocked."); }
 }
 document.getElementById("backup").onclick=doBackup;
@@ -3681,16 +3733,18 @@ document.getElementById("backup").onclick=doBackup;
 /* backup reminders: after each new recording, and weekly while there is work worth keeping */
 const DAY=86400000;
 function agoText(t){ if(!t) return "never"; const d=Math.floor((Date.now()-t)/DAY); return d<1?"today": d===1?"yesterday": d+" days ago"; }
-function showBkp(title,text){ if(!downloads || (CLOUD_ON && sbSess && lsGet("ps.lastSync"))) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
-function nudgeAfterRecording(){ showBkp("New recording added", "It lives only in this browser until you back it up. Last backup: "+agoText(lsGet("ps.lastBackup"))+". PENNIO cannot recover it if it is lost."); }
+function showBkp(title,text){ if(!downloads) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
+function nudgeAfterRecording(){ showBkp("New recording added", "Your DAW sessions and project media live only in this browser until you back them up. Last backup: "+agoText(lsGet("ps.lastBackup"))+"."); }
 async function nudgeWeekly(){
   if(!document.getElementById("bkpBar").hidden) return;
   const last=lsGet("ps.lastBackup")||0, snooze=lsGet("ps.bkpSnooze")||0;
   if(Date.now()<snooze || Date.now()-last<7*DAY) return;
   const list=(await allProjects())||[];
-  const worth=list.some(r=>r.audio || (r.state&&r.state.pattern&&Object.values(r.state.pattern).some(a=>a.some(Boolean)) && r.updated>last));
+  const studioProjects=lsGet("ps.studio.projects.v1")||[];
+  let studioAssets=[];try{if(window.PennioWorkspace)studioAssets=await window.PennioWorkspace.listAssets();}catch(e){}
+  const worth=list.some(r=>r.audio || (r.state&&r.state.pattern&&Object.values(r.state.pattern).some(a=>a.some(Boolean)) && r.updated>last)) || studioProjects.length>0 || studioAssets.length>0;
   if(!worth) return;
-  showBkp("Time to back up", "Last backup: "+agoText(last)+". Your work lives only in this browser, and PENNIO cannot recover it if it is lost.");
+  showBkp("Time to back up", "Studio projects, DAW sessions and media are stored in this browser. Last backup: "+agoText(last)+".");
 }
 document.getElementById("bkpNow").onclick=doBackup;
 document.getElementById("bkpLater").onclick=()=>{ lsSet("ps.bkpSnooze",Date.now()+2*DAY); document.getElementById("bkpBar").hidden=true; };
@@ -3708,7 +3762,7 @@ function rpRender(){
     d.querySelector("small").append([kindName(r.kind),r.group].filter(Boolean).map(x=>x+" · ").join("")+"Last worked "+new Date(r.updated).toLocaleDateString([], {dateStyle:"medium"})+" · "+stateSummary(r.state,!!r.audio));
     el.appendChild(d); });
   rpBtn(); }
-function rpBtn(){ const n=rpPick.size; const b=document.getElementById("rpGo"); b.disabled=!n; b.textContent= n? "Restore "+n+" session"+(n===1?"":"s") : "Pick sessions to restore"; }
+function rpBtn(){ const n=rpPick.size,studio=rpData&&rpData.studio,hasStudio=!!(studio&&((studio.projects||[]).length||(studio.assets||[]).length||(studio.sessions||[]).length||Object.keys(studio.roomData||{}).length)); const b=document.getElementById("rpGo"); b.disabled=!n&&!hasStudio; b.textContent=n? "Restore "+n+" session"+(n===1?"":"s"):hasStudio?"Restore Studio projects and media":"Pick sessions to restore"; }
 document.getElementById("rpSort").onchange=rpRender;
 document.getElementById("rpAll").onclick=()=>{ const all=(rpData.projects||[]).map(r=>r.id); if(rpPick.size===all.length) rpPick.clear(); else all.forEach(id=>rpPick.add(id)); rpRender(); };
 document.getElementById("rpCancel").onclick=()=>{ rpData=null; document.getElementById("rPrev").hidden=true; };
@@ -3719,7 +3773,7 @@ document.getElementById("restoreFile").onchange=async e=>{
     rpPick=new Set((data.projects||[]).filter(r=>{ const m=rpHave.get(r.id); return !m || m.updated<r.updated; }).map(r=>r.id));
     const n=(data.projects||[]).length;
     document.getElementById("rpTitle").textContent=f.name;
-    document.getElementById("rpInfo").textContent="Made "+(data.at? new Date(data.at).toLocaleString([], {dateStyle:"medium", timeStyle:"short"}) : "at an unknown date")+" · "+n+" session"+(n===1?"":"s")+" · "+fmtSize(f.size)+". Sessions that are new or newer than yours are ticked.";
+    document.getElementById("rpInfo").textContent="Made "+(data.at? new Date(data.at).toLocaleString([], {dateStyle:"medium", timeStyle:"short"}) : "at an unknown date")+" · "+n+" session"+(n===1?"":"s")+" · "+((data.studio&&data.studio.projects||[]).length)+" Studio project"+((data.studio&&data.studio.projects||[]).length===1?"":"s")+" · "+((data.studio&&data.studio.assets||[]).length)+" media asset"+((data.studio&&data.studio.assets||[]).length===1?"":"s")+" · "+((data.studio&&data.studio.sessions||[]).length)+" DAW session"+((data.studio&&data.studio.sessions||[]).length===1?"":"s")+" · "+fmtSize(f.size)+". Sessions that are new or newer than yours are ticked.";
     document.getElementById("rPrev").hidden=false; rpRender(); document.getElementById("rPrev").scrollIntoView({block:"nearest"});
   }catch(err){ toast("That is not a pennio.studio backup."); }
 };
@@ -3732,9 +3786,24 @@ document.getElementById("rpGo").onclick=async()=>{
     for(const [k,v] of Object.entries(data.audio||{})) if(keys.has(k)) await tx("audio","readwrite",st=>st.put(unb64(v),k));
     for(const v of vers) await tx("versions","readwrite",st=>st.put(v));
     if(data.words&&data.words.length){ const cur=(await kvGet("words"))||[]; const merged=cur.concat(data.words.filter(w=>!cur.some(c=>c.text===w.text))); await kvSet("words",merged); lsSet("ps.words",merged); renderWords(); }
-    toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+" from the backup. Tap Continue on any of them.");
+    let studioAdded=0,studioMedia=0,studioSessions=0,studioProjectCount=0;
+    if(data.studio){
+      const studio=data.studio,local=lsGet("ps.studio.projects.v1")||[],merged=local.slice();studioProjectCount=(studio.projects||[]).length;
+      for(const project of studio.projects||[]){const i=merged.findIndex(x=>x.id===project.id);if(i<0){merged.push(project);studioAdded++;}else if((project.updated||project.created||0)>(merged[i].updated||merged[i].created||0))merged[i]=project;}
+      lsSet("ps.studio.projects.v1",merged);
+      for(const [key,value] of Object.entries(studio.roomData||{})){if(localStorage.getItem(key)===null)localStorage.setItem(key,JSON.stringify(value));}
+      for(const [projectId,sessionId] of Object.entries(studio.ayanMap||{})){if(keep.has(sessionId)||have.has(sessionId))await kvSet("workspace.ayan."+projectId,sessionId);}
+      if(window.PennioWorkspace?.importProjectData){
+        const assets=(studio.assets||[]).map(asset=>{const {b64:encoded,...meta}=asset;return {...meta,blob:new Blob([unb64(encoded)],{type:asset.type||""})};});
+        const sessions=(studio.sessions||[]).map(session=>({...session,audio:(session.audio||[]).map(item=>({id:item.id,blob:new Blob([unb64(item.b64)],{type:item.type||"audio/wav"})}))}));
+        const imported=await window.PennioWorkspace.importProjectData({assets,sessions});studioMedia=imported.assets;studioSessions=imported.sessions;
+      }
+      if(!localStorage.getItem("ps.studio.activeProject.v1")&&studio.activeProjectId){const activeProject=merged.find(project=>project.id===studio.activeProjectId);if(activeProject)window.PennioWorkspace?.setActiveProject(activeProject);}
+      window.PennioWorkspace?.refreshProjects?.();window.PennioDashboardProjectsRefresh?.();
+    }
+    toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+(studioProjectCount?" · "+studioProjectCount+" Studio project"+(studioProjectCount===1?"":"s")+" included":"")+(studioMedia?" · "+studioMedia+" media asset"+(studioMedia===1?"":"s"):"")+(studioSessions?" · "+studioSessions+" DAW session"+(studioSessions===1?"":"s"):"")+" from the backup. Tap Continue on any of them.");
     rpData=null; document.getElementById("rPrev").hidden=true; renderWork();
-  }catch(err){ toast("Something in that file could not be restored."); }
+  }catch(err){ toast("Restore stopped: "+(err&&err.message||"the file could not be read")+". Some earlier items may already have been restored."); }
 };
 
 /* words written in Write */
@@ -4227,8 +4296,8 @@ document.getElementById("sylIn").oninput=sylRender;
     saveFilm();
   }
   async function restoreFilmAsset(project){
-    const projectId=project&&project.id||window.PennioWorkspace?.activeProjectId;
-    if(!projectId||!window.PennioWorkspace)return;
+    const projectId=project&&project.id||window.PennioWorkspace?.activeProjectId||"__studio_default__";
+    if(!window.PennioWorkspace)return;
     try{
       const all=await window.PennioWorkspace.listAssets();
       const owned=all.filter(asset=>asset.projectId===projectId&&(asset.kind==="video"||asset.kind==="audio"));
@@ -4239,7 +4308,7 @@ document.getElementById("sylIn").oninput=sylRender;
       if(full&&full.blob){const playhead=Number(film.playhead)||0;useFilmBlob(full.blob,full.name,full.id,full.kind);film.playhead=playhead;saveFilm();}
     }catch(error){filmClipNote.textContent="Could not restore this project’s media: "+error.message;}
   }
-  window.PennioFilmWorkspace={restore:restoreFilmAsset};
+  window.PennioFilmWorkspace={restore:restoreFilmAsset,save:()=>{clearTimeout(filmTimer);saveFilm();}};
   window.addEventListener("pennio:film-media",event=>{
     const media=event.detail||{};if(!media.blob)return;
     useFilmBlob(media.blob,media.name,media.assetId,media.kind|| (media.blob.type.startsWith("audio/")?"audio":"video"));
@@ -4492,6 +4561,7 @@ document.getElementById("sylIn").oninput=sylRender;
     filmVideo.load();filmAudio.load();filmEmpty.hidden=false;
     filmClipNote.textContent="No media loaded. Choose a video clip or send audio from another Studio room.";
   }
+  window.PennioWriteWorkspace={save:()=>{clearTimeout(draftTimer);saveDraft();}};
   function switchRoomProject(project){
     clearTimeout(draftTimer);clearTimeout(filmTimer);saveDraft();saveFilm();
     activeRoomProjectId=project&&project.id||null;lastFilmPositionSaved=-1;
@@ -4502,7 +4572,7 @@ document.getElementById("sylIn").oninput=sylRender;
     film.cues=Array.isArray(film.cues)?film.cues:[];film.cues.forEach(c=>{if(!c.id)c.id=makeId();});
     filmTitle.value=film.title||"Untitled film";filmLogline.value=film.logline||"";
     renderCues();renderActiveCue();renderWriteCue();clearFilmPreview();
-    if(project&&document.getElementById("filmDesk")?.getClientRects().length)restoreFilmAsset(project);
+    if(document.getElementById("filmDesk")?.getClientRects().length)restoreFilmAsset(project||null);
   }
   window.addEventListener("pennio:workspace-project-open",event=>switchRoomProject(event.detail&&event.detail.project||null));
 })();
@@ -4556,7 +4626,22 @@ document.getElementById("sylIn").oninput=sylRender;
    const actions=document.createElement("div");actions.className="dash-project-actions";
    const open=document.createElement("button");open.textContent="Open";open.onclick=()=>{window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project:item}}));go(roomNames[item.room]?item.room:"ayan");if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;};
    const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>openModal(item);
-   const remove=document.createElement("button");remove.textContent="×";remove.setAttribute("aria-label","Delete "+item.name);remove.onclick=()=>{if(confirm('Delete "'+item.name+'" from this device?')){write(read().filter(x=>x.id!==item.id));renderProjects();}};
+   const remove=document.createElement("button");remove.textContent="×";remove.setAttribute("aria-label","Delete "+item.name);remove.onclick=async()=>{
+    if(!confirm('Delete "'+item.name+'" and its recordings, DAW tracks, drafts and Film media from this device?'))return;
+    remove.disabled=true;
+    window.PennioWorkspace?.beginProjectDeletion(item.id);
+    try{
+      if(window.PennioWorkspace?.activeProjectId===item.id)window.PennioWorkspace.setActiveProject(null);
+      await window.PennioWorkspace?.flushRoomTransitions?.();
+      await window.PennioDAWSession?.flush?.();
+      await window.PennioAyanWorkspace?.stopRecordings?.();
+      await window.PennioWorkspace?.deleteProjectData(item.id);
+      await window.PennioAyanWorkspace?.remove(item.id);
+      ["ps.film.room","ps.write.draft","ps.film.activeCue","ps.ayan.writeCue"].forEach(base=>{try{localStorage.removeItem(base+"."+item.id);}catch(e){}});
+      write(read().filter(x=>x.id!==item.id));renderProjects();window.PennioWorkspace?.refreshProjects?.();
+      window.PennioWorkspace?.finishProjectDeletion(item.id);
+    }catch(error){window.PennioWorkspace?.cancelProjectDeletion(item.id);remove.disabled=false;alert("Project deletion was interrupted: "+error.message+". Check your backup before trying again.");}
+   };
    actions.append(open,edit,remove);row.append(mark,copy,actions);projects.append(row);
   });
  }
@@ -4565,6 +4650,7 @@ document.getElementById("sylIn").oninput=sylRender;
  $("dashStartSound").onclick=()=>{go("ayan");setTimeout(()=>{const target=$("voiceCard");if(target)target.scrollIntoView({behavior:"smooth",block:"start"});},100);};
  $("dashHelp").onclick=()=>{go("ayan");const guide=$("guideLink");if(guide)guide.click();};
  renderProjects();filterRooms();
+ window.PennioDashboardProjectsRefresh=renderProjects;
 })();;
 
 </script>
