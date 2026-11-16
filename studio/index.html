@@ -4386,7 +4386,7 @@ document.getElementById("sylIn").oninput=sylRender;
     renderActiveCue();
   });
   function renderActiveCue(){
-    const active=safeRead(roomKey(CUE_KEY)),box=$("filmCueContext");
+    const active=readRoomData(CUE_KEY,null),box=$("filmCueContext");
     box.hidden=!active;
     if(active){
       $("filmCueName").textContent=(active.title||"Untitled cue")+" · "+(active.film||"Film");
@@ -4394,7 +4394,7 @@ document.getElementById("sylIn").oninput=sylRender;
     }
   }
   function renderWriteCue(){
-    const active=safeRead(roomKey("ps.ayan.writeCue")),box=$("writeAyanContext");
+    const active=readRoomData("ps.ayan.writeCue",null),box=$("writeAyanContext");
     box.hidden=!active;
     if(active){$("writeAyanName").textContent=active.title||"Untitled draft";$("writeAyanLine").textContent="“"+(active.text||"")+"”";}
   }
