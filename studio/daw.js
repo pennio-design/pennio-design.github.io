@@ -50,7 +50,7 @@ async function loadSessionFor(projectId){
    for(const meta of rec.tracks){
     const blob=stored.get(meta.audioKey);if(!blob)continue;
     try{
-     const buffer=await context().decodeAudioData(await blob.arrayBuffer());
+     const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error("Web Audio is unavailable.");if(!state.ctx)state.ctx=new C();const buffer=await state.ctx.decodeAudioData(await blob.arrayBuffer());
      const start=Math.max(0,Math.min(buffer.duration,Number(meta.start)||0));
      const end=Math.max(start,Math.min(buffer.duration,Number.isFinite(+meta.end)?+meta.end:buffer.duration));
      state.tracks.push({id:meta.id,name:meta.name||"Audio",buffer,start,end,gain:Number.isFinite(+meta.gain)?+meta.gain:1,pan:Number.isFinite(+meta.pan)?+meta.pan:0,timeline:Math.max(0,Number(meta.timeline)||0),mute:!!meta.mute,solo:!!meta.solo});
@@ -97,6 +97,8 @@ $("dawDelete").onclick=()=>{const t=selected();if(!t)return;snapshot();state.tra
 $("dawNormalize").onclick=()=>{const t=selected();if(!t)return;snapshot();const copy=context().createBuffer(t.buffer.numberOfChannels,t.buffer.length,t.buffer.sampleRate);let peak=0;for(let c=0;c<t.buffer.numberOfChannels;c++){const src=t.buffer.getChannelData(c),dst=copy.getChannelData(c);for(let i=0;i<src.length;i++){dst[i]=src[i];peak=Math.max(peak,Math.abs(src[i]));}}if(peak>0){const factor=.95/peak;for(let c=0;c<copy.numberOfChannels;c++){const d=copy.getChannelData(c);for(let i=0;i<d.length;i++)d[i]*=factor;}}t.buffer=copy;t.end=Math.min(t.end,copy.duration);render();status("Selected track normalized to -0.45 dBFS.");};
 document.querySelectorAll("[data-fx]").forEach(b=>b.onclick=()=>{const k=b.dataset.fx;state.effects[k]=!state.effects[k];b.classList.toggle("primary",state.effects[k]);status(k+" "+(state.effects[k]?"on":"off")+" for playback and mix.");queueSessionSave();});
 $("dawMic").onclick=async()=>{if(state.recorder&&state.recorder.state==="recording"){state.recorder.stop();$("dawMic").textContent="Record voice";return;}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});state.recordStream=stream;state.recordChunks=[];const mime=MediaRecorder.isTypeSupported("audio/webm;codecs=opus")?"audio/webm;codecs=opus":"";state.recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});state.recorder.ondataavailable=e=>{if(e.data.size)state.recordChunks.push(e.data);};state.recorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(state.recordChunks,{type:state.recorder.mimeType||"audio/webm"});try{const buf=await context().decodeAudioData(await blob.arrayBuffer());addBuffer(buf,"Voice take");status("Voice take recorded.");}catch(e){status("Recording could not be decoded on this browser.");}};state.recorder.start();$("dawMic").textContent="■ Stop recording";status("Recording from microphone…");}catch(e){status("Microphone unavailable: "+e.message);}};
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"){clearTimeout(sessionSaveTimer);saveSessionNow().catch(()=>{});}});
+window.addEventListener("pagehide",()=>{clearTimeout(sessionSaveTimer);saveSessionNow().catch(()=>{});});
 window.addEventListener("beforeunload",()=>{clearTimeout(sessionSaveTimer);saveSessionNow().catch(()=>{});stop();});
 
 // Timeline selection: drag across a waveform to mark an exact passage.
