@@ -102,6 +102,7 @@ async function refreshAssets(){
    const action=document.createElement("button");action.type="button";action.textContent=asset.kind==="video"?"Film":"Àyàn";
    action.addEventListener("click",async()=>{
     const full=await getAsset(asset.id);if(!full)return;
+    if(deletingProjects.has(full.projectId))return;
     const project=projectById(full.projectId);
     if(project)setActive(project);
     else if(full.projectId==="__studio_default__")setActive(null);
