@@ -202,6 +202,7 @@ async function importProjectData(data){
 window.PennioWorkspace={
  get activeProjectId(){return activeProjectId;},
  setActiveProject:setActive,
+ getProject:projectById,
  listAssets:()=>getAssets(),
  getAsset,
  addAsset:storeAsset,
