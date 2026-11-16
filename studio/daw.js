@@ -1,6 +1,7 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
+if(!document.getElementById("dawSessionStyle")){const style=document.createElement("style");style.id="dawSessionStyle";style.textContent="#dawRoom.session-loading{opacity:.72;pointer-events:none;}";document.head.append(style);}
 const state={tracks:[],selected:null,ctx:null,sources:[],playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[]};
 const status=(s)=>{const el=$("dawStatus");if(el)el.textContent=s;};
 const duration=()=>state.tracks.reduce((m,t)=>Math.max(m,(t.timeline||0)+t.end-t.start),0);
@@ -41,7 +42,7 @@ async function saveSessionNow(projectOverride){
 }
 async function loadSessionFor(projectId){
  if(!window.PennioWorkspace?.loadSession)return;
- sessionRestoring=true;clearTimeout(sessionSaveTimer);stop();
+ sessionRestoring=true;clearTimeout(sessionSaveTimer);const host=document.getElementById("dawRoom");host?.classList.add("session-loading");status("Restoring project session…");stop();
  try{
   const rec=await window.PennioWorkspace.loadSession(projectId||SESSION_DEFAULT);
   state.tracks=[];state.selected=null;state.effects={eq:false,compressor:false,reverb:false,echo:false};state.offset=0;state.range=null;sessionBlobCache.clear();
@@ -63,13 +64,14 @@ async function loadSessionFor(projectId){
   document.querySelectorAll("[data-fx]").forEach(button=>button.classList.toggle("primary",!!state.effects[button.dataset.fx]));
   render();$("dawClock").textContent=fmt(state.offset);status(rec?"Project session restored.":"A new DAW session is ready for this project.");
  }catch(e){status("Could not restore this project session: "+e.message);}
- finally{sessionRestoring=false;}
+ finally{sessionRestoring=false;document.getElementById("dawRoom")?.classList.remove("session-loading");}
 }
 window.PennioDAWSession={save:async()=>{await sessionSwitchQueue;return saveSessionNow();}};
 window.addEventListener("pennio:workspace-project-open",e=>{
  const detail=e.detail||{},previous=detail.previousProjectId??SESSION_DEFAULT,next=detail.project?.id||SESSION_DEFAULT;
  if(previous===next)return;
  sessionSwitchQueue=sessionSwitchQueue.then(async()=>{
+  document.getElementById("dawRoom")?.classList.add("session-loading");status("Switching project session…");
   clearTimeout(sessionSaveTimer);
   try{await saveSessionNow(previous);}catch(err){status("Previous session could not be saved: "+err.message);}
   await loadSessionFor(next);
