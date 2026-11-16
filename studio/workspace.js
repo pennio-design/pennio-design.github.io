@@ -10,7 +10,7 @@ function openDB(){
  dbPromise=new Promise((resolve,reject)=>{
   if(!window.indexedDB){reject(Error("This browser does not support local media storage."));return;}
   const req=indexedDB.open("pennio-studio-workspace",2);
-  req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains("assets")){const store=d.createObjectStore("assets",{keyPath:"id"});store.createIndex("projectId","projectId",{unique:false});store.createIndex("created","created",{unique:false});}if(!d.objectStoreNames.contains("sessions"))d.createObjectStore("sessions",{keyPath:"projectId"});};
+  req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains("assets")){const store=d.createObjectStore("assets",{keyPath:"id"});store.createIndex("projectId","projectId",{unique:false});store.createIndex("created","created",{unique:false});}if(!d.objectStoreNames.contains("sessions"))d.createObjectStore("sessions",{keyPath:"projectId"});if(!d.objectStoreNames.contains("sessionAudio")){const a=d.createObjectStore("sessionAudio",{keyPath:"id"});a.createIndex("projectId","projectId",{unique:false});}};
   req.onsuccess=()=>{const db=req.result;db.onversionchange=()=>{db.close();dbPromise=null;};resolve(db);};req.onerror=()=>reject(req.error||Error("Could not open Studio media storage."));
  });
  return dbPromise;
@@ -111,10 +111,18 @@ function refreshProjectSelect(){
 }
 async function saveSession(projectId,session){
  if(!projectId||!session)return false;
- const d=await openDB();
+ const d=await openDB(),audio=Array.isArray(session.audio)?session.audio:[];
+ const record=Object.assign({projectId,updated:Date.now()},session);delete record.audio;
  return new Promise((resolve,reject)=>{
-  const tx=d.transaction("sessions","readwrite");
-  tx.objectStore("sessions").put(Object.assign({projectId,updated:Date.now()},session));
+  const tx=d.transaction(["sessions","sessionAudio"],"readwrite");
+  tx.objectStore("sessions").put(record);
+  const audioStore=tx.objectStore("sessionAudio"),req=audioStore.index("projectId").getAll(projectId);
+  req.onsuccess=()=>{
+   const keep=new Set(audio.map(x=>x.id));
+   (req.result||[]).forEach(x=>{if(!keep.has(x.id))audioStore.delete(x.id);});
+   audio.forEach(x=>audioStore.put({id:x.id,projectId,blob:x.blob}));
+  };
+  req.onerror=()=>{try{tx.abort();}catch(e){}};
   tx.oncomplete=()=>resolve(true);
   tx.onerror=()=>reject(tx.error||Error("Could not save this session."));
   tx.onabort=()=>reject(tx.error||Error("Session save was interrupted."));
@@ -124,16 +132,23 @@ async function loadSession(projectId){
  if(!projectId)return null;
  const d=await openDB();
  return new Promise((resolve,reject)=>{
-  const req=d.transaction("sessions","readonly").objectStore("sessions").get(projectId);
-  req.onsuccess=()=>resolve(req.result||null);
-  req.onerror=()=>reject(req.error||Error("Could not open this session."));
+  const tx=d.transaction(["sessions","sessionAudio"],"readonly");
+  const req=tx.objectStore("sessions").get(projectId),audioReq=tx.objectStore("sessionAudio").index("projectId").getAll(projectId);
+  let record=null,audio=null;
+  req.onsuccess=()=>{record=req.result||null;if(audio!==null&&record)resolve(Object.assign(record,{audio}));};
+  audioReq.onsuccess=()=>{audio=audioReq.result||[];if(record)resolve(Object.assign(record,{audio}));};
+  tx.onerror=()=>reject(tx.error||Error("Could not open this session."));
+  tx.oncomplete=()=>{if(!record)resolve(null);};
  });
 }
 async function deleteSession(projectId){
  if(!projectId)return;
  const d=await openDB();
  return new Promise((resolve,reject)=>{
-  const tx=d.transaction("sessions","readwrite");tx.objectStore("sessions").delete(projectId);
+  const tx=d.transaction(["sessions","sessionAudio"],"readwrite");
+  tx.objectStore("sessions").delete(projectId);
+  const req=tx.objectStore("sessionAudio").index("projectId").getAllKeys(projectId);
+  req.onsuccess=()=>req.result.forEach(key=>tx.objectStore("sessionAudio").delete(key));
   tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
  });
 }
