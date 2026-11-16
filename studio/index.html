@@ -2036,39 +2036,88 @@ expBtn.onclick=()=>{ expPanel.hidden=!expPanel.hidden; expBtn.setAttribute("aria
 document.querySelectorAll("#expFmt button").forEach(b=>b.onclick=()=>{ expFmt=b.dataset.f; document.querySelectorAll("#expFmt button").forEach(x=>x.classList.toggle("on",x===b)); document.getElementById("expNote").textContent= expFmt==="mp3"? "Small file, right for WhatsApp and Instagram." : "Full quality, for a producer or another music app."; });
 swLoud.onclick=()=>{ const on=!swLoud.classList.contains("on"); swLoud.classList.toggle("on",on); swLoud.setAttribute("aria-checked",String(on)); };
 if(inClaude) expShare.hidden=true;
+function closeExportPanel(){
+  expPanel.hidden=true;
+  expBtn.setAttribute("aria-expanded","false");
+}
+function savedWhatsApp(){
+  try{
+    const digits=String(sessionStorage.getItem("ps.whatsapp")||"").replace(/\D/g,"");
+    const normalized=/^0\d{10}$/.test(digits)?"234"+digits.slice(1):digits.length===10?"234"+digits:digits;
+    return normalized.length>=10&&normalized.length<=15?normalized:"";
+  }catch(e){return "";}
+}
+function addPennioCredit(blob){
+  const enc=new TextEncoder();
+  const makeFrame=(id,value)=>{
+    const text=enc.encode(value),data=new Uint8Array(text.length+1);data[0]=3;data.set(text,1);
+    const frame=new Uint8Array(10+data.length);
+    for(let i=0;i<4;i++)frame[i]=id.charCodeAt(i);
+    const n=data.length;frame[4]=(n>>>24)&255;frame[5]=(n>>>16)&255;frame[6]=(n>>>8)&255;frame[7]=n&255;
+    frame.set(data,10);return frame;
+  };
+  const frames=[makeFrame("TENC","PENNIO Studio"),makeFrame("TCOP","Created with PENNIO Studio · https://pennio.agency/studio/")];
+  const size=frames.reduce((sum,frame)=>sum+frame.length,0),body=new Uint8Array(size);
+  let offset=0;for(const frame of frames){body.set(frame,offset);offset+=frame.length;}
+  const header=new Uint8Array([73,68,51,3,0,0,(size>>>21)&127,(size>>>14)&127,(size>>>7)&127,size&127]);
+  return new Blob([header,body,blob],{type:"audio/mpeg"});
+}
+async function saveExport(x){
+  try{await downloads.save({filename:x.name,data:x.blob});}
+  catch(e){await downloads.save({filename:x.name,data:new Uint8Array(await x.blob.arrayBuffer())});}
+}
 async function buildExport(){
   const buf=await renderMix(); let info="";
   if(swLoud.classList.contains("on")){ const m=await matchLoudness(buf); info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
-  const isMp3=expFmt==="mp3"; const blob= isMp3? await mp3(buf) : new Blob([wav(buf)],{type:"audio/wav"});
+  const isMp3=expFmt==="mp3"; let blob=isMp3?await mp3(buf):new Blob([wav(buf)],{type:"audio/wav"});
+  if(isMp3)blob=addPennioCredit(blob);
   const name="pennio-studio-"+(new Date().toISOString().slice(0,10))+(isMp3?".mp3":".wav");
-  info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB.";
+  info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+(isMp3?" · Credit: PENNIO Studio.":"");
   return {blob,name,info};
 }
 expGo.onclick=async()=>{
   if(!downloads){ toast("Export is not available in this view."); return; }
   expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…";
   try{ const x=await buildExport(); expMeta.textContent=x.info;
-    try{ await downloads.save({filename:x.name, data:x.blob}); }catch(e1){ await downloads.save({filename:x.name, data:new Uint8Array(await x.blob.arrayBuffer())}); }
-    toast("Track exported."); }
+    await saveExport(x);
+    toast("Track exported."); closeExportPanel(); }
   catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : "Export was cancelled or blocked."); }
   expGo.disabled=expShare.disabled=false; expGo.textContent="Download";
 };
 expShare.onclick=async()=>{
-  expGo.disabled=expShare.disabled=true; expShare.textContent="Rendering…";
-  const text="I made this on pennio.studio. Make yours free: https://pennio.agency/studio/";
+  expGo.disabled=expShare.disabled=true;expShare.textContent="Rendering…";
+  const text="Made with PENNIO Studio. Bring your voice. Leave with a record: https://pennio.agency/studio/";
+  const phone=savedWhatsApp();
+  let whatsappWindow=null;
+  if(phone)whatsappWindow=window.open("about:blank","_blank");
   try{
-    const x=await buildExport(); expMeta.textContent=x.info;
+    const x=await buildExport();expMeta.textContent=x.info;
     const file=new File([x.blob],x.name,{type:x.blob.type});
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      try{ await navigator.share({files:[file],text}); toast("Pick WhatsApp in the share sheet."); }
-      catch(e){ if(e&&e.name!=="AbortError") throw e; }
-    } else {
-      if(downloads){ try{ await downloads.save({filename:x.name, data:x.blob}); }catch(e){} }
-      window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank","noopener");
-      toast("Your track downloaded. Attach it in WhatsApp with the paperclip.");
+    if(phone){
+      await saveExport(x);
+      const url="https://wa.me/"+phone+"?text="+encodeURIComponent(text);
+      if(whatsappWindow)whatsappWindow.location.href=url;
+      else window.location.href=url;
+      toast("MP3 saved. WhatsApp opened to your number; attach the file and send it.");
+      closeExportPanel();
+    }else if(navigator.canShare&&navigator.canShare({files:[file]})){
+      try{
+        await navigator.share({files:[file],text});
+        toast("Choose WhatsApp and send the PENNIO-credited MP3.");
+        closeExportPanel();
+      }catch(e){if(e&&e.name!=="AbortError")throw e;}
+    }else{
+      await saveExport(x);
+      const url="https://wa.me/?text="+encodeURIComponent(text);
+      window.open(url,"_blank","noopener");
+      toast("MP3 saved. Choose your WhatsApp chat, attach the file, and send it.");
+      closeExportPanel();
     }
-  }catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : "Sharing did not work here. Use Download, then send the file in WhatsApp."); }
-  expGo.disabled=expShare.disabled=false; expShare.textContent="Share to WhatsApp";
+  }catch(e){
+    if(whatsappWindow)whatsappWindow.close();
+    toast(e&&e.message==="encoder"?"The MP3 encoder did not load. Check your connection, or export WAV.":"Sharing did not work here. Use Download, then send the file in WhatsApp.");
+  }
+  expGo.disabled=expShare.disabled=false;expGo.textContent="Download";expShare.textContent="Share to WhatsApp";
 };
 
 /* ---------- voice: load, slice, enhance ---------- */
