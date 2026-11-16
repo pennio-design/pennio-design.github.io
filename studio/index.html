@@ -3429,6 +3429,27 @@ async function openProject(rec,keepSitting){
 }
 function newId(){ return "p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
+async function openWorkspaceMusicProject(project){
+  if(!project||!project.id) return false;
+  if(!db) db=await idb();
+  if(!db) throw new Error("Local music session storage is unavailable.");
+  if(ready&&currentId) await saveNow();
+  const mapKey="workspace.ayan."+project.id;
+  const mapped=await kvGet(mapKey);
+  let rec=mapped?await tx("projects","readonly",st=>st.get(mapped)):null;
+  if(!rec){
+    const list=(await allProjects())||[];
+    rec={id:newId(),name:project.name||"Untitled project",created:Date.now(),updated:Date.now(),state:null,audio:null};
+    await openProject(rec);loadPreset(0);ready=true;await saveNow();await kvSet(mapKey,rec.id);
+  }else{
+    rec.name=project.name||rec.name;
+    await openProject(rec);ready=true;await saveNow();
+  }
+  return true;
+}
+window.PennioAyanWorkspace={open:openWorkspaceMusicProject};
+
+
 /* ---------- sessions and history: sittings, checkpoints, restore ---------- */
 let sitting={start:0,end:0}, edits=0, editsAtCk=0, lastCkAt=0;
 function startSitting(){ sitting={start:Date.now(),end:Date.now()}; edits=0; editsAtCk=0; lastCkAt=Date.now(); }
