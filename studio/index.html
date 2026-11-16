@@ -4233,6 +4233,7 @@ document.getElementById("sylIn").oninput=sylRender;
       const owned=all.filter(asset=>asset.projectId===projectId&&(asset.kind==="video"||asset.kind==="audio"));
       const chosen=owned.find(asset=>asset.id===film.clipAssetId)||owned.sort((a,b)=>b.created-a.created)[0];
       if(!chosen)return;
+      if(chosen.id===film.clipAssetId&&videoUrl)return;
       const full=await window.PennioWorkspace.getAsset(chosen.id);
       if(full&&full.blob){const playhead=Number(film.playhead)||0;useFilmBlob(full.blob,full.name,full.id,full.kind);film.playhead=playhead;saveFilm();}
     }catch(error){filmClipNote.textContent="Could not restore this project’s media: "+error.message;}
