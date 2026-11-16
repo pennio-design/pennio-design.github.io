@@ -874,6 +874,19 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
 .daw-status{font-size:12px;color:var(--mute);min-height:16px}
 .daw-recording{color:#ff8068}
 @media(max-width:620px){.daw-track{grid-template-columns:1fr}.daw-track-head{border-right:0;border-bottom:1px solid var(--line)}.daw-track-wave canvas{height:82px;min-height:82px}.daw-trim{grid-template-columns:1fr}.daw-head{align-items:flex-start}}
+/* Voice-to-instrument composer */
+.daw-composer{margin-top:16px;padding:16px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:14px;background:var(--panel,rgba(255,255,255,.025))}
+.daw-composer-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:13px}
+.daw-composer-head h4{font-size:15px;margin:0 0 4px}.daw-composer-head p,.daw-compose-card p{font-size:12px;line-height:1.5;color:var(--mute);margin:0}
+.daw-composer-tag{font-size:10px;color:var(--orange);border:1px solid currentColor;border-radius:20px;padding:5px 8px;white-space:nowrap}
+.daw-composer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.daw-compose-card{padding:14px;border:1px solid var(--line,rgba(255,255,255,.1));border-radius:11px;display:flex;flex-direction:column;align-items:flex-start;gap:9px;min-width:0}
+.daw-compose-icon{font-size:22px;color:var(--orange)}.daw-compose-card h5{font-size:13px;margin:0}
+.daw-compose-card small{font-size:11px;line-height:1.5;color:var(--mute)}
+.daw-compose-option{font-size:11px;color:var(--mute);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.daw-compose-option select{background:transparent;color:inherit;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:6px;padding:6px}
+.daw-composer-status{font-size:11px;line-height:1.5;color:var(--mute);margin:12px 0 0}
+@media(max-width:620px){.daw-composer{padding:12px}.daw-composer-grid{grid-template-columns:1fr}.daw-composer-head{flex-direction:column}}
 </style>\n</head>
 <body class="in-studio">
 <header>
@@ -1018,6 +1031,25 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
   <div class="daw-bottom"><div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button><button class="btn" id="dawNormalize">Normalize selected</button><button class="btn" id="dawDelete">Delete selected</button></div>
     <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
     <div class="daw-status">Audio is processed in your browser. Imported tracks are not uploaded. Export creates a stereo WAV mix.</div>
+  </div>
+  <div class="daw-composer" id="dawComposer">
+    <div class="daw-composer-head"><div><h4>Hum &amp; Beatbox composer</h4><p>Turn a voice idea into playable instrumental tracks.</p></div><span class="daw-composer-tag">Voice to instrument</span></div>
+    <div class="daw-composer-grid">
+      <div class="daw-compose-card">
+        <div class="daw-compose-icon">♪</div><h5>Hum a melody</h5>
+        <p>Hum one clear note at a time. Àyàn will detect the pitch contour and build a playable melody.</p>
+        <button class="btn primary" id="dawHum">Record melody</button>
+        <label class="daw-compose-option">Harmony interval <select id="dawHarmony"><option value="4">Major third</option><option value="3">Minor third</option><option value="7">Perfect fifth</option><option value="0">Melody only</option></select></label>
+        <small>Best with a steady hum, little background noise and a single voice.</small>
+      </div>
+      <div class="daw-compose-card">
+        <div class="daw-compose-icon">▥</div><h5>Beatbox a rhythm</h5>
+        <p>Make kick, snare and hi-hat sounds with your mouth. Àyàn will map the detected hits to a drum track.</p>
+        <button class="btn primary" id="dawBeatbox">Record beatbox</button>
+        <small>Try “b-ts-k-ts” with clear gaps between hits. A short, steady pattern works best.</small>
+      </div>
+    </div>
+    <p class="daw-composer-status" id="dawComposerStatus" aria-live="polite">Your generated melody, harmony and drums will appear as separate tracks above.</p>
   </div>
 </section>
 
