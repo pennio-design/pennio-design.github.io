@@ -234,8 +234,8 @@ window.addEventListener("pennio:workspace-project-open",e=>{
  const p=e.detail&&e.detail.project,previous=activeProjectId;
  if(e.detail&&!Object.prototype.hasOwnProperty.call(e.detail,"previousProjectId"))e.detail.previousProjectId=previous;
  setActive(p||null,true);refreshProjectSelect();
- if(document.getElementById("dawRoom")?.getClientRects().length)window.PennioAyanWorkspace?.open(p||{id:"__studio_default__",name:"Studio workspace",room:"ayan"}).catch(err=>console.warn("Àyàn project restore:",err));
- if(document.getElementById("filmDesk")?.getClientRects().length)window.PennioFilmWorkspace?.restore(p||null).catch(err=>console.warn("Film project restore:",err));
+ if(document.getElementById("dawRoom")?.getClientRects().length)roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(p||{id:"__studio_default__",name:"Studio workspace",room:"ayan"})).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
+ if(document.getElementById("filmDesk")?.getClientRects().length)roomSwitchPromise=Promise.resolve(window.PennioFilmWorkspace?.restore(p||null)).catch(err=>{console.warn("Film project restore:",err);throw err;});
 });
 document.addEventListener("click",e=>{
  const button=e.target.closest('nav button[data-v]');
