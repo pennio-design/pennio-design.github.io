@@ -4629,6 +4629,7 @@ document.getElementById("sylIn").oninput=sylRender;
     window.PennioWorkspace?.beginProjectDeletion(item.id);
     try{
       if(window.PennioWorkspace?.activeProjectId===item.id)window.PennioWorkspace.setActiveProject(null);
+      await window.PennioWorkspace?.flushRoomTransitions?.();
       await window.PennioDAWSession?.flush?.();
       await window.PennioAyanWorkspace?.stopRecordings?.();
       await window.PennioWorkspace?.deleteProjectData(item.id);
