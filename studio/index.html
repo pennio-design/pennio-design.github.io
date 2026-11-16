@@ -1001,7 +1001,8 @@ html[data-theme="light"] .daw-track-name::placeholder{color:#817a71}
 .daw-track-wave .daw-range-select.on{display:block}
 .daw-selection-note{margin:0;line-height:1.5}
 @media(max-width:620px){.daw-selection-actions .btn{flex:1 1 100%}}
-</style>\n</head>
+</style>
+</head>
 <body class="in-studio">
 <header>
   <div class="wrap bar">
@@ -1441,7 +1442,8 @@ A clear image or action.
   <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Add to Àyàn</button><button type="button" class="btn" id="studioRecFilm">Use in Film</button><button type="button" class="btn" id="studioRecExtract" hidden>Extract audio</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
   <p class="studio-rec-status" id="studioRecStatus" aria-live="polite">Your recording stays on this device until you save or use it.</p>
 </aside>
-<button type="button" class="studio-rec-launch" id="studioRecLaunch" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Record</button>\n<p class="foot"><a href="/studio/guide/" style="color:inherit">How to use pennio.studio</a> · pennio.studio by PENNIO</p>
+<button type="button" class="studio-rec-launch" id="studioRecLaunch" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Record</button>
+<p class="foot"><a href="/studio/guide/" style="color:inherit">How to use pennio.studio</a> · pennio.studio by PENNIO</p>
 </main>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to pennio.studio.</h2>
@@ -4435,5 +4437,7 @@ document.getElementById("sylIn").oninput=sylRender;
   button.addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light"));
 })();
 </script>
-<script src="/studio/daw.js" defer></script>\n<script src="/studio/recording.js" defer></script>\n</body>
+<script src="/studio/daw.js" defer></script>
+<script src="/studio/recording.js" defer></script>
+</body>
 </html>
