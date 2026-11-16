@@ -3034,14 +3034,21 @@ async function micTake(btn,label,maxSec,onDone,noteEl){
   ensureAudio();
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:true,autoGainControl:true}});
-    const r=new MediaRecorder(stream), chunks=[]; btn._rec=r; const t0=Date.now();
-    r.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
-    r.onstop=async()=>{ clearInterval(btn._t); stream.getTracks().forEach(t=>t.stop()); btn.textContent=label; btn._rec=null;
-      noteEl.textContent="Listening…";
-      try{ const ab=await new Blob(chunks,{type:r.mimeType||"audio/webm"}).arrayBuffer(); const b=await new Promise((res,rej)=>{ const p=ac.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); }); onDone(b); }
-      catch(err){ noteEl.textContent="That recording could not be read. Try again."; } };
-    r.start(); btn._t=setInterval(()=>{ const s=Math.floor((Date.now()-t0)/1000); btn.textContent="■ Stop · "+s+"s"; if(s>=maxSec) r.stop(); },250);
-  }catch(e){ btn.hidden=true; noteEl.textContent="Microphone is not available here. Use Add recording."; }
+    const r=new MediaRecorder(stream),chunks=[];btn._rec=r;const t0=Date.now();let resolveDone;
+    btn._recDone=new Promise(resolve=>{resolveDone=resolve;});
+    r.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+    r.onstop=async()=>{clearInterval(btn._t);stream.getTracks().forEach(t=>t.stop());btn.textContent=label;btn._rec=null;noteEl.textContent="Listening…";
+      try{const ab=await new Blob(chunks,{type:r.mimeType||"audio/webm"}).arrayBuffer();const b=await new Promise((res,rej)=>{const p=ac.decodeAudioData(ab,res,rej);if(p&&p.then)p.then(res,rej);});await onDone(b);}
+      catch(err){noteEl.textContent="That recording could not be read. Try again.";}
+      finally{resolveDone();btn._recDone=null;}
+    };
+    r.start();btn._t=setInterval(()=>{const elapsed=Math.floor((Date.now()-t0)/1000);btn.textContent="■ Stop · "+elapsed+"s";if(elapsed>=maxSec)r.stop();},250);
+  }catch(e){btn.hidden=true;noteEl.textContent="Microphone is not available here. Use Add recording.";}
+}
+async function stopWorkspaceRecordings(){
+ const buttons=[...document.querySelectorAll("button")].filter(button=>button._rec||button._recDone);
+ buttons.forEach(button=>{if(button._rec&&button._rec.state==="recording")button._rec.stop();});
+ await Promise.all(buttons.map(button=>button._recDone).filter(Boolean));
 }
 if(!inClaude && navigator.mediaDevices && window.MediaRecorder){
   const wc=document.getElementById("wcalRec"), wr=document.getElementById("wrecRec");
@@ -3432,6 +3439,7 @@ function newId(){ return "p"+Date.now().toString(36)+Math.random().toString(36).
 async function openWorkspaceMusicProject(project){
   if(!project||!project.id) return false;
   if(window.__pennioAyanBoot)await window.__pennioAyanBoot;
+  await stopWorkspaceRecordings();
   if(!db) db=await idb();
   if(!db) throw new Error("Local music session storage is unavailable.");
   if(ready&&currentId) await saveNow();
@@ -3450,6 +3458,7 @@ async function openWorkspaceMusicProject(project){
 }
 async function removeWorkspaceMusicProject(projectId){
   if(window.__pennioAyanBoot)await window.__pennioAyanBoot;
+  await stopWorkspaceRecordings();
   const mapKey="workspace.ayan."+projectId,mapped=await kvGet(mapKey);
   if(!mapped){await tx("kv","readwrite",st=>st.delete(mapKey));return false;}
   if(currentId===mapped){
@@ -3463,7 +3472,7 @@ async function removeWorkspaceMusicProject(projectId){
   try{if(typeof cloudDeleteProject==="function")await cloudDeleteProject(mapped);}catch(error){console.warn("Cloud session cleanup:",error);}
   return true;
 }
-window.PennioAyanWorkspace={open:openWorkspaceMusicProject,remove:removeWorkspaceMusicProject};
+window.PennioAyanWorkspace={open:openWorkspaceMusicProject,remove:removeWorkspaceMusicProject,stopRecordings:stopWorkspaceRecordings};
 
 
 /* ---------- sessions and history: sittings, checkpoints, restore ---------- */
