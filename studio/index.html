@@ -1427,7 +1427,7 @@ A clear image or action.
           <audio id="filmAudio" controls preload="metadata" hidden style="width:100%;margin-top:10px"></audio>
           <div class="fr-empty" id="filmEmpty">
             <b>Your picture starts here</b>
-            <span>Choose a video clip from this device. It is previewed in your browser and never uploaded.</span>
+            <span>Choose a video clip from this device. It is saved with this project on this device.</span>
             <label class="btn primary fr-file">Choose a clip<input id="filmFile" type="file" accept="video/*" aria-label="Choose a video clip"></label>
           </div>
         </div>
@@ -1435,7 +1435,7 @@ A clear image or action.
       </div>
       <div class="fr-side">
         <label class="fr-logline"><span>Story note</span><textarea id="filmLogline" maxlength="1200" placeholder="What is changing in this story?"></textarea></label>
-        <p class="fr-privacy">A working film desk, not a file upload service. Only the project title, story note and cue sheet are saved here.</p>
+        <p class="fr-privacy">Your video and audio stay in this project’s local media library. Story notes and scene cues are saved alongside them.</p>
       </div>
     </div>
     <div class="fr-cue-head">
@@ -4202,6 +4202,39 @@ document.getElementById("sylIn").oninput=sylRender;
   const filmCues=$("filmCues"), filmCueEmpty=$("filmCueEmpty"), filmCueCount=$("filmCueCount");
   let videoUrl="";
   let filmTimer=0;
+  function useFilmBlob(blob,name,assetId,kind){
+    if(videoUrl)URL.revokeObjectURL(videoUrl);
+    videoUrl=URL.createObjectURL(blob);
+    film.clipName=name||"Studio media";film.clipAssetId=assetId||null;
+    if(kind==="audio"){
+      filmVideo.pause();filmVideo.removeAttribute("src");filmVideo.hidden=true;
+      filmAudio.src=videoUrl;filmAudio.hidden=false;filmEmpty.hidden=true;filmAudio.load();
+    }else{
+      filmAudio.pause();filmAudio.removeAttribute("src");filmAudio.hidden=true;
+      filmVideo.src=videoUrl;filmVideo.hidden=false;filmEmpty.hidden=true;filmVideo.load();
+    }
+    filmClipNote.textContent=(name||"Studio media")+" · saved with this project on this device";
+    saveFilm();
+  }
+  async function restoreFilmAsset(project){
+    const projectId=project&&project.id||window.PennioWorkspace?.activeProjectId;
+    if(!projectId||!window.PennioWorkspace)return;
+    try{
+      const all=await window.PennioWorkspace.listAssets();
+      const owned=all.filter(asset=>asset.projectId===projectId&&(asset.kind==="video"||asset.kind==="audio"));
+      const chosen=owned.find(asset=>asset.id===film.clipAssetId)||owned.sort((a,b)=>b.created-a.created)[0];
+      if(!chosen)return;
+      const full=await window.PennioWorkspace.getAsset(chosen.id);
+      if(full&&full.blob)useFilmBlob(full.blob,full.name,full.id,full.kind);
+    }catch(error){filmClipNote.textContent="Could not restore this project’s media: "+error.message;}
+  }
+  window.PennioFilmWorkspace={restore:restoreFilmAsset};
+  window.addEventListener("pennio:film-media",event=>{
+    const media=event.detail||{};if(!media.blob)return;
+    useFilmBlob(media.blob,media.name,media.assetId,media.kind|| (media.blob.type.startsWith("audio/")?"audio":"video"));
+  });
+  window.addEventListener("pennio:workspace-ready",()=>restoreFilmAsset());
+
   function saveFilm(){
     film.title=filmTitle.value.trim()||"Untitled film";
     film.logline=filmLogline.value;
@@ -4248,17 +4281,21 @@ document.getElementById("sylIn").oninput=sylRender;
   film.cues.forEach(c=>{if(!c.id)c.id=makeId();});
   filmTitle.value=film.title||"Untitled film";
   filmLogline.value=film.logline||"";
-  if(film.clipName)filmClipNote.textContent="Previously selected: "+film.clipName+". Re-add the clip to preview it; video is never stored or uploaded.";
+  if(film.clipName)filmClipNote.textContent="Restoring "+film.clipName+" from this project’s local media library…";
   renderCues();
   filmTitle.addEventListener("input",saveFilmSoon);
   filmLogline.addEventListener("input",saveFilmSoon);
-  filmFile.addEventListener("change",()=>{
+  filmFile.addEventListener("change",async()=>{
     const file=filmFile.files&&filmFile.files[0];if(!file)return;
-    if(videoUrl)URL.revokeObjectURL(videoUrl);
-    videoUrl=URL.createObjectURL(file);
-    filmVideo.src=videoUrl;filmVideo.hidden=false;filmEmpty.hidden=true;filmVideo.load();
-    film.clipName=file.name;filmClipNote.textContent=file.name+" · previewed on this device only";
-    saveFilm();filmFile.value="";
+    try{
+      const asset=window.PennioWorkspace?await window.PennioWorkspace.addAsset({blob:file,name:file.name,kind:"video"}):null;
+      useFilmBlob(file,file.name,asset&&asset.id,"video");
+      filmClipNote.textContent=file.name+" · saved with this project on this device";
+    }catch(error){
+      useFilmBlob(file,file.name,null,"video");
+      filmClipNote.textContent=file.name+" · preview only. Local storage failed: "+error.message;
+    }
+    filmFile.value="";
   });
   filmVideo.addEventListener("loadedmetadata",()=>{
     if(Number.isFinite(filmVideo.duration)&&filmVideo.duration>0) filmClipNote.textContent=(film.clipName||"Clip")+" · "+stamp(filmVideo.duration)+" · footage stays on this device";
