@@ -707,6 +707,88 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 .nv-t{font-size:12px;color:var(--mute,#a3958c);font-variant-numeric:tabular-nums;white-space:nowrap;flex:none}
 @media (max-width:560px){.navrow{flex-wrap:wrap}.navrow input[type=range]{flex:1 1 40%}.nv-t{flex:1 0 100%;text-align:center;order:9}}
 </style>
+<style id="creative-room-styles">
+/* Film room + draft room */
+.cr-kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange);font-weight:600}
+.cr-lead{max-width:700px;margin:4px 0 18px}
+.cr-lead .sub{max-width:640px}
+.fr-desk,.dr-desk{border:1px solid var(--line2);border-radius:22px;background:linear-gradient(145deg,#151217,#0f0d10 72%);padding:clamp(16px,3vw,24px);margin-top:20px}
+.fr-top,.dr-top{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
+.fr-title,.dr-title{display:grid;gap:6px;flex:1;min-width:220px}
+.fr-title label,.dr-title label,.fr-logline label{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute)}
+.fr-title input,.dr-title input{font:600 20px/1.2 Inter,system-ui,sans-serif;letter-spacing:-.02em;color:var(--text);background:transparent;border:0;border-bottom:1px solid var(--line2);padding:8px 0;outline:none;min-height:44px}
+.fr-title input:focus,.dr-title input:focus{border-color:var(--orange)}
+.fr-save,.dr-save{font-size:12px;color:var(--mute);min-height:24px}
+.fr-player-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(220px,.8fr);gap:16px;margin-top:18px;align-items:start}
+.fr-player{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--line2);border-radius:16px;background:#080708}
+.fr-player video{width:100%;height:100%;display:block;object-fit:contain;background:#080708}
+.fr-empty{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;padding:18px;background:radial-gradient(ellipse at 50% 45%,rgba(242,101,34,.11),transparent 65%)}
+.fr-empty b{font-size:16px}
+.fr-empty span{max-width:280px;font-size:12px;line-height:1.5;color:var(--mute)}
+.fr-file{position:relative;overflow:hidden}
+.fr-file input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.fr-side{display:grid;gap:14px}
+.fr-logline{display:grid;gap:7px}
+.fr-logline textarea,.fr-note{width:100%;min-height:112px;resize:vertical;padding:12px;border:1px solid var(--line2);border-radius:12px;background:var(--black);color:var(--text);font:400 14px/1.55 Inter,system-ui,sans-serif;outline:none}
+.fr-logline textarea:focus,.fr-note:focus{border-color:var(--orange)}
+.fr-privacy{font-size:12px;line-height:1.5;color:var(--mute)}
+.fr-cue-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.fr-cue-head h2{font-size:18px;letter-spacing:-.02em}
+.fr-cue-head p{font-size:12px;color:var(--mute);margin-top:4px}
+.fr-cue-actions{display:flex;gap:8px;flex-wrap:wrap}
+.fr-cues{display:grid;gap:10px;margin-top:14px}
+.fr-cue{display:grid;grid-template-columns:44px minmax(150px,1fr) auto;gap:10px 14px;align-items:start;padding:14px;border:1px solid var(--line2);border-radius:16px;background:rgba(5,5,5,.32)}
+.fr-cue-n{font-size:10px;letter-spacing:.12em;color:var(--orange);font-weight:600;padding-top:12px}
+.fr-cue-main{display:grid;grid-template-columns:minmax(150px,1.4fr) minmax(105px,.7fr);gap:8px;min-width:0}
+.fr-cue-main input,.fr-cue-main select{min-width:0;width:100%;height:42px;border:1px solid var(--line2);border-radius:10px;background:var(--black);color:var(--text);font:500 13px Inter,system-ui,sans-serif;padding:0 10px;outline:none}
+.fr-cue-main input:focus,.fr-cue-main select:focus{border-color:var(--orange)}
+.fr-cue-times{display:flex;align-items:center;gap:6px;grid-column:1/-1;font-size:11px;color:var(--mute)}
+.fr-cue-times input{width:80px;height:36px;text-align:center;font-variant-numeric:tabular-nums;padding:0 5px}
+.fr-cue .fr-note{grid-column:2/-1;min-height:58px;font-size:12px}
+.fr-cue-acts{grid-column:2/-1;display:flex;gap:7px;flex-wrap:wrap}
+.fr-cue-acts .btn{min-height:36px;font-size:12px;padding:0 12px}
+.fr-cue-acts .fr-score{background:var(--orange);border-color:var(--orange);color:#100b08;font-weight:700}
+.fr-remove{margin-left:auto;color:#ffb1a0!important}
+.fr-cue-empty{padding:22px;border:1px dashed var(--line2);border-radius:16px;text-align:center;color:var(--mute);font-size:13px;line-height:1.5}
+.fr-cue-empty b{display:block;color:var(--text);font-size:14px;margin-bottom:4px}
+.fr-story{margin-top:24px}
+.fr-roadmap{margin-top:24px}
+.fr-context{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:10px 0 14px;padding:12px 14px;border:1px solid rgba(242,101,34,.45);border-radius:14px;background:rgba(242,101,34,.06)}
+.fr-context[hidden]{display:none}
+.fr-context-copy{flex:1;min-width:180px}
+.fr-context-copy small{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);font-weight:600}
+.fr-context-copy b{display:block;margin-top:3px;font-size:14px}
+.fr-context-copy span{display:block;margin-top:2px;font-size:12px;color:var(--mute)}
+.fr-context .btn{min-height:36px}
+.dr-head{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.dr-modes{display:flex;gap:4px;padding:3px;border:1px solid var(--line2);border-radius:999px}
+.dr-modes button{min-height:36px;border-radius:999px;padding:0 14px;font:500 12px Inter,system-ui,sans-serif;color:var(--mute)}
+.dr-modes button.on{background:var(--text);color:var(--black);font-weight:600}
+.dr-meta{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-left:auto;font-size:12px;color:var(--mute)}
+.dr-meta b{color:var(--text);font-weight:600}
+.dr-toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.dr-toolbar .btn{min-height:36px;font-size:12px;padding:0 12px}
+.dr-toolbar [hidden]{display:none!important}
+.dr-editor{display:block;width:100%;min-height:360px;resize:vertical;margin-top:12px;padding:18px;border:1px solid var(--line2);border-radius:14px;background:#090809;color:var(--text);font:400 15px/1.75 ui-monospace,SFMono-Regular,Consolas,monospace;outline:none;tab-size:4}
+.dr-editor:focus{border-color:rgba(242,101,34,.7)}
+.dr-editor::placeholder{color:#706963}
+.dr-footer{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.dr-footer .btn{min-height:40px}
+.dr-footnote{flex:1 1 240px;font-size:12px;line-height:1.5;color:var(--mute)}
+.dr-handoff{background:rgba(242,101,34,.1);border-color:rgba(242,101,34,.35)}
+.dr-section-head{display:flex;gap:10px;justify-content:space-between;align-items:end;flex-wrap:wrap;margin:28px 0 6px}
+.dr-section-head h2{font-size:19px;letter-spacing:-.02em}
+.dr-section-head p{font-size:12px;color:var(--mute)}
+@media(max-width:640px){
+ .fr-player-grid{grid-template-columns:1fr}
+ .fr-cue{grid-template-columns:34px minmax(0,1fr);gap:8px 10px;padding:11px}
+ .fr-cue-n{padding-top:12px}
+ .fr-cue-main,.fr-cue .fr-note,.fr-cue-acts{grid-column:2/-1}
+ .dr-editor{min-height:300px;padding:14px;font-size:14px}
+ .dr-meta{margin-left:0}
+}
+@media(prefers-reduced-motion:reduce){.fr-desk *,.dr-desk *{scroll-behavior:auto!important;transition:none!important}}
+</style>
 </head>
 <body class="in-studio">
 <header>
@@ -718,7 +800,7 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
         <nav id="nav" hidden>
           <button data-v="ayan" class="on">Studio <small>Àyàn</small></button>
           <button data-v="write">Write <small>Yoruba with tones</small></button>
-          <button data-v="faajiplace">Fàájìplace <small>stories open, film tools later</small></button>
+          <button data-v="faajiplace">Film <small>Picture & story</small></button>
         </nav></div>
       <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
     </div>
@@ -732,6 +814,11 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
     <button id="openWork" role="tab">Sessions</button>
     <button id="openHist" role="tab">History</button>
     <button id="guideLink" role="tab">Learn</button>
+  </div>
+  <div class="fr-context" id="filmCueContext" hidden>
+    <div class="fr-context-copy"><small>Scoring a film cue</small><b id="filmCueName"></b><span id="filmCueTime"></span></div>
+    <button class="btn" id="filmCueBack">Back to Film</button>
+    <button class="btn" id="filmCueClear" aria-label="Clear film cue">Clear cue</button>
   </div>
   <div class="inst" id="inst" hidden>
     <div class="inst-ic" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -862,9 +949,40 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 
 <!-- WRITE -->
 <section class="view" id="v-write">
-  <h1>Type it plain. Say it once. Get the tones.</h1>
-  <p class="sub">Your voice decides the tone marks. Type a word or short phrase without marks, record yourself saying it, and the studio writes it with the tones you spoke. Tap any syllable to correct it.</p>
-  <div class="jump" role="navigation" aria-label="In this tab"><a href="#wtext">Tone marks</a><a href="#hkCard">Hacks</a><a href="#tgCard">Tone game</a><a href="#ogbCard">Translate</a></div>
+  <div class="cr-lead">
+    <div class="cr-kicker">Write room · lyrics & screenplay</div>
+    <h1>Write for the ear. Write for the screen.</h1>
+    <p class="sub">Shape a scene or a song, then bring your Yoruba lines into focus with your own voice. Drafts stay on this device until you export them.</p>
+  </div>
+  <div class="jump" role="navigation" aria-label="In this tab"><a href="#draftRoom">Draft room</a><a href="#wtext">Tone marks</a><a href="#hkCard">Songwriting</a><a href="#tgCard">Tone game</a><a href="#ogbCard">Translate</a></div>
+  <div class="dr-section-head" id="draftRoom"><div><div class="cr-kicker">One working draft</div><h2>Build the scene. Find the line.</h2></div><p id="draftStatus" aria-live="polite">Saved on this device</p></div>
+  <div class="dr-desk">
+    <div class="dr-top">
+      <div class="dr-title"><label for="draftTitle">Draft title</label><input id="draftTitle" maxlength="80" value="Untitled draft"></div>
+      <div class="dr-head">
+        <div class="dr-modes" role="group" aria-label="Draft format"><button type="button" data-draft-mode="screenplay" class="on">Screenplay</button><button type="button" data-draft-mode="lyrics">Lyrics / prose</button></div>
+        <div class="dr-meta"><span><b id="draftWords">0</b> words</span><span><b id="draftLines">0</b> lines</span></div>
+      </div>
+    </div>
+    <div class="dr-toolbar" id="scriptTools" aria-label="Screenplay shortcuts">
+      <button class="btn" type="button" data-insert="slugline">Scene heading</button>
+      <button class="btn" type="button" data-insert="action">Action</button>
+      <button class="btn" type="button" data-insert="character">Character</button>
+      <button class="btn" type="button" data-insert="dialogue">Dialogue</button>
+      <button class="btn" type="button" data-insert="transition">Transition</button>
+    </div>
+    <textarea class="dr-editor" id="draftText" maxlength="60000" spellcheck="false" aria-label="Your screenplay or lyric draft" placeholder="INT. LOCATION - DAY
+
+A clear image or action.
+
+                    CHARACTER
+          A line that changes the scene."></textarea>
+    <div class="dr-footer">
+      <button class="btn primary" id="draftExport">Download draft</button>
+      <button class="btn dr-handoff" id="draftToFilm">Send scenes to Film</button>
+      <span class="dr-footnote">Your draft saves automatically in this browser. Export a copy when you want to move it elsewhere.</span>
+    </div>
+  </div>
   <div class="steps3">
     <div class="stp">
       <div class="k">Step 1</div>
@@ -956,20 +1074,50 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 
 <!-- FILM -->
 <section class="view" id="v-faajiplace">
-  <div class="soon">Open now: stories</div>
-  <h1>Fàájìplace. Stories open now, film tools later.</h1>
-  <p class="sub">Fàájìplace is the film side of pennio.studio. I am developing African stories for the screen, and I am receiving yours. The score and production tools below are not built yet.</p>
-  <div class="phase live openstory" style="display:block;margin-top:18px">
-    <div class="n" style="margin-bottom:6px">Open now</div>
-    <h3>Five Yoruba story worlds, and a place to send yours</h3>
-    <p>The chain at Ilé-Ifẹ̀, Mọ́remí Àjàṣorò, Ṣàngó, Ọya and Ọba, Lísàbí and the aró, Ọ̀ṣun and Larooye. I read every story sent and write back within 14 days.</p>
+  <div class="cr-lead">
+    <div class="cr-kicker">Fàájìplace · film room</div>
+    <h1>Score the story while it is still moving.</h1>
+    <p class="sub">Bring in a clip, mark the moments that matter, and carry each scene into Àyàn as a clear score cue. Your footage stays on this device.</p>
+  </div>
+  <div class="fr-desk" id="filmDesk">
+    <div class="fr-top">
+      <div class="fr-title"><label for="filmTitle">Film project</label><input id="filmTitle" maxlength="80" value="Untitled film"></div>
+      <span class="fr-save" id="filmSave" aria-live="polite">Saved on this device</span>
+    </div>
+    <div class="fr-player-grid">
+      <div>
+        <div class="fr-player">
+          <video id="filmVideo" controls playsinline preload="metadata" hidden></video>
+          <div class="fr-empty" id="filmEmpty">
+            <b>Your picture starts here</b>
+            <span>Choose a video clip from this device. It is previewed in your browser and never uploaded.</span>
+            <label class="btn primary fr-file">Choose a clip<input id="filmFile" type="file" accept="video/*" aria-label="Choose a video clip"></label>
+          </div>
+        </div>
+        <div class="fr-privacy" id="filmClipNote" style="margin-top:8px">No clip loaded. Re-add it after a refresh; the video itself is not stored.</div>
+      </div>
+      <div class="fr-side">
+        <label class="fr-logline"><span>Story note</span><textarea id="filmLogline" maxlength="1200" placeholder="What is changing in this story?"></textarea></label>
+        <p class="fr-privacy">A working film desk, not a file upload service. Only the project title, story note and cue sheet are saved here.</p>
+      </div>
+    </div>
+    <div class="fr-cue-head">
+      <div><h2>Scene cues <span id="filmCueCount" style="font-size:12px;color:var(--mute);font-weight:400">0</span></h2><p>Set a start and end, name the turn, then take the cue into the music studio.</p></div>
+      <div class="fr-cue-actions"><button class="btn" id="filmImportDraft">Import from Write</button><button class="btn primary" id="filmAddCue">+ Mark this moment</button></div>
+    </div>
+    <div class="fr-cues" id="filmCues"></div>
+    <div class="fr-cue-empty" id="filmCueEmpty"><b>Your first cue is one moment away.</b>Add a clip, pause on a story turn, then mark it. You can also bring scene headings over from Write.</div>
+  </div>
+  <div class="card fr-story">
+    <div class="ogb-h"><h3>Stories with roots</h3><span class="ogb-tag">Fàájìplace</span></div>
+    <p>Explore five Yoruba story worlds, or send a story of your own. The room above is for shaping picture and sound around the stories you are making.</p>
     <div class="cta2"><a class="p" href="/faajiplace/send/">Send me your story</a><a class="s" href="/faajiplace/">Read the story worlds</a></div>
   </div>
-  <div class="k" style="margin:26px 0 -4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)">The studio roadmap</div>
+  <div class="k fr-roadmap" style="margin:26px 0 -4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)">The studio roadmap</div>
   <div class="phases">
-    <div class="phase live"><div class="n">Now</div><div><h3>Àyàn: rhythm and sound</h3><p>Browser studio: your voice in, enhanced, chopped and remixed over synthesized Yoruba percussion, and a talking drum that follows the pitch of your own voice. The plan from here: replace the synthesized drums with samples recorded from working drummers, credited and paid per use.</p></div></div>
+    <div class="phase live"><div class="n">Now</div><div><h3>Àyàn: rhythm and sound</h3><p>Make a groove from your voice and let the talking drum follow its rise and fall. The next sound-library step is to replace synthesized drums with recordings from working drummers, credited and paid per use.</p></div></div>
+    <div class="phase live"><div class="n">New</div><div><h3>Film room: picture and cue sheet</h3><p>Keep your clip on this device, mark scene moments and take each cue into the browser studio. Picture-locked scoring and export to your edit timeline remain on the roadmap.</p></div></div>
     <div class="phase"><div class="n">Next</div><div><h3>Sound library and stems</h3><p>Melodic layers, vocal chants and full stems. Creators export to their own DAW or release straight from the studio.</p></div></div>
-    <div class="phase"><div class="n">Then</div><div><h3>Scoring for picture</h3><p>Drop a video clip in, build the score against it. The first bridge from music into film, built for Nollywood editors who need a score fast.</p></div></div>
     <div class="phase"><div class="n">Later</div><div><h3>Story and production tools</h3><p>Script, shot lists and cultural reference checks so the story is told right: names, proverbs, dress and setting reviewed by people who carry the culture.</p></div></div>
   </div>
 </section>
@@ -3393,7 +3541,7 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
   if(v!=="faajiplace" && window.__gatePending){ window.__gatePending=false; ob.classList.add("on"); }
-  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="ayan"?"Studio": v==="write"?"Write":"Fàájìplace";
+  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="ayan"?"Studio": v==="write"?"Write":"Film";
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
@@ -3455,5 +3603,258 @@ document.getElementById("sylIn").oninput=sylRender;
 })();
 
 </script>
+
+<script>
+(function(){
+  "use strict";
+  const FILM_KEY="ps.film.room";
+  const CUE_KEY="ps.film.activeCue";
+  const DRAFT_KEY="ps.write.draft";
+  const $=id=>document.getElementById(id);
+  const navTo=(view,hash)=>{
+    const button=document.querySelector('nav button[data-v="'+view+'"]');
+    if(button) button.click();
+    try{history.replaceState(null,"","#"+(hash||view));}catch(e){}
+  };
+  const stamp=seconds=>{
+    const n=Math.max(0,Math.floor(Number(seconds)||0));
+    const h=Math.floor(n/3600),m=Math.floor((n%3600)/60),s=n%60;
+    return (h?String(h).padStart(2,"0")+":":"")+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  };
+  const parseStamp=value=>{
+    const parts=String(value||"").trim().split(":");
+    if(parts.length<2||parts.length>3||parts.some(p=>!/^[0-9]{1,2}$/.test(p))) return null;
+    const nums=parts.map(Number);
+    if(nums[nums.length-1]>59 || (nums.length===3&&nums[1]>59)) return null;
+    return nums.length===2?nums[0]*60+nums[1]:nums[0]*3600+nums[1]*60+nums[2];
+  };
+  const safeRead=key=>{try{return JSON.parse(localStorage.getItem(key)||"null");}catch(e){return null;}};
+  const safeWrite=(key,value,status)=>{
+    try{localStorage.setItem(key,JSON.stringify(value));if(status)status.textContent="Saved just now";}
+    catch(e){if(status)status.textContent="Browser storage is full. Export your work to keep it.";}
+  };
+  const makeId=()=>Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
+  const initialFilm={title:"Untitled film",logline:"",clipName:"",cues:[]};
+  let film=Object.assign({},initialFilm,safeRead(FILM_KEY)||{});
+  film.cues=Array.isArray(film.cues)?film.cues:[];
+  const filmTitle=$("filmTitle"), filmLogline=$("filmLogline"), filmVideo=$("filmVideo"), filmFile=$("filmFile");
+  const filmClipNote=$("filmClipNote"), filmEmpty=$("filmEmpty"), filmSave=$("filmSave");
+  const filmCues=$("filmCues"), filmCueEmpty=$("filmCueEmpty"), filmCueCount=$("filmCueCount");
+  let videoUrl="";
+  let filmTimer=0;
+  function saveFilm(){
+    film.title=filmTitle.value.trim()||"Untitled film";
+    film.logline=filmLogline.value;
+    safeWrite(FILM_KEY,film,filmSave);
+  }
+  function saveFilmSoon(){
+    clearTimeout(filmTimer);
+    filmSave.textContent="Saving…";
+    filmTimer=setTimeout(saveFilm,240);
+  }
+  function cueNode(cue,index){
+    const article=document.createElement("article");article.className="fr-cue";article.dataset.id=cue.id;
+    const number=document.createElement("div");number.className="fr-cue-n";number.textContent="CUE "+String(index+1).padStart(2,"0");
+    const main=document.createElement("div");main.className="fr-cue-main";
+    const title=document.createElement("input");title.type="text";title.maxLength=100;title.placeholder="Scene or story turn";title.value=cue.title||"";title.dataset.field="title";title.setAttribute("aria-label","Cue title");
+    const mood=document.createElement("select");mood.dataset.field="mood";mood.setAttribute("aria-label","Scene mood");
+    [["wonder","Wonder"],["tender","Tender"],["tension","Tension"],["joy","Joy"],["grief","Grief"],["resolve","Resolve"],["other","Other"]].forEach(item=>{const option=document.createElement("option");option.value=item[0];option.textContent=item[1];mood.appendChild(option);});
+    mood.value=cue.mood||"wonder";
+    const times=document.createElement("div");times.className="fr-cue-times";
+    const startLabel=document.createElement("label");startLabel.textContent="From";
+    const start=document.createElement("input");start.type="text";start.inputMode="numeric";start.placeholder="00:00";start.value=stamp(cue.start||0);start.dataset.field="start";start.setAttribute("aria-label","Cue start time");
+    const to=document.createElement("span");to.textContent="to";
+    const end=document.createElement("input");end.type="text";end.inputMode="numeric";end.placeholder="End";end.value=cue.end==null?"":stamp(cue.end);end.dataset.field="end";end.setAttribute("aria-label","Cue end time");
+    const endLabel=document.createElement("label");endLabel.appendChild(end);
+    times.append(startLabel,start,to,endLabel);
+    main.append(title,mood,times);
+    const note=document.createElement("textarea");note.className="fr-note";note.rows=2;note.maxLength=800;note.placeholder="What changes here? Add a visual beat or score direction.";note.value=cue.note||"";note.dataset.field="note";note.setAttribute("aria-label","Story and score note");
+    const actions=document.createElement("div");actions.className="fr-cue-acts";
+    const score=document.createElement("button");score.type="button";score.className="btn fr-score";score.dataset.action="score";score.textContent="Take cue to Studio →";
+    const mark=document.createElement("button");mark.type="button";mark.className="btn";mark.dataset.action="mark";mark.textContent="Set start to playhead";
+    const remove=document.createElement("button");remove.type="button";remove.className="btn fr-remove";remove.dataset.action="remove";remove.textContent="Remove";
+    actions.append(score,mark,remove);
+    article.append(number,main,note,actions);
+    return article;
+  }
+  function renderCues(){
+    filmCues.replaceChildren();
+    film.cues.forEach((cue,index)=>filmCues.appendChild(cueNode(cue,index)));
+    filmCueCount.textContent="· "+film.cues.length;
+    filmCueEmpty.hidden=film.cues.length>0;
+  }
+  film.cues.forEach(c=>{if(!c.id)c.id=makeId();});
+  filmTitle.value=film.title||"Untitled film";
+  filmLogline.value=film.logline||"";
+  if(film.clipName)filmClipNote.textContent="Previously selected: "+film.clipName+". Re-add the clip to preview it; video is never stored or uploaded.";
+  renderCues();
+  filmTitle.addEventListener("input",saveFilmSoon);
+  filmLogline.addEventListener("input",saveFilmSoon);
+  filmFile.addEventListener("change",()=>{
+    const file=filmFile.files&&filmFile.files[0];if(!file)return;
+    if(videoUrl)URL.revokeObjectURL(videoUrl);
+    videoUrl=URL.createObjectURL(file);
+    filmVideo.src=videoUrl;filmVideo.hidden=false;filmEmpty.hidden=true;filmVideo.load();
+    film.clipName=file.name;filmClipNote.textContent=file.name+" · previewed on this device only";
+    saveFilm();filmFile.value="";
+  });
+  filmVideo.addEventListener("loadedmetadata",()=>{
+    if(Number.isFinite(filmVideo.duration)&&filmVideo.duration>0) filmClipNote.textContent=(film.clipName||"Clip")+" · "+stamp(filmVideo.duration)+" · footage stays on this device";
+  });
+  filmVideo.addEventListener("leavepictureinpicture",()=>{filmVideo.muted=false;});
+  $("filmAddCue").addEventListener("click",()=>{
+    const at=filmVideo.src?Math.floor(filmVideo.currentTime||0):0;
+    film.cues.push({id:makeId(),title:"Scene "+String(film.cues.length+1).padStart(2,"0"),mood:"wonder",start:at,end:null,note:""});
+    renderCues();saveFilm();
+    const last=filmCues.lastElementChild;if(last){last.scrollIntoView({behavior:"smooth",block:"nearest"});const input=last.querySelector('[data-field="title"]');if(input){input.focus();input.select();}}
+  });
+  function updateCueField(event){
+    const input=event.target,field=input&&input.dataset&&input.dataset.field;
+    if(!field)return;
+    const article=input.closest(".fr-cue");if(!article)return;
+    const cue=film.cues.find(c=>c.id===article.dataset.id);if(!cue)return;
+    if(field==="start"||field==="end"){
+      const parsed=input.value.trim()===""&&field==="end"?null:parseStamp(input.value);
+      if(parsed===null&&!(field==="end"&&input.value.trim()==="")){input.setAttribute("aria-invalid","true");return;}
+      input.removeAttribute("aria-invalid");
+      if(field==="start")cue.start=parsed;else cue.end=parsed;
+    }else cue[field]=input.value;
+    saveFilmSoon();
+  }
+  filmCues.addEventListener("input",updateCueField);
+  filmCues.addEventListener("change",updateCueField);
+  function setActiveCue(cue){
+    const active={title:cue.title||"Untitled cue",start:cue.start||0,end:cue.end,mood:cue.mood||"wonder",film:film.title||"Untitled film",at:Date.now()};
+    safeWrite(CUE_KEY,active,filmSave);
+  }
+  filmCues.addEventListener("click",async event=>{
+    const button=event.target.closest("button[data-action]");if(!button)return;
+    const article=button.closest(".fr-cue"),cue=article&&film.cues.find(c=>c.id===article.dataset.id);if(!cue)return;
+    if(button.dataset.action==="remove"){
+      film.cues=film.cues.filter(c=>c.id!==cue.id);renderCues();saveFilm();return;
+    }
+    if(button.dataset.action==="mark"){
+      if(filmVideo.src){cue.start=Math.floor(filmVideo.currentTime||0);renderCues();saveFilm();}
+      else if(window.toast)toast("Add a clip first, then mark the playhead.");
+      else filmSave.textContent="Add a clip to set the playhead.";
+      return;
+    }
+    if(button.dataset.action==="score"){
+      setActiveCue(cue);
+      if(filmVideo.src&&document.pictureInPictureEnabled&&filmVideo.requestPictureInPicture){
+        try{filmVideo.currentTime=Math.max(0,Number(cue.start)||0);filmVideo.muted=true;await filmVideo.play();await filmVideo.requestPictureInPicture();}
+        catch(e){filmVideo.pause();filmVideo.muted=false;}
+      }
+      navTo("ayan","ayan");
+      return;
+    }
+  });
+  function importScenes(){
+    const draft=safeRead(DRAFT_KEY)||{};
+    const text=String(draft.text||"").trim();
+    if(!text){if(window.toast)toast("Write a scene or lyric first.");return;}
+    const lines=text.split(/\r?\n/);
+    const starts=[];
+    lines.forEach((line,index)=>{if(/^(?:INT\.?\s*\/\s*EXT\.?|INT\.?|EXT\.?|I\/E\.?)\s+\S/i.test(line.trim()))starts.push(index);});
+    if(starts.length){
+      starts.forEach((lineIndex,index)=>{
+        const line=lines[lineIndex].trim();
+        let note="";
+        const end=index+1<starts.length?starts[index+1]:lines.length;
+        note=lines.slice(lineIndex+1,end).join("\n").trim().slice(0,800);
+        film.cues.push({id:makeId(),title:line.replace(/^[^ ]+\s*/,""),mood:"wonder",start:0,end:null,note:note});
+      });
+    }else{
+      film.cues.push({id:makeId(),title:(draft.title||"Draft cue").trim(),mood:"wonder",start:0,end:null,note:text.slice(0,800)});
+    }
+    renderCues();saveFilm();
+    if(window.toast)toast(starts.length?starts.length+" scene"+(starts.length===1?"":"s")+" added to Film.":"Draft added as a film cue.");
+  }
+  $("filmImportDraft").addEventListener("click",importScenes);
+  $("filmCueBack").addEventListener("click",()=>navTo("faajiplace","film"));
+  $("filmCueClear").addEventListener("click",()=>{
+    try{localStorage.removeItem(CUE_KEY);}catch(e){}
+    renderActiveCue();
+  });
+  function renderActiveCue(){
+    const active=safeRead(CUE_KEY),box=$("filmCueContext");
+    box.hidden=!active;
+    if(active){
+      $("filmCueName").textContent=(active.title||"Untitled cue")+" · "+(active.film||"Film");
+      $("filmCueTime").textContent="Picture starts at "+stamp(active.start||0)+(active.end==null?"":" · ends at "+stamp(active.end))+" · "+(active.mood||"wonder");
+    }
+  }
+  renderActiveCue();
+
+  let draft=Object.assign({title:"Untitled draft",mode:"screenplay",text:""},safeRead(DRAFT_KEY)||{});
+  const draftTitle=$("draftTitle"),draftText=$("draftText"),draftStatus=$("draftStatus");
+  let draftTimer=0;
+  draftTitle.value=draft.title||"Untitled draft";
+  draftText.value=draft.text||"";
+  function updateDraftStats(){
+    const body=draftText.value;
+    const words=body.trim()?body.trim().split(/\s+/).length:0;
+    $("draftWords").textContent=String(words);
+    $("draftLines").textContent=String(body?body.split(/\r?\n/).length:0);
+    $("draftExport").disabled=!body.trim();
+    $("draftToFilm").disabled=!body.trim();
+  }
+  function paintDraftMode(){
+    document.querySelectorAll("[data-draft-mode]").forEach(button=>button.classList.toggle("on",button.dataset.draftMode===draft.mode));
+    $("scriptTools").hidden=draft.mode!=="screenplay";
+  }
+  function saveDraft(){
+    draft.title=draftTitle.value.trim()||"Untitled draft";draft.text=draftText.value;
+    safeWrite(DRAFT_KEY,draft,draftStatus);updateDraftStats();
+  }
+  function saveDraftSoon(){
+    clearTimeout(draftTimer);draftStatus.textContent="Saving…";draftTimer=setTimeout(saveDraft,220);
+  }
+  document.querySelectorAll("[data-draft-mode]").forEach(button=>button.addEventListener("click",()=>{
+    draft.mode=button.dataset.draftMode;paintDraftMode();saveDraft();draftStatus.textContent="Format saved";
+  }));
+  draftTitle.addEventListener("input",saveDraftSoon);
+  draftText.addEventListener("input",saveDraftSoon);
+  paintDraftMode();updateDraftStats();
+  function insertText(text){
+    draftText.focus();
+    const start=draftText.selectionStart,end=draftText.selectionEnd;
+    draftText.setRangeText(text,start,end,"end");
+    draftText.dispatchEvent(new Event("input",{bubbles:true}));
+  }
+  $("scriptTools").addEventListener("click",event=>{
+    const button=event.target.closest("button[data-insert]");if(!button)return;
+    const snippets={
+      slugline:"INT. LOCATION - DAY\n\n",
+      action:"A visible action or detail.\n\n",
+      character:"\n\n                    CHARACTER\n",
+      dialogue:"          Dialogue goes here.\n\n",
+      transition:"\n\n                                                   CUT TO:\n\n"
+    };
+    insertText(snippets[button.dataset.insert]||"");
+  });
+  $("draftExport").addEventListener("click",()=>{
+    saveDraft();
+    const name=(draft.title||"draft").replace(/[^a-z0-9_-]+/gi,"-").replace(/^-|-$/g,"")||"draft";
+    const ext=draft.mode==="screenplay"?"fountain":"txt";
+    const blob=new Blob([draftText.value],{type:"text/plain;charset=utf-8"});
+    const url=URL.createObjectURL(blob),link=document.createElement("a");
+    link.href=url;link.download=name+"."+ext;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+  $("draftToFilm").addEventListener("click",()=>{
+    saveDraft();
+    if(!draftText.value.trim())return;
+    importScenes();navTo("faajiplace","film");
+  });
+  $("filmImportDraft").addEventListener("click",importScenes);
+  window.addEventListener("beforeunload",()=>{
+    if(filmTimer)clearTimeout(filmTimer);
+    if(draftTimer)clearTimeout(draftTimer);
+    saveFilm();saveDraft();
+    if(videoUrl)URL.revokeObjectURL(videoUrl);
+  });
+})();
+</script>
+
 </body>
 </html>
