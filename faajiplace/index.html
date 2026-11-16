@@ -137,12 +137,15 @@ $("fHelp").onclick=async()=>{
   const b=$("fHelp"),o=$("fHelpOut"),t=$("fStory").value.trim();
   o.classList.add("on");
   if(t.length<60){o.textContent="Write a few more lines first, at least 60 characters.";return;}
-  b.disabled=true;o.textContent="Reading your story...";
+  b.disabled=true;let n=0;o.textContent="Reading your story... 0s";
+  const tick=setInterval(()=>{n++;o.textContent="Reading your story... "+n+"s (up to 30s)";},1000);
+  const ac=new AbortController(),to=setTimeout(()=>ac.abort(),30000);
   try{
-    const r=await fetch("https://rgkxqcmfejglfslhrpsm.supabase.co/functions/v1/faajiplace-assist",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({story:t})});
+    const r=await fetch("https://rgkxqcmfejglfslhrpsm.supabase.co/functions/v1/faajiplace-assist",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({story:t}),signal:ac.signal});
     const d=await r.json();
     o.textContent=(r.ok&&d.questions)?d.questions:(r.status===429?"Too many requests right now. Try again in a few minutes, or send your story as it is.":"The helper is not available right now. You can still send your story as it is.");
-  }catch(e){o.textContent="The helper is not available right now. You can still send your story as it is.";}
+  }catch(e){o.textContent=e.name==="AbortError"?"That took too long. Try again, or send your story as it is.":"The helper is not available right now. You can still send your story as it is.";}
+  clearInterval(tick);clearTimeout(to);
   b.disabled=false;
 };
 $("fForm").onsubmit=async e=>{

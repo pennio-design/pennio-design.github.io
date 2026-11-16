@@ -61,13 +61,14 @@ Deno.serve(async (req) => {
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      signal: AbortSignal.timeout(25000),
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: SYSTEM }] },
         contents: [{ role: "user", parts: [{ text: story }] }],
-        generationConfig: { maxOutputTokens: 400, temperature: 0.4 },
+        generationConfig: { maxOutputTokens: 1500, temperature: 0.4, thinkingConfig: { thinkingLevel: "low" } },
       }),
     });
-    if (!r.ok) { console.error("gemini", r.status); return json({ error: "upstream" }, 502, origin); }
+    if (!r.ok) { console.error("gemini", r.status, (await r.text()).slice(0, 300)); return json({ error: "upstream" }, 502, origin); }
     const d = await r.json();
     const text = (d?.candidates?.[0]?.content?.parts || []).map((p: { text?: string }) => p.text || "").join("").trim();
     if (!text) return json({ error: "empty" }, 502, origin);
