@@ -67,7 +67,7 @@ async function captureSelection(kind){
   mr.ondataavailable=e=>{if(e.data?.size)parts.push(e.data);};
   mr.onerror=()=>{mic.getTracks().forEach(x=>x.stop());status("Recording failed. Check microphone permission and try again.");};
   mr.onstop=async()=>{
-   mic.getTracks().forEach(x=>x.stop());src.stop();
+   mic.getTracks().forEach(x=>x.stop());try{src.stop();}catch(_){}
    const take=new Blob(parts,{type:mr.mimeType||"audio/webm"});
    if(!take.size){status("No audio was captured.");return;}
    if(kind==="hum"){
