@@ -65,6 +65,7 @@ async function loadSessionFor(projectId){
  }catch(e){status("Could not restore this project session: "+e.message);}
  finally{sessionRestoring=false;}
 }
+window.PennioDAWSession={save:async()=>{await sessionSwitchQueue;return saveSessionNow();}};
 window.addEventListener("pennio:workspace-project-open",e=>{
  const detail=e.detail||{},previous=detail.previousProjectId??SESSION_DEFAULT,next=detail.project?.id||SESSION_DEFAULT;
  if(previous===next)return;
