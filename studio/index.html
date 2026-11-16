@@ -1056,6 +1056,43 @@ html[data-theme="light"] .studio-rec-launch{color:#17120e;background:#ff8a42}
 .daw-selection-note{margin:0;line-height:1.5}
 @media(max-width:620px){.daw-selection-actions .btn{flex:1 1 100%}}
 </style>
+
+<style id="ayan-responsive-layout-fix">
+/* Àyàn responsive layout: keep the voice lane and beat grid inside the viewport. */
+#v-ayan, #v-ayan .wrap, #v-ayan .card, #v-ayan .grid, #v-ayan .daw {min-width:0;max-width:100%}
+#v-ayan .grid{overflow-x:auto;overscroll-behavior-x:contain}
+#v-ayan .row{grid-template-columns:minmax(76px,96px) minmax(0,1fr)}
+#v-ayan .steps{min-width:0;grid-template-columns:repeat(16,minmax(0,1fr));gap:3px;padding-right:8px}
+#v-ayan .step{width:auto;min-width:0;min-height:30px;height:auto;aspect-ratio:1/1.05}
+#v-ayan canvas#wave{display:block;width:100%;max-width:100%;height:clamp(88px,13vw,124px);margin:12px 0 0}
+#v-ayan .recopts{max-width:100%;overflow:visible}
+#v-ayan .voice-top{min-width:0}
+#v-ayan .voice-top>*{max-width:100%}
+#v-ayan .daw-tracks{min-width:0;max-width:100%;overflow:hidden}
+#v-ayan .daw-track{grid-template-columns:minmax(112px,180px) minmax(0,1fr);min-width:0}
+#v-ayan .daw-track-head,#v-ayan .daw-track-wave{min-width:0}
+#v-ayan .daw-track-wave{width:100%;overflow:hidden}
+#v-ayan .daw-selection-actions>*{min-width:0}
+@media(max-width:760px){
+ #v-ayan .row{grid-template-columns:76px minmax(0,1fr)}
+ #v-ayan .steps{grid-template-columns:repeat(16,minmax(0,1fr));min-width:0}
+ #v-ayan .step{min-width:0;padding:0}
+ #v-ayan .daw-track{grid-template-columns:1fr}
+ #v-ayan .daw-track-head{border-right:0;border-bottom:1px solid var(--line)}
+ #v-ayan .daw-track-wave{min-height:92px}
+ #v-ayan .daw-toolbar .btn{flex:0 1 auto}
+}
+@media(max-width:420px){
+ #v-ayan .row{grid-template-columns:66px minmax(0,1fr);gap:5px}
+ #v-ayan .name{padding-left:3px}
+ #v-ayan .name b{font-size:11px}
+ #v-ayan .steps{gap:2px;padding-right:4px}
+ #v-ayan .step{min-height:26px;border-radius:3px}
+ #v-ayan canvas#wave{height:88px}
+ #v-ayan .card{padding:12px}
+}
+</style>
+
 </head>
 <body class="in-studio">
 <header>
