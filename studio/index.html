@@ -3728,7 +3728,7 @@ function rpRender(){
     d.querySelector("small").append([kindName(r.kind),r.group].filter(Boolean).map(x=>x+" · ").join("")+"Last worked "+new Date(r.updated).toLocaleDateString([], {dateStyle:"medium"})+" · "+stateSummary(r.state,!!r.audio));
     el.appendChild(d); });
   rpBtn(); }
-function rpBtn(){ const n=rpPick.size,studio=rpData&&rpData.studio,hasStudio=!!(studio&&((studio.projects||[]).length||(studio.assets||[]).length||(studio.sessions||[]).length)); const b=document.getElementById("rpGo"); b.disabled=!n&&!hasStudio; b.textContent=n? "Restore "+n+" session"+(n===1?"":"s"):hasStudio?"Restore Studio projects and media":"Pick sessions to restore"; }
+function rpBtn(){ const n=rpPick.size,studio=rpData&&rpData.studio,hasStudio=!!(studio&&((studio.projects||[]).length||(studio.assets||[]).length||(studio.sessions||[]).length||Object.keys(studio.roomData||{}).length)); const b=document.getElementById("rpGo"); b.disabled=!n&&!hasStudio; b.textContent=n? "Restore "+n+" session"+(n===1?"":"s"):hasStudio?"Restore Studio projects and media":"Pick sessions to restore"; }
 document.getElementById("rpSort").onchange=rpRender;
 document.getElementById("rpAll").onclick=()=>{ const all=(rpData.projects||[]).map(r=>r.id); if(rpPick.size===all.length) rpPick.clear(); else all.forEach(id=>rpPick.add(id)); rpRender(); };
 document.getElementById("rpCancel").onclick=()=>{ rpData=null; document.getElementById("rPrev").hidden=true; };
