@@ -3,6 +3,7 @@
 const PROJECTS_KEY="ps.studio.projects.v1",ACTIVE_KEY="ps.studio.activeProject.v1";
 const $=id=>document.getElementById(id);
 let activeProjectId=null,dbPromise=null,assets=[],roomSwitchPromise=Promise.resolve();
+const deletingProjects=new Set(),pendingAssetWrites=new Map();
 const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Model / Beauty"};
 function readProjects(){try{const v=JSON.parse(localStorage.getItem(PROJECTS_KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
 function openDB(){
@@ -18,9 +19,17 @@ function openDB(){
 async function storeAsset(detail){
  if(!detail||!detail.blob||!detail.blob.size)return null;
  const projectId=detail.projectId||activeProjectId||"__studio_default__";
- const d=await openDB(),asset={id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,7),projectId,name:String(detail.name||"Studio media").slice(0,120),kind:detail.kind||(detail.blob.type.startsWith("video/")?"video":"audio"),type:detail.blob.type||"",size:detail.blob.size,created:Date.now(),blob:detail.blob};
- await new Promise((resolve,reject)=>{const tx=d.transaction("assets","readwrite");tx.objectStore("assets").put(asset);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||Error("Could not save this media."));});
- await refreshAssets();window.dispatchEvent(new CustomEvent("pennio:workspace-media-saved",{detail:{id:asset.id,projectId:asset.projectId}}));return asset;
+ if(deletingProjects.has(projectId))throw Error("This project is being deleted. Start a new project before saving more media.");
+ const previous=pendingAssetWrites.get(projectId)||Promise.resolve();
+ const operation=previous.catch(()=>{}).then(async()=>{
+  if(deletingProjects.has(projectId))throw Error("This project is being deleted. Start a new project before saving more media.");
+  const d=await openDB(),asset={id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,7),projectId,name:String(detail.name||"Studio media").slice(0,120),kind:detail.kind||(detail.blob.type.startsWith("video/")?"video":"audio"),type:detail.blob.type||"",size:detail.blob.size,created:Date.now(),blob:detail.blob};
+  await new Promise((resolve,reject)=>{const tx=d.transaction("assets","readwrite");tx.objectStore("assets").put(asset);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||Error("Could not save this media."));});
+  await refreshAssets();window.dispatchEvent(new CustomEvent("pennio:workspace-media-saved",{detail:{id:asset.id,projectId:asset.projectId}}));return asset;
+ });
+ pendingAssetWrites.set(projectId,operation);
+ try{return await operation;}
+ finally{if(pendingAssetWrites.get(projectId)===operation)pendingAssetWrites.delete(projectId);}
 }
 async function getAssets(){
  const d=await openDB();
@@ -34,6 +43,7 @@ async function deleteAsset(id){
  const d=await openDB();await new Promise((resolve,reject)=>{const tx=d.transaction("assets","readwrite");tx.objectStore("assets").delete(id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});await refreshAssets();
 }
 function setActive(project,silent){
+ if(project&&deletingProjects.has(project.id))project=null;
  const previous=activeProjectId;activeProjectId=project&&project.id?project.id:null;
  try{if(activeProjectId)localStorage.setItem(ACTIVE_KEY,activeProjectId);else localStorage.removeItem(ACTIVE_KEY);}catch(e){}
  const label=$("workspaceProjectName");if(label)label.textContent=project?project.name:"Studio workspace";
@@ -41,7 +51,10 @@ function setActive(project,silent){
  refreshAssets();
  if(!silent&&activeProjectId!==previous)window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project,previousProjectId:previous}}));
 }
-function projectById(id){return readProjects().find(p=>p.id===id)||null;}
+function projectById(id){if(deletingProjects.has(id))return null;return readProjects().find(p=>p.id===id)||null;}
+function beginProjectDeletion(id){if(id)deletingProjects.add(id);}
+function cancelProjectDeletion(id){deletingProjects.delete(id);}
+function finishProjectDeletion(id){deletingProjects.delete(id);}
 function buildUI(){
  if($("pennioWorkspaceDock"))return;
  const style=document.createElement("style");
@@ -159,6 +172,8 @@ async function deleteSession(projectId){
 }
 async function deleteProjectData(projectId){
  if(!projectId)return;
+ deletingProjects.add(projectId);
+ const pending=pendingAssetWrites.get(projectId);if(pending)await pending.catch(()=>{});
  const d=await openDB();
  return new Promise((resolve,reject)=>{
   const tx=d.transaction(["assets","sessions","sessionAudio"],"readwrite");
@@ -211,6 +226,7 @@ window.PennioWorkspace={
  addAsset:storeAsset,
  saveSession,loadSession,deleteSession,deleteProjectData,exportProjectData,importProjectData,
  refreshProjects:refreshProjectSelect,
+ beginProjectDeletion,cancelProjectDeletion,finishProjectDeletion,
  openRoom:async room=>{const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();else window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room}}));await roomSwitchPromise;},
  refresh:refreshAssets
 };
