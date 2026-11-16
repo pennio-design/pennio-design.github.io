@@ -3970,7 +3970,7 @@ function show(v){
 }
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"",b.dataset.v==="home"?"/studio/":"#"+b.dataset.v);}catch(e){} });
 const hs=x=>{x=x.replace("#",""); return x==="film"?"faajiplace":x;};
-const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan") show(h);
+const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan"||h==="home") show(h);
 window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write"||x==="beauty") show(x);});
 
 /* Model / Beauty camera controls */
@@ -4320,9 +4320,9 @@ document.getElementById("sylIn").oninput=sylRender;
  const $=id=>document.getElementById(id), KEY="ps.studio.projects.v1";
  const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}};
  const write=list=>{try{localStorage.setItem(KEY,JSON.stringify(list));return true}catch(e){return false}};
- const rooms=$("dashRooms"),search=$("dashSearch"),projects=$("dashProjects");
+ const rooms=$("dashRooms"),search=$("dashSearch"),projects=$("dashProjects");let showAllProjects=false;
  const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Model / Beauty"};
- function go(room){if(typeof show==="function")show(room);try{history.replaceState(null,"",room==="home"?"/studio/":"#"+room)}catch(e){}window.scrollTo({top:0,behavior:"smooth"});}
+ function go(room){const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();try{history.replaceState(null,"",room==="home"?"/studio/":"#"+room)}catch(e){}window.scrollTo({top:0,behavior:"smooth"});}
  rooms.addEventListener("click",e=>{const card=e.target.closest("[data-room]");if(card&&roomNames[card.dataset.room])go(card.dataset.room);});
  function filterRooms(){const q=(search.value||"").trim().toLowerCase();let count=0;rooms.querySelectorAll("[data-search]").forEach(card=>{const match=!q||(card.dataset.search+" "+card.textContent).toLowerCase().includes(q);card.hidden=!match;if(match&&card.dataset.room)count++;});$("dashRoomCount").textContent=count+" active room"+(count===1?"":"s");}
  search.addEventListener("input",filterRooms);
@@ -4330,7 +4330,7 @@ document.getElementById("sylIn").oninput=sylRender;
  function renderProjects(){
   const list=read().sort((a,b)=>b.updated-a);projects.replaceChildren();
   if(!list.length){const empty=document.createElement("div");empty.className="dash-empty";empty.innerHTML='<span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button>';projects.append(empty);$("dashFirstProject").onclick=createProject;return;}
-  list.slice(0,5).forEach(item=>{
+  (showAllProjects?list:list.slice(0,5)).forEach(item=>{
    const row=document.createElement("article");row.className="dash-project";
    const mark=document.createElement("span");mark.className="dash-project-mark";mark.textContent="✳";
    const copy=document.createElement("div");copy.className="dash-project-copy";
@@ -4352,7 +4352,7 @@ document.getElementById("sylIn").oninput=sylRender;
   const session=$("pname");if(session)session.value=item.name;
  }
  $("dashNewProject").onclick=createProject;
- $("dashViewAll").onclick=()=>{search.value="";filterRooms();search.focus();};
+ $("dashViewAll").onclick=()=>{showAllProjects=!showAllProjects;$("dashViewAll").innerHTML=showAllProjects?"Show less <span>↑</span>":"View all <span>↗</span>";renderProjects();};
  $("dashStartSound").onclick=()=>{go("ayan");setTimeout(()=>{const target=$("voiceCard");if(target)target.scrollIntoView({behavior:"smooth",block:"start"});},100);};
  $("dashHelp").onclick=()=>{go("ayan");const guide=$("guideLink");if(guide)guide.click();};
  renderProjects();filterRooms();
