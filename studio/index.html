@@ -3665,6 +3665,7 @@ async function doBackup(only,projName){
   const list= Array.isArray(only)? only : ((await allProjects())||[]);
   const data={app:"pennio.studio", version:2, at:new Date().toISOString(), profile:lsGet("ps.profile"), words:(await kvGet("words"))||lsGet("ps.words")||[],
     projects:list.map(r=>({...r, audio:r.audio? {name:r.audio.name, b64:b64(r.audio.bytes)} : null}))};
+  try{
   if(window.PennioWorkspace?.exportProjectData){
     const allStudio=(()=>{try{return JSON.parse(localStorage.getItem("ps.studio.projects.v1")||"[]")}catch(e){return[]}})();
     let studioProjects=allStudio;
@@ -3683,6 +3684,8 @@ async function doBackup(only,projName){
     const active=localStorage.getItem("ps.studio.activeProject.v1");
     data.studio={projects:studioProjects,activeProjectId:studioProjectIds.includes(active)?active:null,ayanMap,roomData,assets:studioAssets,sessions:studioSessions};
   }
+  }catch(error){data.studioError=error&&error.message||"Studio project data could not be read.";}
+
   const vers=[], keys=new Set(); for(const r of list){ const vs=(await tx("versions","readonly",st=>st.index("pid").getAll(r.id)))||[]; vs.forEach(v=>{ vers.push(v); if(v.audioKey) keys.add(v.audioKey); }); }
   data.versions=vers; data.audio={}; for(const k of keys){ const bytes=await tx("audio","readonly",st=>st.get(k)); if(bytes) data.audio[k]=b64(bytes); }
   const now=new Date(), stamp=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+"-"+String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0");
@@ -3693,7 +3696,7 @@ async function doBackup(only,projName){
     const m=lsGet("ps.bkMap")||{}; list.forEach(r=>m[r.id]=Date.now()); lsSet("ps.bkMap",m);
     const log=lsGet("ps.bkLog")||[]; log.unshift({file:filename, at:Date.now(), n:list.length, names:list.map(r=>r.name), size:blob.size}); log.length=Math.min(log.length,20); lsSet("ps.bkLog",log);
     document.getElementById("bkpBar").hidden=true; toast((projName? "Saved the project "+projName+" as " : one? "Saved "+list[0].name+" as " : "Backup saved as ")+filename);
-    if(workEl.classList.contains("on")) renderWork(); }
+    if(workEl.classList.contains("on")) renderWork();if(data.studioError)toast("Studio data was not included: "+data.studioError); }
   catch(e){ toast("Backup was cancelled or blocked."); }
 }
 document.getElementById("backup").onclick=doBackup;
