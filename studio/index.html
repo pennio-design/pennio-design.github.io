@@ -3661,8 +3661,25 @@ async function doBackup(only,projName){
   await saveNow();
   if(!downloads){ toast("Download is not available in this view."); return; }
   const list= Array.isArray(only)? only : ((await allProjects())||[]);
-  const data={app:"pennio.studio", version:1, at:new Date().toISOString(), profile:lsGet("ps.profile"), words:(await kvGet("words"))||lsGet("ps.words")||[],
+  const data={app:"pennio.studio", version:2, at:new Date().toISOString(), profile:lsGet("ps.profile"), words:(await kvGet("words"))||lsGet("ps.words")||[],
     projects:list.map(r=>({...r, audio:r.audio? {name:r.audio.name, b64:b64(r.audio.bytes)} : null}))};
+  if(window.PennioWorkspace?.exportProjectData){
+    const allStudio=(()=>{try{return JSON.parse(localStorage.getItem("ps.studio.projects.v1")||"[]")}catch(e){return[]}})();
+    let studioProjects=allStudio;
+    if(Array.isArray(only)){
+      const sessionIds=new Set(list.map(r=>r.id));studioProjects=[];
+      for(const project of allStudio){const mapped=await kvGet("workspace.ayan."+project.id);if(mapped&&sessionIds.has(mapped))studioProjects.push(project);}
+    }
+    const studioProjectIds=studioProjects.map(project=>project.id),storageIds=Array.isArray(only)?studioProjectIds:[...studioProjectIds,"__studio_default__"];
+    const payload=await window.PennioWorkspace.exportProjectData(storageIds);
+    const studioAssets=[];for(const asset of payload.assets){const {blob,...meta}=asset;studioAssets.push({...meta,b64:b64(await blob.arrayBuffer())});}
+    const studioSessions=[];for(const session of payload.sessions){const {audio,...meta}=session,encoded=[];for(const item of audio||[])encoded.push({id:item.id,type:item.blob.type||"audio/wav",b64:b64(await item.blob.arrayBuffer())});studioSessions.push({...meta,audio:encoded});}
+    const roomData={},roomBases=["ps.film.room","ps.write.draft","ps.film.activeCue","ps.ayan.writeCue"];
+    for(const id of storageIds)for(const base of roomBases){const key=base+"."+(id==="__studio_default__"?"default":id),raw=localStorage.getItem(key);if(raw!==null){try{roomData[key]=JSON.parse(raw)}catch(e){roomData[key]=raw;}}}
+    const ayanMap={};for(const project of studioProjects){const mapped=await kvGet("workspace.ayan."+project.id);if(mapped)ayanMap[project.id]=mapped;}
+    const active=localStorage.getItem("ps.studio.activeProject.v1");
+    data.studio={projects:studioProjects,activeProjectId:studioProjectIds.includes(active)?active:null,ayanMap,roomData,assets:studioAssets,sessions:studioSessions};
+  }
   const vers=[], keys=new Set(); for(const r of list){ const vs=(await tx("versions","readonly",st=>st.index("pid").getAll(r.id)))||[]; vs.forEach(v=>{ vers.push(v); if(v.audioKey) keys.add(v.audioKey); }); }
   data.versions=vers; data.audio={}; for(const k of keys){ const bytes=await tx("audio","readonly",st=>st.get(k)); if(bytes) data.audio[k]=b64(bytes); }
   const now=new Date(), stamp=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0")+"-"+String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0");
@@ -3719,7 +3736,7 @@ document.getElementById("restoreFile").onchange=async e=>{
     rpPick=new Set((data.projects||[]).filter(r=>{ const m=rpHave.get(r.id); return !m || m.updated<r.updated; }).map(r=>r.id));
     const n=(data.projects||[]).length;
     document.getElementById("rpTitle").textContent=f.name;
-    document.getElementById("rpInfo").textContent="Made "+(data.at? new Date(data.at).toLocaleString([], {dateStyle:"medium", timeStyle:"short"}) : "at an unknown date")+" · "+n+" session"+(n===1?"":"s")+" · "+fmtSize(f.size)+". Sessions that are new or newer than yours are ticked.";
+    document.getElementById("rpInfo").textContent="Made "+(data.at? new Date(data.at).toLocaleString([], {dateStyle:"medium", timeStyle:"short"}) : "at an unknown date")+" · "+n+" session"+(n===1?"":"s")+" · "+((data.studio&&data.studio.projects||[]).length)+" Studio project"+((data.studio&&data.studio.projects||[]).length===1?"":"s")+" · "+((data.studio&&data.studio.assets||[]).length)+" media asset"+((data.studio&&data.studio.assets||[]).length===1?"":"s")+" · "+fmtSize(f.size)+". Sessions that are new or newer than yours are ticked.";
     document.getElementById("rPrev").hidden=false; rpRender(); document.getElementById("rPrev").scrollIntoView({block:"nearest"});
   }catch(err){ toast("That is not a pennio.studio backup."); }
 };
@@ -3732,7 +3749,21 @@ document.getElementById("rpGo").onclick=async()=>{
     for(const [k,v] of Object.entries(data.audio||{})) if(keys.has(k)) await tx("audio","readwrite",st=>st.put(unb64(v),k));
     for(const v of vers) await tx("versions","readwrite",st=>st.put(v));
     if(data.words&&data.words.length){ const cur=(await kvGet("words"))||[]; const merged=cur.concat(data.words.filter(w=>!cur.some(c=>c.text===w.text))); await kvSet("words",merged); lsSet("ps.words",merged); renderWords(); }
-    toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+" from the backup. Tap Continue on any of them.");
+    let studioAdded=0,studioMedia=0;
+    if(data.studio){
+      const studio=data.studio,local=lsGet("ps.studio.projects.v1")||[],merged=local.slice();
+      for(const project of studio.projects||[]){const i=merged.findIndex(x=>x.id===project.id);if(i<0){merged.push(project);studioAdded++;}else if((project.updated||project.created||0)>(merged[i].updated||merged[i].created||0))merged[i]=project;}
+      lsSet("ps.studio.projects.v1",merged);
+      for(const [key,value] of Object.entries(studio.roomData||{})){if(localStorage.getItem(key)===null)localStorage.setItem(key,JSON.stringify(value));}
+      for(const [projectId,sessionId] of Object.entries(studio.ayanMap||{})){if(keep.has(sessionId))await kvSet("workspace.ayan."+projectId,sessionId);}
+      if(window.PennioWorkspace?.importProjectData){
+        const assets=(studio.assets||[]).map(asset=>{const {b64:encoded,...meta}=asset;return {...meta,blob:new Blob([unb64(encoded)],{type:asset.type||""})};});
+        const sessions=(studio.sessions||[]).map(session=>({...session,audio:(session.audio||[]).map(item=>({id:item.id,blob:new Blob([unb64(item.b64)],{type:item.type||"audio/wav"})}))}));
+        const imported=await window.PennioWorkspace.importProjectData({assets,sessions});studioMedia=imported.assets;
+      }
+      if(!localStorage.getItem("ps.studio.activeProject.v1")&&studio.activeProjectId){const activeProject=merged.find(project=>project.id===studio.activeProjectId);if(activeProject)window.PennioWorkspace?.setActiveProject(activeProject);}
+    }
+    toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+(studioAdded?" · "+studioAdded+" Studio project"+(studioAdded===1?"":"s"):"")+(studioMedia?" · "+studioMedia+" media asset"+(studioMedia===1?"":"s"):"")+" from the backup. Tap Continue on any of them.");
     rpData=null; document.getElementById("rPrev").hidden=true; renderWork();
   }catch(err){ toast("Something in that file could not be restored."); }
 };
