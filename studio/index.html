@@ -3727,7 +3727,7 @@ async function nudgeWeekly(){
   if(Date.now()<snooze || Date.now()-last<7*DAY) return;
   const list=(await allProjects())||[];
   const studioProjects=lsGet("ps.studio.projects.v1")||[];
-  const studioAssets=window.PennioWorkspace?await window.PennioWorkspace.listAssets():[];
+  let studioAssets=[];try{if(window.PennioWorkspace)studioAssets=await window.PennioWorkspace.listAssets();}catch(e){}
   const worth=list.some(r=>r.audio || (r.state&&r.state.pattern&&Object.values(r.state.pattern).some(a=>a.some(Boolean)) && r.updated>last)) || studioProjects.length>0 || studioAssets.length>0;
   if(!worth) return;
   showBkp("Time to back up", "Studio projects, DAW sessions and media are stored in this browser. Last backup: "+agoText(last)+".");
