@@ -824,7 +824,22 @@ html[data-theme="light"] .fr-cue{background:rgba(255,255,255,.72)}
 html[data-theme="light"] .dr-editor{background:#fff}
 html[data-theme="light"] .fr-player{background:#090909}
 html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
-@media(max-width:560px){.logo span{display:inline}.theme-toggle{min-height:36px;padding:0 9px}}
+@media(max-width:560px){
+ .bar{height:auto;min-height:56px;flex-wrap:wrap;gap:4px 8px;padding:6px 0}
+ .logo{font-size:14px;gap:7px}.logo-mark{width:28px;height:28px}
+ .hright{gap:4px}
+ .theme-toggle{width:44px;height:44px;min-height:44px;padding:0;display:grid;place-items:center}
+ .theme-toggle span{display:none}
+ .theme-toggle svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+ #siteSettingsBtn{width:44px;height:44px;min-height:44px}
+ .morebtn{min-height:44px;padding:0 6px}
+ .morebtn span{max-width:44px}
+ .avatar{width:32px;height:32px}
+ .hsess{order:3;flex:1 0 100%;margin:0}
+ .hsess input{width:100%;max-width:100%;font-size:14px}
+ body:not(.in-studio) .hsess{display:none}
+}
+@media(max-width:400px){.avatar{display:none}}
 .set-actions{display:grid;gap:10px;margin-top:18px}.set-action{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px;border:1px solid var(--line2);border-radius:14px;background:var(--surface)}.set-action div{flex:1;min-width:0}.set-action b{display:block;font-size:14px}.set-action small{display:block;margin-top:4px;color:var(--mute);font-size:12px;line-height:1.45}.set-action .btn{flex:none}
 @media(max-width:480px){.set-action{align-items:flex-start;flex-direction:column}.set-action .btn{width:100%}}
 </style>
@@ -836,7 +851,7 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
     <div class="logo"><svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-label="PENNIO Studio"><rect width="32" height="32" rx="6" fill="#090909"/><path d="M9 7h8.5a5.5 5.5 0 1 1 0 11H13v7H9V7Zm4 3.5v4h4.2a2 2 0 1 0 0-4H13Z" fill="#F6F5F2"/><circle cx="22.5" cy="22.5" r="2.5" fill="#FF6B35"/></svg>pennio.studio <span>· PENNIO</span></div>
     <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span></div>
     <div class="hright">
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme">Light</button>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
       <button class="btn ic" id="siteSettingsBtn" type="button" aria-label="Studio settings" title="Studio settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
       <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Studio</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
         <nav id="nav" hidden>
@@ -4007,7 +4022,7 @@ document.getElementById("sylIn").oninput=sylRender;
   const setTheme=theme=>{
     const light=theme==="light";
     document.documentElement.dataset.theme=light?"light":"dark";
-    button.textContent=light?"Dark":"Light";
+    button.querySelector("span").textContent=light?"Dark":"Light";
     button.setAttribute("aria-label","Switch to "+(light?"dark":"light")+" theme");
     button.setAttribute("aria-pressed",String(light));
     const meta=document.querySelector('meta[name="theme-color"]');
