@@ -3376,7 +3376,7 @@ function beatFromVoice(fit){
 }
 
 /* ---------- storage: everything stays in this browser ---------- */
-let db=null, currentId=null, ready=false, saveT=null;
+let db=null, currentId=null, ready=false, saveT=null, activeWorkspaceAyanProjectId=null;
 function idb(){ return new Promise((res)=>{ try{ const r=indexedDB.open("pennio-studio",2); r.onupgradeneeded=()=>{ const d=r.result; const has=n=>d.objectStoreNames.contains(n);
     if(!has("projects")) d.createObjectStore("projects",{keyPath:"id"}); if(!has("kv")) d.createObjectStore("kv");
     if(!has("versions")){ const v=d.createObjectStore("versions",{keyPath:"id"}); v.createIndex("pid","pid"); } if(!has("audio")) d.createObjectStore("audio"); }; r.onsuccess=()=>res(r.result); r.onerror=()=>res(null); }catch(e){ res(null); } }); }
@@ -3439,6 +3439,7 @@ function newId(){ return "p"+Date.now().toString(36)+Math.random().toString(36).
 async function openWorkspaceMusicProject(project){
   if(!project||!project.id) return false;
   if(window.__pennioAyanBoot)await window.__pennioAyanBoot;
+  if(activeWorkspaceAyanProjectId===project.id)return true;
   await stopWorkspaceRecordings();
   if(!db) db=await idb();
   if(!db) throw new Error("Local music session storage is unavailable.");
@@ -3449,10 +3450,10 @@ async function openWorkspaceMusicProject(project){
   if(!rec){
     const list=(await allProjects())||[];
     rec={id:newId(),name:project.name||"Untitled project",created:Date.now(),updated:Date.now(),state:null,audio:null};
-    await openProject(rec);loadPreset(0);ready=true;await saveNow();await kvSet(mapKey,rec.id);
+    await openProject(rec);loadPreset(0);ready=true;await saveNow();await kvSet(mapKey,rec.id);activeWorkspaceAyanProjectId=project.id;
   }else{
     rec.name=project.name||rec.name;
-    await openProject(rec);ready=true;await saveNow();
+    await openProject(rec);ready=true;await saveNow();activeWorkspaceAyanProjectId=project.id;
   }
   return true;
 }
@@ -3462,7 +3463,7 @@ async function removeWorkspaceMusicProject(projectId){
   const mapKey="workspace.ayan."+projectId,mapped=await kvGet(mapKey);
   if(!mapped){await tx("kv","readwrite",st=>st.delete(mapKey));return false;}
   if(currentId===mapped){
-    stopTracks();ready=false;currentId=null;currentAudio=null;rawBuf=proBuf=drumBuf=null;
+    stopTracks();ready=false;currentId=null;activeWorkspaceAyanProjectId=null;currentAudio=null;rawBuf=proBuf=drumBuf=null;
     lsSet("ps.current",null);await tx("kv","readwrite",st=>st.delete("current"));
   }
   const versions=(await tx("versions","readonly",st=>st.index("pid").getAll(mapped)))||[];
