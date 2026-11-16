@@ -175,6 +175,7 @@ document.addEventListener("click",e=>{
  if(button)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:button.dataset.v}}));
 });
 window.addEventListener("pennio:workspace-room-open",e=>{
+ roomSwitchPromise=Promise.resolve();
  const project=activeProjectId?projectById(activeProjectId):null;
  if(e.detail?.room==="ayan"&&project)roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(project)).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
  if((e.detail?.room==="faajiplace"||e.detail?.room==="film")&&project)roomSwitchPromise=Promise.resolve(window.PennioFilmWorkspace?.restore(project)).catch(err=>{console.warn("Film project restore:",err);throw err;});
