@@ -3947,5 +3947,23 @@ document.getElementById("sylIn").oninput=sylRender;
 })();
 </script>
 
+<script>
+(function(){
+  const button=document.getElementById("themeToggle");
+  if(!button)return;
+  const setTheme=theme=>{
+    const light=theme==="light";
+    document.documentElement.dataset.theme=light?"light":"dark";
+    button.textContent=light?"Dark":"Light";
+    button.setAttribute("aria-label","Switch to "+(light?"dark":"light")+" theme");
+    button.setAttribute("aria-pressed",String(light));
+    const meta=document.querySelector('meta[name="theme-color"]');
+    if(meta)meta.content=light?"#F6F5F2":"#090909";
+    try{localStorage.setItem("ps.theme",light?"light":"dark");}catch(e){}
+  };
+  setTheme(document.documentElement.dataset.theme||"dark");
+  button.addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light"));
+})();
+</script>
 </body>
 </html>
