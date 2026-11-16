@@ -943,6 +943,60 @@ html[data-theme="light"] .daw-track input[type="range"],
 html[data-theme="light"] .daw-trim input[type="range"]{accent-color:#d95728}
 html[data-theme="light"] .daw-room input::placeholder,
 html[data-theme="light"] .daw-track-name::placeholder{color:#817a71}
+
+/* Light-theme contrast pass for the voice recorder and DAW controls. */
+html[data-theme="light"] .daw{background:#fff!important;color:#201d19;border-color:#d5cfc6}
+html[data-theme="light"] .daw-head,
+html[data-theme="light"] .daw-toolbar,
+html[data-theme="light"] .daw-bottom,
+html[data-theme="light"] .daw-selection{background:#f4f2ee!important;color:#201d19;border-color:#d5cfc6}
+html[data-theme="light"] .daw-head p,
+html[data-theme="light"] .daw-status,
+html[data-theme="light"] .daw-selection-head small,
+html[data-theme="light"] .daw-selection-note{color:#514b43!important}
+html[data-theme="light"] .daw-track-head{background:#f7f5f1!important;color:#201d19}
+html[data-theme="light"] .daw-track-name,
+html[data-theme="light"] .daw-track input:not([type="range"]),
+html[data-theme="light"] .daw-trim input:not([type="range"]){background:#fff!important;color:#201d19!important;border-color:#aaa196!important}
+html[data-theme="light"] .daw-track-controls button,
+html[data-theme="light"] .daw-toolbar .btn,
+html[data-theme="light"] .daw-bottom .btn,
+html[data-theme="light"] .daw-selection .btn{background:#fff!important;color:#302b25!important;border:1px solid #aaa196!important}
+html[data-theme="light"] .daw-track-controls button.on,
+html[data-theme="light"] .daw-toolbar .btn.primary,
+html[data-theme="light"] .daw-bottom .btn.primary,
+html[data-theme="light"] .daw-selection .btn.primary{background:#b94317!important;color:#fff!important;border-color:#b94317!important}
+html[data-theme="light"] .daw button:disabled{opacity:.48;color:#625b52!important;background:#e8e4de!important}
+html[data-theme="light"] #voiceCard,
+html[data-theme="light"] #voiceCard .card,
+html[data-theme="light"] #voiceCard .recopts,
+html[data-theme="light"] #voiceCard .take{background:#fff!important;color:#201d19!important;border-color:#d5cfc6}
+html[data-theme="light"] #voiceCard p,
+html[data-theme="light"] #voiceCard .hint,
+html[data-theme="light"] #voiceCard .vmeta,
+html[data-theme="light"] #voiceCard .tk small,
+html[data-theme="light"] #voiceCard .sw-row span{color:#514b43!important}
+html[data-theme="light"] #voiceCard .sw-row{border-color:#d5cfc6}
+html[data-theme="light"] #voiceCard .sw{background:#d4cec5;border:1px solid #82796e}
+html[data-theme="light"] #voiceCard .sw.on{background:#b94317;border-color:#b94317}
+html[data-theme="light"] #voiceCard .lat{background:#f4f2ee;color:#201d19;border-color:#d5cfc6}
+html[data-theme="light"] #voiceCard input[type="range"]{accent-color:#b94317}
+html[data-theme="light"] #voiceCard .seg,
+html[data-theme="light"] #voiceCard .vstyle{color:#302b25}
+html[data-theme="light"] #voiceCard .seg button,
+html[data-theme="light"] #voiceCard .vstyle button{color:#302b25;border-color:#aaa196}
+html[data-theme="light"] #voiceCard .seg button.on,
+html[data-theme="light"] #voiceCard .vstyle button.on{background:#b94317;color:#fff;border-color:#b94317}
+html[data-theme="light"] .studio-rec{background:rgba(255,255,255,.99)!important;color:#201d19!important;border-color:#bdb5aa;box-shadow:0 18px 50px rgba(35,27,18,.2)}
+html[data-theme="light"] .studio-rec p,
+html[data-theme="light"] .studio-rec small,
+html[data-theme="light"] .studio-rec-status{color:#514b43!important}
+html[data-theme="light"] .studio-rec input,
+html[data-theme="light"] .studio-rec select{background:#fff;color:#201d19;border-color:#aaa196}
+html[data-theme="light"] .studio-rec .btn{background:#fff;color:#302b25;border-color:#aaa196}
+html[data-theme="light"] .studio-rec .btn.primary{background:#b94317;color:#fff;border-color:#b94317}
+html[data-theme="light"] .studio-rec-launch{color:#17120e;background:#ff8a42}
+
 </style>
 <script>try{if(localStorage.getItem("ps.theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}</script>
 <style>.beauty-frame{position:relative;max-width:720px;margin:16px auto 0;aspect-ratio:4/5;max-height:72vh;overflow:hidden;border-radius:16px;background:#080708;border:1px solid var(--line2)}.beauty-frame video,.beauty-frame img{width:100%;height:100%;object-fit:cover;display:block}.beauty-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--mute);text-align:center;padding:24px}.beauty-tunes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:16px}.beauty-tunes label{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:13px}.beauty-tunes output{color:var(--orange)}.beauty-tunes input{grid-column:1/-1;width:100%;accent-color:var(--orange)}</style>
