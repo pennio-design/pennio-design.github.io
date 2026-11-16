@@ -2229,6 +2229,24 @@ async function loadVoice(bytes,name,fromRestore){
   vmeta.textContent=voiceMeta();
   saveSoon(true);
 }
+window.addEventListener("pennio:recorded-audio",async e=>{
+  const detail=e.detail||{};
+  if(!detail.blob) return;
+  const name=detail.name||"Studio voice take";
+  vmeta.textContent="Loading your Studio recording into the voice and Ìlù engine…";
+  try{
+    stopAll();
+    pushHist();
+    await loadVoice(await detail.blob.arrayBuffer(),name,false);
+    sayNote.textContent="Your Studio recording is ready. Press “Translate my voice to drum” to turn its pitch movement into a dùndún line.";
+    toast("Voice loaded into Àyàn. Ìlù is ready.");
+    nudgeAfterRecording();
+  }catch(err){
+    console.error("Studio recording handoff failed:",err);
+    vmeta.textContent="The recording reached Àyàn but could not be decoded. Try saving it as WAV or MP3, then import it here.";
+    sayNote.textContent="Could not read this recording. Try a WAV or MP3 export.";
+  }
+});
 document.getElementById("vfile").onchange=async e=>{
   const f=e.target.files&&e.target.files[0]; if(!f) return;
   vmeta.textContent="Reading "+f.name+"…";
