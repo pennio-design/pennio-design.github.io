@@ -4243,7 +4243,7 @@ document.getElementById("sylIn").oninput=sylRender;
     useFilmBlob(media.blob,media.name,media.assetId,media.kind|| (media.blob.type.startsWith("audio/")?"audio":"video"));
   });
   window.addEventListener("pennio:film-media-saved",event=>{const saved=event.detail||{};if(saved.id&&saved.name===film.clipName){film.clipAssetId=saved.id;saveFilm();}});
-  window.addEventListener("pennio:workspace-ready",()=>restoreFilmAsset());
+  window.addEventListener("pennio:workspace-ready",()=>{if(document.getElementById("filmDesk")?.getClientRects().length)restoreFilmAsset();});
 
   function saveFilm(){
     film.title=filmTitle.value.trim()||"Untitled film";
@@ -4496,7 +4496,7 @@ document.getElementById("sylIn").oninput=sylRender;
     film.cues=Array.isArray(film.cues)?film.cues:[];film.cues.forEach(c=>{if(!c.id)c.id=makeId();});
     filmTitle.value=film.title||"Untitled film";filmLogline.value=film.logline||"";
     renderCues();clearFilmPreview();
-    if(project)restoreFilmAsset(project);
+    if(project&&document.getElementById("filmDesk")?.getClientRects().length)restoreFilmAsset(project);
   }
   window.addEventListener("pennio:workspace-project-open",event=>switchRoomProject(event.detail&&event.detail.project||null));
 })();
