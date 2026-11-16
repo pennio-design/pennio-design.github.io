@@ -3746,7 +3746,7 @@ document.getElementById("sylIn").oninput=sylRender;
       return;
     }
     if(button.dataset.action==="score"){
-      setActiveCue(cue);
+      setActiveCue(cue);renderActiveCue();
       if(filmVideo.src&&document.pictureInPictureEnabled&&filmVideo.requestPictureInPicture){
         try{filmVideo.currentTime=Math.max(0,Number(cue.start)||0);filmVideo.muted=true;await filmVideo.play();await filmVideo.requestPictureInPicture();}
         catch(e){filmVideo.pause();filmVideo.muted=false;}
@@ -3858,7 +3858,7 @@ document.getElementById("sylIn").oninput=sylRender;
   $("draftToAyan").addEventListener("click",()=>{
     saveDraft();
     const selected=draftText.value.slice(draftText.selectionStart,draftText.selectionEnd).trim();
-    const line=(selected||draftText.value.split(/\\r?\\n/).map(part=>part.trim()).find(Boolean)||"").slice(0,240);
+    const line=(selected||draftText.value.split(/\r?\n/).map(part=>part.trim()).find(Boolean)||"").slice(0,240);
     if(!line)return;
     const cue={title:draft.title||"Untitled draft",text:line,at:Date.now()};
     safeWrite("ps.ayan.writeCue",cue,draftStatus);renderWriteCue();navTo("ayan","ayan");
