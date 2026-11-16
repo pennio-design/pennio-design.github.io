@@ -126,19 +126,24 @@ $("dawMic").onclick=async()=>{
  if(state.recorder&&state.recorder.state==="recording"){state.recorder.stop();$("dawMic").textContent="Record voice";return;}
  const recordProjectId=sessionProjectId();
  try{
-  const stream=await navigator.mediaDevices.getUserMedia({audio:true});state.recordStream=stream;state.recordChunks=[];
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  if(state.projectSwitching||sessionProjectId()!==recordProjectId){stream.getTracks().forEach(t=>t.stop());status("Recording cancelled because the project changed.");return;}
+  state.recordStream=stream;state.recordChunks=[];
   const mime=MediaRecorder.isTypeSupported("audio/webm;codecs=opus")?"audio/webm;codecs=opus":"";
-  state.recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});state.recorderKind="mic";
+  state.recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});state.recorderKind="mic";beginRecordingTask("mic");
   state.recorder.ondataavailable=e=>{if(e.data.size)state.recordChunks.push(e.data);};
   state.recorder.onstop=async()=>{
-   stream.getTracks().forEach(t=>t.stop());state.recordStream=null;$("dawMic").textContent="Record voice";
-   const blob=new Blob(state.recordChunks,{type:state.recorder.mimeType||"audio/webm"});state.recorder=null;state.recorderKind=null;
-   if(!blob.size){status("No voice take was captured.");return;}
-   if(window.PennioWorkspace?.addAsset)window.PennioWorkspace.addAsset({blob,name:"Voice take",kind:"audio",projectId:recordProjectId}).catch(e=>status("Voice take recorded, but could not be added to shared media: "+e.message));
-   queueSessionOperation(recordProjectId,async()=>{const buf=await context().decodeAudioData(await blob.arrayBuffer());addBuffer(buf,"Voice take");status("Voice take recorded.");}).catch(e=>status("Recording could not be added to its project: "+e.message));
+   try{
+    stream.getTracks().forEach(t=>t.stop());state.recordStream=null;$("dawMic").textContent="Record voice";
+    const blob=new Blob(state.recordChunks,{type:state.recorder.mimeType||"audio/webm"});state.recorder=null;state.recorderKind=null;
+    if(!blob.size){status("No voice take was captured.");return;}
+    if(window.PennioWorkspace?.addAsset)window.PennioWorkspace.addAsset({blob,name:"Voice take",kind:"audio",projectId:recordProjectId}).catch(e=>status("Voice take recorded, but could not be added to shared media: "+e.message));
+    await queueSessionOperation(recordProjectId,async()=>{const buf=await context().decodeAudioData(await blob.arrayBuffer());addBuffer(buf,"Voice take");status("Voice take recorded.");});
+   }catch(error){status("Recording could not be added to its project: "+error.message);}
+   finally{finishRecordingTask();}
   };
   state.recorder.start();$("dawMic").textContent="■ Stop recording";status("Recording from microphone…");
- }catch(e){status("Microphone unavailable: "+e.message);}
+ }catch(e){if(state.recordStream){state.recordStream.getTracks().forEach(t=>t.stop());state.recordStream=null;}if(state.recordingKind==="mic")finishRecordingTask();status("Microphone unavailable: "+e.message);}
 };
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"){clearTimeout(sessionSaveTimer);saveSessionNow().catch(()=>{});}});
 window.addEventListener("pagehide",()=>{clearTimeout(sessionSaveTimer);saveSessionNow().catch(()=>{});});
