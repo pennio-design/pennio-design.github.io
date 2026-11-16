@@ -1144,6 +1144,7 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
   <div class="daw-selection" id="dawSelectionPanel">
   <div class="daw-selection-head"><div><b>Selected passage</b><small id="dawSelectionReadout">Drag across a waveform to select a timeframe.</small></div><button class="btn" id="dawClearSelection" disabled>Clear</button></div>
   <div class="daw-selection-actions">
+    <button class="btn" id="dawPlaySelection" disabled>▶ Play selection</button>
     <button class="btn" id="dawKeepSelection" disabled>Keep selection</button>
     <button class="btn" id="dawPunchRecord" disabled>● Re-record selection</button>
     <button class="btn primary" id="dawHumBeat" disabled>Hum to beat</button>
@@ -4318,45 +4319,60 @@ document.getElementById("sylIn").oninput=sylRender;
 
 (function(){
  const $=id=>document.getElementById(id), KEY="ps.studio.projects.v1";
- const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}};
+ const read=()=>{try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}};
  const write=list=>{try{localStorage.setItem(KEY,JSON.stringify(list));return true}catch(e){return false}};
- const rooms=$("dashRooms"),search=$("dashSearch"),projects=$("dashProjects");let showAllProjects=false;
+ const rooms=$("dashRooms"),search=$("dashSearch"),projects=$("dashProjects");
  const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Model / Beauty"};
+ let showAllProjects=false;
  function go(room){const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();try{history.replaceState(null,"",room==="home"?"/studio/":"#"+room)}catch(e){}window.scrollTo({top:0,behavior:"smooth"});}
  rooms.addEventListener("click",e=>{const card=e.target.closest("[data-room]");if(card&&roomNames[card.dataset.room])go(card.dataset.room);});
  function filterRooms(){const q=(search.value||"").trim().toLowerCase();let count=0;rooms.querySelectorAll("[data-search]").forEach(card=>{const match=!q||(card.dataset.search+" "+card.textContent).toLowerCase().includes(q);card.hidden=!match;if(match&&card.dataset.room)count++;});$("dashRoomCount").textContent=count+" active room"+(count===1?"":"s");}
  search.addEventListener("input",filterRooms);
  document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"&&!e.target.matches("input,textarea")){e.preventDefault();go("home");search.focus();}});
+ const style=document.createElement("style");
+ style.textContent='.dash-modal-backdrop{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.dash-modal{width:min(100%,460px);background:var(--panel,#151515);color:var(--text,#fff);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;padding:24px;box-shadow:0 24px 80px #0008}.dash-modal h2{margin:0 0 8px;font-size:24px}.dash-modal p{margin:0 0 20px;color:var(--muted,#aaa);font-size:14px}.dash-modal label{display:block;margin:14px 0 7px;font-size:12px;color:var(--muted,#aaa)}.dash-modal input,.dash-modal select{width:100%;min-height:46px;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:9px;background:var(--surface,#202020);color:inherit;padding:0 12px;font:inherit}.dash-modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}.dash-modal-actions button{min-height:42px;padding:0 15px;border-radius:9px;border:1px solid var(--line,rgba(255,255,255,.2));background:transparent;color:inherit}.dash-modal-actions button.primary{background:var(--accent,#ff6a00);border-color:var(--accent,#ff6a00);color:#fff}.dash-project-actions button{cursor:pointer}';
+ document.head.append(style);
+ const backdrop=document.createElement("div");backdrop.className="dash-modal-backdrop";backdrop.hidden=true;backdrop.innerHTML='<form class="dash-modal" role="dialog" aria-modal="true" aria-labelledby="dashModalTitle"><h2 id="dashModalTitle">New project</h2><p id="dashModalCopy">Give the work a name and choose where it begins.</p><label for="dashProjectName">Project name</label><input id="dashProjectName" maxlength="70" required placeholder="A name worth returning to"><label for="dashProjectRoom">Starting room</label><select id="dashProjectRoom"><option value="ayan">Àyàn · Music</option><option value="write">Akéwì · Writing</option><option value="faajiplace">Fàájíplace · Film</option><option value="beauty">Model / Beauty</option></select><div class="dash-modal-actions"><button type="button" id="dashModalCancel">Cancel</button><button class="primary" type="submit">Save project</button></div></form>';
+ document.body.append(backdrop);
+ const form=backdrop.querySelector("form"),nameInput=$("dashProjectName"),roomInput=$("dashProjectRoom");
+ let editingId=null;
+ function closeModal(){backdrop.hidden=true;editingId=null;}
+ function openModal(item){editingId=item?.id||null;$("dashModalTitle").textContent=item?"Edit project":"New project";$("dashModalCopy").textContent=item?"Update the project name or move it to another room.":"Give the work a name and choose where it begins.";nameInput.value=item?.name||"";roomInput.value=item?.room||"ayan";backdrop.hidden=false;nameInput.focus();}
+ $("dashModalCancel").addEventListener("click",closeModal);
+ backdrop.addEventListener("click",e=>{if(e.target===backdrop)closeModal();});
+ document.addEventListener("keydown",e=>{if(!backdrop.hidden&&e.key==="Escape")closeModal();});
+ form.addEventListener("submit",e=>{
+  e.preventDefault();const name=nameInput.value.trim();if(!name)return;
+  const list=read();let item;
+  if(editingId){item=list.find(x=>x.id===editingId);if(!item)return;item.name=name;item.room=roomInput.value;item.updated=Date.now();}
+  else{item={id:"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name,room:roomInput.value,created:Date.now(),updated:Date.now()};list.unshift(item);}
+  if(!write(list)){alert("This browser could not save the project. Check available storage.");return;}
+  const isNew=!editingId;closeModal();renderProjects();
+  if(isNew){go(item.room);if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;}
+ });
  function renderProjects(){
-  const list=read().sort((a,b)=>b.updated-a);projects.replaceChildren();
-  if(!list.length){const empty=document.createElement("div");empty.className="dash-empty";empty.innerHTML='<span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button>';projects.append(empty);$("dashFirstProject").onclick=createProject;return;}
+  const list=read().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0));projects.replaceChildren();
+  if(!list.length){const empty=document.createElement("div");empty.className="dash-empty";empty.innerHTML='<span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button>';projects.append(empty);$("dashFirstProject").onclick=()=>openModal();return;}
   (showAllProjects?list:list.slice(0,5)).forEach(item=>{
    const row=document.createElement("article");row.className="dash-project";
    const mark=document.createElement("span");mark.className="dash-project-mark";mark.textContent="✳";
    const copy=document.createElement("div");copy.className="dash-project-copy";
    const title=document.createElement("b");title.textContent=item.name;
-   const meta=document.createElement("small");meta.textContent=(item.room||"Studio project")+" · "+new Date(item.updated).toLocaleDateString();
+   const meta=document.createElement("small");meta.textContent=(roomNames[item.room]||"Studio project")+" · "+new Date(item.updated||item.created||Date.now()).toLocaleDateString();
    copy.append(title,meta);
    const actions=document.createElement("div");actions.className="dash-project-actions";
-   const open=document.createElement("button");open.textContent="Open";open.onclick=()=>go(item.room||"ayan");
-   const rename=document.createElement("button");rename.textContent="Rename";rename.onclick=()=>{const name=prompt("Project name",item.name);if(name&&name.trim()){item.name=name.trim().slice(0,70);item.updated=Date.now();write(list);renderProjects();}};
-   const remove=document.createElement("button");remove.textContent="×";remove.setAttribute("aria-label","Delete project");remove.onclick=()=>{if(confirm("Delete this project from the dashboard?")){write(read().filter(x=>x.id!==item.id));renderProjects();}};
-   actions.append(open,rename,remove);row.append(mark,copy,actions);projects.append(row);
+   const open=document.createElement("button");open.textContent="Open";open.onclick=()=>{go(roomNames[item.room]?item.room:"ayan");if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;};
+   const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>openModal(item);
+   const remove=document.createElement("button");remove.textContent="×";remove.setAttribute("aria-label","Delete "+item.name);remove.onclick=()=>{if(confirm('Delete "'+item.name+'" from this device?')){write(read().filter(x=>x.id!==item.id));renderProjects();}};
+   actions.append(open,edit,remove);row.append(mark,copy,actions);projects.append(row);
   });
  }
- function createProject(){
-  const name=prompt("What are you making?");if(!name||!name.trim())return;
-  const list=read();const item={id:"p"+Date.now().toString(36),name:name.trim().slice(0,70),room:"ayan",updated:Date.now()};
-  list.unshift(item);if(!write(list)){alert("This browser could not save the project. Check available storage.");return;}
-  renderProjects();go("ayan");
-  const session=$("pname");if(session)session.value=item.name;
- }
- $("dashNewProject").onclick=createProject;
+ $("dashNewProject").onclick=()=>openModal();
  $("dashViewAll").onclick=()=>{showAllProjects=!showAllProjects;$("dashViewAll").innerHTML=showAllProjects?"Show less <span>↑</span>":"View all <span>↗</span>";renderProjects();};
  $("dashStartSound").onclick=()=>{go("ayan");setTimeout(()=>{const target=$("voiceCard");if(target)target.scrollIntoView({behavior:"smooth",block:"start"});},100);};
  $("dashHelp").onclick=()=>{go("ayan");const guide=$("guideLink");if(guide)guide.click();};
  renderProjects();filterRooms();
-})();
+})();;
 
 </script>
 
