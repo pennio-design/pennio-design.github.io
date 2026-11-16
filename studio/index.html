@@ -3629,7 +3629,7 @@ async function renderWork(){
   }
   }
   renderCloud();
-  let note= CLOUD_ON&&sbSess&&sbSess.user? "Projects are saved in this browser and in your PENNIO account. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Projects live in this browser only, and PENNIO cannot see or recover them"+(CLOUD_ON?" unless you turn on cloud saving":"")+". Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
+  let note= CLOUD_ON&&sbSess&&sbSess.user? "Àyàn sessions sync to your PENNIO account. Studio project metadata, DAW sessions, Film media and room drafts remain in this browser until you back them up. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Studio projects, DAW sessions, recordings and room drafts live in this browser only. Clearing site data or using a private window can remove them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
   try{ if(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted()) note+=" This browser has agreed to keep them."; }catch(e){}
   if(!db) note="This browser is blocking local storage here. Download a backup and use a supported browser before creating important work.";
   document.getElementById("storeNote").textContent=note;
