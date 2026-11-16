@@ -124,6 +124,8 @@ $("dawNormalize").onclick=()=>{const t=selected();if(!t)return;snapshot();const 
 document.querySelectorAll("[data-fx]").forEach(b=>b.onclick=()=>{const k=b.dataset.fx;state.effects[k]=!state.effects[k];b.classList.toggle("primary",state.effects[k]);status(k+" "+(state.effects[k]?"on":"off")+" for playback and mix.");queueSessionSave();});
 $("dawMic").onclick=async()=>{
  if(state.recorder&&state.recorder.state==="recording"){state.recorder.stop();$("dawMic").textContent="Record voice";return;}
+ if(state.recordingDone){status("Finishing the previous take…");return;}
+ if(state.projectSwitching){status("Wait for the project session to finish switching.");return;}
  const recordProjectId=sessionProjectId();
  try{
   const stream=await navigator.mediaDevices.getUserMedia({audio:true});
@@ -194,20 +196,22 @@ keepSelection?.addEventListener("click",()=>{
 async function captureSelection(kind){
  const r=rangeTimes();if(!r)return;
  const captureProjectId=sessionProjectId();
- if(state.recorder&&state.recorder.state==="recording"){status("A recording is already in progress. Stop it before starting another.");return;}
+ if(state.projectSwitching){status("Wait for the project session to finish switching.");return;}
+ if(state.recordingDone||state.recorder&&state.recorder.state==="recording"){status("A recording is already in progress. Stop it before starting another.");return;}
  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status("Microphone recording needs a supported HTTPS browser. Open Studio in Chrome and allow microphone access.");return;}
  let mic=null,src=null,stopTimer=0,finished=false;
  try{
   status("Requesting microphone access…");
   mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+  if(state.projectSwitching||sessionProjectId()!==captureProjectId){mic.getTracks().forEach(track=>track.stop());status("Recording cancelled because the project changed.");return;}
   const ctx=context();if(ctx.state!=="running")await ctx.resume();
   const parts=[],supported=["audio/webm;codecs=opus","audio/mp4","audio/webm"].find(x=>MediaRecorder.isTypeSupported(x));
-  const mr=new MediaRecorder(mic,supported?{mimeType:supported}:undefined);state.recorder=mr;state.recorderKind="selection";
+  const mr=new MediaRecorder(mic,supported?{mimeType:supported}:undefined);state.recorder=mr;state.recorderKind="selection";beginRecordingTask("selection");
   src=ctx.createBufferSource();src.buffer=r.track.buffer;
   const gain=ctx.createGain();gain.gain.value=r.track.mute?0:Math.max(0,Math.min(1.5,r.track.gain||1));src.connect(gain);gain.connect(ctx.destination);
   const cleanup=()=>{if(finished)return;finished=true;clearTimeout(stopTimer);mic?.getTracks().forEach(x=>x.stop());try{src?.stop();}catch(_){}};
   mr.ondataavailable=e=>{if(e.data&&e.data.size)parts.push(e.data);};
-  mr.onerror=()=>{cleanup();state.recorder=null;state.recorderKind=null;status("Recording failed. Check microphone permission, then try again.");};
+  mr.onerror=()=>{cleanup();state.recorder=null;state.recorderKind=null;finishRecordingTask();status("Recording failed. Check microphone permission, then try again.");};
   mr.onstart=()=>{
    status(kind==="hum"?"Recording started. Hum along with the selected passage.":"Recording started. Speak or sing over the selected passage.");
    const when=ctx.currentTime+.12;
@@ -216,23 +220,27 @@ async function captureSelection(kind){
   };
   mr.onstop=async()=>{
    cleanup();state.recorder=null;state.recorderKind=null;
-   const take=new Blob(parts,{type:mr.mimeType||"audio/webm"});
-   if(!take.size){status("No audio was captured. Check microphone permission and try again.");return;}
-   if(kind==="hum"){
-    window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob:take,name:"Hum over selection",projectId:captureProjectId}}));
-    status("Hum sent to Àyàn and Ìlù. Select “Translate my voice to drum” to create the talking-drum line.");
-   }else{
-    try{const buffer=await ctx.decodeAudioData(await take.arrayBuffer());await queueSessionOperation(captureProjectId,async()=>{snapshot();const track={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:"Re-recorded passage",buffer,start:0,end:buffer.duration,gain:1,pan:0,timeline:r.timeline,mute:false,solo:false};state.tracks.push(track);state.selected=track.id;render();status("New take placed at the selected timeline position. Original track preserved.");});}
-    catch(e){status("The take was captured, but this browser could not decode it. Try Chrome or import the saved recording.");}
-   }
+   try{
+    const take=new Blob(parts,{type:mr.mimeType||"audio/webm"});
+    if(!take.size){status("No audio was captured. Check microphone permission and try again.");return;}
+    if(kind==="hum"){
+     window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob:take,name:"Hum over selection",projectId:captureProjectId}}));
+     if(state.lastSessionOperation)await state.lastSessionOperation;
+     status("Hum sent to Àyàn and Ìlù. Select “Translate my voice to drum” to create the talking-drum line.");
+    }else{
+     const buffer=await ctx.decodeAudioData(await take.arrayBuffer());
+     await queueSessionOperation(captureProjectId,async()=>{snapshot();const track={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:"Re-recorded passage",buffer,start:0,end:buffer.duration,gain:1,pan:0,timeline:r.timeline,mute:false,solo:false};state.tracks.push(track);state.selected=track.id;render();status("New take placed at the selected timeline position. Original track preserved.");});
+    }
+   }catch(error){status("The take was captured, but could not be added to its project: "+error.message);}
+   finally{finishRecordingTask();}
   };
-  mr.start(100);
-  status("Starting microphone and selected passage…");
+  mr.start(100);status("Starting microphone and selected passage…");
  }catch(e){
-  mic?.getTracks().forEach(x=>x.stop());state.recorder=null;state.recorderKind=null;
+  mic?.getTracks().forEach(x=>x.stop());state.recorder=null;state.recorderKind=null;finishRecordingTask();
   status("Could not start recording: "+(e.name==="NotAllowedError"?"Allow microphone access in your browser settings.":e.message||"Check microphone permission and try again."));
  }
 }
+
 punchRecord?.addEventListener("click",()=>captureSelection("punch"));
 humBeat?.addEventListener("click",()=>captureSelection("hum"));
 sessionSwitchQueue=loadSessionFor(window.PennioWorkspace?.activeProjectId||SESSION_DEFAULT).catch(e=>status("Could not open the current project session: "+e.message));
