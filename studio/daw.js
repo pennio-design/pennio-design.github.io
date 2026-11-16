@@ -8,7 +8,7 @@ const fmt=n=>{n=Math.max(0,n||0);return String(Math.floor(n/60)).padStart(2,"0")
 function snapshot(){state.undo.push({tracks:state.tracks.map(t=>({...t})),selected:state.selected});if(state.undo.length>20)state.undo.shift();$("dawUndo").disabled=false;}
 function context(){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error("Web Audio is not supported in this browser.");if(!state.ctx)state.ctx=new C();if(state.ctx.state==="suspended")state.ctx.resume();return state.ctx;}
 function drawWave(track,canvas){const c=canvas.getContext("2d"),w=canvas.width= Math.max(320,canvas.clientWidth*2),h=canvas.height=180;c.clearRect(0,0,w,h);const data=track.buffer.getChannelData(0),step=Math.max(1,Math.floor(data.length/w)),mid=h/2;c.strokeStyle=track.id===state.selected?"#ff8a55":"#b7a79a";c.lineWidth=1.3;c.beginPath();for(let x=0;x<w;x++){let min=1,max=-1;for(let j=0;j<step;j++){const v=data[x*step+j]||0;if(v<min)min=v;if(v>max)max=v;}c.moveTo(x,mid+min*mid*.82);c.lineTo(x,mid+max*mid*.82);}c.stroke();c.strokeStyle="#333";c.beginPath();c.moveTo(0,mid);c.lineTo(w,mid);c.stroke();}
-function render(){const host=$("dawTracks");host.replaceChildren();if(!state.tracks.length){const e=document.createElement("div");e.className="daw-empty";e.textContent="Your tracks will appear here. Add vocals, instruments or field recordings.";host.append(e);}state.tracks.forEach(t=>{const row=document.createElement("div");row.className="daw-track";row.dataset.id=t.id;const head=document.createElement("div");head.className="daw-track-head";const name=document.createElement("input");name.className="daw-track-name";name.value=t.name;name.setAttribute("aria-label","Track name");name.onchange=()=>t.name=name.value;const controls=document.createElement("div");controls.className="daw-track-controls";[["M", "mute"],["S","solo"]].forEach(([label,key])=>{const b=document.createElement("button");b.textContent=label;b.classList.toggle("on",!!t[key]);b.onclick=()=>{t[key]=!t[key];render();};controls.append(b);});const remove=document.createElement("button");remove.textContent="×";remove.title="Remove track";remove.onclick=()=>{snapshot();state.tracks=state.tracks.filter(x=>x.id!==t.id);if(state.selected===t.id)state.selected=state.tracks[0]?.id||null;render();};controls.append(remove);const faders=document.createElement("div");faders.className="daw-track-faders";[["Level", "gain",0,1.5,.01],["Pan","pan",-1,1,.01],["Position","timeline",0,120,.1]].forEach(([label,key,min,max,step])=>{const lab=document.createElement("label");lab.textContent=label;const input=document.createElement("input");input.type="range";input.min=min;input.max=max;input.step=step;input.value=t[key];input.oninput=()=>{t[key]=+input.value;};lab.append(input);faders.append(lab);});head.append(name,controls,faders);const wave=document.createElement("div");wave.className="daw-track-wave";const canvas=document.createElement("canvas");wave.append(canvas);const region=document.createElement("div");region.className="daw-region";wave.append(region);row.append(head,wave);row.style.outline=t.id===state.selected?"1px solid var(--orange)":"none";row.onclick=e=>{if(e.target.closest("button,input"))return;state.selected=t.id;syncTrim();render();};host.append(row);requestAnimationFrame(()=>drawWave(t,canvas));});$("dawExport").disabled=!state.tracks.length;$("dawSendStudio").disabled=!state.tracks.length;syncTrim();}
+function render(){const host=$("dawTracks");host.replaceChildren();if(!state.tracks.length){const e=document.createElement("div");e.className="daw-empty";e.textContent="Your tracks will appear here. Add vocals, instruments or field recordings.";host.append(e);}state.tracks.forEach(t=>{const row=document.createElement("div");row.className="daw-track";row.dataset.id=t.id;const head=document.createElement("div");head.className="daw-track-head";const name=document.createElement("input");name.className="daw-track-name";name.value=t.name;name.setAttribute("aria-label","Track name");name.onchange=()=>t.name=name.value;const controls=document.createElement("div");controls.className="daw-track-controls";[["M", "mute"],["S","solo"]].forEach(([label,key])=>{const b=document.createElement("button");b.textContent=label;b.classList.toggle("on",!!t[key]);b.onclick=()=>{t[key]=!t[key];render();};controls.append(b);});const remove=document.createElement("button");remove.textContent="×";remove.title="Remove track";remove.onclick=()=>{snapshot();state.tracks=state.tracks.filter(x=>x.id!==t.id);if(state.selected===t.id)state.selected=state.tracks[0]?.id||null;render();};controls.append(remove);const faders=document.createElement("div");faders.className="daw-track-faders";[["Level", "gain",0,1.5,.01],["Pan","pan",-1,1,.01],["Position","timeline",0,120,.1]].forEach(([label,key,min,max,step])=>{const lab=document.createElement("label");lab.textContent=label;const input=document.createElement("input");input.type="range";input.min=min;input.max=max;input.step=step;input.value=t[key];input.oninput=()=>{t[key]=+input.value;};lab.append(input);faders.append(lab);});head.append(name,controls,faders);const wave=document.createElement("div");wave.className="daw-track-wave";const canvas=document.createElement("canvas");wave.append(canvas);const region=document.createElement("div");region.className="daw-region";wave.append(region);const range=document.createElement("div");range.className="daw-range-select";wave.append(range);bindWaveSelection(wave,t);row.append(head,wave);row.style.outline=t.id===state.selected?"1px solid var(--orange)":"none";row.onclick=e=>{if(e.target.closest("button,input"))return;state.selected=t.id;syncTrim();render();};host.append(row);requestAnimationFrame(()=>drawWave(t,canvas));});syncRangeUI();$("dawExport").disabled=!state.tracks.length;$("dawSendStudio").disabled=!state.tracks.length;syncTrim();}
 function selected(){return state.tracks.find(t=>t.id===state.selected)||null;}
 function syncTrim(){const t=selected(),a=$("dawTrimStart"),b=$("dawTrimEnd");[a,b].forEach(x=>x.disabled=!t);if(t){a.max=t.buffer.duration;b.max=t.buffer.duration;a.value=t.start;b.value=t.end;a.step=b.step=".01";}}
 function addBuffer(buffer,name){snapshot();const t={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:name||"Audio "+(state.tracks.length+1),buffer,start:0,end:buffer.duration,gain:1,pan:0,timeline:0,mute:false,solo:false};state.tracks.push(t);state.selected=t.id;render();status(t.name+" added · "+fmt(buffer.duration));}
@@ -29,4 +29,59 @@ $("dawNormalize").onclick=()=>{const t=selected();if(!t)return;snapshot();const 
 document.querySelectorAll("[data-fx]").forEach(b=>b.onclick=()=>{const k=b.dataset.fx;state.effects[k]=!state.effects[k];b.classList.toggle("primary",state.effects[k]);status(k+" "+(state.effects[k]?"on":"off")+" for playback and mix.");});
 $("dawMic").onclick=async()=>{if(state.recorder&&state.recorder.state==="recording"){state.recorder.stop();$("dawMic").textContent="Record voice";return;}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});state.recordStream=stream;state.recordChunks=[];const mime=MediaRecorder.isTypeSupported("audio/webm;codecs=opus")?"audio/webm;codecs=opus":"";state.recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});state.recorder.ondataavailable=e=>{if(e.data.size)state.recordChunks.push(e.data);};state.recorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(state.recordChunks,{type:state.recorder.mimeType||"audio/webm"});try{const buf=await context().decodeAudioData(await blob.arrayBuffer());addBuffer(buf,"Voice take");status("Voice take recorded.");}catch(e){status("Recording could not be decoded on this browser.");}};state.recorder.start();$("dawMic").textContent="■ Stop recording";status("Recording from microphone…");}catch(e){status("Microphone unavailable: "+e.message);}};
 window.addEventListener("beforeunload",stop);
+
+// Timeline selection: drag across a waveform to mark an exact passage.
+state.range=null;
+const selectionReadout=$("dawSelectionReadout"),clearSelection=$("dawClearSelection"),keepSelection=$("dawKeepSelection"),punchRecord=$("dawPunchRecord"),humBeat=$("dawHumBeat");
+function rangeTimes(){const t=selected();if(!t||!state.range)return null;const a=Math.max(t.start,Math.min(state.range.start,state.range.end)),b=Math.min(t.end,Math.max(state.range.start,state.range.end));return b-a>=.08?{track:t,start:a,end:b,duration:b-a,timeline:(t.timeline||0)+a-t.start}:null;}
+function syncRangeUI(){
+ const r=rangeTimes(),fmt=n=>{n=Math.max(0,n||0);return String(Math.floor(n/60)).padStart(2,"0")+":"+String(Math.floor(n%60)).padStart(2,"0")+"."+Math.floor(n%1*10)};
+ if(selectionReadout)selectionReadout.textContent=r?fmt(r.start)+" – "+fmt(r.end)+" · "+fmt(r.duration)+" selected":"Drag across a waveform to select a timeframe.";
+ [clearSelection,keepSelection,punchRecord,humBeat].forEach(b=>{if(b)b.disabled=!r;});
+ document.querySelectorAll(".daw-range-select").forEach(el=>{const row=el.closest(".daw-track"),t=state.tracks.find(x=>x.id===row?.dataset.id);if(!r||!t||t.id!==r.track.id){el.classList.remove("on");return;}el.style.left=(r.start/t.buffer.duration*100)+"%";el.style.width=((r.end-r.start)/t.buffer.duration*100)+"%";el.classList.add("on");});
+}
+function clearRange(){state.range=null;syncRangeUI();}
+function bindWaveSelection(wave,t){
+ let down=false,x0=0;
+ const point=e=>{const rect=wave.getBoundingClientRect(),pct=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));return pct*t.buffer.duration;};
+ wave.addEventListener("pointerdown",e=>{if(e.target.closest("button,input"))return;down=true;x0=point(e);state.selected=t.id;state.range={start:x0,end:x0+.1};wave.setPointerCapture?.(e.pointerId);syncRangeUI();});
+ wave.addEventListener("pointermove",e=>{if(!down)return;const x=point(e);state.range={start:Math.min(x0,x),end:Math.max(x0,x)};syncRangeUI();});
+ const finish=()=>{if(!down)return;down=false;const r=rangeTimes();if(!r)clearRange();else syncRangeUI();};
+ wave.addEventListener("pointerup",finish);wave.addEventListener("pointercancel",finish);
+}
+clearSelection?.addEventListener("click",clearRange);
+keepSelection?.addEventListener("click",()=>{
+ const r=rangeTimes();if(!r)return;const t=r.track;snapshot();const from=Math.floor(r.start*t.buffer.sampleRate),to=Math.max(from+1,Math.floor(r.end*t.buffer.sampleRate)),frames=to-from;
+ const cropped=context().createBuffer(t.buffer.numberOfChannels,frames,t.buffer.sampleRate);
+ for(let c=0;c<t.buffer.numberOfChannels;c++)cropped.copyToChannel(t.buffer.getChannelData(c).slice(from,to),c);
+ t.timeline=r.timeline;t.buffer=cropped;t.start=0;t.end=cropped.duration;clearRange();render();status("Selection isolated as the active clip. Undo restores the full track.");
+});
+async function captureSelection(kind){
+ const r=rangeTimes();if(!r)return;if(state.recorder&&state.recorder.state==="recording")return;
+ if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status("Microphone recording needs a supported HTTPS browser.");return;}
+ try{
+  stop();const mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+  const parts=[],mime=["audio/webm;codecs=opus","audio/mp4","audio/webm"].find(x=>MediaRecorder.isTypeSupported(x));
+  const mr=new MediaRecorder(mic,mime?{mimeType:mime}:undefined);state.recorder=mr;
+  const ctx=context(),src=ctx.createBufferSource();src.buffer=r.track.buffer;const gain=ctx.createGain();gain.gain.value=r.track.gain;src.connect(gain);gain.connect(ctx.destination);
+  mr.ondataavailable=e=>{if(e.data?.size)parts.push(e.data);};
+  mr.onerror=()=>{mic.getTracks().forEach(x=>x.stop());status("Recording failed. Check microphone permission and try again.");};
+  mr.onstop=async()=>{
+   mic.getTracks().forEach(x=>x.stop());src.stop();
+   const take=new Blob(parts,{type:mr.mimeType||"audio/webm"});
+   if(!take.size){status("No audio was captured.");return;}
+   if(kind==="hum"){
+    window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob:take,name:"Hum over selection"}}));
+    status("Hum sent to Àyàn and Ìlù. Press “Translate my voice to drum” to generate the talking-drum line.");
+   }else{
+    try{const buffer=await context().decodeAudioData(await take.arrayBuffer());snapshot();const track={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:"Re-recorded passage",buffer,start:0,end:buffer.duration,gain:1,pan:0,timeline:r.timeline,mute:false,solo:false};state.tracks.push(track);state.selected=track.id;render();status("New take placed at the selected timeline position. Original track preserved.");}
+    catch(e){status("Could not decode the new take in this browser.");}
+   }
+  };
+  mr.start(100);src.start(ctx.currentTime+.04,r.start,r.duration);status(kind==="hum"?"Hum now. Recording will stop at the end of the selection.":"Re-record now. Recording will stop at the end of the selection.");
+  setTimeout(()=>{if(mr.state==="recording")mr.stop();},Math.max(200,r.duration*1000));
+ }catch(e){status("Could not start microphone: "+(e.message||"Check permission and try again."));}
+}
+punchRecord?.addEventListener("click",()=>captureSelection("punch"));
+humBeat?.addEventListener("click",()=>captureSelection("hum"));
 })();
