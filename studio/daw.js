@@ -96,13 +96,13 @@ function syncRangeUI(){
  [clearSelection,keepSelection,punchRecord,humBeat].forEach(b=>{if(b)b.disabled=!r;});
  document.querySelectorAll(".daw-range-select").forEach(el=>{const row=el.closest(".daw-track"),t=state.tracks.find(x=>x.id===row?.dataset.id);if(!r||!t||t.id!==r.track.id){el.classList.remove("on");return;}el.style.left=(r.start/t.buffer.duration*100)+"%";el.style.width=((r.end-r.start)/t.buffer.duration*100)+"%";el.classList.add("on");});
 }
-function clearRange(){state.range=null;syncRangeUI();}
+function clearRange(){state.range=null;syncRangeUI();queueSessionSave();}
 function bindWaveSelection(wave,t){
  let down=false,x0=0;
  const point=e=>{const rect=wave.getBoundingClientRect(),pct=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));return pct*t.buffer.duration;};
  wave.addEventListener("pointerdown",e=>{if(e.target.closest("button,input"))return;down=true;x0=point(e);state.selected=t.id;state.range={start:x0,end:x0+.1};wave.setPointerCapture?.(e.pointerId);syncRangeUI();});
  wave.addEventListener("pointermove",e=>{if(!down)return;const x=point(e);state.range={start:Math.min(x0,x),end:Math.max(x0,x)};syncRangeUI();});
- const finish=()=>{if(!down)return;down=false;const r=rangeTimes();if(!r)clearRange();else syncRangeUI();};
+ const finish=()=>{if(!down)return;down=false;const r=rangeTimes();if(!r)clearRange();else syncRangeUI();queueSessionSave();};
  wave.addEventListener("pointerup",finish);wave.addEventListener("pointercancel",finish);
 }
 clearSelection?.addEventListener("click",clearRange);
