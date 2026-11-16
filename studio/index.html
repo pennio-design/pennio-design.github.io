@@ -28,7 +28,65 @@
 <meta name="apple-mobile-web-app-title" content="pennio.studio">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-<style>/* Inter, hosted on this domain so it loads on slow or blocked networks. */@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/inter-300.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-500.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/inter-600.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-700.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/inter-800.woff2') format('woff2')}</style>
+<style>/* Inter, hosted on this domain so it loads on slow or blocked networks. */@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url('/fonts/inter-300.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/inter-400.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/inter-500.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/inter-600.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/inter-700.woff2') format('woff2')}@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url('/fonts/inter-800.woff2') format('woff2')}
+/* PENNIO Studio dashboard */
+#v-home{padding-top:30px;padding-bottom:36px}
+.dash-topline,.dash-section-head,.dash-room-foot,.dash-footer{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.dash-kicker,.dash-overline,.dash-room-index{font-size:10px;letter-spacing:.15em;font-weight:700;color:var(--mute)}
+.dash-local{font-size:11px;color:var(--mute);display:flex;align-items:center;gap:7px}
+.dash-local i{width:7px;height:7px;background:#78c99a;border-radius:50%;box-shadow:0 0 0 4px #78c99a1a}
+.dash-intro{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:38px 0 28px}
+.dash-intro h1{font-size:clamp(42px,7vw,76px);letter-spacing:-.065em;line-height:.96;font-weight:600}
+.dash-intro h1 em{font-style:normal;color:var(--orange)}
+.dash-intro p{font-size:14px;color:var(--mute);margin-top:14px}
+.dash-new,.dash-start-btn{background:var(--orange);color:#090909;padding:13px 17px;border-radius:12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;min-height:48px}
+.dash-new span{font-size:20px;line-height:10px}
+.dash-command{height:54px;border:1px solid var(--line2);border-radius:14px;background:var(--surface);display:flex;align-items:center;gap:12px;padding:0 16px;margin-bottom:34px}
+.dash-command svg{width:19px;height:19px;fill:none;stroke:var(--mute);stroke-width:1.7}
+.dash-command input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text);font:inherit;font-size:14px}
+.dash-command kbd{border:1px solid var(--line2);border-radius:6px;padding:3px 7px;color:var(--mute);font-size:10px}
+.dash-section-head{margin-bottom:14px}.dash-section-head h2,.dash-start-panel h2{font-size:22px;letter-spacing:-.04em;font-weight:600;margin-top:5px}
+.dash-count{font-size:11px;color:var(--mute)}
+.dash-rooms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.dash-room{position:relative;min-height:222px;padding:17px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#191919,#101010);text-align:left;display:flex;flex-direction:column;align-items:flex-start;gap:10px;transition:transform .18s,border-color .18s,background .18s;overflow:hidden}
+.dash-room:hover{transform:translateY(-3px);border-color:#5a5149;background:#1d1b19}
+.dash-room-feature{background:linear-gradient(145deg,#282019,#15110f);border-color:#69402c}
+.dash-room-index{font-size:9px;color:#a39a90}
+.dash-room-icon{width:38px;height:38px;display:grid;place-items:center;border:1px solid #ffffff22;border-radius:11px;font-size:21px;color:var(--orange);margin-top:7px}
+.dash-room>b{font-size:18px;letter-spacing:-.03em}
+.dash-room-desc{font-size:11px;line-height:1.55;color:var(--mute);max-width:230px}
+.dash-room-foot{width:100%;margin-top:auto;padding-top:11px;border-top:1px solid #ffffff14;font-size:10px;color:var(--text)}
+.dash-room-foot span:last-child{font-size:15px;color:var(--orange)}
+.dash-room-soon{opacity:.62;cursor:default;border-style:dashed;background:var(--black)}
+.dash-room[hidden]{display:none}
+.dash-lower{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-top:14px}
+.dash-panel{border:1px solid var(--line);border-radius:16px;padding:19px;background:var(--off);min-width:0}
+.dash-panel .dash-section-head{margin-bottom:16px}
+.dash-text-btn{font-size:11px;color:var(--mute);padding:8px}.dash-text-btn span{color:var(--orange)}
+.dash-empty{min-height:158px;display:flex;align-items:flex-start;flex-direction:column;justify-content:center}
+.dash-empty>span{color:var(--orange);font-size:20px}
+.dash-empty b{font-size:14px;margin-top:8px}
+.dash-empty p,.dash-start-panel p{font-size:11px;line-height:1.6;color:var(--mute);margin-top:6px;max-width:370px}
+.dash-outline{margin-top:13px;padding:9px 12px;border:1px solid var(--line2);border-radius:9px;font-size:11px}
+.dash-projects{display:grid;gap:8px}
+.dash-project{display:flex;align-items:center;gap:12px;padding:11px;border:1px solid var(--line);border-radius:11px;background:#111;min-width:0}
+.dash-project-mark{width:36px;height:36px;flex:none;border-radius:9px;background:#292019;color:var(--orange);display:grid;place-items:center}
+.dash-project-copy{flex:1;min-width:0}.dash-project-copy b{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dash-project-copy small{font-size:10px;color:var(--mute)}
+.dash-project-actions{display:flex;gap:5px}.dash-project-actions button{padding:7px;border:1px solid var(--line);border-radius:8px;font-size:10px}
+.dash-start-panel{position:relative;overflow:hidden;background:linear-gradient(145deg,#211811,#12100e)}
+.dash-start-panel h2{font-size:25px;margin-top:14px}
+.dash-start-btn{margin-top:20px;min-height:42px;padding:10px 14px;font-size:11px}
+.dash-start-btn span{font-size:16px}
+.dash-wave{height:32px;display:flex;align-items:center;gap:4px;margin-top:20px;opacity:.8}
+.dash-wave i{width:3px;border-radius:4px;background:var(--orange);height:var(--h,40%);animation:dashPulse 1.4s ease-in-out infinite alternate}
+.dash-wave i:nth-child(3n){--h:90%;animation-delay:-.5s}.dash-wave i:nth-child(3n + 1){--h:55%;animation-delay:-.9s}.dash-wave i:nth-child(3n + 2){--h:28%;animation-delay:-.2s}
+@keyframes dashPulse{to{transform:scaleY(.35);opacity:.5}}
+.dash-footer{margin-top:22px;padding:14px 0;border-top:1px solid var(--line);font-size:9px;letter-spacing:.1em;color:var(--dim)}
+.dash-footer button{font-size:10px;color:var(--mute);letter-spacing:0}
+@media(max-width:800px){.dash-rooms{grid-template-columns:repeat(2,minmax(0,1fr))}.dash-lower{grid-template-columns:1fr}}
+@media(max-width:520px){#v-home{padding-top:20px}.dash-intro{align-items:flex-start;flex-direction:column;margin:30px 0 22px}.dash-intro h1{font-size:48px}.dash-new{width:100%;justify-content:center}.dash-rooms{grid-template-columns:1fr 1fr;gap:8px}.dash-room{min-height:215px;padding:13px}.dash-room>b{font-size:16px}.dash-room-desc{font-size:10px}.dash-room-foot{font-size:9px}.dash-panel{padding:15px}.dash-footer{align-items:flex-start;flex-wrap:wrap}.dash-local{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.dash-wave i{animation:none}.dash-room{transition:none}}
+</style>
 <style>
 :root{
   --orange:#FF6B35; --orange-dk:#E65D2B; --black:#090909; --off:#101010; --surface:#171717;
@@ -911,9 +969,10 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
     <div class="hright">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
       <button class="btn ic" id="siteSettingsBtn" type="button" aria-label="Studio settings" title="Studio settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
-      <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Studio</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Overview</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
         <nav id="nav" hidden>
-          <button data-v="ayan" class="on">Studio <small>Àyàn</small></button>
+          <button data-v="home" class="on">Overview <small>Workspace</small></button>
+          <button data-v="ayan">Studio <small>Àyàn</small></button>
           <button data-v="write">Write <small>Yoruba with tones</small></button>
           <button data-v="faajiplace">Film <small>Picture & story</small></button>
           <button data-v="beauty">Model / Beauty <small>Camera & looks</small></button>
@@ -923,9 +982,48 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap"><!-- STUDIO DASHBOARD -->
+<section class="view on" id="v-home">
+  <div class="dash-topline"><span class="dash-kicker">PENNIO CREATIVE PLATFORM</span><span class="dash-local"><i></i> Your workspace · This device</span></div>
+  <div class="dash-intro"><div><h1>Make something<br><em>worth keeping.</em></h1><p>One workspace for sound, language, image and story.</p></div><button class="dash-new" id="dashNewProject"><span>＋</span> New project</button></div>
+  <div class="dash-command">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+    <input id="dashSearch" type="search" placeholder="Find a room or start with an idea…" autocomplete="off" aria-label="Search Studio rooms">
+    <kbd>⌘ K</kbd>
+  </div>
+  <div class="dash-section-head"><div><span class="dash-overline">YOUR WORKSPACE</span><h2>Choose a room</h2></div><span class="dash-count" id="dashRoomCount">4 active rooms</span></div>
+  <div class="dash-rooms" id="dashRooms">
+    <button class="dash-room dash-room-feature" data-room="ayan" data-search="music beat recording voice drum ayaan">
+      <span class="dash-room-index">01 / SOUND</span><span class="dash-room-icon">◉</span><b>Àyàn</b><span class="dash-room-desc">Record, arrange, produce. Let the talking drum answer your voice.</span><span class="dash-room-foot"><span>Open music studio</span><span>↗</span></span>
+    </button>
+    <button class="dash-room" data-room="write" data-search="write poetry screenplay lyrics akewi">
+      <span class="dash-room-index">02 / LANGUAGE</span><span class="dash-room-icon">Aa</span><b>Akéwì</b><span class="dash-room-desc">Write poetry, lyrics, scenes and stories with Yoruba tone support.</span><span class="dash-room-foot"><span>Open writing room</span><span>↗</span></span>
+    </button>
+    <button class="dash-room" data-room="faajiplace" data-search="film video filmmaking faajiplace">
+      <span class="dash-room-index">03 / IMAGE</span><span class="dash-room-icon">▣</span><b>Fàájíplace</b><span class="dash-room-desc">Shape scenes, plan shots and build a film from an idea.</span><span class="dash-room-foot"><span>Open film room</span><span>↗</span></span>
+    </button>
+    <button class="dash-room" data-room="beauty" data-search="model beauty camera portrait fashion face">
+      <span class="dash-room-index">04 / PRESENCE</span><span class="dash-room-icon">◌</span><b>Model / Beauty</b><span class="dash-room-desc">Use the camera, explore looks and create portraits.</span><span class="dash-room-foot"><span>Open beauty room</span><span>↗</span></span>
+    </button>
+    <div class="dash-room dash-room-soon" data-search="claps atewo rhythm percussion" aria-disabled="true">
+      <span class="dash-room-index">05 / RHYTHM</span><span class="dash-room-icon">✳</span><b>Àtẹ́wọ́</b><span class="dash-room-desc">Claps, body percussion and rhythm patterns.</span><span class="dash-room-foot"><span>In development</span><span>—</span></span>
+    </div>
+  </div>
+  <div class="dash-lower">
+    <section class="dash-panel dash-project-panel">
+      <div class="dash-section-head"><div><span class="dash-overline">PROJECT SPACE</span><h2>Recent projects</h2></div><button class="dash-text-btn" id="dashViewAll">View all <span>↗</span></button></div>
+      <div id="dashProjects" class="dash-projects"><div class="dash-empty"><span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button></div></div>
+    </section>
+    <section class="dash-panel dash-start-panel">
+      <span class="dash-overline">A GOOD PLACE TO BEGIN</span><h2>Start with a sound.</h2><p>Hum a melody, speak a line or tap a rhythm. Àyàn can turn the raw idea into a starting point.</p><button class="dash-start-btn" id="dashStartSound">Open Àyàn <span>↗</span></button>
+      <div class="dash-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </section>
+  </div>
+  <div class="dash-footer"><span>PENNIO STUDIO</span><span>Made for ideas that deserve a form.</span><button id="dashHelp">How Studio works ↗</button></div>
+</section>
+
 <!-- MUSIC -->
-<section class="view on" id="v-ayan">
+<section class="view" id="v-ayan">
   <div class="stabs" role="tablist" aria-label="Session">
     <button id="openWork" role="tab">Sessions</button>
     <button id="openHist" role="tab">History</button>
@@ -3851,7 +3949,7 @@ function menu(open){ navEl.hidden=!open; moreBtn.setAttribute("aria-expanded",St
 moreBtn.onclick=e=>{ e.stopPropagation(); menu(navEl.hidden); };
 addEventListener("click",e=>{ if(!navEl.hidden && !e.target.closest(".more")) menu(false); });
 function paintAvatar(){ const pf=lsGet("ps.profile"); const a=document.getElementById("avatar"); if(a) a.textContent=(pf&&pf.name? pf.name.trim()[0] : "·").toUpperCase(); }
-document.getElementById("avatar").onclick=()=>{ show("ayan"); document.getElementById("openWork").click(); };
+document.getElementById("avatar").onclick=()=>show("home");
 document.getElementById("heroX").onclick=()=>{ document.getElementById("hero").hidden=true; };
 const tpEl=document.getElementById("tp");
 function tpOpen(o){ tpEl.classList.toggle("open",o); document.getElementById("tpVal").setAttribute("aria-expanded",String(o)); document.getElementById("tpMore").setAttribute("aria-expanded",String(o)); }
@@ -3866,13 +3964,13 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
   if(v!=="faajiplace" && window.__gatePending){ window.__gatePending=false; ob.classList.add("on"); }
-  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="ayan"?"Studio": v==="write"?"Write":v==="beauty"?"Model / Beauty":"Film";
+  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="home"?"Overview":v==="ayan"?"Àyàn":v==="write"?"Akéwì":v==="beauty"?"Model / Beauty":"Fàájíplace";
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"","#"+b.dataset.v);}catch(e){} });
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"",b.dataset.v==="home"?"/studio/":"#"+b.dataset.v);}catch(e){} });
 const hs=x=>{x=x.replace("#",""); return x==="film"?"faajiplace":x;};
-const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty") show(h);
+const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan"||h==="home") show(h);
 window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write"||x==="beauty") show(x);});
 
 /* Model / Beauty camera controls */
@@ -4215,6 +4313,51 @@ document.getElementById("sylIn").oninput=sylRender;
     if(videoUrl)URL.revokeObjectURL(videoUrl);
   });
 })();
+</script>
+<script>
+
+(function(){
+ const $=id=>document.getElementById(id), KEY="ps.studio.projects.v1";
+ const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}};
+ const write=list=>{try{localStorage.setItem(KEY,JSON.stringify(list));return true}catch(e){return false}};
+ const rooms=$("dashRooms"),search=$("dashSearch"),projects=$("dashProjects");let showAllProjects=false;
+ const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Model / Beauty"};
+ function go(room){const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();try{history.replaceState(null,"",room==="home"?"/studio/":"#"+room)}catch(e){}window.scrollTo({top:0,behavior:"smooth"});}
+ rooms.addEventListener("click",e=>{const card=e.target.closest("[data-room]");if(card&&roomNames[card.dataset.room])go(card.dataset.room);});
+ function filterRooms(){const q=(search.value||"").trim().toLowerCase();let count=0;rooms.querySelectorAll("[data-search]").forEach(card=>{const match=!q||(card.dataset.search+" "+card.textContent).toLowerCase().includes(q);card.hidden=!match;if(match&&card.dataset.room)count++;});$("dashRoomCount").textContent=count+" active room"+(count===1?"":"s");}
+ search.addEventListener("input",filterRooms);
+ document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"&&!e.target.matches("input,textarea")){e.preventDefault();go("home");search.focus();}});
+ function renderProjects(){
+  const list=read().sort((a,b)=>b.updated-a);projects.replaceChildren();
+  if(!list.length){const empty=document.createElement("div");empty.className="dash-empty";empty.innerHTML='<span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button>';projects.append(empty);$("dashFirstProject").onclick=createProject;return;}
+  (showAllProjects?list:list.slice(0,5)).forEach(item=>{
+   const row=document.createElement("article");row.className="dash-project";
+   const mark=document.createElement("span");mark.className="dash-project-mark";mark.textContent="✳";
+   const copy=document.createElement("div");copy.className="dash-project-copy";
+   const title=document.createElement("b");title.textContent=item.name;
+   const meta=document.createElement("small");meta.textContent=(item.room||"Studio project")+" · "+new Date(item.updated).toLocaleDateString();
+   copy.append(title,meta);
+   const actions=document.createElement("div");actions.className="dash-project-actions";
+   const open=document.createElement("button");open.textContent="Open";open.onclick=()=>go(item.room||"ayan");
+   const rename=document.createElement("button");rename.textContent="Rename";rename.onclick=()=>{const name=prompt("Project name",item.name);if(name&&name.trim()){item.name=name.trim().slice(0,70);item.updated=Date.now();write(list);renderProjects();}};
+   const remove=document.createElement("button");remove.textContent="×";remove.setAttribute("aria-label","Delete project");remove.onclick=()=>{if(confirm("Delete this project from the dashboard?")){write(read().filter(x=>x.id!==item.id));renderProjects();}};
+   actions.append(open,rename,remove);row.append(mark,copy,actions);projects.append(row);
+  });
+ }
+ function createProject(){
+  const name=prompt("What are you making?");if(!name||!name.trim())return;
+  const list=read();const item={id:"p"+Date.now().toString(36),name:name.trim().slice(0,70),room:"ayan",updated:Date.now()};
+  list.unshift(item);if(!write(list)){alert("This browser could not save the project. Check available storage.");return;}
+  renderProjects();go("ayan");
+  const session=$("pname");if(session)session.value=item.name;
+ }
+ $("dashNewProject").onclick=createProject;
+ $("dashViewAll").onclick=()=>{showAllProjects=!showAllProjects;$("dashViewAll").innerHTML=showAllProjects?"Show less <span>↑</span>":"View all <span>↗</span>";renderProjects();};
+ $("dashStartSound").onclick=()=>{go("ayan");setTimeout(()=>{const target=$("voiceCard");if(target)target.scrollIntoView({behavior:"smooth",block:"start"});},100);};
+ $("dashHelp").onclick=()=>{go("ayan");const guide=$("guideLink");if(guide)guide.click();};
+ renderProjects();filterRooms();
+})();
+
 </script>
 
 <script>
