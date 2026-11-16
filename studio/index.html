@@ -3431,6 +3431,7 @@ function newId(){ return "p"+Date.now().toString(36)+Math.random().toString(36).
 
 async function openWorkspaceMusicProject(project){
   if(!project||!project.id) return false;
+  if(window.__pennioAyanBoot)await window.__pennioAyanBoot;
   if(!db) db=await idb();
   if(!db) throw new Error("Local music session storage is unavailable.");
   if(ready&&currentId) await saveNow();
@@ -3943,7 +3944,7 @@ document.getElementById("sbWipe").onclick=async()=>{
 document.getElementById("obReturn").onclick=()=>{ ob.classList.remove("on"); renderWork(); workEl.classList.add("on"); renderCloud(); setTimeout(()=>{ document.getElementById("cloud").scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("sbEmail").focus(); },200); };
 
 /* boot */
-(async()=>{
+window.__pennioAyanBoot=(async()=>{
   db=await idb();
   const prof=lsGet("ps.profile")||(await kvGet("profile"));
   if(!prof){ if(location.hash==="#film"||location.hash==="#faajiplace") window.__gatePending=true; else ob.classList.add("on"); } /* a shared Film link opens the page itself, the sign-up waits until someone opens a tool */
