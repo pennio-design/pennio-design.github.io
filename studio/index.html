@@ -4495,7 +4495,7 @@ document.getElementById("sylIn").oninput=sylRender;
     film.cues=Array.isArray(film.cues)?film.cues:[];film.cues.forEach(c=>{if(!c.id)c.id=makeId();});
     filmTitle.value=film.title||"Untitled film";filmLogline.value=film.logline||"";
     renderCues();clearFilmPreview();
-    restoreFilmAsset(project||null);
+    if(project)restoreFilmAsset(project);
   }
   window.addEventListener("pennio:workspace-project-open",event=>switchRoomProject(event.detail&&event.detail.project||null));
 })();
