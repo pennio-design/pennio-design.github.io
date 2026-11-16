@@ -844,6 +844,7 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
 @media(max-width:480px){.set-action{align-items:flex-start;flex-direction:column}.set-action .btn{width:100%}}
 </style>
 <script>try{if(localStorage.getItem("ps.theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}</script>
+<style>.beauty-frame{position:relative;max-width:720px;margin:16px auto 0;aspect-ratio:4/5;max-height:72vh;overflow:hidden;border-radius:16px;background:#080708;border:1px solid var(--line2)}.beauty-frame video,.beauty-frame img{width:100%;height:100%;object-fit:cover;display:block}.beauty-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--mute);text-align:center;padding:24px}.beauty-tunes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:16px}.beauty-tunes label{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:13px}.beauty-tunes output{color:var(--orange)}.beauty-tunes input{grid-column:1/-1;width:100%;accent-color:var(--orange)}</style>
 </head>
 <body class="in-studio">
 <header>
@@ -858,6 +859,7 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
           <button data-v="ayan" class="on">Studio <small>Àyàn</small></button>
           <button data-v="write">Write <small>Yoruba with tones</small></button>
           <button data-v="faajiplace">Film <small>Picture & story</small></button>
+          <button data-v="beauty">Model / Beauty <small>Camera & looks</small></button>
         </nav></div>
       <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
     </div>
@@ -1183,6 +1185,21 @@ A clear image or action.
     <div class="phase"><div class="n">Next</div><div><h3>Sound library and stems</h3><p>Melodic layers, vocal chants and full stems. Creators export to their own DAW or release straight from the studio.</p></div></div>
     <div class="phase"><div class="n">Later</div><div><h3>Story and production tools</h3><p>Script, shot lists and cultural reference checks so the story is told right: names, proverbs, dress and setting reviewed by people who carry the culture.</p></div></div>
   </div>
+</section>
+<section class="view" id="v-beauty">
+ <div class="cr-lead"><div class="cr-kicker">Model / Beauty · camera room</div><h1>Find your look.</h1><p class="sub">Take a portrait, try a look, and save the result. Switch between your front and rear camera whenever you need.</p></div>
+ <div class="fr-desk"><div class="fr-top"><div class="fr-title"><b>Camera</b><span>Preview and capture</span></div><span class="fr-save" id="beautyStatus" aria-live="polite">Camera is off</span></div>
+  <div class="beauty-frame"><video id="beautyVideo" autoplay playsinline muted hidden></video><img id="beautyStill" alt="Captured portrait" hidden><div id="beautyEmpty" class="beauty-empty">Open the camera to begin.</div></div>
+  <div class="fr-cue-actions" style="margin-top:12px"><button class="btn" id="beautyFront">Front camera</button><button class="btn" id="beautyBack">Back camera</button><button class="btn primary" id="beautyStart">Open camera</button><button class="btn" id="beautySnap" disabled>Take photo</button><button class="btn" id="beautyRetake" hidden>Retake</button><button class="btn" id="beautySave" hidden>Save photo</button></div>
+  <p class="fr-privacy" style="margin-top:10px">Camera permission is requested only when you open it. Camera access requires HTTPS and browser permission.</p>
+ </div>
+ <div class="card" style="margin-top:18px"><h3>Tune your look</h3><p>Adjust the preview before saving your portrait.</p><div class="beauty-tunes">
+  <label>Brightness <output id="beautyBrightnessVal">100%</output><input id="beautyBrightness" type="range" min="50" max="150" value="100"></label>
+  <label>Contrast <output id="beautyContrastVal">100%</output><input id="beautyContrast" type="range" min="50" max="150" value="100"></label>
+  <label>Colour <output id="beautySaturateVal">100%</output><input id="beautySaturate" type="range" min="0" max="180" value="100"></label>
+  <label>Warmth <output id="beautyWarmthVal">0</output><input id="beautyWarmth" type="range" min="-40" max="40" value="0"></label>
+  <label>Soft focus <output id="beautySoftVal">0px</output><input id="beautySoft" type="range" min="0" max="4" step=".5" value="0"></label>
+ </div><div class="fr-cue-actions" style="margin-top:14px"><button class="btn" id="beautyReset">Reset adjustments</button></div></div>
 </section>
 <section class="wrap" style="padding:0">
   <a class="cast" href="/oju-gbooro/" style="display:block;text-decoration:none;color:inherit">
@@ -1741,20 +1758,21 @@ function cellDesc(id,v){ if(!v) return "empty"; const t=cellText(id,v); return (
 function styleCell(b,id,i){ const v=pattern[id][i], a=Math.abs(v), grp=N===12?3:4;
   b.className="step"+(i%grp===0?" beat":"")+(i>0&&i%grp===0?" g":"")+(a?" v"+a:"")+(v<0?" ghost":"");
   b.textContent=cellText(id,v); b.setAttribute("aria-label",(LANES.find(l=>l.id===id)||{}).name+", step "+(i+1)+" of "+N+", "+cellDesc(id,v)); }
+let soloLaneId=null;
 function render(){
   rowsEl.innerHTML=""; const add=document.getElementById("addRows"); if(add) add.innerHTML="";
   LANES.forEach(l=>{
     if(COLLAPSE.includes(l.id) && !laneUsed(l.id) && !shownRows.has(l.id)){
       if(add){ const c=document.createElement("button"); c.className="addrow"; c.textContent="+ "+l.name; c.onclick=()=>{ shownRows.add(l.id); render(); }; add.appendChild(c); }
       return; }
-    const row=document.createElement("div"); row.className="row "+l.id+(laneOn(l.id)?"":" off"); row.dataset.l=l.id;
+    const row=document.createElement("div"); row.className="row "+l.id+(laneOn(l.id)?"":" off"); row.dataset.l=l.id; row.hidden=!!(soloLaneId&&soloLaneId!==l.id);
     const nm=document.createElement("div"); nm.className="name"+(muted[l.id]?" muted":"");
-    nm.innerHTML='<button class="nmb" aria-label=""><b></b><small></small></button><span class="ms"><button class="m" aria-label="Mute">M</button><button class="s" aria-label="Solo">S</button></span>';
+    nm.innerHTML='<button class="nmb" aria-label=""><b></b><small></small></button><span class="ms"><button class="m" aria-label="Mute">M</button><button class="s" aria-label="Solo">S</button><button class="eye" aria-label="Solo lane" title="Show only this lane">◉</button></span>';
     nm.querySelector("b").textContent=l.name; nm.querySelector("small").textContent=l.sub;
     if(l.id==="dd"||l.id==="bata") nm.querySelector(".nmb").insertAdjacentHTML("afterbegin",'<svg class="ilu-row" viewBox="0 0 64 64" aria-hidden="true"><use href="#iluFace"/></svg>');
     nm.querySelector(".nmb").setAttribute("aria-label",(muted[l.id]?"Unmute ":"Mute ")+l.name);
     nm.querySelector(".nmb").onclick=()=>{ muted[l.id]=!muted[l.id]; render(); renderLayers(); };
-    const mb=nm.querySelector(".m"), sb=nm.querySelector(".s"); mb.classList.toggle("on",!!muted[l.id]); sb.classList.toggle("on",soloed.has(l.id));
+    const mb=nm.querySelector(".m"), sb=nm.querySelector(".s"), eye=nm.querySelector(".eye"); mb.classList.toggle("on",!!muted[l.id]); sb.classList.toggle("on",soloed.has(l.id)); eye.onclick=()=>{soloLaneId=soloLaneId===l.id?null:l.id;render();}; eye.classList.toggle("on",soloLaneId===l.id);
     mb.onclick=()=>{ muted[l.id]=!muted[l.id]; render(); renderLayers(); };
     sb.onclick=()=>{ soloed.has(l.id)? soloed.delete(l.id) : soloed.add(l.id); render(); };
     const st=document.createElement("div"); st.className="steps"; st.style.gridTemplateColumns="repeat("+N+",minmax(28px,1fr))";
@@ -3734,14 +3752,32 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
   if(v!=="faajiplace" && window.__gatePending){ window.__gatePending=false; ob.classList.add("on"); }
-  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="ayan"?"Studio": v==="write"?"Write":"Film";
+  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="ayan"?"Studio": v==="write"?"Write":v==="beauty"?"Model / Beauty":"Film";
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"","#"+b.dataset.v);}catch(e){} });
 const hs=x=>{x=x.replace("#",""); return x==="film"?"faajiplace":x;};
-const h=hs(location.hash); if(h==="faajiplace"||h==="write") show(h);
-window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write") show(x);});
+const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty") show(h);
+window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write"||x==="beauty") show(x);});
+
+/* Model / Beauty camera controls */
+(()=>{
+ const video=document.getElementById("beautyVideo"),still=document.getElementById("beautyStill"),empty=document.getElementById("beautyEmpty"),status=document.getElementById("beautyStatus");if(!video)return;
+ let stream=null,facing="user",captured=null;const keys=["Brightness","Contrast","Saturate","Warmth","Soft"];
+ const vals=()=>Object.fromEntries(keys.map(k=>[k,+document.getElementById("beauty"+k).value]));
+ const filter=v=>"brightness("+v.Brightness+"%) contrast("+v.Contrast+"%) saturate("+v.Saturate+"%) sepia("+Math.max(0,v.Warmth)+"%) hue-rotate("+(-v.Warmth/2)+"deg) blur("+v.Soft+"px)";
+ function tune(){let v=vals(),f=filter(v);video.style.filter=f;still.style.filter=f;keys.forEach(k=>document.getElementById("beauty"+k+"Val").textContent=(k==="Warmth"?(v[k]>0?"+":"")+v[k]:v[k]+(k==="Soft"?"px":"%")));}
+ function stop(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;document.getElementById("beautySnap").disabled=true;}
+ async function open(mode=facing){facing=mode;stop();try{if(!navigator.mediaDevices?.getUserMedia)throw Error("Camera access is unavailable in this browser.");stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}}});video.srcObject=stream;await video.play();video.hidden=false;still.hidden=true;empty.hidden=true;document.getElementById("beautySnap").disabled=false;document.getElementById("beautyRetake").hidden=true;document.getElementById("beautySave").hidden=true;status.textContent=facing==="user"?"Front camera ready":"Back camera ready";}catch(e){status.textContent=e.name==="NotAllowedError"?"Camera permission denied. Allow access in browser settings.":e.message||"Could not open camera";}}
+ function snap(){if(!video.videoWidth)return;let c=document.createElement("canvas");c.width=video.videoWidth;c.height=video.videoHeight;let x=c.getContext("2d");if(facing==="user"){x.translate(c.width,0);x.scale(-1,1);}x.filter=filter(vals());x.drawImage(video,0,0);captured=c.toDataURL("image/jpeg",.94);still.src=captured;still.hidden=false;video.hidden=true;document.getElementById("beautyRetake").hidden=false;document.getElementById("beautySave").hidden=false;status.textContent="Portrait captured. Tune it or save it.";}
+ document.getElementById("beautyStart").onclick=()=>open(facing);document.getElementById("beautyFront").onclick=()=>open("user");document.getElementById("beautyBack").onclick=()=>open("environment");document.getElementById("beautySnap").onclick=snap;
+ document.getElementById("beautyRetake").onclick=()=>{captured=null;still.hidden=true;video.hidden=false;document.getElementById("beautyRetake").hidden=true;document.getElementById("beautySave").hidden=true;};
+ document.getElementById("beautySave").onclick=()=>{if(!captured)return;let a=document.createElement("a");a.href=captured;a.download="pennio-model-beauty.jpg";a.click();};
+ keys.forEach(k=>document.getElementById("beauty"+k).addEventListener("input",tune));
+ document.getElementById("beautyReset").onclick=()=>{let d={Brightness:100,Contrast:100,Saturate:100,Warmth:0,Soft:0};keys.forEach(k=>document.getElementById("beauty"+k).value=d[k]);tune();};
+ document.addEventListener("visibilitychange",()=>{if(document.hidden)stop();});tune();
+})();
 
 /* toast */
 let tt=null;
