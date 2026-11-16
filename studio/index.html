@@ -61,6 +61,8 @@ h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.025em;line-he
 .exp{margin:0 0 14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--black);display:grid;gap:12px}
 .exp[hidden]{display:none}
 .exp-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+ .exp-head{justify-content:space-between}.exp-dismiss{margin-left:auto;min-height:40px!important;padding:0 12px;font-size:13px}
+
 .exp-row .btn{min-height:44px}
 .exp-note,.exp-meta{font-size:12px;color:var(--mute);font-weight:300}
 .exp-meta:empty{display:none}
@@ -922,9 +924,9 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
   </div>
 
   <div class="exp" id="expPanel" hidden>
-    <div class="exp-row">
+    <div class="exp-row exp-head">
       <div class="seg" id="expFmt"><button data-f="mp3" class="on">MP3</button><button data-f="wav">WAV</button></div>
-      <span class="exp-note" id="expNote">Small file, right for WhatsApp and Instagram.</span>
+      <span class="exp-note" id="expNote">Small file, right for WhatsApp and Instagram.</span><button class="btn exp-dismiss" id="expClose" type="button" aria-label="Close export panel">Close ×</button>
     </div>
     <div class="exp-row"><span class="exp-lab">Length</span><div class="seg" id="expLen"><button data-l="0" class="on">Auto</button><button data-l="4">4 bars</button><button data-l="8">8</button><button data-l="16">16</button></div></div>
     <div class="sw-row"><button class="sw" id="swDrum" role="switch" aria-checked="false"><i></i></button><span><b>Include the talking-drum answer</b> the dùndún version of your voice, made in Ìlù below</span></div>
@@ -2058,6 +2060,9 @@ function closeExportPanel(){
   expPanel.hidden=true;
   expBtn.setAttribute("aria-expanded","false");
 }
+document.getElementById("expClose").onclick=closeExportPanel;
+document.addEventListener("click",e=>{if(!expPanel.hidden&&!expPanel.contains(e.target)&&!expBtn.contains(e.target))closeExportPanel();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!expPanel.hidden)closeExportPanel();});
 function savedWhatsApp(){
   try{
     const digits=String(sessionStorage.getItem("ps.whatsapp")||"").replace(/\D/g,"");
