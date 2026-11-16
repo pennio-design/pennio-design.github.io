@@ -2050,13 +2050,13 @@ function savedWhatsApp(){
 function addPennioCredit(blob){
   const enc=new TextEncoder();
   const makeFrame=(id,value)=>{
-    const text=enc.encode(value),data=new Uint8Array(text.length+1);data[0]=3;data.set(text,1);
+    const text=enc.encode(value),data=new Uint8Array(text.length+1);data[0]=0;data.set(text,1);
     const frame=new Uint8Array(10+data.length);
     for(let i=0;i<4;i++)frame[i]=id.charCodeAt(i);
     const n=data.length;frame[4]=(n>>>24)&255;frame[5]=(n>>>16)&255;frame[6]=(n>>>8)&255;frame[7]=n&255;
     frame.set(data,10);return frame;
   };
-  const frames=[makeFrame("TENC","PENNIO Studio"),makeFrame("TCOP","Created with PENNIO Studio · https://pennio.agency/studio/")];
+  const frames=[makeFrame("TENC","PENNIO Studio"),makeFrame("TCOP","Created with PENNIO Studio - https://pennio.agency/studio/")];
   const size=frames.reduce((sum,frame)=>sum+frame.length,0),body=new Uint8Array(size);
   let offset=0;for(const frame of frames){body.set(frame,offset);offset+=frame.length;}
   const header=new Uint8Array([73,68,51,3,0,0,(size>>>21)&127,(size>>>14)&127,(size>>>7)&127,size&127]);
@@ -2088,8 +2088,10 @@ expShare.onclick=async()=>{
   expGo.disabled=expShare.disabled=true;expShare.textContent="Rendering…";
   const text="Made with PENNIO Studio. Bring your voice. Leave with a record: https://pennio.agency/studio/";
   const phone=savedWhatsApp();
+  let canShareFile=false;
+  try{canShareFile=!!(navigator.canShare&&navigator.canShare({files:[new File([""],"pennio.mp3",{type:"audio/mpeg"})]}));}catch(e){}
   let whatsappWindow=null;
-  if(phone)whatsappWindow=window.open("about:blank","_blank");
+  if(phone||!canShareFile)whatsappWindow=window.open("about:blank","_blank");
   try{
     const x=await buildExport();expMeta.textContent=x.info;
     const file=new File([x.blob],x.name,{type:x.blob.type});
@@ -2100,7 +2102,7 @@ expShare.onclick=async()=>{
       else window.location.href=url;
       toast("MP3 saved. WhatsApp opened to your number; attach the file and send it.");
       closeExportPanel();
-    }else if(navigator.canShare&&navigator.canShare({files:[file]})){
+    }else if(canShareFile&&navigator.canShare({files:[file]})){
       try{
         await navigator.share({files:[file],text});
         toast("Choose WhatsApp and send the PENNIO-credited MP3.");
@@ -2109,7 +2111,8 @@ expShare.onclick=async()=>{
     }else{
       await saveExport(x);
       const url="https://wa.me/?text="+encodeURIComponent(text);
-      window.open(url,"_blank","noopener");
+      if(whatsappWindow)whatsappWindow.location.href=url;
+      else window.open(url,"_blank","noopener");
       toast("MP3 saved. Choose your WhatsApp chat, attach the file, and send it.");
       closeExportPanel();
     }
