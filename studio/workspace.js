@@ -179,9 +179,10 @@ window.addEventListener("pennio:workspace-room-open",e=>{
  if(e.detail?.room==="ayan"&&project)roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(project)).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
  if((e.detail?.room==="faajiplace"||e.detail?.room==="film")&&project)roomSwitchPromise=Promise.resolve(window.PennioFilmWorkspace?.restore(project)).catch(err=>{console.warn("Film project restore:",err);throw err;});
 });
-window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(err=>console.warn("Studio media save:",err));});
-window.addEventListener("pennio:studio-media",e=>{storeAsset(e.detail||{}).catch(err=>console.warn("Studio media save:",err));});
-window.addEventListener("pennio:film-media",e=>{const d=e.detail||{};if(!d.blob||d.assetId)return;const kind=d.kind||(d.blob.type.startsWith("audio/")?"audio":"video");storeAsset({...d,kind}).then(asset=>window.dispatchEvent(new CustomEvent("pennio:film-media-saved",{detail:{id:asset.id,name:asset.name,kind:asset.kind}}))).catch(err=>console.warn("Studio media save:",err));});
+function reportMediaError(error){const message=error&&error.message||"Browser storage is unavailable.";console.warn("Studio media save:",error);window.dispatchEvent(new CustomEvent("pennio:workspace-media-error",{detail:{message}}));}
+window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(reportMediaError);});
+window.addEventListener("pennio:studio-media",e=>{storeAsset(e.detail||{}).catch(reportMediaError);});
+window.addEventListener("pennio:film-media",e=>{const d=e.detail||{};if(!d.blob||d.assetId)return;const kind=d.kind||(d.blob.type.startsWith("audio/")?"audio":"video");storeAsset({...d,kind}).then(asset=>window.dispatchEvent(new CustomEvent("pennio:film-media-saved",{detail:{id:asset.id,name:asset.name,kind:asset.kind,projectId:asset.projectId}}))).catch(reportMediaError);});
 buildUI();
 const saved=(()=>{try{return localStorage.getItem(ACTIVE_KEY)}catch(e){return null}})();
 setActive(projectById(saved)||null);refreshProjectSelect();refreshAssets();
