@@ -3038,7 +3038,7 @@ async function micTake(btn,label,maxSec,onDone,noteEl){
     btn._recDone=new Promise(resolve=>{resolveDone=resolve;});
     r.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
     r.onstop=async()=>{clearInterval(btn._t);stream.getTracks().forEach(t=>t.stop());btn.textContent=label;btn._rec=null;noteEl.textContent="Listening…";
-      try{const ab=await new Blob(chunks,{type:r.mimeType||"audio/webm"}).arrayBuffer();const b=await new Promise((res,rej)=>{const p=ac.decodeAudioData(ab,res,rej);if(p&&p.then)p.then(res,rej);});await onDone(b);}
+      try{const recordingBlob=new Blob(chunks,{type:r.mimeType||"audio/webm"}),ab=await recordingBlob.arrayBuffer();const b=await new Promise((res,rej)=>{const p=ac.decodeAudioData(ab,res,rej);if(p&&p.then)p.then(res,rej);});window.dispatchEvent(new CustomEvent("pennio:workspace-media-save",{detail:{blob:recordingBlob,name:"Àyàn voice take",kind:"audio",projectId:activeWorkspaceAyanProjectId||window.PennioWorkspace?.activeProjectId||"__studio_default__"}}));await onDone(b);}
       catch(err){noteEl.textContent="That recording could not be read. Try again.";}
       finally{resolveDone();btn._recDone=null;}
     };
