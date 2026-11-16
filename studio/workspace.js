@@ -161,7 +161,7 @@ window.PennioWorkspace={
  saveSession,loadSession,deleteSession,
  refresh:refreshAssets
 };
-window.addEventListener("pennio:workspace-project-open",e=>{const p=e.detail&&e.detail.project;setActive(p||null,true);refreshProjectSelect();});
+window.addEventListener("pennio:workspace-project-open",e=>{const p=e.detail&&e.detail.project,previous=activeProjectId;if(e.detail)e.detail.previousProjectId=previous;setActive(p||null,true);refreshProjectSelect();});
 window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(err=>console.warn("Studio media save:",err));});
 window.addEventListener("pennio:studio-media",e=>{storeAsset(e.detail||{}).catch(err=>console.warn("Studio media save:",err));});
 window.addEventListener("pennio:film-media",e=>{if(e.detail&&e.detail.blob)storeAsset({...e.detail,kind:"video"}).catch(err=>console.warn("Studio media save:",err));});
