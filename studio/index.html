@@ -925,10 +925,10 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
   </div>
 
   <div class="card">
-    <h3>Remix</h3>
-    <p>Each tap writes a new variation: drum hits move, the dùndún line shifts, and your vocal chops are reordered. Downbeats stay put so the groove holds. Undo walks back one remix at a time; Redo brings it back.</p>
+    <h3>Takes and remix</h3>
+    <p>Re-create beat gives you a fresh variation across the sounds. Clear beat removes the current pattern; Undo restores it. Switch takes A–F to compare arrangements. Each tap writes a new variation: drum hits move, the dùndún line shifts, and your vocal chops are reordered. Downbeats stay put so the groove holds. Undo reverses the latest change; Redo brings it back.</p>
     <div class="remixbar">
-      <button class="btn primary" id="remix">Remix</button>
+      <button class="btn primary" id="remix">Re-create beat</button>
       <button class="btn ic" id="rxUndo" disabled aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Undo</span></button>
       <button class="btn ic" id="rxRedo" disabled aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span>Redo</span></button>
       <span class="vmeta" id="ver" style="align-self:center;margin:0"></span>
@@ -1743,7 +1743,7 @@ document.querySelectorAll("#len button").forEach(b=>b.onclick=()=>setN(+b.datase
 bpmEl.oninput=()=>{ document.getElementById("bpmV").textContent=bpmEl.value; const tb=document.getElementById("tpBpm"); if(tb) tb.textContent=bpmEl.value; saveSoon(); };
 swEl.oninput=()=>{ document.getElementById("swV").textContent=swEl.value+"%"; saveSoon(); };
 bpmEl.onpointerdown=swEl.onpointerdown=()=>pushHist();
-document.getElementById("clear").onclick=()=>{pushHist();LANES.forEach(l=>pattern[l.id].fill(0));render();markPresets(-1);};
+document.getElementById("clear").onclick=()=>{pushHist();LANES.forEach(l=>pattern[l.id].fill(0));render();renderLayers();markPresets(-1);toast("Beat cleared. Undo brings it back.");};
 
 /* harmony controls */
 const hKey=document.getElementById("hKey"), hProg=document.getElementById("hProg");
@@ -2250,6 +2250,23 @@ document.getElementById("remix").onclick=()=>{
 
 /* ---------- layers: on/off, volume and tune for every sound ---------- */
 const layersEl=document.getElementById("layers");
+function newLanePattern(id){
+  const lane=LANES.find(l=>l.id===id); if(!lane) return new Array(16).fill(0);
+  const options=PRESETS.filter(p=>p.p&&p.p[id]&&p.p[id].some(Boolean));
+  if(options.length) return options[Math.floor(Math.random()*options.length)].p[id].slice();
+  const a=new Array(16).fill(0), wind=id==="flute"||id==="reed";
+  const hits=wind?[0,4,8,12]:[0,3,7,8,11,15];
+  hits.forEach((step,i)=>{if(Math.random()<(wind?.78:.68))a[step]=1+Math.floor(Math.random()*lane.states);});
+  return a;
+}
+function clearLane(id){
+  if(!pattern[id])return;
+  pushHist();pattern[id].fill(0);render();renderLayers();markPresets(-1);saveSoon();toast("Lane cleared. Undo brings it back.");
+}
+function recreateLane(id){
+  if(!pattern[id])return;
+  pushHist();pattern[id]=newLanePattern(id);banks[bank]=pattern;render();renderLayers();markPresets(-1);saveSoon();toast("New lane take made. Undo brings the last one back.");
+}
 const LAYER_DEFS=[
   ...LANES.filter(l=>l.id!=="vox").map(l=>({id:l.id,name:l.name,sub:l.sub,kind:"drum"})),
   {id:"vox",name:"Vox chops",sub:"pieces of your recording on the grid",kind:"vox"},
@@ -2278,6 +2295,13 @@ function renderLayers(){
       const [re,del]=la.querySelectorAll("button");
       re.onclick=reRecord;
       del.onclick=()=>{ if(armDelete(del,"Delete")) deleteRecording(); };
+      el.appendChild(la);
+    } else if(d.kind==="drum"){
+      const la=document.createElement("div");la.className="la";
+      la.innerHTML='<button class="btn">Re-create lane</button><button class="btn">Clear lane</button>';
+      const [fresh,clear]=la.querySelectorAll("button");
+      fresh.onclick=()=>recreateLane(d.id);
+      clear.onclick=()=>clearLane(d.id);
       el.appendChild(la);
     }
     el.querySelector("b").textContent=d.name;
