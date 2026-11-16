@@ -232,8 +232,8 @@ canvas#wave{width:100%;height:96px;display:block;margin-top:12px;background:var(
 .strip{display:flex;gap:6px;flex-wrap:wrap;width:100%}
 .strip span{font-size:13px;font-weight:600;padding:6px 10px;border-radius:9px;border:1px solid var(--line2);color:var(--mute);min-width:44px;text-align:center}
 .strip span.on{border-color:var(--orange);color:var(--text)}
-.row.gtr .step[class*=" v"],.row.bass .step[class*=" v"],.row.keys .step[class*=" v"],.row.pluck .step[class*=" v"],.row.flute .step[class*=" v"]{background:#c9a27a;color:#050505}
-.row.gtr .step.v1,.row.bass .step.v1,.row.keys .step.v2,.row.pluck .step.v1,.row.flute .step.v1{background:#e8c9a3}
+.row.gtr .step[class*=" v"],.row.bass .step[class*=" v"],.row.keys .step[class*=" v"],.row.pluck .step[class*=" v"],.row.flute .step[class*=" v"],.row.reed .step[class*=" v"]{background:#c9a27a;color:#050505}
+.row.gtr .step.v1,.row.bass .step.v1,.row.keys .step.v2,.row.pluck .step.v1,.row.flute .step.v1,.row.reed .step.v1{background:#e8c9a3}
 /* touch targets: 44px rule for the live site */
 nav button{min-height:40px}
 .seg button{min-height:40px}
@@ -1723,7 +1723,7 @@ rowsEl.addEventListener("click",e=>{ if(e.detail!==0) return; const h=cellAt(e.t
 rowsEl.addEventListener("keydown",e=>{ const h=cellAt(e.target); if(!h) return; const rows=[...rowsEl.querySelectorAll(".row")].filter(r=>r.querySelector(".step")); let ri=rows.indexOf(h.c.closest(".row")), ci=h.i;
   if(e.key==="ArrowRight") ci=Math.min(N-1,ci+1); else if(e.key==="ArrowLeft") ci=Math.max(0,ci-1); else if(e.key==="ArrowDown") ri=Math.min(rows.length-1,ri+1); else if(e.key==="ArrowUp") ri=Math.max(0,ri-1); else if(e.key==="g"){ ghostCell(h.id,h.i); return; } else return;
   e.preventDefault(); const n=rows[ri].querySelector('.step[data-i="'+ci+'"]'); if(n) n.focus(); });
-/* banks: three patterns per session */
+/* take banks: six patterns per session */
 function markBank(){ document.querySelectorAll("#bank button").forEach(b=>b.classList.toggle("on",b.dataset.b===bank)); }
 document.querySelectorAll("#bank button").forEach(b=>b.onclick=()=>{ const to=b.dataset.b; if(to===bank) return; pushHist(); banks[bank]=pattern;
   let fresh=false; if(!banks[to]){ banks[to]=fillLanes(JSON.parse(JSON.stringify(pattern))); fresh=true; }
@@ -3518,7 +3518,7 @@ const TOURS=[
     {sel:"#hKey", t:"Choose a key. Every melody instrument follows it, so nothing clashes."},
     {sel:"#hProg", t:"Choose the chords. One chord plays per bar, and the chord names light up as they play."},
     {sel:'#rows .row[data-l="gtr"] .step[data-i="2"]', t:"Guitar picks the notes of each chord. Tap a square: R is the root, tap again for 3, 5, 8 and 10.", tap:true},
-    {sel:"#addRows", t:"Bring in Flute, Vox and other rows from here when you want them."}]},
+    {sel:"#addRows", t:"Add Fèrè, Dùrù, Reed, Vox and other rows when you want them."}]},
   {id:"save", n:"Sessions, history and backups", d:"1 minute · name, go back, start new", steps:[
     {sel:"#pname", t:"Name your session here. It saves as you work."},
     {sel:"#openHist", t:"History keeps checkpoints. You can go back to any of them, or copy one into a new session."},
