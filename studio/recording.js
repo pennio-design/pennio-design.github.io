@@ -79,16 +79,22 @@ $("studioRecFilm").addEventListener("click",()=>{if(!blob)return;const empty=$("
 async function extractVideoAudio(){if(!blob||mode!=="video")return;setStatus("Extracting the video's audio…");let url=URL.createObjectURL(blob),video=document.createElement("video"),stream=null,mr=null;video.preload="auto";video.src=url;video.playsInline=true;try{await new Promise((resolve,reject)=>{video.onloadedmetadata=resolve;video.onerror=()=>reject(Error("This video could not be opened."));});const capture=video.captureStream||video.mozCaptureStream;if(!capture)throw Error("Audio extraction is not supported in this browser. Try a desktop Chrome browser.");stream=capture.call(video);const tracks=stream.getAudioTracks();if(!tracks.length)throw Error("This video has no audio track to extract.");const audioStream=new MediaStream(tracks),candidates=["audio/webm;codecs=opus","audio/mp4","audio/webm"],mime=candidates.find(t=>MediaRecorder.isTypeSupported(t));mr=new MediaRecorder(audioStream,mime?{mimeType:mime}:undefined);const parts=[];mr.ondataavailable=e=>{if(e.data&&e.data.size)parts.push(e.data);};const finished=new Promise((resolve,reject)=>{mr.onerror=e=>reject(e.error||Error("Audio extraction failed."));mr.onstop=()=>resolve(new Blob(parts,{type:mr.mimeType||"audio/webm"}));});mr.start(250);const playbackEnded=new Promise(resolve=>{video.onended=resolve;});await video.play();await playbackEnded;mr.stop();const audio=await finished;if(!audio.size)throw Error("No audio was captured from this video.");blob=audio;sourceBlob=blob;mode="audio";setMode("audio");clearInterval(ticker);showPreview();result.hidden=false;useAyan.hidden=false;useFilm.hidden=false;extract.hidden=true;setStatus("Audio extracted. Add it to Àyàn for Ìlù, or move it into Film.");}catch(e){setStatus(e.message||"Could not extract audio from this video.");}finally{if(stream)stream.getTracks().forEach(t=>t.stop());video.pause();video.removeAttribute("src");video.load();URL.revokeObjectURL(url);}}
 extract.addEventListener("click",extractVideoAudio);
 window.addEventListener("pennio:studio-media",e=>{const d=e.detail||{};if(!d.blob)return;clearTake();blob=d.blob;sourceBlob=blob;mode=d.kind==="video"?"video":"audio";setMode(mode);showPreview();result.hidden=false;useAyan.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=mode!=="video";setStatus((d.name||"Media")+" received from another Studio room. Choose where to use it.");showDock(true);});
-useAyan.addEventListener("click",()=>{
+useAyan.addEventListener("click",async()=>{
  if(!blob||mode!=="audio")return;
- window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob,name:"Studio audio take"}}));
- setStatus("Sent to Àyàn. The take is now available in the shared project media.");
+ try{
+  if(window.PennioWorkspace?.openRoom)await window.PennioWorkspace.openRoom("ayan");
+  window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob,name:"Studio audio take"}}));
+  setStatus("Sent to Àyàn. The take is now available in this project’s DAW and media library.");
+ }catch(error){setStatus("Could not open Àyàn: "+error.message);}
 });
-useFilm.addEventListener("click",()=>{
+useFilm.addEventListener("click",async()=>{
  if(!blob)return;
  const kind=blob.type.startsWith("audio/")?"audio":"video";
- window.dispatchEvent(new CustomEvent("pennio:film-media",{detail:{blob,name:kind==="video"?"Studio video take":"Studio audio take",kind}}));
- setStatus("Sent to Fàájìplace. The media is being saved with this project.");
+ try{
+  if(window.PennioWorkspace?.openRoom)await window.PennioWorkspace.openRoom("faajiplace");
+  window.dispatchEvent(new CustomEvent("pennio:film-media",{detail:{blob,name:kind==="video"?"Studio video take":"Studio audio take",kind}}));
+  setStatus("Sent to Fàájìplace. The media is being saved with this project.");
+ }catch(error){setStatus("Could not open Fàájìplace: "+error.message);}
 });
 $("studioRecAgain").addEventListener("click",()=>{clearTake();setStatus("Ready for another take.");});
 window.addEventListener("beforeunload",()=>{stopTracks();if(blobUrl)URL.revokeObjectURL(blobUrl);clearInterval(ticker);});
