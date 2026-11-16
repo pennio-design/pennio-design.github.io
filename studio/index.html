@@ -874,6 +874,24 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
 .daw-status{font-size:12px;color:var(--mute);min-height:16px}
 .daw-recording{color:#ff8068}
 @media(max-width:620px){.daw-track{grid-template-columns:1fr}.daw-track-head{border-right:0;border-bottom:1px solid var(--line)}.daw-track-wave canvas{height:82px;min-height:82px}.daw-trim{grid-template-columns:1fr}.daw-head{align-items:flex-start}}
+/* Shared recording dock across studio rooms */
+.studio-rec{position:fixed;z-index:50;right:18px;bottom:82px;width:min(420px,calc(100vw - 28px));padding:16px;border:1px solid var(--line2);border-radius:18px;background:rgba(15,15,15,.97);box-shadow:0 18px 60px rgba(0,0,0,.48);backdrop-filter:blur(18px);display:none;gap:12px;color:var(--text)}
+.studio-rec.open{display:grid}
+.studio-rec-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.studio-rec-top>div{display:grid;gap:3px}.studio-rec-kicker{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange)}
+.studio-rec-top b{font-size:15px}.studio-rec-top small{font-size:12px;color:var(--mute)}
+.studio-rec-close{font-size:24px;color:var(--mute);padding:0 6px}
+.studio-rec-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.studio-rec-modes{display:flex;padding:3px;border:1px solid var(--line);border-radius:10px;margin-right:auto}
+.studio-rec-modes button{font-size:11px;padding:8px 9px;border-radius:7px;color:var(--mute)}
+.studio-rec-modes button.on{background:var(--line2);color:var(--text)}
+.studio-rec-clock{font-variant-numeric:tabular-nums;font-size:13px;color:var(--orange);min-width:42px}
+.studio-rec-preview video{width:100%;max-height:220px;border-radius:12px;background:#000}.studio-rec-preview audio{width:100%}
+.studio-rec-result{display:flex;flex-wrap:wrap;gap:7px}
+.studio-rec-status{font-size:11px;line-height:1.45;color:var(--mute)}
+.studio-rec-launch{position:fixed;z-index:49;right:18px;bottom:18px;display:flex;align-items:center;gap:9px;padding:13px 18px;border-radius:999px;background:var(--orange);color:#090909;font-size:13px;font-weight:700;box-shadow:0 8px 28px rgba(0,0,0,.35)}
+.studio-rec-launch span{font-size:12px}
+@media(max-width:600px){.studio-rec{right:10px;bottom:76px;width:calc(100vw - 20px);padding:13px}.studio-rec-launch{right:12px;bottom:12px}.studio-rec-controls>.btn{padding:9px 11px}}
 </style>\n</head>
 <body class="in-studio">
 <header>
@@ -1247,7 +1265,14 @@ A clear image or action.
     <p>Skilled traditional hairdressers, and models to wear their work. Send your entry →</p>
   </a>
 </section>
-<p class="foot"><a href="/studio/guide/" style="color:inherit">How to use pennio.studio</a> · pennio.studio by PENNIO</p>
+<aside class="studio-rec" id="studioRecorder" aria-label="Studio recorder">
+  <div class="studio-rec-top"><div><span class="studio-rec-kicker">PENNIO capture</span><b id="studioRecTitle">Record a new idea</b><small id="studioRecHint">Capture audio or video from any room.</small></div><button type="button" class="studio-rec-close" id="studioRecClose" aria-label="Close recorder">×</button></div>
+  <div class="studio-rec-controls"><div class="studio-rec-modes" role="group" aria-label="Recording type"><button type="button" class="on" data-rec-mode="audio">Voice / audio</button><button type="button" data-rec-mode="video">Video</button></div><button type="button" class="btn primary" id="studioRecStart">● Record</button><button type="button" class="btn" id="studioRecStop" disabled>Stop</button><span class="studio-rec-clock" id="studioRecClock">00:00</span></div>
+  <div class="studio-rec-preview" id="studioRecPreview" hidden></div>
+  <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Add to Àyàn</button><button type="button" class="btn" id="studioRecFilm" hidden>Use in Film</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
+  <p class="studio-rec-status" id="studioRecStatus" aria-live="polite">Your recording stays on this device until you save or use it.</p>
+</aside>
+<button type="button" class="studio-rec-launch" id="studioRecLaunch" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Record</button>\n<p class="foot"><a href="/studio/guide/" style="color:inherit">How to use pennio.studio</a> · pennio.studio by PENNIO</p>
 </main>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to pennio.studio.</h2>
@@ -4163,5 +4188,5 @@ document.getElementById("sylIn").oninput=sylRender;
   button.addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light"));
 })();
 </script>
-<script src="/studio/daw.js" defer></script>\n</body>
+<script src="/studio/daw.js" defer></script>\n<script src="/studio/recording.js" defer></script>\n</body>
 </html>
