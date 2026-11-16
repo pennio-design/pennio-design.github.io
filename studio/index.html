@@ -742,6 +742,7 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 .fr-cue-main{display:grid;grid-template-columns:minmax(150px,1.4fr) minmax(105px,.7fr);gap:8px;min-width:0}
 .fr-cue-main input,.fr-cue-main select{min-width:0;width:100%;height:42px;border:1px solid var(--line2);border-radius:10px;background:var(--black);color:var(--text);font:500 13px Inter,system-ui,sans-serif;padding:0 10px;outline:none}
 .fr-cue-main input:focus,.fr-cue-main select:focus{border-color:var(--orange)}
+.fr-cue-main input[data-field="plan"]{grid-column:1/-1}
 .fr-cue-times{display:flex;align-items:center;gap:6px;grid-column:1/-1;font-size:11px;color:var(--mute)}
 .fr-cue-times input{width:80px;height:36px;text-align:center;font-variant-numeric:tabular-nums;padding:0 5px}
 .fr-cue .fr-note{grid-column:2/-1;min-height:58px;font-size:12px}
@@ -1108,7 +1109,7 @@ A clear image or action.
       </div>
     </div>
     <div class="fr-cue-head">
-      <div><h2>Scene cues <span id="filmCueCount" style="font-size:12px;color:var(--mute);font-weight:400">0</span></h2><p>Set a start and end, name the turn, then take the cue into the music studio.</p></div>
+      <div><h2>Scene cues <span id="filmCueCount" style="font-size:12px;color:var(--mute);font-weight:400">0</span></h2><p>Set the story turn, mark its in and out, note what production needs, then take its score cue into the music studio.</p></div>
       <div class="fr-cue-actions"><button class="btn" id="filmImportDraft">Import from Write</button><button class="btn primary" id="filmAddCue">+ Mark this moment</button></div>
     </div>
     <div class="fr-cues" id="filmCues"></div>
@@ -3666,6 +3667,7 @@ document.getElementById("sylIn").oninput=sylRender;
     const mood=document.createElement("select");mood.dataset.field="mood";mood.setAttribute("aria-label","Scene mood");
     [["wonder","Wonder"],["tender","Tender"],["tension","Tension"],["joy","Joy"],["grief","Grief"],["resolve","Resolve"],["other","Other"]].forEach(item=>{const option=document.createElement("option");option.value=item[0];option.textContent=item[1];mood.appendChild(option);});
     mood.value=cue.mood||"wonder";
+    const plan=document.createElement("input");plan.type="text";plan.maxLength=240;plan.placeholder="Planning note · place, people, props or setup";plan.value=cue.plan||"";plan.dataset.field="plan";plan.setAttribute("aria-label","Production planning note");
     const times=document.createElement("div");times.className="fr-cue-times";
     const startLabel=document.createElement("label");startLabel.textContent="From";
     const start=document.createElement("input");start.type="text";start.inputMode="numeric";start.placeholder="00:00";start.value=stamp(cue.start||0);start.dataset.field="start";start.setAttribute("aria-label","Cue start time");
@@ -3673,13 +3675,14 @@ document.getElementById("sylIn").oninput=sylRender;
     const end=document.createElement("input");end.type="text";end.inputMode="numeric";end.placeholder="End";end.value=cue.end==null?"":stamp(cue.end);end.dataset.field="end";end.setAttribute("aria-label","Cue end time");
     const endLabel=document.createElement("label");endLabel.appendChild(end);
     times.append(startLabel,start,to,endLabel);
-    main.append(title,mood,times);
+    main.append(title,mood,plan,times);
     const note=document.createElement("textarea");note.className="fr-note";note.rows=2;note.maxLength=800;note.placeholder="What changes here? Add a visual beat or score direction.";note.value=cue.note||"";note.dataset.field="note";note.setAttribute("aria-label","Story and score note");
     const actions=document.createElement("div");actions.className="fr-cue-acts";
     const score=document.createElement("button");score.type="button";score.className="btn fr-score";score.dataset.action="score";score.textContent="Take cue to Studio →";
     const mark=document.createElement("button");mark.type="button";mark.className="btn";mark.dataset.action="mark";mark.textContent="Set start to playhead";
+    const markEnd=document.createElement("button");markEnd.type="button";markEnd.className="btn";markEnd.dataset.action="mark-end";markEnd.textContent="Set end to playhead";
     const remove=document.createElement("button");remove.type="button";remove.className="btn fr-remove";remove.dataset.action="remove";remove.textContent="Remove";
-    actions.append(score,mark,remove);
+    actions.append(score,mark,markEnd,remove);
     article.append(number,main,note,actions);
     return article;
   }
@@ -3710,7 +3713,7 @@ document.getElementById("sylIn").oninput=sylRender;
   filmVideo.addEventListener("leavepictureinpicture",()=>{filmVideo.muted=false;});
   $("filmAddCue").addEventListener("click",()=>{
     const at=filmVideo.src?Math.floor(filmVideo.currentTime||0):0;
-    film.cues.push({id:makeId(),title:"Scene "+String(film.cues.length+1).padStart(2,"0"),mood:"wonder",start:at,end:null,note:""});
+    film.cues.push({id:makeId(),title:"Scene "+String(film.cues.length+1).padStart(2,"0"),mood:"wonder",start:at,end:null,plan:"",note:""});
     renderCues();saveFilm();
     const last=filmCues.lastElementChild;if(last){last.scrollIntoView({behavior:"smooth",block:"nearest"});const input=last.querySelector('[data-field="title"]');if(input){input.focus();input.select();}}
   });
@@ -3739,8 +3742,8 @@ document.getElementById("sylIn").oninput=sylRender;
     if(button.dataset.action==="remove"){
       film.cues=film.cues.filter(c=>c.id!==cue.id);renderCues();saveFilm();return;
     }
-    if(button.dataset.action==="mark"){
-      if(filmVideo.src){cue.start=Math.floor(filmVideo.currentTime||0);renderCues();saveFilm();}
+    if(button.dataset.action==="mark"||button.dataset.action==="mark-end"){
+      if(filmVideo.src){const at=Math.floor(filmVideo.currentTime||0);if(button.dataset.action==="mark")cue.start=at;else cue.end=at;renderCues();saveFilm();}
       else if(window.toast)toast("Add a clip first, then mark the playhead.");
       else filmSave.textContent="Add a clip to set the playhead.";
       return;
