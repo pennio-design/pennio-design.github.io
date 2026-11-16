@@ -4227,8 +4227,8 @@ document.getElementById("sylIn").oninput=sylRender;
     saveFilm();
   }
   async function restoreFilmAsset(project){
-    const projectId=project&&project.id||window.PennioWorkspace?.activeProjectId;
-    if(!projectId||!window.PennioWorkspace)return;
+    const projectId=project&&project.id||window.PennioWorkspace?.activeProjectId||"__studio_default__";
+    if(!window.PennioWorkspace)return;
     try{
       const all=await window.PennioWorkspace.listAssets();
       const owned=all.filter(asset=>asset.projectId===projectId&&(asset.kind==="video"||asset.kind==="audio"));
@@ -4502,7 +4502,7 @@ document.getElementById("sylIn").oninput=sylRender;
     film.cues=Array.isArray(film.cues)?film.cues:[];film.cues.forEach(c=>{if(!c.id)c.id=makeId();});
     filmTitle.value=film.title||"Untitled film";filmLogline.value=film.logline||"";
     renderCues();renderActiveCue();renderWriteCue();clearFilmPreview();
-    if(project&&document.getElementById("filmDesk")?.getClientRects().length)restoreFilmAsset(project);
+    if(document.getElementById("filmDesk")?.getClientRects().length)restoreFilmAsset(project||null);
   }
   window.addEventListener("pennio:workspace-project-open",event=>switchRoomProject(event.detail&&event.detail.project||null));
 })();
