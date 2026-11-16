@@ -1012,7 +1012,16 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
   </div>
 
   <div class="card">
-    <h3>Takes and remix</h3>
+    <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
+  <div class="daw-head"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
+  <div class="daw-toolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
+  <div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
+  <div class="daw-bottom"><div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button><button class="btn" id="dawNormalize">Normalize selected</button><button class="btn" id="dawDelete">Delete selected</button></div>
+    <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
+    <div class="daw-status">Audio is processed in your browser. Imported tracks are not uploaded. Export creates a stereo WAV mix.</div>
+  </div>
+</section>
+<h3>Takes and remix</h3>
     <p>Re-create beat gives you a fresh variation across the sounds. Clear beat removes the current pattern; Undo restores it. Switch takes A–F to compare arrangements. Each tap writes a new variation: drum hits move, the dùndún line shifts, and your vocal chops are reordered. Downbeats stay put so the groove holds. Undo reverses the latest change; Redo brings it back.</p>
     <div class="remixbar">
       <button class="btn primary" id="remix">Re-create beat</button>
