@@ -30,12 +30,13 @@ async function saveSessionNow(projectOverride){
  const savedOffset=state.playing&&state.ctx?Math.min(duration(),state.offset+state.ctx.currentTime-state.startTime):(state.offset||0);
  for(const t of state.tracks){
   const key=projectId+":"+t.id;
-  let cached=sessionBlobCache.get(key);
-  if(!cached||cached.buffer!==t.buffer){cached={buffer:t.buffer,blob:trackWavBlob(t.buffer)};sessionBlobCache.set(key,cached);}
+  let cached=sessionBlobCache.get(key),changed=!cached||cached.buffer!==t.buffer;
+  if(changed){cached={buffer:t.buffer,blob:trackWavBlob(t.buffer),persisted:false};sessionBlobCache.set(key,cached);}
   tracks.push({id:t.id,name:t.name,start:t.start,end:t.end,gain:t.gain,pan:t.pan,timeline:t.timeline,mute:!!t.mute,solo:!!t.solo,audioKey:key});
-  audio.push({id:key,blob:cached.blob});
+  audio.push({id:key,blob:cached.blob,force:changed||!cached.persisted});
  }
  await window.PennioWorkspace.saveSession(projectId,{version:1,tracks,selected:state.selected,effects:{...state.effects},offset:savedOffset,range:state.range?{...state.range}:null,audio});
+ for(const t of state.tracks){const cached=sessionBlobCache.get(projectId+":"+t.id);if(cached)cached.persisted=true;}
  return true;
 }
 async function loadSessionFor(projectId){
@@ -53,7 +54,7 @@ async function loadSessionFor(projectId){
      const start=Math.max(0,Math.min(buffer.duration,Number(meta.start)||0));
      const end=Math.max(start,Math.min(buffer.duration,Number.isFinite(+meta.end)?+meta.end:buffer.duration));
      state.tracks.push({id:meta.id,name:meta.name||"Audio",buffer,start,end,gain:Number.isFinite(+meta.gain)?+meta.gain:1,pan:Number.isFinite(+meta.pan)?+meta.pan:0,timeline:Math.max(0,Number(meta.timeline)||0),mute:!!meta.mute,solo:!!meta.solo});
-     sessionBlobCache.set(meta.audioKey,{buffer,blob});
+     sessionBlobCache.set(meta.audioKey,{buffer,blob,persisted:true});
     }catch(e){console.warn("Could not restore DAW track",meta.name,e);}
    }
    state.selected=state.tracks.some(t=>t.id===rec.selected)?rec.selected:(state.tracks[0]?.id||null);
