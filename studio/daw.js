@@ -2,7 +2,7 @@
 "use strict";
 const $=id=>document.getElementById(id);
 if(!document.getElementById("dawSessionStyle")){const style=document.createElement("style");style.id="dawSessionStyle";style.textContent="#dawRoom.session-loading{opacity:.72;pointer-events:none;}";document.head.append(style);}
-const state={tracks:[],selected:null,ctx:null,sources:[],playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[]};
+const state={tracks:[],selected:null,ctx:null,sources:[],playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[],recordingDone:null,resolveRecordingDone:null,recordingKind:null,projectSwitching:false,lastSessionOperation:null};
 const status=(s)=>{const el=$("dawStatus");if(el)el.textContent=s;};
 const duration=()=>state.tracks.reduce((m,t)=>Math.max(m,(t.timeline||0)+t.end-t.start),0);
 const fmt=n=>{n=Math.max(0,n||0);return String(Math.floor(n/60)).padStart(2,"0")+":"+String(Math.floor(n%60)).padStart(2,"0")+"."+Math.floor(n%1*10)};
@@ -74,22 +74,31 @@ async function runInProjectSession(targetProjectId,task){
  try{await task(target);}
  finally{clearTimeout(sessionSaveTimer);try{await saveSessionNow(target);}finally{await loadSessionFor(current);}}
 }
+function beginRecordingTask(kind){
+ let resolve;state.recordingDone=new Promise(done=>{resolve=done;});state.resolveRecordingDone=resolve;state.recordingKind=kind;
+}
+function finishRecordingTask(){
+ const resolve=state.resolveRecordingDone;state.resolveRecordingDone=null;state.recordingDone=null;state.recordingKind=null;if(resolve)resolve();
+}
 function queueSessionOperation(targetProjectId,task){
  const job=sessionSwitchQueue.then(()=>runInProjectSession(targetProjectId,task));
- sessionSwitchQueue=job.catch(error=>status("Audio operation failed: "+error.message));
+ sessionSwitchQueue=job.catch(error=>status("Audio operation failed: "+error.message));state.lastSessionOperation=job;
  return job;
 }
-window.PennioDAWSession={save:async()=>{await sessionSwitchQueue;return saveSessionNow();}};
+async function flushDAWSession(){if(state.recorder&&state.recorder.state==="recording"){try{state.recorder.stop();}catch(e){}}if(state.recordingDone)await state.recordingDone;await sessionSwitchQueue;clearTimeout(sessionSaveTimer);return saveSessionNow();}
+window.PennioDAWSession={save:flushDAWSession,flush:flushDAWSession};
 window.addEventListener("pennio:workspace-project-open",e=>{
  const detail=e.detail||{},previous=detail.previousProjectId??SESSION_DEFAULT,next=detail.project?.id||SESSION_DEFAULT;
  if(previous===next)return;
+ const switchGeneration=(window.__pennioDawSwitchGeneration=(window.__pennioDawSwitchGeneration||0)+1);state.projectSwitching=true;
  sessionSwitchQueue=sessionSwitchQueue.then(async()=>{
   document.getElementById("dawRoom")?.classList.add("session-loading");status("Switching project session…");
   if(state.recorder&&state.recorder.state==="recording"){try{state.recorder.stop();}catch(e){}}
   clearTimeout(sessionSaveTimer);
   try{await saveSessionNow(previous);}catch(err){status("Previous session could not be saved: "+err.message);}
   await loadSessionFor(next);
- }).catch(err=>status("Project switch failed: "+err.message));
+  if(switchGeneration===window.__pennioDawSwitchGeneration)state.projectSwitching=false;
+ }).catch(err=>{if(switchGeneration===window.__pennioDawSwitchGeneration)state.projectSwitching=false;status("Project switch failed: "+err.message);});
 });
 function snapshot(){state.undo.push({tracks:state.tracks.map(t=>({...t})),selected:state.selected});if(state.undo.length>20)state.undo.shift();$("dawUndo").disabled=false;}
 function context(){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error("Web Audio is not supported in this browser.");if(!state.ctx)state.ctx=new C();if(state.ctx.state==="suspended")state.ctx.resume();return state.ctx;}
