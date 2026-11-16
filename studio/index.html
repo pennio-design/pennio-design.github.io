@@ -1011,8 +1011,7 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
     <div class="vmeta" id="vmeta">No recording yet. The Vox lane stays silent until you add one.</div>
   </div>
 
-  <div class="card">
-    <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
+  <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
   <div class="daw-head"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
   <div class="daw-toolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
   <div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
@@ -1021,7 +1020,9 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
     <div class="daw-status">Audio is processed in your browser. Imported tracks are not uploaded. Export creates a stereo WAV mix.</div>
   </div>
 </section>
-<h3>Takes and remix</h3>
+
+  <div class="card">
+    <h3>Takes and remix</h3>
     <p>Re-create beat gives you a fresh variation across the sounds. Clear beat removes the current pattern; Undo restores it. Switch takes A–F to compare arrangements. Each tap writes a new variation: drum hits move, the dùndún line shifts, and your vocal chops are reordered. Downbeats stay put so the groove holds. Undo reverses the latest change; Redo brings it back.</p>
     <div class="remixbar">
       <button class="btn primary" id="remix">Re-create beat</button>
