@@ -3705,7 +3705,7 @@ async function doBackup(only,projName){
     const roomData={},roomBases=["ps.film.room","ps.write.draft","ps.film.activeCue","ps.ayan.writeCue"];
     for(const id of storageIds)for(const base of roomBases){const key=base+"."+(id==="__studio_default__"?"default":id),raw=localStorage.getItem(key);if(raw!==null){try{roomData[key]=JSON.parse(raw)}catch(e){roomData[key]=raw;}}}
     for(const base of roomBases){const raw=localStorage.getItem(base);if(raw!==null){try{roomData[base]=JSON.parse(raw)}catch(e){roomData[base]=raw;}}}
-    const ayanMap={};for(const project of studioProjects){const mapped=await kvGet("workspace.ayan."+project.id);if(mapped)ayanMap[project.id]=mapped;}
+    const ayanMap={};for(const id of (Array.isArray(only)?studioProjects.map(project=>project.id):[...studioProjects.map(project=>project.id),"__studio_default__"])){const mapped=await kvGet("workspace.ayan."+id);if(mapped)ayanMap[id]=mapped;}
     const active=localStorage.getItem("ps.studio.activeProject.v1");
     data.studio={projects:studioProjects,activeProjectId:studioProjectIds.includes(active)?active:null,ayanMap,roomData,assets:studioAssets,sessions:studioSessions};
   }
