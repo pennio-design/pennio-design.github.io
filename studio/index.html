@@ -1270,6 +1270,15 @@ A clear image or action.
   <div class="studio-rec-top"><div><span class="studio-rec-kicker">PENNIO capture</span><b id="studioRecTitle">Record a new idea</b><small id="studioRecHint">Capture audio or video from any room.</small></div><button type="button" class="studio-rec-close" id="studioRecClose" aria-label="Close recorder">×</button></div>
   <div class="studio-rec-controls"><div class="studio-rec-modes" role="group" aria-label="Recording type"><button type="button" class="on" data-rec-mode="audio">Voice / audio</button><button type="button" data-rec-mode="video">Video</button></div><button type="button" class="btn primary" id="studioRecStart">● Record</button><button type="button" class="btn" id="studioRecStop" disabled>Stop</button><span class="studio-rec-clock" id="studioRecClock">00:00</span></div>
   <div class="studio-rec-preview" id="studioRecPreview" hidden></div>
+  <div class="studio-rec-trim" id="studioRecTrim" hidden style="padding:12px;margin:10px 0;border:1px solid var(--line,rgba(255,255,255,.16));border-radius:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px"><b>Trim take</b><small id="studioRecTrimDuration">00:00</small></div>
+    <label for="studioRecTrimStart" style="display:flex;justify-content:space-between;gap:10px;font-size:12px">Start <output id="studioRecTrimStartValue">00:00</output></label>
+    <input id="studioRecTrimStart" type="range" min="0" max="1" step="0.1" value="0" style="width:100%;display:block;margin:6px 0 12px">
+    <label for="studioRecTrimEnd" style="display:flex;justify-content:space-between;gap:10px;font-size:12px">End <output id="studioRecTrimEndValue">00:00</output></label>
+    <input id="studioRecTrimEnd" type="range" min="0.1" max="1" step="0.1" value="1" style="width:100%;display:block;margin:6px 0 12px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary" id="studioRecTrimApply">Apply trim</button><button type="button" class="btn" id="studioRecTrimReset" disabled>Restore original</button></div>
+    <small style="display:block;margin-top:8px;opacity:.7">Choose the section to keep. The original take remains available until you start a new recording.</small>
+  </div>
   <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Add to Àyàn</button><button type="button" class="btn" id="studioRecFilm">Use in Film</button><button type="button" class="btn" id="studioRecExtract" hidden>Extract audio</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
   <p class="studio-rec-status" id="studioRecStatus" aria-live="polite">Your recording stays on this device until you save or use it.</p>
 </aside>
