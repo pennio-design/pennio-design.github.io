@@ -50,6 +50,22 @@ function bindWaveSelection(wave,t){
  wave.addEventListener("pointerup",finish);wave.addEventListener("pointercancel",finish);
 }
 clearSelection?.addEventListener("click",clearRange);
+const playSelectionButton=$("dawPlaySelection");
+playSelectionButton?.addEventListener("click",()=>{
+ const r=rangeTimes();if(!r)return;
+ try{
+  stop();const ctx=context(),src=ctx.createBufferSource();src.buffer=r.track.buffer;
+  chain(src,r.track,ctx,ctx.destination);
+  state.sources=[src];state.playing=true;state.offset=r.timeline;state.startTime=ctx.currentTime;
+  src.start(ctx.currentTime+.025,r.start,r.duration);
+  $("dawPlay").textContent="Ⅱ Pause";status("Auditioning selected passage · "+r.track.name);
+  state.timer=setInterval(()=>{
+   const elapsed=ctx.currentTime-state.startTime;
+   $("dawClock").textContent=fmt(r.timeline+Math.min(elapsed,r.duration));
+   if(elapsed>=r.duration){state.offset=r.timeline+r.duration;stop();}
+  },50);
+ }catch(e){status("Could not play selection: "+e.message);}
+});
 keepSelection?.addEventListener("click",()=>{
  const r=rangeTimes();if(!r)return;const t=r.track;snapshot();const from=Math.floor(r.start*t.buffer.sampleRate),to=Math.max(from+1,Math.floor(r.end*t.buffer.sampleRate)),frames=to-from;
  const cropped=context().createBuffer(t.buffer.numberOfChannels,frames,t.buffer.sampleRate);
