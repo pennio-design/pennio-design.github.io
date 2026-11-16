@@ -3699,16 +3699,18 @@ document.getElementById("backup").onclick=doBackup;
 /* backup reminders: after each new recording, and weekly while there is work worth keeping */
 const DAY=86400000;
 function agoText(t){ if(!t) return "never"; const d=Math.floor((Date.now()-t)/DAY); return d<1?"today": d===1?"yesterday": d+" days ago"; }
-function showBkp(title,text){ if(!downloads || (CLOUD_ON && sbSess && lsGet("ps.lastSync"))) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
-function nudgeAfterRecording(){ showBkp("New recording added", "It lives only in this browser until you back it up. Last backup: "+agoText(lsGet("ps.lastBackup"))+". PENNIO cannot recover it if it is lost."); }
+function showBkp(title,text){ if(!downloads) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
+function nudgeAfterRecording(){ showBkp("New recording added", "Your DAW sessions and project media live only in this browser until you back them up. Last backup: "+agoText(lsGet("ps.lastBackup"))+"."); }
 async function nudgeWeekly(){
   if(!document.getElementById("bkpBar").hidden) return;
   const last=lsGet("ps.lastBackup")||0, snooze=lsGet("ps.bkpSnooze")||0;
   if(Date.now()<snooze || Date.now()-last<7*DAY) return;
   const list=(await allProjects())||[];
-  const worth=list.some(r=>r.audio || (r.state&&r.state.pattern&&Object.values(r.state.pattern).some(a=>a.some(Boolean)) && r.updated>last));
+  const studioProjects=lsGet("ps.studio.projects.v1")||[];
+  const studioAssets=window.PennioWorkspace?await window.PennioWorkspace.listAssets():[];
+  const worth=list.some(r=>r.audio || (r.state&&r.state.pattern&&Object.values(r.state.pattern).some(a=>a.some(Boolean)) && r.updated>last)) || studioProjects.length>0 || studioAssets.length>0;
   if(!worth) return;
-  showBkp("Time to back up", "Last backup: "+agoText(last)+". Your work lives only in this browser, and PENNIO cannot recover it if it is lost.");
+  showBkp("Time to back up", "Studio projects, DAW sessions and media are stored in this browser. Last backup: "+agoText(last)+".");
 }
 document.getElementById("bkpNow").onclick=doBackup;
 document.getElementById("bkpLater").onclick=()=>{ lsSet("ps.bkpSnooze",Date.now()+2*DAY); document.getElementById("bkpBar").hidden=true; };
@@ -3750,9 +3752,9 @@ document.getElementById("rpGo").onclick=async()=>{
     for(const [k,v] of Object.entries(data.audio||{})) if(keys.has(k)) await tx("audio","readwrite",st=>st.put(unb64(v),k));
     for(const v of vers) await tx("versions","readwrite",st=>st.put(v));
     if(data.words&&data.words.length){ const cur=(await kvGet("words"))||[]; const merged=cur.concat(data.words.filter(w=>!cur.some(c=>c.text===w.text))); await kvSet("words",merged); lsSet("ps.words",merged); renderWords(); }
-    let studioAdded=0,studioMedia=0,studioSessions=0;
+    let studioAdded=0,studioMedia=0,studioSessions=0,studioProjectCount=0;
     if(data.studio){
-      const studio=data.studio,local=lsGet("ps.studio.projects.v1")||[],merged=local.slice();
+      const studio=data.studio,local=lsGet("ps.studio.projects.v1")||[],merged=local.slice();studioProjectCount=(studio.projects||[]).length;
       for(const project of studio.projects||[]){const i=merged.findIndex(x=>x.id===project.id);if(i<0){merged.push(project);studioAdded++;}else if((project.updated||project.created||0)>(merged[i].updated||merged[i].created||0))merged[i]=project;}
       lsSet("ps.studio.projects.v1",merged);
       for(const [key,value] of Object.entries(studio.roomData||{})){if(localStorage.getItem(key)===null)localStorage.setItem(key,JSON.stringify(value));}
@@ -3764,7 +3766,7 @@ document.getElementById("rpGo").onclick=async()=>{
       }
       if(!localStorage.getItem("ps.studio.activeProject.v1")&&studio.activeProjectId){const activeProject=merged.find(project=>project.id===studio.activeProjectId);if(activeProject)window.PennioWorkspace?.setActiveProject(activeProject);}
     }
-    toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+(studioAdded?" · "+studioAdded+" Studio project"+(studioAdded===1?"":"s"):"")+(studioMedia?" · "+studioMedia+" media asset"+(studioMedia===1?"":"s"):"")+(studioSessions?" · "+studioSessions+" DAW session"+(studioSessions===1?"":"s"):"")+" from the backup. Tap Continue on any of them.");
+    toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+(studioProjectCount?" · "+studioProjectCount+" Studio project"+(studioProjectCount===1?"":"s")+" included":"")+(studioMedia?" · "+studioMedia+" media asset"+(studioMedia===1?"":"s"):"")+(studioSessions?" · "+studioSessions+" DAW session"+(studioSessions===1?"":"s"):"")+" from the backup. Tap Continue on any of them.");
     rpData=null; document.getElementById("rPrev").hidden=true; renderWork();
   }catch(err){ toast("Something in that file could not be restored."); }
 };
