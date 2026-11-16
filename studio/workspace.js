@@ -118,9 +118,10 @@ async function saveSession(projectId,session){
   tx.objectStore("sessions").put(record);
   const audioStore=tx.objectStore("sessionAudio"),req=audioStore.index("projectId").getAll(projectId);
   req.onsuccess=()=>{
-   const keep=new Set(audio.map(x=>x.id));
-   (req.result||[]).forEach(x=>{if(!keep.has(x.id))audioStore.delete(x.id);});
-   audio.forEach(x=>audioStore.put({id:x.id,projectId,blob:x.blob}));
+   const keep=new Set((record.tracks||[]).map(track=>track.audioKey).filter(Boolean));
+   const existing=new Set((req.result||[]).map(item=>item.id));
+   (req.result||[]).forEach(item=>{if(!keep.has(item.id))audioStore.delete(item.id);});
+   audio.forEach(item=>{if(item.force||!existing.has(item.id))audioStore.put({id:item.id,projectId,blob:item.blob});});
   };
   req.onerror=()=>{try{tx.abort();}catch(e){}};
   tx.oncomplete=()=>resolve(true);
