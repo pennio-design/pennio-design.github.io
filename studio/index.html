@@ -3756,7 +3756,7 @@ document.getElementById("rpGo").onclick=async()=>{
       for(const project of studio.projects||[]){const i=merged.findIndex(x=>x.id===project.id);if(i<0){merged.push(project);studioAdded++;}else if((project.updated||project.created||0)>(merged[i].updated||merged[i].created||0))merged[i]=project;}
       lsSet("ps.studio.projects.v1",merged);
       for(const [key,value] of Object.entries(studio.roomData||{})){if(localStorage.getItem(key)===null)localStorage.setItem(key,JSON.stringify(value));}
-      for(const [projectId,sessionId] of Object.entries(studio.ayanMap||{})){if(keep.has(sessionId))await kvSet("workspace.ayan."+projectId,sessionId);}
+      for(const [projectId,sessionId] of Object.entries(studio.ayanMap||{})){if(keep.has(sessionId)||have.has(sessionId))await kvSet("workspace.ayan."+projectId,sessionId);}
       if(window.PennioWorkspace?.importProjectData){
         const assets=(studio.assets||[]).map(asset=>{const {b64:encoded,...meta}=asset;return {...meta,blob:new Blob([unb64(encoded)],{type:asset.type||""})};});
         const sessions=(studio.sessions||[]).map(session=>({...session,audio:(session.audio||[]).map(item=>({id:item.id,blob:new Blob([unb64(item.b64)],{type:item.type||"audio/wav"})}))}));
