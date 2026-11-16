@@ -17,7 +17,8 @@ function openDB(){
 }
 async function storeAsset(detail){
  if(!detail||!detail.blob||!detail.blob.size)return null;
- const d=await openDB(),asset={id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,7),projectId:activeProjectId||"__studio_default__",name:String(detail.name||"Studio media").slice(0,120),kind:detail.kind||(detail.blob.type.startsWith("video/")?"video":"audio"),type:detail.blob.type||"",size:detail.blob.size,created:Date.now(),blob:detail.blob};
+ const projectId=activeProjectId||"__studio_default__";
+ const d=await openDB(),asset={id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,7),projectId,name:String(detail.name||"Studio media").slice(0,120),kind:detail.kind||(detail.blob.type.startsWith("video/")?"video":"audio"),type:detail.blob.type||"",size:detail.blob.size,created:Date.now(),blob:detail.blob};
  await new Promise((resolve,reject)=>{const tx=d.transaction("assets","readwrite");tx.objectStore("assets").put(asset);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||Error("Could not save this media."));});
  await refreshAssets();window.dispatchEvent(new CustomEvent("pennio:workspace-media-saved",{detail:{id:asset.id,projectId:asset.projectId}}));return asset;
 }
