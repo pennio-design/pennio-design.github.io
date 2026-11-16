@@ -38,7 +38,7 @@ function setActive(project,silent){
  const label=$("workspaceProjectName");if(label)label.textContent=project?project.name:"Studio workspace";
  const select=$("workspaceProjectSelect");if(select&&select.value!==(activeProjectId||""))select.value=activeProjectId||"";
  refreshAssets();
- if(!silent&&activeProjectId&&activeProjectId!==previous)window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project}}));
+ if(!silent&&activeProjectId!==previous)window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project,previousProjectId:previous}}));
 }
 function projectById(id){return readProjects().find(p=>p.id===id)||null;}
 function buildUI(){
