@@ -1031,7 +1031,7 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
 
   <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
   <div class="daw-head"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
-  <div class="daw-toolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
+  <div class="daw-toolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><button class="btn" id="dawSendStudio" disabled>Send mix to Studio</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
   <div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
   <div class="daw-bottom"><div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button><button class="btn" id="dawNormalize">Normalize selected</button><button class="btn" id="dawDelete">Delete selected</button></div>
     <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
@@ -1210,6 +1210,7 @@ A clear image or action.
       <div>
         <div class="fr-player">
           <video id="filmVideo" controls playsinline preload="metadata" hidden></video>
+          <audio id="filmAudio" controls preload="metadata" hidden style="width:100%;margin-top:10px"></audio>
           <div class="fr-empty" id="filmEmpty">
             <b>Your picture starts here</b>
             <span>Choose a video clip from this device. It is previewed in your browser and never uploaded.</span>
@@ -1269,7 +1270,7 @@ A clear image or action.
   <div class="studio-rec-top"><div><span class="studio-rec-kicker">PENNIO capture</span><b id="studioRecTitle">Record a new idea</b><small id="studioRecHint">Capture audio or video from any room.</small></div><button type="button" class="studio-rec-close" id="studioRecClose" aria-label="Close recorder">×</button></div>
   <div class="studio-rec-controls"><div class="studio-rec-modes" role="group" aria-label="Recording type"><button type="button" class="on" data-rec-mode="audio">Voice / audio</button><button type="button" data-rec-mode="video">Video</button></div><button type="button" class="btn primary" id="studioRecStart">● Record</button><button type="button" class="btn" id="studioRecStop" disabled>Stop</button><span class="studio-rec-clock" id="studioRecClock">00:00</span></div>
   <div class="studio-rec-preview" id="studioRecPreview" hidden></div>
-  <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Add to Àyàn</button><button type="button" class="btn" id="studioRecFilm" hidden>Use in Film</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
+  <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Add to Àyàn</button><button type="button" class="btn" id="studioRecFilm">Use in Film</button><button type="button" class="btn" id="studioRecExtract" hidden>Extract audio</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
   <p class="studio-rec-status" id="studioRecStatus" aria-live="polite">Your recording stays on this device until you save or use it.</p>
 </aside>
 <button type="button" class="studio-rec-launch" id="studioRecLaunch" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Record</button>\n<p class="foot"><a href="/studio/guide/" style="color:inherit">How to use pennio.studio</a> · pennio.studio by PENNIO</p>
