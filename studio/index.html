@@ -3683,6 +3683,8 @@ document.getElementById("sessFind").oninput=()=>renderWork();
 function b64(buf){ let s="",u=new Uint8Array(buf); for(let i=0;i<u.length;i+=32768) s+=String.fromCharCode.apply(null,u.subarray(i,i+32768)); return btoa(s); }
 function unb64(str){ const s=atob(str), u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u.buffer; }
 async function doBackup(only,projName){
+  await window.PennioWorkspace?.flushRoomTransitions?.();
+  await window.PennioAyanWorkspace?.stopRecordings?.();
   await saveNow();
   let studioSaveError=null;try{await window.PennioDAWSession?.save?.();}catch(error){studioSaveError=error&&error.message||"DAW session could not be flushed.";}
   window.PennioFilmWorkspace?.save?.();window.PennioWriteWorkspace?.save?.();
