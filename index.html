@@ -1131,6 +1131,11 @@ document.getElementById('proofModal').addEventListener('click', e => { if (e.tar
         body: formData
       });
       if (!res.ok) throw new Error('Submit failed');
+      try {
+        const whatsapp = String(formData.get('whatsapp') || '').trim();
+        if (whatsapp) sessionStorage.setItem('ps.whatsapp', whatsapp);
+        else sessionStorage.removeItem('ps.whatsapp');
+      } catch (_) {}
       form.style.display = 'none';
       successMsg.style.display = 'block';
       trackLead(formData.get('budget'));
