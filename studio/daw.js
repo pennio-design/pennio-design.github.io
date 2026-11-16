@@ -7,13 +7,21 @@ const duration=()=>state.tracks.reduce((m,t)=>Math.max(m,(t.timeline||0)+t.end-t
 const fmt=n=>{n=Math.max(0,n||0);return String(Math.floor(n/60)).padStart(2,"0")+":"+String(Math.floor(n%60)).padStart(2,"0")+"."+Math.floor(n%1*10)};
 
 const SESSION_DEFAULT="__studio_default__";
-let sessionSaveTimer=0,sessionRestoring=false;
+let sessionSaveTimer=0,sessionRestoring=false,sessionSwitchQueue=Promise.resolve();
 const sessionBlobCache=new Map();
 function sessionProjectId(){return window.PennioWorkspace?.activeProjectId||SESSION_DEFAULT;}
 function queueSessionSave(){
  if(sessionRestoring||!window.PennioWorkspace?.saveSession)return;
  clearTimeout(sessionSaveTimer);
  sessionSaveTimer=setTimeout(()=>saveSessionNow().catch(e=>status("Session save failed: "+e.message)),900);
+}
+function trackWavBlob(buffer){
+ const channels=buffer.numberOfChannels,length=buffer.length,rate=buffer.sampleRate,bytes=length*channels*2;
+ const ab=new ArrayBuffer(44+bytes),v=new DataView(ab),write=(o,str)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i));};
+ write(0,"RIFF");v.setUint32(4,36+bytes,true);write(8,"WAVE");write(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,channels,true);v.setUint32(24,rate,true);v.setUint32(28,rate*channels*2,true);v.setUint16(32,channels*2,true);v.setUint16(34,16,true);write(36,"data");v.setUint32(40,bytes,true);
+ const data=Array.from({length:channels},(_,c)=>buffer.getChannelData(c));let p=44;
+ for(let i=0;i<length;i++)for(let c=0;c<channels;c++){const x=Math.max(-1,Math.min(1,data[c][i]));v.setInt16(p,x<0?x*32768:x*32767,true);p+=2;}
+ return new Blob([ab],{type:"audio/wav"});
 }
 async function saveSessionNow(projectOverride){
  const projectId=projectOverride||sessionProjectId();
@@ -23,10 +31,9 @@ async function saveSessionNow(projectOverride){
  for(const t of state.tracks){
   const key=projectId+":"+t.id;
   let cached=sessionBlobCache.get(key);
-  if(!cached||cached.buffer!==t.buffer){cached={buffer:t.buffer,blob:wavBlob(t.buffer)};sessionBlobCache.set(key,cached);}
-  const audioKey=key;
-  tracks.push({id:t.id,name:t.name,start:t.start,end:t.end,gain:t.gain,pan:t.pan,timeline:t.timeline,mute:!!t.mute,solo:!!t.solo,audioKey});
-  audio.push({id:audioKey,blob:cached.blob});
+  if(!cached||cached.buffer!==t.buffer){cached={buffer:t.buffer,blob:trackWavBlob(t.buffer)};sessionBlobCache.set(key,cached);}
+  tracks.push({id:t.id,name:t.name,start:t.start,end:t.end,gain:t.gain,pan:t.pan,timeline:t.timeline,mute:!!t.mute,solo:!!t.solo,audioKey:key});
+  audio.push({id:key,blob:cached.blob});
  }
  await window.PennioWorkspace.saveSession(projectId,{version:1,tracks,selected:state.selected,effects:{...state.effects},offset:savedOffset,range:state.range?{...state.range}:null,audio});
  return true;
@@ -43,25 +50,29 @@ async function loadSessionFor(projectId){
     const blob=stored.get(meta.audioKey);if(!blob)continue;
     try{
      const buffer=await context().decodeAudioData(await blob.arrayBuffer());
-     state.tracks.push({id:meta.id,name:meta.name||"Audio",buffer,start:Number(meta.start)||0,end:Number.isFinite(+meta.end)?+meta.end:buffer.duration,gain:Number.isFinite(+meta.gain)?+meta.gain:1,pan:Number.isFinite(+meta.pan)?+meta.pan:0,timeline:Number(meta.timeline)||0,mute:!!meta.mute,solo:!!meta.solo});
+     const start=Math.max(0,Math.min(buffer.duration,Number(meta.start)||0));
+     const end=Math.max(start,Math.min(buffer.duration,Number.isFinite(+meta.end)?+meta.end:buffer.duration));
+     state.tracks.push({id:meta.id,name:meta.name||"Audio",buffer,start,end,gain:Number.isFinite(+meta.gain)?+meta.gain:1,pan:Number.isFinite(+meta.pan)?+meta.pan:0,timeline:Math.max(0,Number(meta.timeline)||0),mute:!!meta.mute,solo:!!meta.solo});
      sessionBlobCache.set(meta.audioKey,{buffer,blob});
     }catch(e){console.warn("Could not restore DAW track",meta.name,e);}
    }
    state.selected=state.tracks.some(t=>t.id===rec.selected)?rec.selected:(state.tracks[0]?.id||null);
-   Object.assign(state.effects,rec.effects||{});document.querySelectorAll("[data-fx]").forEach(b=>b.classList.toggle("primary",!!state.effects[b.dataset.fx]));state.offset=Math.min(duration(),Number(rec.offset)||0);state.range=rec.range||null;
+   Object.assign(state.effects,rec.effects||{});state.offset=Math.min(duration(),Number(rec.offset)||0);state.range=rec.range||null;
   }
+  document.querySelectorAll("[data-fx]").forEach(button=>button.classList.toggle("primary",!!state.effects[button.dataset.fx]));
   render();$("dawClock").textContent=fmt(state.offset);status(rec?"Project session restored.":"A new DAW session is ready for this project.");
  }catch(e){status("Could not restore this project session: "+e.message);}
  finally{sessionRestoring=false;}
 }
-window.addEventListener("pennio:workspace-project-open",async e=>{
- const detail=e.detail||{},previous=detail.previousProjectId||SESSION_DEFAULT,next=detail.project?.id||SESSION_DEFAULT;
+window.addEventListener("pennio:workspace-project-open",e=>{
+ const detail=e.detail||{},previous=detail.previousProjectId??SESSION_DEFAULT,next=detail.project?.id||SESSION_DEFAULT;
  if(previous===next)return;
- clearTimeout(sessionSaveTimer);
- try{await saveSessionNow(previous);}catch(err){status("Previous session could not be saved: "+err.message);}
- await loadSessionFor(next);
+ sessionSwitchQueue=sessionSwitchQueue.then(async()=>{
+  clearTimeout(sessionSaveTimer);
+  try{await saveSessionNow(previous);}catch(err){status("Previous session could not be saved: "+err.message);}
+  await loadSessionFor(next);
+ }).catch(err=>status("Project switch failed: "+err.message));
 });
-
 function snapshot(){state.undo.push({tracks:state.tracks.map(t=>({...t})),selected:state.selected});if(state.undo.length>20)state.undo.shift();$("dawUndo").disabled=false;}
 function context(){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error("Web Audio is not supported in this browser.");if(!state.ctx)state.ctx=new C();if(state.ctx.state==="suspended")state.ctx.resume();return state.ctx;}
 function drawWave(track,canvas){const c=canvas.getContext("2d"),w=canvas.width=Math.max(320,canvas.clientWidth*2),h=canvas.height=180,light=document.documentElement.dataset.theme==="light";c.clearRect(0,0,w,h);const data=track.buffer.getChannelData(0),step=Math.max(1,Math.floor(data.length/w)),mid=h/2;c.strokeStyle=track.id===state.selected?(light?"#b94317":"#ff8a55"):(light?"#625b52":"#b7a79a");c.lineWidth=1.5;c.beginPath();for(let x=0;x<w;x++){let min=1,max=-1;for(let j=0;j<step;j++){const v=data[x*step+j]||0;if(v<min)min=v;if(v>max)max=v;}c.moveTo(x,mid+min*mid*.82);c.lineTo(x,mid+max*mid*.82);}c.stroke();c.strokeStyle=light?"#c9c2b8":"#333";c.beginPath();c.moveTo(0,mid);c.lineTo(w,mid);c.stroke();}
@@ -172,6 +183,5 @@ async function captureSelection(kind){
 }
 punchRecord?.addEventListener("click",()=>captureSelection("punch"));
 humBeat?.addEventListener("click",()=>captureSelection("hum"));
-if(window.PennioWorkspace?.activeProjectId)loadSessionFor(window.PennioWorkspace.activeProjectId);
-else loadSessionFor(SESSION_DEFAULT);
+sessionSwitchQueue=loadSessionFor(window.PennioWorkspace?.activeProjectId||SESSION_DEFAULT).catch(e=>status("Could not open the current project session: "+e.message));
 })();
