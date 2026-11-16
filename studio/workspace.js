@@ -218,7 +218,7 @@ window.addEventListener("pennio:workspace-project-open",e=>{
  const p=e.detail&&e.detail.project,previous=activeProjectId;
  if(e.detail&&!Object.prototype.hasOwnProperty.call(e.detail,"previousProjectId"))e.detail.previousProjectId=previous;
  setActive(p||null,true);refreshProjectSelect();
- if(p&&document.getElementById("dawRoom")?.getClientRects().length)window.PennioAyanWorkspace?.open(p).catch(err=>console.warn("Àyàn project restore:",err));
+ if(document.getElementById("dawRoom")?.getClientRects().length)window.PennioAyanWorkspace?.open(p||{id:"__studio_default__",name:"Studio workspace",room:"ayan"}).catch(err=>console.warn("Àyàn project restore:",err));
  if(document.getElementById("filmDesk")?.getClientRects().length)window.PennioFilmWorkspace?.restore(p||null).catch(err=>console.warn("Film project restore:",err));
 });
 document.addEventListener("click",e=>{
@@ -228,7 +228,7 @@ document.addEventListener("click",e=>{
 window.addEventListener("pennio:workspace-room-open",e=>{
  roomSwitchPromise=Promise.resolve();
  const project=activeProjectId?projectById(activeProjectId):null;
- if(e.detail?.room==="ayan"&&project)roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(project)).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
+ if(e.detail?.room==="ayan")roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(project||{id:"__studio_default__",name:"Studio workspace",room:"ayan"})).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
  if(e.detail?.room==="faajiplace"||e.detail?.room==="film")roomSwitchPromise=Promise.resolve(window.PennioFilmWorkspace?.restore(project)).catch(err=>{console.warn("Film project restore:",err);throw err;});
 });
 function reportMediaError(error){const message=error&&error.message||"Browser storage is unavailable.";console.warn("Studio media save:",error);window.dispatchEvent(new CustomEvent("pennio:workspace-media-error",{detail:{message}}));}
