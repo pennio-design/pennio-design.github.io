@@ -89,12 +89,15 @@ async function refreshAssets(){
    const action=document.createElement("button");action.type="button";action.textContent=asset.kind==="video"?"Film":"Àyàn";
    action.addEventListener("click",async()=>{
     const full=await getAsset(asset.id);if(!full)return;
+    const project=projectById(full.projectId);
+    if(project)setActive(project);
+    else if(full.projectId==="__studio_default__")setActive(null);
     if(full.kind==="video"){
-     window.dispatchEvent(new CustomEvent("pennio:film-media",{detail:{blob:full.blob,name:full.name,assetId:full.id}}));
-     const nav=document.querySelector('nav button[data-v="faajiplace"]');if(nav)nav.click();else location.hash="faajiplace";
+     await window.PennioWorkspace.openRoom("faajiplace");
+     window.dispatchEvent(new CustomEvent("pennio:film-media",{detail:{blob:full.blob,name:full.name,assetId:full.id,projectId:full.projectId,kind:"video"}}));
     }else{
-     window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob:full.blob,name:full.name,workspaceReplay:true,assetId:full.id}}));
-     const nav=document.querySelector('nav button[data-v="ayan"]');if(nav)nav.click();else location.hash="ayan";
+     await window.PennioWorkspace.openRoom("ayan");
+     window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob:full.blob,name:full.name,workspaceReplay:true,assetId:full.id,projectId:full.projectId}}));
     }
    });
    const save=document.createElement("button");save.type="button";save.textContent="Save";
