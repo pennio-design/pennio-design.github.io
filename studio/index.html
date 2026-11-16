@@ -813,6 +813,8 @@ html[data-theme="light"] .dr-editor{background:#fff}
 html[data-theme="light"] .fr-player{background:#090909}
 html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
 @media(max-width:560px){.logo span{display:inline}.theme-toggle{min-height:36px;padding:0 9px}}
+.set-actions{display:grid;gap:10px;margin-top:18px}.set-action{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px;border:1px solid var(--line2);border-radius:14px;background:var(--surface)}.set-action div{flex:1;min-width:0}.set-action b{display:block;font-size:14px}.set-action small{display:block;margin-top:4px;color:var(--mute);font-size:12px;line-height:1.45}.set-action .btn{flex:none}
+@media(max-width:480px){.set-action{align-items:flex-start;flex-direction:column}.set-action .btn{width:100%}}
 </style>
 <script>try{if(localStorage.getItem("ps.theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}</script>
 </head>
@@ -823,6 +825,7 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
     <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span></div>
     <div class="hright">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme">Light</button>
+      <button class="btn ic" id="siteSettingsBtn" type="button" aria-label="Studio settings" title="Studio settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
       <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Studio</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
         <nav id="nav" hidden>
           <button data-v="ayan" class="on">Studio <small>Àyàn</small></button>
@@ -1177,6 +1180,22 @@ A clear image or action.
   <button class="btn" id="obReturn" style="width:100%;margin-top:10px">I have used pennio.studio before: restore my work</button>
 </div></div>
 
+<div class="sheet" id="settingsSheet"><div class="panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+    <h2>Studio settings</h2><button class="btn" id="closeSettings">Close</button>
+  </div>
+  <p>Quick controls for this browser and the current Studio session.</p>
+  <div class="set-actions">
+    <div class="set-action">
+      <div><b>Clear session history</b><small>Remove checkpoints for this session. Your beat, recording and other sessions stay saved.</small></div>
+      <button class="btn" id="settingsClearHistory">Clear history</button>
+    </div>
+    <div class="set-action">
+      <div><b>Refresh Studio</b><small>Save the current beat, then reload this page.</small></div>
+      <button class="btn primary" id="settingsRefresh">Save & refresh</button>
+    </div>
+  </div>
+</div></div>
 <div class="sheet" id="histSheet"><div class="panel">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
     <h2>History</h2><button class="btn" id="closeHist">Close</button>
@@ -3059,6 +3078,28 @@ async function renderHist(){
 }
 document.getElementById("openHist").onclick=async()=>{ await saveNow(); await renderHist(); histEl.classList.add("on"); };
 document.getElementById("closeHist").onclick=()=>histEl.classList.remove("on");
+const settingsEl=document.getElementById("settingsSheet");
+document.getElementById("siteSettingsBtn").onclick=()=>settingsEl.classList.add("on");
+document.getElementById("closeSettings").onclick=()=>settingsEl.classList.remove("on");
+settingsEl.onclick=e=>{if(e.target===settingsEl)settingsEl.classList.remove("on");};
+document.getElementById("settingsClearHistory").onclick=async()=>{
+  const button=document.getElementById("settingsClearHistory");
+  if(!button.dataset.arm){button.dataset.arm="1";button.textContent="Tap again to clear checkpoints";setTimeout(()=>{delete button.dataset.arm;button.textContent="Clear history";},5000);return;}
+  delete button.dataset.arm;button.disabled=true;button.textContent="Clearing…";
+  try{
+    if(!db||!currentId)throw new Error("session");
+    const list=(await tx("versions","readonly",st=>st.index("pid").getAll(currentId)))||[];
+    for(const item of list)await tx("versions","readwrite",st=>st.delete(item.id));
+    button.textContent="Clear history";button.disabled=false;
+    toast(list.length?"Session checkpoints cleared.":"There were no checkpoints to clear.");
+    if(histEl.classList.contains("on"))await renderHist();
+  }catch(e){button.textContent="Clear history";button.disabled=false;toast("Could not clear this session’s history.");}
+};
+document.getElementById("settingsRefresh").onclick=async()=>{
+  const button=document.getElementById("settingsRefresh");button.disabled=true;button.textContent="Saving…";
+  try{await saveNow();await new Promise(resolve=>setTimeout(resolve,280));window.location.reload();}
+  catch(e){button.disabled=false;button.textContent="Save & refresh";toast("Could not save before refreshing.");}
+};
 histEl.onclick=e=>{ if(e.target===histEl) histEl.classList.remove("on"); };
 document.getElementById("ckSave").onclick=async()=>{ const nm=document.getElementById("ckName"); await saveNow(); await checkpoint(nm.value.trim()||"Saved by you", true); nm.value=""; await renderHist(); toast("Checkpoint saved"); };
 async function newProject(){
