@@ -4242,6 +4242,7 @@ document.getElementById("sylIn").oninput=sylRender;
     const media=event.detail||{};if(!media.blob)return;
     useFilmBlob(media.blob,media.name,media.assetId,media.kind|| (media.blob.type.startsWith("audio/")?"audio":"video"));
   });
+  window.addEventListener("pennio:film-media-saved",event=>{const saved=event.detail||{};if(saved.id&&saved.name===film.clipName){film.clipAssetId=saved.id;saveFilm();}});
   window.addEventListener("pennio:workspace-ready",()=>restoreFilmAsset());
 
   function saveFilm(){
