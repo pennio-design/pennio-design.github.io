@@ -11,7 +11,7 @@ function openDB(){
   if(!window.indexedDB){reject(Error("This browser does not support local media storage."));return;}
   const req=indexedDB.open("pennio-studio-workspace",2);
   req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains("assets")){const store=d.createObjectStore("assets",{keyPath:"id"});store.createIndex("projectId","projectId",{unique:false});store.createIndex("created","created",{unique:false});}if(!d.objectStoreNames.contains("sessions"))d.createObjectStore("sessions",{keyPath:"projectId"});if(!d.objectStoreNames.contains("sessionAudio")){const a=d.createObjectStore("sessionAudio",{keyPath:"id"});a.createIndex("projectId","projectId",{unique:false});}};
-  req.onsuccess=()=>{const db=req.result;db.onversionchange=()=>{db.close();dbPromise=null;};resolve(db);};req.onerror=()=>reject(req.error||Error("Could not open Studio media storage."));
+  req.onblocked=()=>reject(Error("Close other PENNIO Studio tabs to finish updating local project storage."));req.onsuccess=()=>{const db=req.result;db.onversionchange=()=>{db.close();dbPromise=null;};resolve(db);};req.onerror=()=>reject(req.error||Error("Could not open Studio media storage."));
  });
  return dbPromise;
 }
@@ -182,4 +182,5 @@ window.addEventListener("pennio:film-media",e=>{if(e.detail&&e.detail.blob)store
 buildUI();
 const saved=(()=>{try{return localStorage.getItem(ACTIVE_KEY)}catch(e){return null}})();
 setActive(projectById(saved)||null);refreshProjectSelect();refreshAssets();
+if(location.hash==="#ayan"&&activeProjectId)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:"ayan"}}));
 })();
