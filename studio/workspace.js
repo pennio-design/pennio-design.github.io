@@ -2,7 +2,7 @@
 "use strict";
 const PROJECTS_KEY="ps.studio.projects.v1",ACTIVE_KEY="ps.studio.activeProject.v1";
 const $=id=>document.getElementById(id);
-let activeProjectId=null,dbPromise=null,assets=[];
+let activeProjectId=null,dbPromise=null,assets=[],roomSwitchPromise=Promise.resolve();
 const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Model / Beauty"};
 function readProjects(){try{const v=JSON.parse(localStorage.getItem(PROJECTS_KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
 function openDB(){
@@ -159,6 +159,7 @@ window.PennioWorkspace={
  getAsset,
  addAsset:storeAsset,
  saveSession,loadSession,deleteSession,
+ openRoom:async room=>{const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();else window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room}}));await roomSwitchPromise;},
  refresh:refreshAssets
 };
 window.addEventListener("pennio:workspace-project-open",e=>{
@@ -173,8 +174,9 @@ document.addEventListener("click",e=>{
  if(button)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:button.dataset.v}}));
 });
 window.addEventListener("pennio:workspace-room-open",e=>{
- if(e.detail?.room==="ayan"&&activeProjectId){const project=projectById(activeProjectId);if(project)window.PennioAyanWorkspace?.open(project).catch(err=>console.warn("Àyàn project restore:",err));}
- if((e.detail?.room==="faajiplace"||e.detail?.room==="film")&&activeProjectId){const project=projectById(activeProjectId);if(project)window.PennioFilmWorkspace?.restore(project).catch(err=>console.warn("Film project restore:",err));}
+ const project=activeProjectId?projectById(activeProjectId):null;
+ if(e.detail?.room==="ayan"&&project)roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(project)).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
+ if((e.detail?.room==="faajiplace"||e.detail?.room==="film")&&project)roomSwitchPromise=Promise.resolve(window.PennioFilmWorkspace?.restore(project)).catch(err=>{console.warn("Film project restore:",err);throw err;});
 });
 window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(err=>console.warn("Studio media save:",err));});
 window.addEventListener("pennio:studio-media",e=>{storeAsset(e.detail||{}).catch(err=>console.warn("Studio media save:",err));});
