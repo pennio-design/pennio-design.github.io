@@ -847,7 +847,34 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
 </style>
 <script>try{if(localStorage.getItem("ps.theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}</script>
 <style>.beauty-frame{position:relative;max-width:720px;margin:16px auto 0;aspect-ratio:4/5;max-height:72vh;overflow:hidden;border-radius:16px;background:#080708;border:1px solid var(--line2)}.beauty-frame video,.beauty-frame img{width:100%;height:100%;object-fit:cover;display:block}.beauty-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--mute);text-align:center;padding:24px}.beauty-tunes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:16px}.beauty-tunes label{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:13px}.beauty-tunes output{color:var(--orange)}.beauty-tunes input{grid-column:1/-1;width:100%;accent-color:var(--orange)}</style>
-</head>
+<style id="dawStyles">
+.daw{margin-top:18px;border:1px solid var(--line2);border-radius:20px;background:#0d0d0d;overflow:hidden}
+.daw-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.daw-head h3{font-size:17px}.daw-head p{font-size:12px;color:var(--mute);margin-top:4px}
+.daw-actions,.daw-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.daw-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
+.daw-clock{font-variant-numeric:tabular-nums;font-size:13px;color:var(--orange);min-width:74px}
+.daw-tracks{display:grid;gap:1px;background:var(--line)}
+.daw-track{display:grid;grid-template-columns:minmax(150px,190px) minmax(240px,1fr);background:#101010;min-height:116px}
+.daw-track-head{padding:12px;border-right:1px solid var(--line);display:grid;gap:8px;align-content:start}
+.daw-track-name{width:100%;background:#090909;border:1px solid var(--line2);border-radius:8px;padding:8px;color:var(--text);font:inherit;font-size:13px}
+.daw-track-controls{display:flex;gap:5px;flex-wrap:wrap}
+.daw-track-controls button{font-size:11px;padding:6px 8px;border:1px solid var(--line2);border-radius:7px;color:var(--mute)}
+.daw-track-controls button.on{background:var(--orange);border-color:var(--orange);color:#090909}
+.daw-track-faders{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.daw-track-faders label,.daw-trim label{font-size:10px;color:var(--mute);display:grid;gap:5px}
+.daw-track-wave{position:relative;min-width:0;overflow:hidden;background:repeating-linear-gradient(90deg,#111 0,#111 calc(10% - 1px),#1b1b1b 10%)}
+.daw-track-wave canvas{width:100%;height:100%;min-height:116px;display:block}
+.daw-track-wave .daw-region{position:absolute;inset:0;border-left:2px solid var(--orange);border-right:2px solid var(--orange);background:rgba(255,107,53,.07);pointer-events:none}
+.daw-track-wave .daw-playhead{position:absolute;top:0;bottom:0;width:1px;background:#fff;pointer-events:none}
+.daw-empty{padding:28px 16px;text-align:center;color:var(--mute);font-size:13px;background:#101010}
+.daw-bottom{padding:14px 16px;display:grid;gap:12px}
+.daw-trim{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.daw-effects{display:flex;gap:7px;flex-wrap:wrap}
+.daw-status{font-size:12px;color:var(--mute);min-height:16px}
+.daw-recording{color:#ff8068}
+@media(max-width:620px){.daw-track{grid-template-columns:1fr}.daw-track-head{border-right:0;border-bottom:1px solid var(--line)}.daw-track-wave canvas{height:82px;min-height:82px}.daw-trim{grid-template-columns:1fr}.daw-head{align-items:flex-start}}
+</style>\n</head>
 <body class="in-studio">
 <header>
   <div class="wrap bar">
@@ -983,6 +1010,16 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
     <canvas id="wave" width="900" height="192"></canvas>
     <div class="vmeta" id="vmeta">No recording yet. The Vox lane stays silent until you add one.</div>
   </div>
+
+  <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
+  <div class="daw-head"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
+  <div class="daw-toolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
+  <div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
+  <div class="daw-bottom"><div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button><button class="btn" id="dawNormalize">Normalize selected</button><button class="btn" id="dawDelete">Delete selected</button></div>
+    <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
+    <div class="daw-status">Audio is processed in your browser. Imported tracks are not uploaded. Export creates a stereo WAV mix.</div>
+  </div>
+</section>
 
   <div class="card">
     <h3>Takes and remix</h3>
@@ -4126,5 +4163,5 @@ document.getElementById("sylIn").oninput=sylRender;
   button.addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light"));
 })();
 </script>
-</body>
+<script src="/studio/daw.js" defer></script>\n</body>
 </html>
