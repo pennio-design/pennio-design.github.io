@@ -3702,6 +3702,7 @@ async function doBackup(only,projName){
       for(const project of allStudio){const mapped=await kvGet("workspace.ayan."+project.id);if(mapped&&sessionIds.has(mapped))studioProjects.push(project);}
     }
     const studioProjectIds=studioProjects.map(project=>project.id),storageIds=Array.isArray(only)?studioProjectIds:[...studioProjectIds,"__studio_default__"];
+    await window.PennioWorkspace.flushMediaWrites?.();
     const payload=await window.PennioWorkspace.exportProjectData(storageIds);
     const studioAssets=[];for(const asset of payload.assets){const {blob,...meta}=asset;studioAssets.push({...meta,b64:b64(await blob.arrayBuffer())});}
     const studioSessions=[];for(const session of payload.sessions){const {audio,...meta}=session,encoded=[];for(const item of audio||[])encoded.push({id:item.id,type:item.blob.type||"audio/wav",b64:b64(await item.blob.arrayBuffer())});studioSessions.push({...meta,audio:encoded});}
