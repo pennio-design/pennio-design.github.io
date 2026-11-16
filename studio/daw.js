@@ -27,5 +27,79 @@ $("dawDelete").onclick=()=>{const t=selected();if(!t)return;snapshot();state.tra
 $("dawNormalize").onclick=()=>{const t=selected();if(!t)return;snapshot();const copy=context().createBuffer(t.buffer.numberOfChannels,t.buffer.length,t.buffer.sampleRate);let peak=0;for(let c=0;c<t.buffer.numberOfChannels;c++){const src=t.buffer.getChannelData(c),dst=copy.getChannelData(c);for(let i=0;i<src.length;i++){dst[i]=src[i];peak=Math.max(peak,Math.abs(src[i]));}}if(peak>0){const factor=.95/peak;for(let c=0;c<copy.numberOfChannels;c++){const d=copy.getChannelData(c);for(let i=0;i<d.length;i++)d[i]*=factor;}}t.buffer=copy;t.end=Math.min(t.end,copy.duration);render();status("Selected track normalized to -0.45 dBFS.");};
 document.querySelectorAll("[data-fx]").forEach(b=>b.onclick=()=>{const k=b.dataset.fx;state.effects[k]=!state.effects[k];b.classList.toggle("primary",state.effects[k]);status(k+" "+(state.effects[k]?"on":"off")+" for playback and mix.");});
 $("dawMic").onclick=async()=>{if(state.recorder&&state.recorder.state==="recording"){state.recorder.stop();$("dawMic").textContent="Record voice";return;}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});state.recordStream=stream;state.recordChunks=[];const mime=MediaRecorder.isTypeSupported("audio/webm;codecs=opus")?"audio/webm;codecs=opus":"";state.recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});state.recorder.ondataavailable=e=>{if(e.data.size)state.recordChunks.push(e.data);};state.recorder.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(state.recordChunks,{type:state.recorder.mimeType||"audio/webm"});try{const buf=await context().decodeAudioData(await blob.arrayBuffer());addBuffer(buf,"Voice take");status("Voice take recorded.");}catch(e){status("Recording could not be decoded on this browser.");}};state.recorder.start();$("dawMic").textContent="■ Stop recording";status("Recording from microphone…");}catch(e){status("Microphone unavailable: "+e.message);}};
+
+const composerStatus=(message)=>{const el=$("dawComposerStatus");if(el)el.textContent=message;};
+function estimatePitches(buffer){
+ const data=buffer.getChannelData(0),sr=buffer.sampleRate,win=4096,hop=2048,events=[];
+ for(let start=0;start+win<data.length;start+=hop){
+  let rms=0;for(let i=0;i<win;i+=4)rms+=data[start+i]*data[start+i];rms=Math.sqrt(rms/(win/4));if(rms<.018)continue;
+  const minLag=Math.floor(sr/900),maxLag=Math.min(Math.floor(sr/75),win/2);
+  let bestLag=0,best=-1;
+  for(let lag=minLag;lag<=maxLag;lag+=1){let corr=0,n=0;for(let i=0;i<win-lag;i+=4){corr+=data[start+i]*data[start+i+lag];n++;}corr/=Math.max(1,n);if(corr>best){best=corr;bestLag=lag;}}
+  if(!bestLag)continue;
+  const hz=sr/bestLag;if(hz<75||hz>900)continue;
+  const midi=Math.round(69+12*Math.log2(hz/440));
+  const time=start/sr;
+  const prev=events[events.length-1];
+  if(prev&&prev.midi===midi&&time-prev.time<.35)prev.duration+=hop/sr;
+  else events.push({midi,time,duration:hop/sr});
+ }
+ const merged=[];for(const e of events){const prev=merged[merged.length-1];if(prev&&prev.midi===e.midi&&e.time-prev.time<.22)prev.duration=e.time+e.duration-prev.time;else merged.push({...e});}
+ return merged.filter(e=>e.duration>.07);
+}
+function synthNotes(events,transpose=0){
+ const sr=44100,end=Math.max(1,...events.map(e=>e.time+Math.max(.16,e.duration))),buffer=context().createBuffer(1,Math.ceil((end+.4)*sr),sr),out=buffer.getChannelData(0);
+ events.forEach(e=>{const hz=440*Math.pow(2,(e.midi+transpose-69)/12),start=Math.floor(e.time*sr),len=Math.max(1,Math.floor(Math.min(1.8,Math.max(.13,e.duration))*sr));for(let i=0;i<len&&start+i<out.length;i++){const t=i/sr,attack=Math.min(1,t/.018),release=Math.min(1,(len-i)/Math.max(1,sr*.09)),env=attack*release;const fundamental=Math.sin(2*Math.PI*hz*t),second=.22*Math.sin(2*Math.PI*hz*2*t),third=.08*Math.sin(2*Math.PI*hz*3*t);out[start+i]+=(fundamental+second+third)*env*.22;}});return buffer;
+}
+function estimateBeatbox(buffer){
+ const data=buffer.getChannelData(0),sr=buffer.sampleRate,frame=Math.floor(sr*.025),hop=Math.floor(sr*.01),hits=[];let previous=0,last=-1;
+ for(let start=0;start+frame<data.length;start+=hop){
+  let energy=0,low=0,high=0;for(let i=0;i<frame;i+=2){const v=data[start+i];energy+=v*v;if(i>1){const diff=v-data[start+i-1];high+=diff*diff;low+=v*v;}}
+  const rms=Math.sqrt(energy/(frame/2));const flux=Math.max(0,rms-previous);previous=rms;
+  if(rms<.025||flux<.012||start/sr-last<.095)continue;
+  const centroid=high/Math.max(.00001,low);
+  const kind=centroid<.16?"kick":centroid>.72?"hat":"snare";
+  hits.push({time:start/sr,kind,strength:Math.min(1,rms*4)});last=start/sr;
+ }
+ return hits;
+}
+function synthDrums(hits){
+ const sr=44100,end=Math.max(1,...hits.map(h=>h.time+.5)),buffer=context().createBuffer(1,Math.ceil((end+.1)*sr),sr),out=buffer.getChannelData(0);
+ hits.forEach(hit=>{const start=Math.floor(hit.time*sr),len=Math.floor(sr*(hit.kind==="kick"?.32:hit.kind==="snare"?.22:.09));let phase=0;for(let i=0;i<len&&start+i<out.length;i++){const t=i/sr,p=i/len,env=Math.pow(1-p,hit.kind==="kick"?3:5);let v;if(hit.kind==="kick"){const f=110-65*p;phase+=2*Math.PI*f/sr;v=Math.sin(phase)*env*.8;}else{v=(Math.random()*2-1)*env*(hit.kind==="hat"?.22:.48);if(hit.kind==="snare")v+=Math.sin(2*Math.PI*185*t)*env*.16;}out[start+i]+=v*hit.strength;}});return buffer;
+}
+async function captureIdea(kind,button){
+ if(state.recorder&&state.recorder.state==="recording"){state.recorder.stop();button.textContent=kind==="hum"?"Record melody":"Record beatbox";return;}
+ if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){composerStatus("This browser does not support microphone recording for voice-to-instrument.");return;}
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+  state.recordStream=stream;state.recordChunks=[];
+  const mime=MediaRecorder.isTypeSupported("audio/webm;codecs=opus")?"audio/webm;codecs=opus":"";
+  const recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});state.recorder=recorder;
+  recorder.ondataavailable=e=>{if(e.data.size)state.recordChunks.push(e.data);};
+  recorder.onstop=async()=>{
+   stream.getTracks().forEach(t=>t.stop());button.textContent=kind==="hum"?"Record melody":"Record beatbox";
+   try{
+    const raw=await context().decodeAudioData(await new Blob(state.recordChunks,{type:recorder.mimeType||"audio/webm"}).arrayBuffer());
+    if(kind==="hum"){
+     composerStatus("Listening for stable pitches…");const notes=estimatePitches(raw);
+     if(notes.length<2){composerStatus("I couldn't find enough clear notes. Try humming a little louder, one note at a time, for 5–10 seconds.");return;}
+     snapshot();addBuffer(synthNotes(notes),"Hummed melody");
+     const interval=+$("dawHarmony").value;if(interval){addBuffer(synthNotes(notes,interval),"Harmony +"+interval+" semitones");}
+     composerStatus("Built "+notes.length+" note events"+(interval?" with a harmony layer.":" as a melody.")+" Select the new tracks and press Play.");
+    }else{
+     composerStatus("Mapping your vocal percussion…");const hits=estimateBeatbox(raw);
+     if(hits.length<3){composerStatus("I found too few clear hits. Try a stronger kick, a sharp snare sound and short hi-hats with small gaps.");return;}
+     snapshot();addBuffer(synthDrums(hits),"Beatbox drums");
+     const counts=hits.reduce((a,h)=>(a[h.kind]=(a[h.kind]||0)+1,a),{});
+     composerStatus("Built "+hits.length+" drum hits: "+(counts.kick||0)+" kicks, "+(counts.snare||0)+" snares and "+(counts.hat||0)+" hi-hats. Press Play to hear the pattern.");
+    }
+   }catch(err){composerStatus("Could not analyse that recording: "+err.message);}
+  };
+  recorder.start();button.textContent="Stop and create";composerStatus(kind==="hum"?"Recording melody. Hum clearly, changing one note at a time.":"Recording beatbox. Try kick, snare and hi-hat sounds with clear attacks.");
+ }catch(err){composerStatus("Microphone unavailable: "+err.message);}
+}
+$("dawHum").addEventListener("click",()=>captureIdea("hum",$("dawHum")));
+$("dawBeatbox").addEventListener("click",()=>captureIdea("beatbox",$("dawBeatbox")));
+
 window.addEventListener("beforeunload",stop);
 })();
