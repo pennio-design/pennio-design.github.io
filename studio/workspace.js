@@ -153,6 +153,21 @@ async function deleteSession(projectId){
   tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
  });
 }
+async function deleteProjectData(projectId){
+ if(!projectId)return;
+ const d=await openDB();
+ return new Promise((resolve,reject)=>{
+  const tx=d.transaction(["assets","sessions","sessionAudio"],"readwrite");
+  tx.objectStore("sessions").delete(projectId);
+  const assetKeys=tx.objectStore("assets").index("projectId").getAllKeys(projectId);
+  assetKeys.onsuccess=()=>assetKeys.result.forEach(key=>tx.objectStore("assets").delete(key));
+  const audioKeys=tx.objectStore("sessionAudio").index("projectId").getAllKeys(projectId);
+  audioKeys.onsuccess=()=>audioKeys.result.forEach(key=>tx.objectStore("sessionAudio").delete(key));
+  tx.oncomplete=()=>{refreshAssets();resolve(true);};
+  tx.onerror=()=>reject(tx.error||Error("Could not delete this project’s local media."));
+  tx.onabort=()=>reject(tx.error||Error("Project data deletion was interrupted."));
+ });
+}
 async function exportProjectData(projectIds){
  const d=await openDB(),ids=Array.isArray(projectIds)?[...new Set(projectIds)]:await new Promise((resolve,reject)=>{const req=d.transaction("sessions","readonly").objectStore("sessions").getAllKeys();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});
  const allowed=new Set(ids),assets=(await getAssets()).filter(asset=>allowed.has(asset.projectId));
@@ -189,7 +204,7 @@ window.PennioWorkspace={
  listAssets:()=>getAssets(),
  getAsset,
  addAsset:storeAsset,
- saveSession,loadSession,deleteSession,exportProjectData,importProjectData,
+ saveSession,loadSession,deleteSession,deleteProjectData,exportProjectData,importProjectData,
  openRoom:async room=>{const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();else window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room}}));await roomSwitchPromise;},
  refresh:refreshAssets
 };
