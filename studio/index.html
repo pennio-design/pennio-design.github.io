@@ -892,6 +892,16 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
 .studio-rec-launch{position:fixed;z-index:49;right:18px;bottom:18px;display:flex;align-items:center;gap:9px;padding:13px 18px;border-radius:999px;background:var(--orange);color:#090909;font-size:13px;font-weight:700;box-shadow:0 8px 28px rgba(0,0,0,.35)}
 .studio-rec-launch span{font-size:12px}
 @media(max-width:600px){.studio-rec{right:10px;bottom:76px;width:calc(100vw - 20px);padding:13px}.studio-rec-launch{right:12px;bottom:12px}.studio-rec-controls>.btn{padding:9px 11px}}
+
+.daw-selection{padding:14px 16px;border-top:1px solid var(--line);display:grid;gap:10px;background:#111}
+.daw-selection-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.daw-selection-head>div{display:grid;gap:3px}.daw-selection-head b{font-size:13px}.daw-selection-head small,.daw-selection-note{font-size:11px;color:var(--mute)}
+.daw-selection-actions{display:flex;gap:8px;flex-wrap:wrap}
+.daw-track-wave{touch-action:pan-y;cursor:crosshair}
+.daw-track-wave .daw-range-select{position:absolute;top:0;bottom:0;z-index:2;border-left:2px solid var(--orange);border-right:2px solid var(--orange);background:rgba(255,107,53,.2);pointer-events:none;display:none}
+.daw-track-wave .daw-range-select.on{display:block}
+.daw-selection-note{margin:0;line-height:1.5}
+@media(max-width:620px){.daw-selection-actions .btn{flex:1 1 100%}}
 </style>\n</head>
 <body class="in-studio">
 <header>
@@ -1033,7 +1043,16 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
   <div class="daw-head"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
   <div class="daw-toolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><button class="btn" id="dawSendStudio" disabled>Send mix to Studio</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
   <div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
-  <div class="daw-bottom"><div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button><button class="btn" id="dawNormalize">Normalize selected</button><button class="btn" id="dawDelete">Delete selected</button></div>
+  <div class="daw-selection" id="dawSelectionPanel">
+  <div class="daw-selection-head"><div><b>Selected passage</b><small id="dawSelectionReadout">Drag across a waveform to select a timeframe.</small></div><button class="btn" id="dawClearSelection" disabled>Clear</button></div>
+  <div class="daw-selection-actions">
+    <button class="btn" id="dawKeepSelection" disabled>Keep selection</button>
+    <button class="btn" id="dawPunchRecord" disabled>● Re-record selection</button>
+    <button class="btn primary" id="dawHumBeat" disabled>Hum to beat</button>
+  </div>
+  <p class="daw-selection-note">Re-record adds a new aligned take, preserving the original. Hum to beat sends your recording to Ìlù. Headphones are recommended when recording over playback.</p>
+</div>
+<div class="daw-bottom"><div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button><button class="btn" id="dawNormalize">Normalize selected</button><button class="btn" id="dawDelete">Delete selected</button></div>
     <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
     <div class="daw-status">Audio is processed in your browser. Imported tracks are not uploaded. Export creates a stereo WAV mix.</div>
   </div>
