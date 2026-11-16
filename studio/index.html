@@ -297,6 +297,18 @@ input[type=range]::-moz-range-thumb{width:24px;height:24px}
 .bkp span{display:block;font-size:13px;color:var(--mute);margin-top:3px;line-height:1.45}
 .bkp-btns{display:flex;gap:8px}
 /* film + casting */
+.jump{display:flex;gap:8px;overflow-x:auto;margin:16px -16px 0;padding:0 16px 4px;scrollbar-width:none}.jump::-webkit-scrollbar{display:none}
+.jump a{flex:none;min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border:1px solid var(--line);border-radius:999px;color:var(--text);font-size:13px;font-weight:600;text-decoration:none;background:var(--surface)}
+.jump a:active{background:var(--line)}
+#hkCard,#tgCard,#ogbCard,#wtext{scroll-margin-top:84px}
+details.cal summary{list-style:none;cursor:pointer;display:block;min-height:44px}details.cal summary::-webkit-details-marker{display:none}
+details.cal .h3{display:block;font-size:16px;font-weight:600;margin-top:4px;letter-spacing:-.01em}
+details.cal summary:after{content:"+";float:right;margin-top:-34px;font-size:22px;color:var(--mute)}details.cal[open] summary:after{content:"\2212"}
+details.cal[open] summary{margin-bottom:6px}
+.cta2{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.cta2 a{min-height:48px;display:inline-flex;align-items:center;padding:0 18px;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none}
+.cta2 .p{background:var(--m);color:var(--black)}.cta2 .s{border:1px solid #3a2c20;color:var(--text)}
+.openstory{border-color:#4a3524!important;background:linear-gradient(160deg,#1f160e,#101010 65%)!important}
 .soon{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--black);background:var(--m);border-radius:999px;padding:5px 10px;margin-bottom:14px}
 .cast{margin-top:16px;border-radius:18px;padding:18px;background:linear-gradient(160deg,#17110c,#0d0d0d 60%);border:1px solid #2b2017}
 .cast .k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--m);font-weight:600}
@@ -852,28 +864,28 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 <section class="view" id="v-write">
   <h1>Type it plain. Say it once. Get the tones.</h1>
   <p class="sub">Your voice decides the tone marks. Type a word or short phrase without marks, record yourself saying it, and the studio writes it with the tones you spoke. Tap any syllable to correct it.</p>
+  <div class="jump" role="navigation" aria-label="In this tab"><a href="#wtext">Tone marks</a><a href="#hkCard">Hacks</a><a href="#tgCard">Tone game</a><a href="#ogbCard">Translate</a></div>
   <div class="steps3">
     <div class="stp">
-      <div class="k">Step 1 · once</div>
-      <h3>Calibrate your voice</h3>
-      <p>Sing do, re, mi slowly, with a short pause between each note, and add the recording. This tells the studio where your low, mid and high sit. You can skip it, but results are steadier with it.</p>
-      <div class="row2"><button class="btn primary wmic" id="wcalRec" hidden>● Record do re mi</button><label class="btn file">Add do re mi<input type="file" id="wcal" accept="audio/*"></label><span class="vmeta" id="wcalNote" style="margin:0">Not calibrated</span></div>
-      <p style="margin-top:12px">Then say the seven vowels, one at a time with a short pause: <b>a · e · ẹ · i · o · ọ · u</b>. This teaches the studio your e and ẹ, o and ọ, so it can add the dots below from your voice.</p>
-      <div class="row2"><button class="btn primary wmic" id="wvowRec" hidden>● Record the vowels</button><label class="btn file">Add vowels<input type="file" id="wvow" accept="audio/*"></label><span class="vmeta" id="wvowNote" style="margin:0">Vowels not learned yet</span></div>
-    </div>
-    <div class="stp">
-      <div class="k">Step 2</div>
+      <div class="k">Step 1</div>
       <h3>Type without tone marks</h3>
       <p>Plain letters are fine. Your voice decides high, mid and low. Once it has learned your vowels, it also decides e or ẹ and o or ọ. Type ṣ yourself: the studio cannot hear s from ṣ yet. Anything you type with a dot stays as you typed it.</p>
       <div class="row2"><input type="text" id="wtext" value="oju gbooro" autocomplete="off" spellcheck="false" aria-label="Text without tone marks"></div>
       <div class="vmeta" id="wsylNote"></div>
     </div>
     <div class="stp">
-      <div class="k">Step 3</div>
+      <div class="k">Step 2</div>
       <h3>Say it and add the recording</h3>
       <p>Say the phrase at a normal pace, close to the phone, somewhere quiet. Short phrases work best.</p>
       <div class="row2"><button class="btn primary wmic" id="wrecRec" hidden>● Record</button><label class="btn file">Add recording<input type="file" id="wrec" accept="audio/*"></label><span class="vmeta" id="wrecNote" style="margin:0"></span></div>
     </div>
+    <details class="stp cal" id="wcalBox">
+      <summary><span class="k">Optional · about a minute, once</span><span class="h3">Calibrate your voice for steadier tones</span></summary>
+      <p>Sing do, re, mi slowly, with a short pause between each note, and add the recording. This tells the studio where your low, mid and high sit. You can skip it, but results are steadier with it.</p>
+      <div class="row2"><button class="btn primary wmic" id="wcalRec" hidden>● Record do re mi</button><label class="btn file">Add do re mi<input type="file" id="wcal" accept="audio/*"></label><span class="vmeta" id="wcalNote" style="margin:0">Not calibrated</span></div>
+      <p style="margin-top:12px">Then say the seven vowels, one at a time with a short pause: <b>a · e · ẹ · i · o · ọ · u</b>. This teaches the studio your e and ẹ, o and ọ, so it can add the dots below from your voice.</p>
+      <div class="row2"><button class="btn primary wmic" id="wvowRec" hidden>● Record the vowels</button><label class="btn file">Add vowels<input type="file" id="wvow" accept="audio/*"></label><span class="vmeta" id="wvowNote" style="margin:0">Vowels not learned yet</span></div>
+    </details>
   </div>
   <div class="result" id="wres">
     <div class="k" style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)">Standard Yoruba, from your voice</div>
@@ -944,9 +956,16 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 
 <!-- FILM -->
 <section class="view" id="v-film">
-  <div class="soon">Coming later</div>
-  <h1>Fàájìplace. Film comes after music.</h1>
-  <p class="sub">Film is a future part of pennio.studio and nothing in this tab works yet. The story side is open now, so <a href="/studio/faajiplace/" style="color:inherit;text-decoration:underline">read the story worlds and send yours</a>. The tools open after the music studio has creators using it, because every film needs a score and the scores will already be made here.</p>
+  <div class="soon">Open now: stories</div>
+  <h1>Fàájìplace. Stories open now, film tools later.</h1>
+  <p class="sub">Fàájìplace is the film side of pennio.studio. I am developing African stories for the screen, and I am receiving yours. The score and production tools below are not built yet.</p>
+  <div class="phase live openstory" style="display:block;margin-top:18px">
+    <div class="n" style="margin-bottom:6px">Open now</div>
+    <h3>Five Yoruba story worlds, and a place to send yours</h3>
+    <p>The chain at Ilé-Ifẹ̀, Mọ́remí Àjàṣorò, Ṣàngó, Ọya and Ọba, Lísàbí and the aró, Ọ̀ṣun and Larooye. I read every story sent and write back within 14 days.</p>
+    <div class="cta2"><a class="p" href="/faajiplace/">Send me your story</a><a class="s" href="/studio/faajiplace/">Read the story worlds</a></div>
+  </div>
+  <div class="k" style="margin:26px 0 -4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)">The studio roadmap</div>
   <div class="phases">
     <div class="phase live"><div class="n">Now</div><div><h3>Àyàn: rhythm and sound</h3><p>Browser studio: your voice in, enhanced, chopped and remixed over synthesized Yoruba percussion, and a talking drum that follows the pitch of your own voice. The plan from here: replace the synthesized drums with samples recorded from working drummers, credited and paid per use.</p></div></div>
     <div class="phase"><div class="n">Next</div><div><h3>Sound library and stems</h3><p>Melodic layers, vocal chants and full stems. Creators export to their own DAW or release straight from the studio.</p></div></div>
@@ -3237,7 +3256,7 @@ document.getElementById("obReturn").onclick=()=>{ ob.classList.remove("on"); ren
 (async()=>{
   db=await idb();
   const prof=lsGet("ps.profile")||(await kvGet("profile"));
-  if(!prof) ob.classList.add("on");
+  if(!prof){ if(location.hash==="#film") window.__gatePending=true; else ob.classList.add("on"); } /* a shared Film link opens the page itself, the sign-up waits until someone opens a tool */
   const curId=lsGet("ps.current")||(await kvGet("current"));
   let rec=curId? await tx("projects","readonly",st=>st.get(curId)) : null;
   if(!rec){ const list=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated); rec=list[0]||null; }
@@ -3373,6 +3392,7 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   if((e.ctrlKey||e.metaKey) && k==="z"){ e.preventDefault(); (e.shiftKey? redoBtn : undoBtn).click(); }
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
+  if(v!=="film" && window.__gatePending){ window.__gatePending=false; ob.classList.add("on"); }
   menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="ayan"?"Studio": v==="write"?"Write":"Fàájìplace";
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
