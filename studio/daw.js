@@ -7,7 +7,7 @@ const duration=()=>state.tracks.reduce((m,t)=>Math.max(m,(t.timeline||0)+t.end-t
 const fmt=n=>{n=Math.max(0,n||0);return String(Math.floor(n/60)).padStart(2,"0")+":"+String(Math.floor(n%60)).padStart(2,"0")+"."+Math.floor(n%1*10)};
 function snapshot(){state.undo.push({tracks:state.tracks.map(t=>({...t})),selected:state.selected});if(state.undo.length>20)state.undo.shift();$("dawUndo").disabled=false;}
 function context(){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error("Web Audio is not supported in this browser.");if(!state.ctx)state.ctx=new C();if(state.ctx.state==="suspended")state.ctx.resume();return state.ctx;}
-function drawWave(track,canvas){const c=canvas.getContext("2d"),w=canvas.width= Math.max(320,canvas.clientWidth*2),h=canvas.height=180;c.clearRect(0,0,w,h);const data=track.buffer.getChannelData(0),step=Math.max(1,Math.floor(data.length/w)),mid=h/2;c.strokeStyle=track.id===state.selected?"#ff8a55":"#b7a79a";c.lineWidth=1.3;c.beginPath();for(let x=0;x<w;x++){let min=1,max=-1;for(let j=0;j<step;j++){const v=data[x*step+j]||0;if(v<min)min=v;if(v>max)max=v;}c.moveTo(x,mid+min*mid*.82);c.lineTo(x,mid+max*mid*.82);}c.stroke();c.strokeStyle="#333";c.beginPath();c.moveTo(0,mid);c.lineTo(w,mid);c.stroke();}
+function drawWave(track,canvas){const c=canvas.getContext("2d"),w=canvas.width=Math.max(320,canvas.clientWidth*2),h=canvas.height=180,light=document.documentElement.dataset.theme==="light";c.clearRect(0,0,w,h);const data=track.buffer.getChannelData(0),step=Math.max(1,Math.floor(data.length/w)),mid=h/2;c.strokeStyle=track.id===state.selected?(light?"#b94317":"#ff8a55"):(light?"#625b52":"#b7a79a");c.lineWidth=1.5;c.beginPath();for(let x=0;x<w;x++){let min=1,max=-1;for(let j=0;j<step;j++){const v=data[x*step+j]||0;if(v<min)min=v;if(v>max)max=v;}c.moveTo(x,mid+min*mid*.82);c.lineTo(x,mid+max*mid*.82);}c.stroke();c.strokeStyle=light?"#c9c2b8":"#333";c.beginPath();c.moveTo(0,mid);c.lineTo(w,mid);c.stroke();}
 function render(){const host=$("dawTracks");host.replaceChildren();if(!state.tracks.length){const e=document.createElement("div");e.className="daw-empty";e.textContent="Your tracks will appear here. Add vocals, instruments or field recordings.";host.append(e);}state.tracks.forEach(t=>{const row=document.createElement("div");row.className="daw-track";row.dataset.id=t.id;const head=document.createElement("div");head.className="daw-track-head";const name=document.createElement("input");name.className="daw-track-name";name.value=t.name;name.setAttribute("aria-label","Track name");name.onchange=()=>t.name=name.value;const controls=document.createElement("div");controls.className="daw-track-controls";[["M", "mute"],["S","solo"]].forEach(([label,key])=>{const b=document.createElement("button");b.textContent=label;b.classList.toggle("on",!!t[key]);b.onclick=()=>{t[key]=!t[key];render();};controls.append(b);});const remove=document.createElement("button");remove.textContent="×";remove.title="Remove track";remove.onclick=()=>{snapshot();state.tracks=state.tracks.filter(x=>x.id!==t.id);if(state.selected===t.id)state.selected=state.tracks[0]?.id||null;render();};controls.append(remove);const faders=document.createElement("div");faders.className="daw-track-faders";[["Level", "gain",0,1.5,.01],["Pan","pan",-1,1,.01],["Position","timeline",0,120,.1]].forEach(([label,key,min,max,step])=>{const lab=document.createElement("label");lab.textContent=label;const input=document.createElement("input");input.type="range";input.min=min;input.max=max;input.step=step;input.value=t[key];input.oninput=()=>{t[key]=+input.value;};lab.append(input);faders.append(lab);});head.append(name,controls,faders);const wave=document.createElement("div");wave.className="daw-track-wave";const canvas=document.createElement("canvas");wave.append(canvas);const region=document.createElement("div");region.className="daw-region";wave.append(region);const range=document.createElement("div");range.className="daw-range-select";wave.append(range);bindWaveSelection(wave,t);row.append(head,wave);row.style.outline=t.id===state.selected?"1px solid var(--orange)":"none";row.onclick=e=>{if(e.target.closest("button,input"))return;state.selected=t.id;syncTrim();render();};host.append(row);requestAnimationFrame(()=>drawWave(t,canvas));});syncRangeUI();$("dawExport").disabled=!state.tracks.length;$("dawSendStudio").disabled=!state.tracks.length;syncTrim();}
 function selected(){return state.tracks.find(t=>t.id===state.selected)||null;}
 function syncTrim(){const t=selected(),a=$("dawTrimStart"),b=$("dawTrimEnd");[a,b].forEach(x=>x.disabled=!t);if(t){a.max=t.buffer.duration;b.max=t.buffer.duration;a.value=t.start;b.value=t.end;a.step=b.step=".01";}}
@@ -73,30 +73,45 @@ keepSelection?.addEventListener("click",()=>{
  t.timeline=r.timeline;t.buffer=cropped;t.start=0;t.end=cropped.duration;clearRange();render();status("Selection isolated as the active clip. Undo restores the full track.");
 });
 async function captureSelection(kind){
- const r=rangeTimes();if(!r)return;if(state.recorder&&state.recorder.state==="recording")return;
- if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status("Microphone recording needs a supported HTTPS browser.");return;}
+ const r=rangeTimes();if(!r)return;
+ if(state.recorder&&state.recorder.state==="recording"){status("A recording is already in progress. Stop it before starting another.");return;}
+ if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status("Microphone recording needs a supported HTTPS browser. Open Studio in Chrome and allow microphone access.");return;}
+ let mic=null,src=null,stopTimer=0,finished=false;
  try{
-  stop();const mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
-  const parts=[],mime=["audio/webm;codecs=opus","audio/mp4","audio/webm"].find(x=>MediaRecorder.isTypeSupported(x));
-  const mr=new MediaRecorder(mic,mime?{mimeType:mime}:undefined);state.recorder=mr;
-  const ctx=context(),src=ctx.createBufferSource();src.buffer=r.track.buffer;const gain=ctx.createGain();gain.gain.value=r.track.gain;src.connect(gain);gain.connect(ctx.destination);
-  mr.ondataavailable=e=>{if(e.data?.size)parts.push(e.data);};
-  mr.onerror=()=>{mic.getTracks().forEach(x=>x.stop());status("Recording failed. Check microphone permission and try again.");};
+  status("Requesting microphone access…");
+  mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+  const ctx=context();if(ctx.state!=="running")await ctx.resume();
+  const parts=[],supported=["audio/webm;codecs=opus","audio/mp4","audio/webm"].find(x=>MediaRecorder.isTypeSupported(x));
+  const mr=new MediaRecorder(mic,supported?{mimeType:supported}:undefined);state.recorder=mr;
+  src=ctx.createBufferSource();src.buffer=r.track.buffer;
+  const gain=ctx.createGain();gain.gain.value=r.track.mute?0:Math.max(0,Math.min(1.5,r.track.gain||1));src.connect(gain);gain.connect(ctx.destination);
+  const cleanup=()=>{if(finished)return;finished=true;clearTimeout(stopTimer);mic?.getTracks().forEach(x=>x.stop());try{src?.stop();}catch(_){}};
+  mr.ondataavailable=e=>{if(e.data&&e.data.size)parts.push(e.data);};
+  mr.onerror=()=>{cleanup();status("Recording failed. Check microphone permission, then try again.");};
+  mr.onstart=()=>{
+   status(kind==="hum"?"Recording started. Hum along with the selected passage.":"Recording started. Speak or sing over the selected passage.");
+   const when=ctx.currentTime+.12;
+   try{src.start(when,r.start,r.duration);}catch(e){try{mr.stop();}catch(_){}status("Could not play the selected passage: "+e.message);return;}
+   stopTimer=setTimeout(()=>{if(mr.state==="recording")mr.stop();},Math.max(350,r.duration*1000+180));
+  };
   mr.onstop=async()=>{
-   mic.getTracks().forEach(x=>x.stop());try{src.stop();}catch(_){}
+   cleanup();state.recorder=null;
    const take=new Blob(parts,{type:mr.mimeType||"audio/webm"});
-   if(!take.size){status("No audio was captured.");return;}
+   if(!take.size){status("No audio was captured. Check microphone permission and try again.");return;}
    if(kind==="hum"){
     window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob:take,name:"Hum over selection"}}));
-    status("Hum sent to Àyàn and Ìlù. Press “Translate my voice to drum” to generate the talking-drum line.");
+    status("Hum sent to Àyàn and Ìlù. Select “Translate my voice to drum” to create the talking-drum line.");
    }else{
-    try{const buffer=await context().decodeAudioData(await take.arrayBuffer());snapshot();const track={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:"Re-recorded passage",buffer,start:0,end:buffer.duration,gain:1,pan:0,timeline:r.timeline,mute:false,solo:false};state.tracks.push(track);state.selected=track.id;render();status("New take placed at the selected timeline position. Original track preserved.");}
-    catch(e){status("Could not decode the new take in this browser.");}
+    try{const buffer=await ctx.decodeAudioData(await take.arrayBuffer());snapshot();const track={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:"Re-recorded passage",buffer,start:0,end:buffer.duration,gain:1,pan:0,timeline:r.timeline,mute:false,solo:false};state.tracks.push(track);state.selected=track.id;render();status("New take placed at the selected timeline position. Original track preserved.");}
+    catch(e){status("The take was captured, but this browser could not decode it. Try Chrome or import the saved recording.");}
    }
   };
-  mr.start(100);src.start(ctx.currentTime+.04,r.start,r.duration);status(kind==="hum"?"Hum now. Recording will stop at the end of the selection.":"Re-record now. Recording will stop at the end of the selection.");
-  setTimeout(()=>{if(mr.state==="recording")mr.stop();},Math.max(200,r.duration*1000));
- }catch(e){status("Could not start microphone: "+(e.message||"Check permission and try again."));}
+  mr.start(100);
+  status("Starting microphone and selected passage…");
+ }catch(e){
+  mic?.getTracks().forEach(x=>x.stop());state.recorder=null;
+  status("Could not start recording: "+(e.name==="NotAllowedError"?"Allow microphone access in your browser settings.":e.message||"Check microphone permission and try again."));
+ }
 }
 punchRecord?.addEventListener("click",()=>captureSelection("punch"));
 humBeat?.addEventListener("click",()=>captureSelection("hum"));
