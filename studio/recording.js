@@ -96,6 +96,7 @@ useFilm.addEventListener("click",async()=>{
   setStatus("Sent to Fàájìplace. The media is being saved with this project.");
  }catch(error){setStatus("Could not open Fàájìplace: "+error.message);}
 });
+window.addEventListener("pennio:workspace-media-error",event=>{setStatus("Media could not be saved: "+(event.detail&&event.detail.message||"Check available device storage."));});
 $("studioRecAgain").addEventListener("click",()=>{clearTake();setStatus("Ready for another take.");});
 window.addEventListener("beforeunload",()=>{stopTracks();if(blobUrl)URL.revokeObjectURL(blobUrl);clearInterval(ticker);});
 setMode("audio");
