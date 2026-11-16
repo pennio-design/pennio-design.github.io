@@ -4234,7 +4234,7 @@ document.getElementById("sylIn").oninput=sylRender;
       const chosen=owned.find(asset=>asset.id===film.clipAssetId)||owned.sort((a,b)=>b.created-a.created)[0];
       if(!chosen)return;
       const full=await window.PennioWorkspace.getAsset(chosen.id);
-      if(full&&full.blob)useFilmBlob(full.blob,full.name,full.id,full.kind);
+      if(full&&full.blob){const playhead=Number(film.playhead)||0;useFilmBlob(full.blob,full.name,full.id,full.kind);film.playhead=playhead;saveFilm();}
     }catch(error){filmClipNote.textContent="Could not restore this project’s media: "+error.message;}
   }
   window.PennioFilmWorkspace={restore:restoreFilmAsset};
