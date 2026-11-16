@@ -3785,6 +3785,7 @@ document.getElementById("rpGo").onclick=async()=>{
         const imported=await window.PennioWorkspace.importProjectData({assets,sessions});studioMedia=imported.assets;studioSessions=imported.sessions;
       }
       if(!localStorage.getItem("ps.studio.activeProject.v1")&&studio.activeProjectId){const activeProject=merged.find(project=>project.id===studio.activeProjectId);if(activeProject)window.PennioWorkspace?.setActiveProject(activeProject);}
+      window.PennioWorkspace?.refreshProjects?.();window.PennioDashboardProjectsRefresh?.();
     }
     toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+(studioProjectCount?" · "+studioProjectCount+" Studio project"+(studioProjectCount===1?"":"s")+" included":"")+(studioMedia?" · "+studioMedia+" media asset"+(studioMedia===1?"":"s"):"")+(studioSessions?" · "+studioSessions+" DAW session"+(studioSessions===1?"":"s"):"")+" from the backup. Tap Continue on any of them.");
     rpData=null; document.getElementById("rPrev").hidden=true; renderWork();
@@ -4620,7 +4621,7 @@ document.getElementById("sylIn").oninput=sylRender;
       await window.PennioWorkspace?.deleteProjectData(item.id);
       await window.PennioAyanWorkspace?.remove(item.id);
       ["ps.film.room","ps.write.draft","ps.film.activeCue","ps.ayan.writeCue"].forEach(base=>{try{localStorage.removeItem(base+"."+item.id);}catch(e){}});
-      write(read().filter(x=>x.id!==item.id));renderProjects();
+      write(read().filter(x=>x.id!==item.id));renderProjects();window.PennioWorkspace?.refreshProjects?.();
     }catch(error){remove.disabled=false;alert("This project could not be fully deleted: "+error.message);}
    };
    actions.append(open,edit,remove);row.append(mark,copy,actions);projects.append(row);
@@ -4631,6 +4632,7 @@ document.getElementById("sylIn").oninput=sylRender;
  $("dashStartSound").onclick=()=>{go("ayan");setTimeout(()=>{const target=$("voiceCard");if(target)target.scrollIntoView({behavior:"smooth",block:"start"});},100);};
  $("dashHelp").onclick=()=>{go("ayan");const guide=$("guideLink");if(guide)guide.click();};
  renderProjects();filterRooms();
+ window.PennioDashboardProjectsRefresh=renderProjects;
 })();;
 
 </script>
