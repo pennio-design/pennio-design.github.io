@@ -2,16 +2,16 @@
 "use strict";
 const PROJECTS_KEY="ps.studio.projects.v1",ACTIVE_KEY="ps.studio.activeProject.v1";
 const $=id=>document.getElementById(id);
-let activeProjectId=null,dbPromise=null,assets=[];
+let activeProjectId=null,dbPromise=null,assets=[],roomSwitchPromise=Promise.resolve();
 const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Model / Beauty"};
 function readProjects(){try{const v=JSON.parse(localStorage.getItem(PROJECTS_KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
 function openDB(){
  if(dbPromise)return dbPromise;
  dbPromise=new Promise((resolve,reject)=>{
   if(!window.indexedDB){reject(Error("This browser does not support local media storage."));return;}
-  const req=indexedDB.open("pennio-studio-workspace",1);
-  req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains("assets")){const store=d.createObjectStore("assets",{keyPath:"id"});store.createIndex("projectId","projectId",{unique:false});store.createIndex("created","created",{unique:false});}};
-  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||Error("Could not open Studio media storage."));
+  const req=indexedDB.open("pennio-studio-workspace",2);
+  req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains("assets")){const store=d.createObjectStore("assets",{keyPath:"id"});store.createIndex("projectId","projectId",{unique:false});store.createIndex("created","created",{unique:false});}if(!d.objectStoreNames.contains("sessions"))d.createObjectStore("sessions",{keyPath:"projectId"});if(!d.objectStoreNames.contains("sessionAudio")){const a=d.createObjectStore("sessionAudio",{keyPath:"id"});a.createIndex("projectId","projectId",{unique:false});}};
+  req.onblocked=()=>reject(Error("Close other PENNIO Studio tabs to finish updating local project storage."));req.onsuccess=()=>{const db=req.result;db.onversionchange=()=>{db.close();dbPromise=null;};resolve(db);};req.onerror=()=>reject(req.error||Error("Could not open Studio media storage."));
  });
  return dbPromise;
 }
@@ -32,12 +32,13 @@ async function getAsset(id){
 async function deleteAsset(id){
  const d=await openDB();await new Promise((resolve,reject)=>{const tx=d.transaction("assets","readwrite");tx.objectStore("assets").delete(id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});await refreshAssets();
 }
-function setActive(project){
- activeProjectId=project&&project.id?project.id:null;
+function setActive(project,silent){
+ const previous=activeProjectId;activeProjectId=project&&project.id?project.id:null;
  try{if(activeProjectId)localStorage.setItem(ACTIVE_KEY,activeProjectId);else localStorage.removeItem(ACTIVE_KEY);}catch(e){}
  const label=$("workspaceProjectName");if(label)label.textContent=project?project.name:"Studio workspace";
  const select=$("workspaceProjectSelect");if(select&&select.value!==(activeProjectId||""))select.value=activeProjectId||"";
  refreshAssets();
+ if(!silent&&activeProjectId!==previous)window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project,previousProjectId:previous}}));
 }
 function projectById(id){return readProjects().find(p=>p.id===id)||null;}
 function buildUI(){
@@ -108,19 +109,84 @@ function refreshProjectSelect(){
  readProjects().forEach(p=>{const option=document.createElement("option");option.value=p.id;option.textContent=p.name;select.append(option);});
  select.value=current||"";
 }
+async function saveSession(projectId,session){
+ if(!projectId||!session)return false;
+ const d=await openDB(),audio=Array.isArray(session.audio)?session.audio:[];
+ const record=Object.assign({projectId,updated:Date.now()},session);delete record.audio;
+ return new Promise((resolve,reject)=>{
+  const tx=d.transaction(["sessions","sessionAudio"],"readwrite");
+  tx.objectStore("sessions").put(record);
+  const audioStore=tx.objectStore("sessionAudio"),req=audioStore.index("projectId").getAll(projectId);
+  req.onsuccess=()=>{
+   const keep=new Set((record.tracks||[]).map(track=>track.audioKey).filter(Boolean));
+   const existing=new Set((req.result||[]).map(item=>item.id));
+   (req.result||[]).forEach(item=>{if(!keep.has(item.id))audioStore.delete(item.id);});
+   audio.forEach(item=>{if(item.force||!existing.has(item.id))audioStore.put({id:item.id,projectId,blob:item.blob});});
+  };
+  req.onerror=()=>{try{tx.abort();}catch(e){}};
+  tx.oncomplete=()=>resolve(true);
+  tx.onerror=()=>reject(tx.error||Error("Could not save this session."));
+  tx.onabort=()=>reject(tx.error||Error("Session save was interrupted."));
+ });
+}
+async function loadSession(projectId){
+ if(!projectId)return null;
+ const d=await openDB();
+ return new Promise((resolve,reject)=>{
+  const tx=d.transaction(["sessions","sessionAudio"],"readonly");
+  const req=tx.objectStore("sessions").get(projectId),audioReq=tx.objectStore("sessionAudio").index("projectId").getAll(projectId);
+  let record=null,audio=null;
+  req.onsuccess=()=>{record=req.result||null;if(audio!==null&&record)resolve(Object.assign(record,{audio}));};
+  audioReq.onsuccess=()=>{audio=audioReq.result||[];if(record)resolve(Object.assign(record,{audio}));};
+  tx.onerror=()=>reject(tx.error||Error("Could not open this session."));
+  tx.oncomplete=()=>{if(!record)resolve(null);};
+ });
+}
+async function deleteSession(projectId){
+ if(!projectId)return;
+ const d=await openDB();
+ return new Promise((resolve,reject)=>{
+  const tx=d.transaction(["sessions","sessionAudio"],"readwrite");
+  tx.objectStore("sessions").delete(projectId);
+  const req=tx.objectStore("sessionAudio").index("projectId").getAllKeys(projectId);
+  req.onsuccess=()=>req.result.forEach(key=>tx.objectStore("sessionAudio").delete(key));
+  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+ });
+}
 window.PennioWorkspace={
  get activeProjectId(){return activeProjectId;},
  setActiveProject:setActive,
  listAssets:()=>getAssets(),
  getAsset,
  addAsset:storeAsset,
+ saveSession,loadSession,deleteSession,
+ openRoom:async room=>{const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();else window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room}}));await roomSwitchPromise;},
  refresh:refreshAssets
 };
-window.addEventListener("pennio:workspace-project-open",e=>{const p=e.detail&&e.detail.project;setActive(p||null);refreshProjectSelect();});
-window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(err=>console.warn("Studio media save:",err));});
-window.addEventListener("pennio:studio-media",e=>{storeAsset(e.detail||{}).catch(err=>console.warn("Studio media save:",err));});
-window.addEventListener("pennio:film-media",e=>{if(e.detail&&e.detail.blob)storeAsset({...e.detail,kind:"video"}).catch(err=>console.warn("Studio media save:",err));});
+window.addEventListener("pennio:workspace-project-open",e=>{
+ const p=e.detail&&e.detail.project,previous=activeProjectId;
+ if(e.detail&&!Object.prototype.hasOwnProperty.call(e.detail,"previousProjectId"))e.detail.previousProjectId=previous;
+ setActive(p||null,true);refreshProjectSelect();
+ if(p&&document.getElementById("dawRoom")?.getClientRects().length)window.PennioAyanWorkspace?.open(p).catch(err=>console.warn("Àyàn project restore:",err));
+ if(p&&document.getElementById("filmDesk")?.getClientRects().length)window.PennioFilmWorkspace?.restore(p).catch(err=>console.warn("Film project restore:",err));
+});
+document.addEventListener("click",e=>{
+ const button=e.target.closest('nav button[data-v]');
+ if(button)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:button.dataset.v}}));
+});
+window.addEventListener("pennio:workspace-room-open",e=>{
+ roomSwitchPromise=Promise.resolve();
+ const project=activeProjectId?projectById(activeProjectId):null;
+ if(e.detail?.room==="ayan"&&project)roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(project)).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
+ if((e.detail?.room==="faajiplace"||e.detail?.room==="film")&&project)roomSwitchPromise=Promise.resolve(window.PennioFilmWorkspace?.restore(project)).catch(err=>{console.warn("Film project restore:",err);throw err;});
+});
+function reportMediaError(error){const message=error&&error.message||"Browser storage is unavailable.";console.warn("Studio media save:",error);window.dispatchEvent(new CustomEvent("pennio:workspace-media-error",{detail:{message}}));}
+window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(reportMediaError);});
+window.addEventListener("pennio:studio-media",e=>{storeAsset(e.detail||{}).catch(reportMediaError);});
+window.addEventListener("pennio:film-media",e=>{const d=e.detail||{};if(!d.blob||d.assetId)return;const kind=d.kind||(d.blob.type.startsWith("audio/")?"audio":"video");storeAsset({...d,kind}).then(asset=>window.dispatchEvent(new CustomEvent("pennio:film-media-saved",{detail:{id:asset.id,name:asset.name,kind:asset.kind,projectId:asset.projectId}}))).catch(reportMediaError);});
 buildUI();
 const saved=(()=>{try{return localStorage.getItem(ACTIVE_KEY)}catch(e){return null}})();
 setActive(projectById(saved)||null);refreshProjectSelect();refreshAssets();
+if(activeProjectId&&["#ayan","#faajiplace","#film"].includes(location.hash))window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:location.hash.slice(1)}}));
+window.dispatchEvent(new CustomEvent("pennio:workspace-ready",{detail:{projectId:activeProjectId}}));
 })();
