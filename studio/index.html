@@ -902,6 +902,47 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
 @media(max-width:400px){.avatar{display:none}}
 .set-actions{display:grid;gap:10px;margin-top:18px}.set-action{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px;border:1px solid var(--line2);border-radius:14px;background:var(--surface)}.set-action div{flex:1;min-width:0}.set-action b{display:block;font-size:14px}.set-action small{display:block;margin-top:4px;color:var(--mute);font-size:12px;line-height:1.45}.set-action .btn{flex:none}
 @media(max-width:480px){.set-action{align-items:flex-start;flex-direction:column}.set-action .btn{width:100%}}
+
+/* Àyàn DAW light theme: keep the editor readable and coherent. */
+html[data-theme="light"] .daw-room,
+html[data-theme="light"] .daw-panel,
+html[data-theme="light"] .daw-shell{background:#fff!important;color:#171513;border-color:#d9d4cc}
+html[data-theme="light"] .daw-toolbar,
+html[data-theme="light"] .daw-bottom,
+html[data-theme="light"] .daw-selection{background:#f1efeb!important;color:#171513;border-color:#d9d4cc}
+html[data-theme="light"] .daw-track{background:#fff!important;color:#171513;border-bottom:1px solid #e3dfd8}
+html[data-theme="light"] .daw-track-head{background:#f7f5f1;border-color:#ded9d1}
+html[data-theme="light"] .daw-track-name,
+html[data-theme="light"] .daw-track input:not([type="range"]),
+html[data-theme="light"] .daw-trim input,
+html[data-theme="light"] .daw-bottom input{background:#fff!important;color:#171513!important;border:1px solid #cfc9c0!important}
+html[data-theme="light"] .daw-track-controls button,
+html[data-theme="light"] .daw-toolbar .btn,
+html[data-theme="light"] .daw-bottom .btn,
+html[data-theme="light"] .daw-selection .btn{background:#fff;color:#39352f;border:1px solid #d1cbc2}
+html[data-theme="light"] .daw-track-controls button.on,
+html[data-theme="light"] .daw-toolbar .btn.primary,
+html[data-theme="light"] .daw-bottom .btn.primary,
+html[data-theme="light"] .daw-selection .btn.primary{background:#ff6b35;color:#171513;border-color:#ff6b35}
+html[data-theme="light"] .daw-track-wave{background:repeating-linear-gradient(90deg,#f7f5f1 0,#f7f5f1 calc(10% - 1px),#e5e0d8 10%)!important}
+html[data-theme="light"] .daw-track-wave .daw-playhead{background:#171513}
+html[data-theme="light"] .daw-track-wave .daw-region{border-color:#e65d2b;background:rgba(255,107,53,.10)}
+html[data-theme="light"] .daw-track-wave .daw-range-select{background:rgba(255,107,53,.22);border-color:#d94f20}
+html[data-theme="light"] .daw-empty{background:#f7f5f1;color:#625e58;border:1px dashed #cfc9c0}
+html[data-theme="light"] .daw-status,
+html[data-theme="light"] .daw-trim label,
+html[data-theme="light"] .daw-track-faders label,
+html[data-theme="light"] .daw-selection-head small,
+html[data-theme="light"] .daw-selection-note{color:#625e58}
+html[data-theme="light"] .daw-clock{color:#b7461d}
+html[data-theme="light"] .daw-track-controls button:focus-visible,
+html[data-theme="light"] .daw-toolbar button:focus-visible,
+html[data-theme="light"] .daw-bottom button:focus-visible,
+html[data-theme="light"] .daw-selection button:focus-visible{outline:2px solid #b7461d;outline-offset:2px}
+html[data-theme="light"] .daw-track input[type="range"],
+html[data-theme="light"] .daw-trim input[type="range"]{accent-color:#d95728}
+html[data-theme="light"] .daw-room input::placeholder,
+html[data-theme="light"] .daw-track-name::placeholder{color:#817a71}
 </style>
 <script>try{if(localStorage.getItem("ps.theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}</script>
 <style>.beauty-frame{position:relative;max-width:720px;margin:16px auto 0;aspect-ratio:4/5;max-height:72vh;overflow:hidden;border-radius:16px;background:#080708;border:1px solid var(--line2)}.beauty-frame video,.beauty-frame img{width:100%;height:100%;object-fit:cover;display:block}.beauty-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--mute);text-align:center;padding:24px}.beauty-tunes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:16px}.beauty-tunes label{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:13px}.beauty-tunes output{color:var(--orange)}.beauty-tunes input{grid-column:1/-1;width:100%;accent-color:var(--orange)}</style>
