@@ -874,6 +874,28 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
 .daw-status{font-size:12px;color:var(--mute);min-height:16px}
 .daw-recording{color:#ff8068}
 @media(max-width:620px){.daw-track{grid-template-columns:1fr}.daw-track-head{border-right:0;border-bottom:1px solid var(--line)}.daw-track-wave canvas{height:82px;min-height:82px}.daw-trim{grid-template-columns:1fr}.daw-head{align-items:flex-start}}
+/* Àyàn DAW guided workflow */
+.daw-guide{margin-top:14px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:14px;background:var(--panel,rgba(255,255,255,.025));overflow:hidden}
+.daw-guide>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;cursor:pointer}
+.daw-guide>summary::-webkit-details-marker{display:none}
+.daw-guide>summary span:first-child{display:grid;gap:4px}
+.daw-guide>summary b{font-size:14px}
+.daw-guide>summary small{font-size:12px;color:var(--mute);font-weight:400}
+.daw-guide-open{font-size:12px;color:var(--orange);white-space:nowrap}
+.daw-guide[open] .daw-guide-open{font-size:0}
+.daw-guide[open] .daw-guide-open:after{content:"Close guide −";font-size:12px}
+.daw-guide-body{padding:0 18px 18px;border-top:1px solid var(--line,rgba(255,255,255,.1))}
+.daw-guide-intro{font-size:13px;color:var(--mute);margin:14px 0}
+.daw-guide-steps{list-style:none;counter-reset:dawstep;padding:0;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.daw-guide-steps li{counter-increment:dawstep;display:grid;grid-template-columns:28px 1fr;column-gap:10px;align-content:start;padding:13px;border:1px solid var(--line,rgba(255,255,255,.1));border-radius:10px}
+.daw-guide-steps li:before{content:counter(dawstep,decimal-leading-zero);grid-row:span 2;color:var(--orange);font-size:12px;font-weight:700;padding-top:2px}
+.daw-guide-steps b{font-size:13px}
+.daw-guide-steps span{font-size:12px;line-height:1.55;color:var(--mute);margin-top:5px}
+.daw-guide-steps em{font-style:normal;color:var(--text,inherit);font-weight:600}
+.daw-guide-rules{display:grid;gap:5px;padding:13px;margin-top:12px;border-left:2px solid var(--orange);background:rgba(255,106,0,.06);font-size:12px;line-height:1.5}
+.daw-guide-rules span,.daw-guide-note{color:var(--mute)}
+.daw-guide-note{font-size:11px;line-height:1.55;margin:12px 0 0}
+@media(max-width:640px){.daw-guide-steps{grid-template-columns:1fr}.daw-guide>summary{padding:14px}.daw-guide-body{padding:0 14px 14px}}
 </style>\n</head>
 <body class="in-studio">
 <header>
@@ -1019,6 +1041,22 @@ html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
     <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
     <div class="daw-status">Audio is processed in your browser. Imported tracks are not uploaded. Export creates a stereo WAV mix.</div>
   </div>
+  <details class="daw-guide" id="dawGuide">
+<summary><span><b>DAW guide</b><small>A simple route from raw audio to a finished mix</small></span><span class="daw-guide-open">Open guide +</span></summary>
+<div class="daw-guide-body">
+<p class="daw-guide-intro">Work in this order. Get the arrangement right before spending time on effects.</p>
+<ol class="daw-guide-steps">
+<li><b>Bring in your sound</b><span>Choose <em>Import audio</em> for existing recordings, beats or stems. Choose <em>Record voice</em> to capture a new take through your microphone. Each file becomes its own track.</span></li>
+<li><b>Build the arrangement</b><span>Select a track by tapping its waveform area. Use <em>Position</em> to place it on the timeline. Use <em>Trim start</em> and <em>Trim end</em> to remove unwanted silence or sections. Play often and make small adjustments.</span></li>
+<li><b>Control each track</b><span><em>M</em> silences a track. <em>S</em> solos it so you can hear it alone. <em>Level</em> changes loudness. <em>Pan</em> moves sound left or right. Rename tracks so the session stays readable.</span></li>
+<li><b>Shape the sound</b><span>Select a track, then use <em>Normalize selected</em> to raise its peak level. Add EQ to shape tone, Compressor to control peaks, Room reverb for space, or Echo for repeats. Start with one effect at a time and keep the change subtle.</span></li>
+<li><b>Check the whole mix</b><span>Turn off Solo, check that no important track is muted, then press Play from the beginning. Listen on headphones and your phone speaker. If one sound dominates, lower its Level before raising everything else.</span></li>
+<li><b>Export your mix</b><span>Choose <em>Export mix WAV</em> when the arrangement is ready. The DAW renders the audible tracks into one stereo WAV file. Give the file a clear name after download and keep your original recordings.</span></li>
+</ol>
+<div class="daw-guide-rules"><b>Three rules that prevent messy sessions</b><span>Keep one purpose per track. Make arrangement decisions before adding effects. Export a checkpoint before experimenting with a major change.</span></div>
+<p class="daw-guide-note">Your current session lives in this browser tab. Refreshing or closing the page clears imported tracks and recordings. Export your mix before leaving. Audio processing happens on this device.</p>
+</div>
+</details>
 </section>
 
   <div class="card">
