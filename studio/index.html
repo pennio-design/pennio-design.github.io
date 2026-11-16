@@ -4445,6 +4445,7 @@ document.getElementById("sylIn").oninput=sylRender;
   else{item={id:"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name,room:roomInput.value,created:Date.now(),updated:Date.now()};list.unshift(item);}
   if(!write(list)){alert("This browser could not save the project. Check available storage.");return;}
   const isNew=!editingId;closeModal();renderProjects();
+  window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project:item}}));
   if(isNew){go(item.room);if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;}
  });
  function renderProjects(){
@@ -4458,7 +4459,7 @@ document.getElementById("sylIn").oninput=sylRender;
    const meta=document.createElement("small");meta.textContent=(roomNames[item.room]||"Studio project")+" · "+new Date(item.updated||item.created||Date.now()).toLocaleDateString();
    copy.append(title,meta);
    const actions=document.createElement("div");actions.className="dash-project-actions";
-   const open=document.createElement("button");open.textContent="Open";open.onclick=()=>{go(roomNames[item.room]?item.room:"ayan");if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;};
+   const open=document.createElement("button");open.textContent="Open";open.onclick=()=>{window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project:item}}));go(roomNames[item.room]?item.room:"ayan");if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;};
    const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>openModal(item);
    const remove=document.createElement("button");remove.textContent="×";remove.setAttribute("aria-label","Delete "+item.name);remove.onclick=()=>{if(confirm('Delete "'+item.name+'" from this device?')){write(read().filter(x=>x.id!==item.id));renderProjects();}};
    actions.append(open,edit,remove);row.append(mark,copy,actions);projects.append(row);
@@ -4491,6 +4492,7 @@ document.getElementById("sylIn").oninput=sylRender;
   button.addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light"));
 })();
 </script>
+<script src="/studio/workspace.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
 </body>
