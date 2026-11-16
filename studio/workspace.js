@@ -205,6 +205,7 @@ window.PennioWorkspace={
  getAsset,
  addAsset:storeAsset,
  saveSession,loadSession,deleteSession,deleteProjectData,exportProjectData,importProjectData,
+ refreshProjects:refreshProjectSelect,
  openRoom:async room=>{const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();else window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room}}));await roomSwitchPromise;},
  refresh:refreshAssets
 };
