@@ -66,7 +66,7 @@
     faajiplace: {
       code: "FAA",
       label: "Fàájìplace story",
-      page: "pennio.agency/faajiplace",
+      page: "pennio.agency/faajiplace/send",
       subject: function (f) { return f.title + ", " + f.name; },
       ack: function (f, ref) {
         return [

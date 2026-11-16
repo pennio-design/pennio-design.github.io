@@ -718,7 +718,7 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
         <nav id="nav" hidden>
           <button data-v="ayan" class="on">Studio <small>Àyàn</small></button>
           <button data-v="write">Write <small>Yoruba with tones</small></button>
-          <button data-v="film">Fàájìplace <small>film, coming later</small></button>
+          <button data-v="faajiplace">Fàájìplace <small>stories open, film tools later</small></button>
         </nav></div>
       <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
     </div>
@@ -955,7 +955,7 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 </section>
 
 <!-- FILM -->
-<section class="view" id="v-film">
+<section class="view" id="v-faajiplace">
   <div class="soon">Open now: stories</div>
   <h1>Fàájìplace. Stories open now, film tools later.</h1>
   <p class="sub">Fàájìplace is the film side of pennio.studio. I am developing African stories for the screen, and I am receiving yours. The score and production tools below are not built yet.</p>
@@ -963,7 +963,7 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
     <div class="n" style="margin-bottom:6px">Open now</div>
     <h3>Five Yoruba story worlds, and a place to send yours</h3>
     <p>The chain at Ilé-Ifẹ̀, Mọ́remí Àjàṣorò, Ṣàngó, Ọya and Ọba, Lísàbí and the aró, Ọ̀ṣun and Larooye. I read every story sent and write back within 14 days.</p>
-    <div class="cta2"><a class="p" href="/faajiplace/">Send me your story</a><a class="s" href="/studio/faajiplace/">Read the story worlds</a></div>
+    <div class="cta2"><a class="p" href="/faajiplace/send/">Send me your story</a><a class="s" href="/faajiplace/">Read the story worlds</a></div>
   </div>
   <div class="k" style="margin:26px 0 -4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)">The studio roadmap</div>
   <div class="phases">
@@ -3256,7 +3256,7 @@ document.getElementById("obReturn").onclick=()=>{ ob.classList.remove("on"); ren
 (async()=>{
   db=await idb();
   const prof=lsGet("ps.profile")||(await kvGet("profile"));
-  if(!prof){ if(location.hash==="#film") window.__gatePending=true; else ob.classList.add("on"); } /* a shared Film link opens the page itself, the sign-up waits until someone opens a tool */
+  if(!prof){ if(location.hash==="#film"||location.hash==="#faajiplace") window.__gatePending=true; else ob.classList.add("on"); } /* a shared Film link opens the page itself, the sign-up waits until someone opens a tool */
   const curId=lsGet("ps.current")||(await kvGet("current"));
   let rec=curId? await tx("projects","readonly",st=>st.get(curId)) : null;
   if(!rec){ const list=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated); rec=list[0]||null; }
@@ -3392,14 +3392,15 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   if((e.ctrlKey||e.metaKey) && k==="z"){ e.preventDefault(); (e.shiftKey? redoBtn : undoBtn).click(); }
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
-  if(v!=="film" && window.__gatePending){ window.__gatePending=false; ob.classList.add("on"); }
+  if(v!=="faajiplace" && window.__gatePending){ window.__gatePending=false; ob.classList.add("on"); }
   menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="ayan"?"Studio": v==="write"?"Write":"Fàájìplace";
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"","#"+b.dataset.v);}catch(e){} });
-const h=location.hash.replace("#",""); if(h==="film"||h==="write") show(h);
-window.addEventListener("hashchange",()=>{const x=location.hash.replace("#",""); if(x==="film"||x==="ayan"||x==="write") show(x);});
+const hs=x=>{x=x.replace("#",""); return x==="film"?"faajiplace":x;};
+const h=hs(location.hash); if(h==="faajiplace"||h==="write") show(h);
+window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write") show(x);});
 
 /* toast */
 let tt=null;
