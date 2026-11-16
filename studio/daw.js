@@ -122,7 +122,7 @@ $("dawMic").onclick=async()=>{
   state.recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});state.recorderKind="mic";
   state.recorder.ondataavailable=e=>{if(e.data.size)state.recordChunks.push(e.data);};
   state.recorder.onstop=async()=>{
-   stream.getTracks().forEach(t=>t.stop());state.recordStream=null;
+   stream.getTracks().forEach(t=>t.stop());state.recordStream=null;$("dawMic").textContent="Record voice";
    const blob=new Blob(state.recordChunks,{type:state.recorder.mimeType||"audio/webm"});state.recorder=null;state.recorderKind=null;
    if(!blob.size){status("No voice take was captured.");return;}
    if(window.PennioWorkspace?.addAsset)window.PennioWorkspace.addAsset({blob,name:"Voice take",kind:"audio",projectId:recordProjectId}).catch(e=>status("Voice take recorded, but could not be added to shared media: "+e.message));
@@ -193,7 +193,7 @@ async function captureSelection(kind){
   const gain=ctx.createGain();gain.gain.value=r.track.mute?0:Math.max(0,Math.min(1.5,r.track.gain||1));src.connect(gain);gain.connect(ctx.destination);
   const cleanup=()=>{if(finished)return;finished=true;clearTimeout(stopTimer);mic?.getTracks().forEach(x=>x.stop());try{src?.stop();}catch(_){}};
   mr.ondataavailable=e=>{if(e.data&&e.data.size)parts.push(e.data);};
-  mr.onerror=()=>{cleanup();status("Recording failed. Check microphone permission, then try again.");};
+  mr.onerror=()=>{cleanup();state.recorder=null;state.recorderKind=null;status("Recording failed. Check microphone permission, then try again.");};
   mr.onstart=()=>{
    status(kind==="hum"?"Recording started. Hum along with the selected passage.":"Recording started. Speak or sing over the selected passage.");
    const when=ctx.currentTime+.12;
@@ -215,7 +215,7 @@ async function captureSelection(kind){
   mr.start(100);
   status("Starting microphone and selected passage…");
  }catch(e){
-  mic?.getTracks().forEach(x=>x.stop());state.recorder=null;
+  mic?.getTracks().forEach(x=>x.stop());state.recorder=null;state.recorderKind=null;
   status("Could not start recording: "+(e.name==="NotAllowedError"?"Allow microphone access in your browser settings.":e.message||"Check microphone permission and try again."));
  }
 }
