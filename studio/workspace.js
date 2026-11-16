@@ -153,13 +153,43 @@ async function deleteSession(projectId){
   tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
  });
 }
+async function exportProjectData(projectIds){
+ const d=await openDB(),ids=Array.isArray(projectIds)?[...new Set(projectIds)]:await new Promise((resolve,reject)=>{const req=d.transaction("sessions","readonly").objectStore("sessions").getAllKeys();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});
+ const allowed=new Set(ids),assets=(await getAssets()).filter(asset=>allowed.has(asset.projectId));
+ const sessions=[];for(const id of ids){const session=await loadSession(id);if(session)sessions.push(session);}
+ return {assets,sessions};
+}
+async function importProjectData(data){
+ const d=await openDB(),assets=Array.isArray(data&&data.assets)?data.assets:[],sessions=Array.isArray(data&&data.sessions)?data.sessions:[];
+ return new Promise((resolve,reject)=>{
+  const tx=d.transaction(["assets","sessions","sessionAudio"],"readwrite"),assetStore=tx.objectStore("assets"),sessionStore=tx.objectStore("sessions"),audioStore=tx.objectStore("sessionAudio");
+  assets.forEach(asset=>{if(asset&&asset.id&&asset.blob)assetStore.put(asset);});
+  sessions.forEach(incoming=>{
+   if(!incoming||!incoming.projectId)return;
+   const get=sessionStore.get(incoming.projectId);
+   get.onsuccess=()=>{
+    const current=get.result;if(current&&Number(current.updated||0)>=Number(incoming.updated||0))return;
+    const record=Object.assign({},incoming),audio=Array.isArray(record.audio)?record.audio:[];delete record.audio;sessionStore.put(record);
+    const keys=audioStore.index("projectId").getAllKeys(incoming.projectId);
+    keys.onsuccess=()=>{
+     const keep=new Set(audio.map(item=>item.id));
+     keys.result.forEach(key=>{if(!keep.has(key))audioStore.delete(key);});
+     audio.forEach(item=>{if(item&&item.id&&item.blob)audioStore.put({id:item.id,projectId:incoming.projectId,blob:item.blob});});
+    };
+   };
+  });
+  tx.oncomplete=()=>{refreshAssets();resolve({assets:assets.length,sessions:sessions.length});};
+  tx.onerror=()=>reject(tx.error||Error("Could not import Studio project data."));
+  tx.onabort=()=>reject(tx.error||Error("Studio project import was interrupted."));
+ });
+}
 window.PennioWorkspace={
  get activeProjectId(){return activeProjectId;},
  setActiveProject:setActive,
  listAssets:()=>getAssets(),
  getAsset,
  addAsset:storeAsset,
- saveSession,loadSession,deleteSession,
+ saveSession,loadSession,deleteSession,exportProjectData,importProjectData,
  openRoom:async room=>{const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();else window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room}}));await roomSwitchPromise;},
  refresh:refreshAssets
 };
