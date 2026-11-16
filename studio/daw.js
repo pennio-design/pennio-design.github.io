@@ -19,6 +19,7 @@ async function saveSessionNow(projectOverride){
  const projectId=projectOverride||sessionProjectId();
  if(!window.PennioWorkspace?.saveSession||sessionRestoring)return false;
  const tracks=[],audio=[];
+ const savedOffset=state.playing&&state.ctx?Math.min(duration(),state.offset+state.ctx.currentTime-state.startTime):(state.offset||0);
  for(const t of state.tracks){
   const key=projectId+":"+t.id;
   let cached=sessionBlobCache.get(key);
@@ -27,7 +28,7 @@ async function saveSessionNow(projectOverride){
   tracks.push({id:t.id,name:t.name,start:t.start,end:t.end,gain:t.gain,pan:t.pan,timeline:t.timeline,mute:!!t.mute,solo:!!t.solo,audioKey});
   audio.push({id:audioKey,blob:cached.blob});
  }
- await window.PennioWorkspace.saveSession(projectId,{version:1,tracks,selected:state.selected,effects:{...state.effects},offset:state.offset||0,range:state.range?{...state.range}:null,audio});
+ await window.PennioWorkspace.saveSession(projectId,{version:1,tracks,selected:state.selected,effects:{...state.effects},offset:savedOffset,range:state.range?{...state.range}:null,audio});
  return true;
 }
 async function loadSessionFor(projectId){
@@ -47,9 +48,9 @@ async function loadSessionFor(projectId){
     }catch(e){console.warn("Could not restore DAW track",meta.name,e);}
    }
    state.selected=state.tracks.some(t=>t.id===rec.selected)?rec.selected:(state.tracks[0]?.id||null);
-   Object.assign(state.effects,rec.effects||{});state.offset=Number(rec.offset)||0;state.range=rec.range||null;
+   Object.assign(state.effects,rec.effects||{});document.querySelectorAll("[data-fx]").forEach(b=>b.classList.toggle("primary",!!state.effects[b.dataset.fx]));state.offset=Math.min(duration(),Number(rec.offset)||0);state.range=rec.range||null;
   }
-  render();status(rec?"Project session restored.":"A new DAW session is ready for this project.");
+  render();$("dawClock").textContent=fmt(state.offset);status(rec?"Project session restored.":"A new DAW session is ready for this project.");
  }catch(e){status("Could not restore this project session: "+e.message);}
  finally{sessionRestoring=false;}
 }
