@@ -161,7 +161,21 @@ window.PennioWorkspace={
  saveSession,loadSession,deleteSession,
  refresh:refreshAssets
 };
-window.addEventListener("pennio:workspace-project-open",e=>{const p=e.detail&&e.detail.project,previous=activeProjectId;if(e.detail&&!Object.prototype.hasOwnProperty.call(e.detail,"previousProjectId"))e.detail.previousProjectId=previous;setActive(p||null,true);refreshProjectSelect();});
+window.addEventListener("pennio:workspace-project-open",e=>{
+ const p=e.detail&&e.detail.project,previous=activeProjectId;
+ if(e.detail&&!Object.prototype.hasOwnProperty.call(e.detail,"previousProjectId"))e.detail.previousProjectId=previous;
+ setActive(p||null,true);refreshProjectSelect();
+ if(p&&document.getElementById("dawRoom")?.getClientRects().length)window.PennioAyanWorkspace?.open(p).catch(err=>console.warn("Àyàn project restore:",err));
+});
+document.addEventListener("click",e=>{
+ const button=e.target.closest('nav button[data-v]');
+ if(button)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:button.dataset.v}}));
+});
+window.addEventListener("pennio:workspace-room-open",e=>{
+ if(e.detail?.room!=="ayan"||!activeProjectId)return;
+ const project=projectById(activeProjectId);
+ if(project)window.PennioAyanWorkspace?.open(project).catch(err=>console.warn("Àyàn project restore:",err));
+});
 window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(err=>console.warn("Studio media save:",err));});
 window.addEventListener("pennio:studio-media",e=>{storeAsset(e.detail||{}).catch(err=>console.warn("Studio media save:",err));});
 window.addEventListener("pennio:film-media",e=>{if(e.detail&&e.detail.blob)storeAsset({...e.detail,kind:"video"}).catch(err=>console.warn("Studio media save:",err));});
