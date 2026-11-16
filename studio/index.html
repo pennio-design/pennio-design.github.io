@@ -4334,7 +4334,7 @@ document.getElementById("sylIn").oninput=sylRender;
   filmCues.addEventListener("change",updateCueField);
   function setActiveCue(cue){
     const active={title:cue.title||"Untitled cue",start:cue.start||0,end:cue.end,mood:cue.mood||"wonder",film:filmTitle.value.trim()||"Untitled film",at:Date.now()};
-    safeWrite(CUE_KEY,active,filmSave);
+    safeWrite(roomKey(CUE_KEY),active,filmSave);
   }
   filmCues.addEventListener("click",async event=>{
     const button=event.target.closest("button[data-action]");if(!button)return;
@@ -4382,11 +4382,11 @@ document.getElementById("sylIn").oninput=sylRender;
   $("filmImportDraft").addEventListener("click",importScenes);
   $("filmCueBack").addEventListener("click",()=>navTo("faajiplace","film"));
   $("filmCueClear").addEventListener("click",()=>{
-    try{localStorage.removeItem(CUE_KEY);}catch(e){}
+    try{localStorage.removeItem(roomKey(CUE_KEY));}catch(e){}
     renderActiveCue();
   });
   function renderActiveCue(){
-    const active=safeRead(CUE_KEY),box=$("filmCueContext");
+    const active=safeRead(roomKey(CUE_KEY)),box=$("filmCueContext");
     box.hidden=!active;
     if(active){
       $("filmCueName").textContent=(active.title||"Untitled cue")+" · "+(active.film||"Film");
@@ -4394,14 +4394,14 @@ document.getElementById("sylIn").oninput=sylRender;
     }
   }
   function renderWriteCue(){
-    const active=safeRead("ps.ayan.writeCue"),box=$("writeAyanContext");
+    const active=safeRead(roomKey("ps.ayan.writeCue")),box=$("writeAyanContext");
     box.hidden=!active;
     if(active){$("writeAyanName").textContent=active.title||"Untitled draft";$("writeAyanLine").textContent="“"+(active.text||"")+"”";}
   }
   renderActiveCue();
   renderWriteCue();
   $("writeAyanGo").addEventListener("click",()=>{$("voiceCard").scrollIntoView({behavior:"smooth",block:"start"});});
-  $("writeAyanClear").addEventListener("click",()=>{try{localStorage.removeItem("ps.ayan.writeCue");}catch(e){}renderWriteCue();});
+  $("writeAyanClear").addEventListener("click",()=>{try{localStorage.removeItem(roomKey("ps.ayan.writeCue"));}catch(e){}renderWriteCue();});
 
   let draft=Object.assign({title:"Untitled draft",mode:"screenplay",text:""},readRoomData(DRAFT_KEY,{}));
   const draftTitle=$("draftTitle"),draftText=$("draftText"),draftStatus=$("draftStatus");
@@ -4464,7 +4464,7 @@ document.getElementById("sylIn").oninput=sylRender;
     const line=(selected||draftText.value.split(/\r?\n/).map(part=>part.trim()).find(Boolean)||"").slice(0,240);
     if(!line)return;
     const cue={title:draft.title||"Untitled draft",text:line,at:Date.now()};
-    safeWrite("ps.ayan.writeCue",cue,draftStatus);renderWriteCue();navTo("ayan","ayan");
+    safeWrite(roomKey("ps.ayan.writeCue"),cue,draftStatus);renderWriteCue();navTo("ayan","ayan");
   });
   $("draftToFilm").addEventListener("click",()=>{
     saveDraft();
@@ -4495,7 +4495,7 @@ document.getElementById("sylIn").oninput=sylRender;
     film=Object.assign({},initialFilm,readRoomData(FILM_KEY,{}));
     film.cues=Array.isArray(film.cues)?film.cues:[];film.cues.forEach(c=>{if(!c.id)c.id=makeId();});
     filmTitle.value=film.title||"Untitled film";filmLogline.value=film.logline||"";
-    renderCues();clearFilmPreview();
+    renderCues();renderActiveCue();renderWriteCue();clearFilmPreview();
     if(project&&document.getElementById("filmDesk")?.getClientRects().length)restoreFilmAsset(project);
   }
   window.addEventListener("pennio:workspace-project-open",event=>switchRoomProject(event.detail&&event.detail.project||null));
