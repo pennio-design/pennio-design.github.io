@@ -820,6 +820,11 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
     <button class="btn" id="filmCueBack">Back to Film</button>
     <button class="btn" id="filmCueClear" aria-label="Clear film cue">Clear cue</button>
   </div>
+  <div class="fr-context" id="writeAyanContext" hidden>
+    <div class="fr-context-copy"><small>A line from Write</small><b id="writeAyanName"></b><span id="writeAyanLine"></span></div>
+    <button class="btn" id="writeAyanGo">Open voice tools</button>
+    <button class="btn" id="writeAyanClear" aria-label="Clear writing cue">Clear line</button>
+  </div>
   <div class="inst" id="inst" hidden>
     <div class="inst-ic" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     <div class="inst-t"><b>Get the app</b><span id="instTxt">Put pennio.studio on your home screen. It opens full screen and still opens without data.</span></div>
@@ -951,8 +956,8 @@ nav#nav button.on{background:var(--surface-2);color:var(--tp)}
 <section class="view" id="v-write">
   <div class="cr-lead">
     <div class="cr-kicker">Write room · lyrics & screenplay</div>
-    <h1>Write for the ear. Write for the screen.</h1>
-    <p class="sub">Shape a scene or a song, then bring your Yoruba lines into focus with your own voice. Drafts stay on this device until you export them.</p>
+    <h1>A place where Write meets Àyàn.</h1>
+    <p class="sub">Shape a scene or a song, then carry a line into Àyàn and find its rhythm with your voice. Send scene headings to Fàájìplace for picture cues. Drafts stay on this device until you export them.</p>
   </div>
   <div class="jump" role="navigation" aria-label="In this tab"><a href="#draftRoom">Draft room</a><a href="#wtext">Tone marks</a><a href="#hkCard">Songwriting</a><a href="#tgCard">Tone game</a><a href="#ogbCard">Translate</a></div>
   <div class="dr-section-head" id="draftRoom"><div><div class="cr-kicker">One working draft</div><h2>Build the scene. Find the line.</h2></div><p id="draftStatus" aria-live="polite">Saved on this device</p></div>
@@ -978,9 +983,10 @@ A clear image or action.
                     CHARACTER
           A line that changes the scene."></textarea>
     <div class="dr-footer">
-      <button class="btn primary" id="draftExport">Download draft</button>
-      <button class="btn dr-handoff" id="draftToFilm">Send scenes to Film</button>
-      <span class="dr-footnote">Your draft saves automatically in this browser. Export a copy when you want to move it elsewhere.</span>
+      <button class="btn" id="draftExport">Download draft</button>
+      <button class="btn primary" id="draftToAyan">Take a line to Àyàn →</button>
+      <button class="btn dr-handoff" id="draftToFilm">Send scenes to Film →</button>
+      <span class="dr-footnote">Select a line first, or the first line of your draft will travel to Àyàn. You choose when to record it.</span>
     </div>
   </div>
   <div class="steps3">
@@ -3724,7 +3730,7 @@ document.getElementById("sylIn").oninput=sylRender;
   filmCues.addEventListener("input",updateCueField);
   filmCues.addEventListener("change",updateCueField);
   function setActiveCue(cue){
-    const active={title:cue.title||"Untitled cue",start:cue.start||0,end:cue.end,mood:cue.mood||"wonder",film:film.title||"Untitled film",at:Date.now()};
+    const active={title:cue.title||"Untitled cue",start:cue.start||0,end:cue.end,mood:cue.mood||"wonder",film:filmTitle.value.trim()||"Untitled film",at:Date.now()};
     safeWrite(CUE_KEY,active,filmSave);
   }
   filmCues.addEventListener("click",async event=>{
@@ -3750,8 +3756,8 @@ document.getElementById("sylIn").oninput=sylRender;
     }
   });
   function importScenes(){
-    const draft=safeRead(DRAFT_KEY)||{};
-    const text=String(draft.text||"").trim();
+    const text=String($("draftText").value||"").trim();
+    const draftTitleNow=String($("draftTitle").value||"Untitled draft").trim();
     if(!text){if(window.toast)toast("Write a scene or lyric first.");return;}
     const lines=text.split(/\r?\n/);
     const starts=[];
@@ -3765,7 +3771,7 @@ document.getElementById("sylIn").oninput=sylRender;
         film.cues.push({id:makeId(),title:line.replace(/^[^ ]+\s*/,""),mood:"wonder",start:0,end:null,note:note});
       });
     }else{
-      film.cues.push({id:makeId(),title:(draft.title||"Draft cue").trim(),mood:"wonder",start:0,end:null,note:text.slice(0,800)});
+      film.cues.push({id:makeId(),title:draftTitleNow||"Draft cue",mood:"wonder",start:0,end:null,note:text.slice(0,800)});
     }
     renderCues();saveFilm();
     if(window.toast)toast(starts.length?starts.length+" scene"+(starts.length===1?"":"s")+" added to Film.":"Draft added as a film cue.");
@@ -3784,7 +3790,15 @@ document.getElementById("sylIn").oninput=sylRender;
       $("filmCueTime").textContent="Picture starts at "+stamp(active.start||0)+(active.end==null?"":" · ends at "+stamp(active.end))+" · "+(active.mood||"wonder");
     }
   }
+  function renderWriteCue(){
+    const active=safeRead("ps.ayan.writeCue"),box=$("writeAyanContext");
+    box.hidden=!active;
+    if(active){$("writeAyanName").textContent=active.title||"Untitled draft";$("writeAyanLine").textContent="“"+(active.text||"")+"”";}
+  }
   renderActiveCue();
+  renderWriteCue();
+  $("writeAyanGo").addEventListener("click",()=>{$("voiceCard").scrollIntoView({behavior:"smooth",block:"start"});});
+  $("writeAyanClear").addEventListener("click",()=>{try{localStorage.removeItem("ps.ayan.writeCue");}catch(e){}renderWriteCue();});
 
   let draft=Object.assign({title:"Untitled draft",mode:"screenplay",text:""},safeRead(DRAFT_KEY)||{});
   const draftTitle=$("draftTitle"),draftText=$("draftText"),draftStatus=$("draftStatus");
@@ -3841,12 +3855,20 @@ document.getElementById("sylIn").oninput=sylRender;
     const url=URL.createObjectURL(blob),link=document.createElement("a");
     link.href=url;link.download=name+"."+ext;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
+  $("draftToAyan").addEventListener("click",()=>{
+    saveDraft();
+    const selected=draftText.value.slice(draftText.selectionStart,draftText.selectionEnd).trim();
+    const line=(selected||draftText.value.split(/\\r?\\n/).map(part=>part.trim()).find(Boolean)||"").slice(0,240);
+    if(!line)return;
+    const cue={title:draft.title||"Untitled draft",text:line,at:Date.now()};
+    safeWrite("ps.ayan.writeCue",cue,draftStatus);renderWriteCue();navTo("ayan","ayan");
+  });
   $("draftToFilm").addEventListener("click",()=>{
     saveDraft();
     if(!draftText.value.trim())return;
     importScenes();navTo("faajiplace","film");
   });
-  $("filmImportDraft").addEventListener("click",importScenes);
+
   window.addEventListener("beforeunload",()=>{
     if(filmTimer)clearTimeout(filmTimer);
     if(draftTimer)clearTimeout(draftTimer);
