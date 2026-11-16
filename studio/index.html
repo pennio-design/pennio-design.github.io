@@ -4243,8 +4243,9 @@ document.getElementById("sylIn").oninput=sylRender;
     const media=event.detail||{};if(!media.blob)return;
     useFilmBlob(media.blob,media.name,media.assetId,media.kind|| (media.blob.type.startsWith("audio/")?"audio":"video"));
   });
-  window.addEventListener("pennio:film-media-saved",event=>{const saved=event.detail||{};if(saved.id&&saved.name===film.clipName){film.clipAssetId=saved.id;saveFilm();}});
+  window.addEventListener("pennio:film-media-saved",event=>{const saved=event.detail||{};if(saved.id&&saved.name===film.clipName&&(!saved.projectId||saved.projectId===activeRoomProjectId)){film.clipAssetId=saved.id;saveFilm();}});
   window.addEventListener("pennio:workspace-ready",()=>{if(document.getElementById("filmDesk")?.getClientRects().length)restoreFilmAsset();});
+  window.addEventListener("pennio:workspace-media-error",event=>{if(document.getElementById("filmDesk")?.getClientRects().length)filmClipNote.textContent="Media could not be saved: "+(event.detail&&event.detail.message||"Check available device storage.");});
 
   function saveFilm(){
     film.title=filmTitle.value.trim()||"Untitled film";
