@@ -31,6 +31,7 @@ async function storeAsset(detail){
  try{return await operation;}
  finally{if(pendingAssetWrites.get(projectId)===operation)pendingAssetWrites.delete(projectId);}
 }
+async function flushMediaWrites(){await Promise.all([...pendingAssetWrites.values()].map(p=>p.catch(()=>{})));return true;}
 async function getAssets(){
  const d=await openDB();
  return new Promise((resolve,reject)=>{const tx=d.transaction("assets","readonly"),req=tx.objectStore("assets").getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});
@@ -227,6 +228,7 @@ window.PennioWorkspace={
  addAsset:storeAsset,
  saveSession,loadSession,deleteSession,deleteProjectData,exportProjectData,importProjectData,
  refreshProjects:refreshProjectSelect,
+ flushMediaWrites,
  beginProjectDeletion,cancelProjectDeletion,finishProjectDeletion,
  openRoom:async room=>{const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();else window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room}}));await roomSwitchPromise;},
  refresh:refreshAssets
