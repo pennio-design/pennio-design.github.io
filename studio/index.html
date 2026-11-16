@@ -3631,7 +3631,7 @@ async function renderWork(){
   renderCloud();
   let note= CLOUD_ON&&sbSess&&sbSess.user? "Projects are saved in this browser and in your PENNIO account. Last synced: "+agoShort(lsGet("ps.lastSync"))+"." : "Projects live in this browser only, and PENNIO cannot see or recover them"+(CLOUD_ON?" unless you turn on cloud saving":"")+". Clearing site data, or a private window, removes them. Last backup: "+agoText(lsGet("ps.lastBackup"))+".";
   try{ if(navigator.storage&&navigator.storage.persisted&&await navigator.storage.persisted()) note+=" This browser has agreed to keep them."; }catch(e){}
-  if(!db) note="This browser is blocking storage here, so only the current beat is kept. Download a backup to keep your work.";
+  if(!db) note="This browser is blocking local storage here. Download a backup and use a supported browser before creating important work.";
   document.getElementById("storeNote").textContent=note;
   try{ const est=navigator.storage&&navigator.storage.estimate? await navigator.storage.estimate() : null; document.getElementById("storeUse").textContent= est&&est.usage!=null? fmtSize(est.usage)+" used in this browser" : ""; }catch(e){}
   renderBkLog();
@@ -3789,7 +3789,7 @@ document.getElementById("rpGo").onclick=async()=>{
     }
     toast("Restored "+added+" session"+(added===1?"":"s")+(newer?" and updated "+newer:"")+(studioProjectCount?" · "+studioProjectCount+" Studio project"+(studioProjectCount===1?"":"s")+" included":"")+(studioMedia?" · "+studioMedia+" media asset"+(studioMedia===1?"":"s"):"")+(studioSessions?" · "+studioSessions+" DAW session"+(studioSessions===1?"":"s"):"")+" from the backup. Tap Continue on any of them.");
     rpData=null; document.getElementById("rPrev").hidden=true; renderWork();
-  }catch(err){ toast("Something in that file could not be restored."); }
+  }catch(err){ toast("Restore stopped: "+(err&&err.message||"the file could not be read")+". Some earlier items may already have been restored."); }
 };
 
 /* words written in Write */
