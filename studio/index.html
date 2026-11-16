@@ -3449,6 +3449,7 @@ async function openWorkspaceMusicProject(project){
   return true;
 }
 async function removeWorkspaceMusicProject(projectId){
+  if(window.__pennioAyanBoot)await window.__pennioAyanBoot;
   const mapKey="workspace.ayan."+projectId,mapped=await kvGet(mapKey);
   if(!mapped){await tx("kv","readwrite",st=>st.delete(mapKey));return false;}
   if(currentId===mapped){
