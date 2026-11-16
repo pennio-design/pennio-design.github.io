@@ -4626,14 +4626,17 @@ document.getElementById("sylIn").oninput=sylRender;
    const remove=document.createElement("button");remove.textContent="×";remove.setAttribute("aria-label","Delete "+item.name);remove.onclick=async()=>{
     if(!confirm('Delete "'+item.name+'" and its recordings, DAW tracks, drafts and Film media from this device?'))return;
     remove.disabled=true;
+    window.PennioWorkspace?.beginProjectDeletion(item.id);
     try{
       if(window.PennioWorkspace?.activeProjectId===item.id)window.PennioWorkspace.setActiveProject(null);
-      await window.PennioDAWSession?.save?.();
+      await window.PennioDAWSession?.flush?.();
+      await window.PennioAyanWorkspace?.stopRecordings?.();
       await window.PennioWorkspace?.deleteProjectData(item.id);
       await window.PennioAyanWorkspace?.remove(item.id);
       ["ps.film.room","ps.write.draft","ps.film.activeCue","ps.ayan.writeCue"].forEach(base=>{try{localStorage.removeItem(base+"."+item.id);}catch(e){}});
       write(read().filter(x=>x.id!==item.id));renderProjects();window.PennioWorkspace?.refreshProjects?.();
-    }catch(error){remove.disabled=false;alert("This project could not be fully deleted: "+error.message);}
+      window.PennioWorkspace?.finishProjectDeletion(item.id);
+    }catch(error){window.PennioWorkspace?.cancelProjectDeletion(item.id);remove.disabled=false;alert("Project deletion was interrupted: "+error.message+". Check your backup before trying again.");}
    };
    actions.append(open,edit,remove);row.append(mark,copy,actions);projects.append(row);
   });
