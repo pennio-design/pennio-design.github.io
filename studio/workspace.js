@@ -9,9 +9,9 @@ function openDB(){
  if(dbPromise)return dbPromise;
  dbPromise=new Promise((resolve,reject)=>{
   if(!window.indexedDB){reject(Error("This browser does not support local media storage."));return;}
-  const req=indexedDB.open("pennio-studio-workspace",1);
-  req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains("assets")){const store=d.createObjectStore("assets",{keyPath:"id"});store.createIndex("projectId","projectId",{unique:false});store.createIndex("created","created",{unique:false});}};
-  req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||Error("Could not open Studio media storage."));
+  const req=indexedDB.open("pennio-studio-workspace",2);
+  req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains("assets")){const store=d.createObjectStore("assets",{keyPath:"id"});store.createIndex("projectId","projectId",{unique:false});store.createIndex("created","created",{unique:false});}if(!d.objectStoreNames.contains("sessions"))d.createObjectStore("sessions",{keyPath:"projectId"});};
+  req.onsuccess=()=>{const db=req.result;db.onversionchange=()=>{db.close();dbPromise=null;};resolve(db);};req.onerror=()=>reject(req.error||Error("Could not open Studio media storage."));
  });
  return dbPromise;
 }
@@ -32,12 +32,13 @@ async function getAsset(id){
 async function deleteAsset(id){
  const d=await openDB();await new Promise((resolve,reject)=>{const tx=d.transaction("assets","readwrite");tx.objectStore("assets").delete(id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});await refreshAssets();
 }
-function setActive(project){
- activeProjectId=project&&project.id?project.id:null;
+function setActive(project,silent){
+ const previous=activeProjectId;activeProjectId=project&&project.id?project.id:null;
  try{if(activeProjectId)localStorage.setItem(ACTIVE_KEY,activeProjectId);else localStorage.removeItem(ACTIVE_KEY);}catch(e){}
  const label=$("workspaceProjectName");if(label)label.textContent=project?project.name:"Studio workspace";
  const select=$("workspaceProjectSelect");if(select&&select.value!==(activeProjectId||""))select.value=activeProjectId||"";
  refreshAssets();
+ if(!silent&&activeProjectId&&activeProjectId!==previous)window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project}}));
 }
 function projectById(id){return readProjects().find(p=>p.id===id)||null;}
 function buildUI(){
@@ -108,15 +109,44 @@ function refreshProjectSelect(){
  readProjects().forEach(p=>{const option=document.createElement("option");option.value=p.id;option.textContent=p.name;select.append(option);});
  select.value=current||"";
 }
+async function saveSession(projectId,session){
+ if(!projectId||!session)return false;
+ const d=await openDB();
+ return new Promise((resolve,reject)=>{
+  const tx=d.transaction("sessions","readwrite");
+  tx.objectStore("sessions").put(Object.assign({projectId,updated:Date.now()},session));
+  tx.oncomplete=()=>resolve(true);
+  tx.onerror=()=>reject(tx.error||Error("Could not save this session."));
+  tx.onabort=()=>reject(tx.error||Error("Session save was interrupted."));
+ });
+}
+async function loadSession(projectId){
+ if(!projectId)return null;
+ const d=await openDB();
+ return new Promise((resolve,reject)=>{
+  const req=d.transaction("sessions","readonly").objectStore("sessions").get(projectId);
+  req.onsuccess=()=>resolve(req.result||null);
+  req.onerror=()=>reject(req.error||Error("Could not open this session."));
+ });
+}
+async function deleteSession(projectId){
+ if(!projectId)return;
+ const d=await openDB();
+ return new Promise((resolve,reject)=>{
+  const tx=d.transaction("sessions","readwrite");tx.objectStore("sessions").delete(projectId);
+  tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);
+ });
+}
 window.PennioWorkspace={
  get activeProjectId(){return activeProjectId;},
  setActiveProject:setActive,
  listAssets:()=>getAssets(),
  getAsset,
  addAsset:storeAsset,
+ saveSession,loadSession,deleteSession,
  refresh:refreshAssets
 };
-window.addEventListener("pennio:workspace-project-open",e=>{const p=e.detail&&e.detail.project;setActive(p||null);refreshProjectSelect();});
+window.addEventListener("pennio:workspace-project-open",e=>{const p=e.detail&&e.detail.project;setActive(p||null,true);refreshProjectSelect();});
 window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(err=>console.warn("Studio media save:",err));});
 window.addEventListener("pennio:studio-media",e=>{storeAsset(e.detail||{}).catch(err=>console.warn("Studio media save:",err));});
 window.addEventListener("pennio:film-media",e=>{if(e.detail&&e.detail.blob)storeAsset({...e.detail,kind:"video"}).catch(err=>console.warn("Studio media save:",err));});
