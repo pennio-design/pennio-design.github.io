@@ -1365,7 +1365,42 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
  .hsess{display:none}
 }
 @media(prefers-reduced-motion:reduce){.studio-side{transition:none}}
-</style></head>
+</style><style>
+/* Unified, movable Studio panel. Navigation and inspector share one surface. */
+.studio-shell{grid-template-columns:250px minmax(0,1fr)!important;gap:14px!important;align-items:start}
+#studioLeftPanel{grid-column:1;grid-row:1;display:flex!important;flex-direction:column;gap:0;position:sticky;top:126px;min-width:0;max-height:calc(100vh - 142px);overflow-y:auto}
+.studio-main{grid-column:2;grid-row:1;min-width:0}
+.studio-shell.panel-right{grid-template-columns:minmax(0,1fr) 250px!important}
+.studio-shell.panel-right #studioLeftPanel{grid-column:2;grid-row:1}
+.studio-shell.panel-right .studio-main{grid-column:1;grid-row:1}
+#studioLeftPanel .studio-inspector-heading{display:grid;grid-template-columns:1fr auto;align-items:center;gap:7px}
+#studioLeftPanel .studio-inspector-heading>small{grid-column:1/-1}
+#studioInspectorTitle{font-size:14px;font-weight:600;letter-spacing:-.02em}
+.studio-side-position{font-size:10px;color:var(--orange);padding:7px 8px;border:1px solid var(--line2);border-radius:8px;white-space:nowrap}
+.studio-panel-toggles{display:flex;align-items:center}
+.studio-panel-toggles button{display:flex;align-items:center;gap:7px;min-height:36px;padding:7px 10px;border:1px solid var(--line2);border-radius:9px;color:var(--mute);font-size:11px}
+.studio-panel-toggles svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6}
+.studio-side-close{display:none}
+.studio-panel-backdrop{display:none}
+@media(max-width:760px){
+ .studio-shell,.studio-shell.panel-right{display:block!important;padding:0 10px!important}
+ .studio-main{padding:0 2px 28px!important}
+ #studioLeftPanel{position:fixed!important;z-index:81;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);left:0;right:auto;width:min(88vw,360px);max-height:none;margin:0;border:1px solid var(--line2);border-left:0;border-radius:0 16px 16px 0;background:var(--off);box-shadow:0 12px 40px rgba(0,0,0,.32);transform:translateX(-105%);transition:transform .22s ease;overscroll-behavior:contain;padding:15px 12px}
+ .studio-shell.panel-right #studioLeftPanel{left:auto;right:0;border-left:1px solid var(--line2);border-right:0;border-radius:16px 0 0 16px;transform:translateX(105%)}
+ .studio-shell.panel-mobile-open #studioLeftPanel,.studio-shell.panel-right.panel-mobile-open #studioLeftPanel{transform:translateX(0)}
+ .studio-side-close{display:grid;position:absolute;top:10px;right:10px;place-items:center;width:34px;height:34px;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:20px;line-height:1}
+ .studio-panel-backdrop{display:block;position:fixed;inset:0;z-index:79;background:rgba(0,0,0,.18);touch-action:manipulation}
+ .studio-panel-backdrop[hidden]{display:none!important}
+ body.studio-drawer-open{overflow:hidden;overscroll-behavior:none}
+ .studio-panel-toggles{position:relative;z-index:82}
+ .studio-panel-toggles button{width:38px;justify-content:center;padding:7px}
+ .studio-panel-toggles button span{display:none}
+ .studio-nav-list{max-height:28vh;overflow:auto}
+}
+@media(min-width:761px){.studio-panel-backdrop{display:none!important}}
+@media(prefers-reduced-motion:reduce){#studioLeftPanel{transition:none}}
+</style>
+</head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
   <div class="auth-gate-top"><a class="auth-gate-brand" href="https://pennio.agency/" aria-label="PENNIO home"><span class="auth-gate-mark" aria-hidden="true"><svg viewBox="0 0 81.67 102.67" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></span><span>PENNIO <i>STUDIO</i></span></a><span class="auth-gate-label">CREATIVE WORKSPACE</span></div>
@@ -1387,7 +1422,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <div class="logo"><svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81.67 102.67" role="img" aria-label="PENNIO"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg>PENNIO Studio <span>· PENNIO</span></div>
     <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span><span class="local-status" id="localStatus"><i></i>Saved on device</span></div>
     <div class="hright">
-      <div class="studio-panel-toggles" role="group" aria-label="Workspace panels"><button type="button" id="leftPanelToggle" aria-controls="studioLeftPanel" aria-expanded="true" title="Hide navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg><span>Library</span></button><button type="button" id="rightPanelToggle" aria-controls="studioRightPanel" aria-expanded="true" title="Hide inspector"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg><span>Inspector</span></button></div><button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
+      <div class="studio-panel-toggles" role="group" aria-label="Studio side panel"><button type="button" id="studioPanelToggle" aria-controls="studioLeftPanel" aria-expanded="false" title="Open Studio panel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg><span>Studio panel</span></button></div><button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
       <button class="btn ic" id="siteSettingsBtn" type="button" aria-label="Studio settings" title="Studio settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
       <button type="button" class="studio-rec-launch" id="studioRecLaunch" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Capture</button>
       <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
@@ -1423,7 +1458,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 </aside>
 
 
-<div class="studio-shell" id="studioShell"><div class="studio-panel-backdrop" id="studioPanelBackdrop" hidden aria-hidden="true"></div><aside class="studio-side studio-side-left" id="studioLeftPanel" aria-label="Studio navigation"><div class="studio-side-head"><span>PENNIO STUDIO</span><b>Library</b><button type="button" class="studio-side-close" data-studio-panel-close aria-label="Close navigation">×</button></div><div class="studio-nav-actions"><button type="button" class="studio-nav-new" id="studioNavNewProject">＋ <span>New project</span></button><button type="button" class="studio-nav-search-focus" id="studioNavSearchFocus" aria-label="Focus project search">⌕</button></div><label class="studio-nav-search"><span aria-hidden="true">⌕</span><input id="studioNavSearch" type="search" placeholder="Search projects" autocomplete="off" aria-label="Search projects and saved sessions"></label><div class="studio-side-section studio-nav-project-section"><small>PROJECTS <span id="studioNavProjectCount">0</span></small><div id="studioNavProjects" class="studio-nav-list"><p class="studio-nav-empty">Your projects will appear here.</p></div></div><div class="studio-side-section"><small>RECENT WORK</small><div id="studioNavRecent" class="studio-nav-list"><p class="studio-nav-empty">Saved sessions will appear here.</p></div></div><div class="studio-side-section"><small>ROOMS</small><button type="button" data-studio-room="ayan">Beat <span>Àyàn</span></button><button type="button" data-studio-room="write">Write <span>Akéwì</span></button><button type="button" data-studio-room="faajiplace">Fàájíplace</button><button type="button" data-studio-room="beauty">Model</button></div><div class="studio-side-section"><small>TOOLS</small><button type="button" data-studio-action="openWork">All sessions <span>↗</span></button><button type="button" data-studio-action="openHist">History <span>↗</span></button><button type="button" data-studio-action="guideLink">Learn <span>↗</span></button></div></aside><main class="wrap studio-main"><!-- STUDIO DASHBOARD -->
+<div class="studio-shell" id="studioShell"><div class="studio-panel-backdrop" id="studioPanelBackdrop" hidden aria-hidden="true"></div><aside class="studio-side studio-side-left" id="studioLeftPanel" aria-label="Studio navigation"><div class="studio-side-head"><span>PENNIO STUDIO</span><b>Library</b><button type="button" class="studio-side-close" data-studio-panel-close aria-label="Close navigation">×</button></div><div class="studio-nav-actions"><button type="button" class="studio-nav-new" id="studioNavNewProject">＋ <span>New project</span></button><button type="button" class="studio-nav-search-focus" id="studioNavSearchFocus" aria-label="Focus project search">⌕</button></div><label class="studio-nav-search"><span aria-hidden="true">⌕</span><input id="studioNavSearch" type="search" placeholder="Search projects" autocomplete="off" aria-label="Search projects and saved sessions"></label><div class="studio-side-section studio-nav-project-section"><small>PROJECTS <span id="studioNavProjectCount">0</span></small><div id="studioNavProjects" class="studio-nav-list"><p class="studio-nav-empty">Your projects will appear here.</p></div></div><div class="studio-side-section"><small>RECENT WORK</small><div id="studioNavRecent" class="studio-nav-list"><p class="studio-nav-empty">Saved sessions will appear here.</p></div></div><div class="studio-side-section"><small>ROOMS</small><button type="button" data-studio-room="ayan">Beat <span>Àyàn</span></button><button type="button" data-studio-room="write">Write <span>Akéwì</span></button><button type="button" data-studio-room="faajiplace">Fàájíplace</button><button type="button" data-studio-room="beauty">Model</button></div><div class="studio-side-section"><small>TOOLS</small><button type="button" data-studio-action="openWork">All sessions <span>↗</span></button><button type="button" data-studio-action="openHist">History <span>↗</span></button><button type="button" data-studio-action="guideLink">Learn <span>↗</span></button></div><div class="studio-side-section studio-inspector-heading"><small>ACTIVE ROOM</small><b id="studioInspectorTitle">Workspace tools</b><button type="button" class="studio-side-position" id="studioPanelPosition" aria-label="Move panel to right">Move to right ↗</button></div><div class="studio-inspector-context" id="studioInspectorContext">Choose a destination to see its available tools.</div><div class="studio-side-section"><small>SELECTED AUDIO LAYER</small><div id="studioCleanControls"><p class="studio-side-note">Select an audio layer in Beat to adjust its sound.</p></div></div><div class="studio-side-section"><small>QUICK ACTIONS</small><button type="button" data-studio-action="studioRecLaunch">Capture a take</button><button type="button" data-studio-action="openWork">Open sessions</button><button type="button" data-studio-action="openHist">Open history</button></div><div class="studio-side-section"><small>PROJECT</small><div class="studio-side-project" id="studioInspectorProject">Studio workspace</div><p class="studio-side-note">Tools and properties will follow the selected room and item.</p></div></aside><main class="wrap studio-main"><!-- STUDIO DASHBOARD -->
 <section class="view" id="v-home">
   <div class="dash-topline"><span class="dash-kicker">PENNIO CREATIVE PLATFORM</span><span class="dash-local"><i></i> <span id="dashAccountIdentity">Authenticated workspace</span></span></div>
   <div class="dash-intro"><div><h1>Welcome back,<br><em id="dashUserName">creator.</em></h1><p>Your creative workspace is ready.</p></div><button class="dash-new" id="dashNewProject"><span>＋</span> New project</button></div>
@@ -1846,7 +1881,7 @@ A clear image or action.
 
 
 <p class="foot"><a href="/studio/guide/" style="color:inherit">How to use PENNIO Studio</a> · PENNIO Studio by PENNIO</p>
-</main><aside class="studio-side studio-side-right" id="studioRightPanel" aria-label="Contextual tools"><div class="studio-side-head"><span>INSPECTOR</span><b id="studioInspectorTitle">Workspace tools</b><button type="button" class="studio-side-close" data-studio-panel-close aria-label="Close right panel">×</button></div><div class="studio-inspector-context" id="studioInspectorContext">Choose a destination to see its available tools.</div><div class="studio-side-section"><small>SELECTED AUDIO LAYER</small><div id="studioCleanControls"><p class="studio-side-note">Select an audio layer in Beat to adjust its sound.</p></div></div><div class="studio-side-section"><small>QUICK ACTIONS</small><button type="button" data-studio-action="studioRecLaunch">Capture a take</button><button type="button" data-studio-action="openWork">Open sessions</button><button type="button" data-studio-action="openHist">Open history</button></div><div class="studio-side-section"><small>PROJECT</small><div class="studio-side-project" id="studioInspectorProject">Studio workspace</div><p class="studio-side-note">Tools and properties will follow the selected room and item.</p></div></aside></div>
+</main></div>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to PENNIO Studio.</h2>
   <p id="obIntro">No password. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your work saves in this browser on this device, so download a backup from Sessions now and then.</p>
@@ -5535,43 +5570,47 @@ nav#nav[hidden]{display:none!important}
 
 </style>
 <script>
-/* Independent Studio panel controls. State is shared across rooms and reloads. */
+/* One responsive Studio panel. The same panel can move between screen edges. */
 (()=>{
  const shell=document.getElementById("studioShell");
  if(!shell)return;
- const key="pennio.studio.panels.v1";
- const left=document.getElementById("studioLeftPanel"),right=document.getElementById("studioRightPanel");
- const leftBtn=document.getElementById("leftPanelToggle"),rightBtn=document.getElementById("rightPanelToggle");
+ const panel=document.getElementById("studioLeftPanel");
+ const toggle=document.getElementById("studioPanelToggle");
+ const position=document.getElementById("studioPanelPosition");
  const backdrop=document.getElementById("studioPanelBackdrop");
- const closeDrawers=()=>{mobileLeftOpen=false;mobileRightOpen=false;render();save()};
- const read=()=>{try{return JSON.parse(localStorage.getItem(key)||"{}")}catch(e){return {}}};
- const save=()=>{try{localStorage.setItem(key,JSON.stringify({left:leftOpen,right:rightOpen}))}catch(e){}};
- const mobile=()=>window.matchMedia("(max-width:1024px)").matches;
- let state=read(),leftOpen=state.left!==false,rightOpen=state.right!==false,mobileLeftOpen=false,mobileRightOpen=false;
+ const key="pennio.studio.panel.v2";
+ const mobile=()=>window.matchMedia("(max-width:760px)").matches;
+ let side="left",mobileOpen=false;
+ try{const saved=JSON.parse(localStorage.getItem(key)||"{}");side=saved.side==="right"?"right":"left";}catch(e){}
+ const save=()=>{try{localStorage.setItem(key,JSON.stringify({side}));}catch(e){}};
  function render(){
-  shell.classList.toggle("left-collapsed",!leftOpen);shell.classList.toggle("right-collapsed",!rightOpen);
-  const isMobile=mobile(),anyDrawerOpen=isMobile&&(mobileLeftOpen||mobileRightOpen);
-  shell.classList.toggle("mobile-left-open",isMobile&&mobileLeftOpen);shell.classList.toggle("mobile-right-open",isMobile&&mobileRightOpen);
-  backdrop.hidden=!anyDrawerOpen;backdrop.setAttribute("aria-hidden",String(!anyDrawerOpen));
-  document.body.classList.toggle("studio-drawer-open",anyDrawerOpen);
-  const leftVisible=isMobile?mobileLeftOpen:leftOpen,rightVisible=isMobile?mobileRightOpen:rightOpen;
-  leftBtn.setAttribute("aria-expanded",String(leftVisible));rightBtn.setAttribute("aria-expanded",String(rightVisible));
-  leftBtn.title=leftVisible?"Hide navigation":"Show navigation";rightBtn.title=rightVisible?"Hide inspector":"Show inspector";
-  leftBtn.setAttribute("aria-label",leftBtn.title);rightBtn.setAttribute("aria-label",rightBtn.title);
+  shell.classList.toggle("panel-right",side==="right");
+  shell.classList.toggle("panel-mobile-open",mobile()&&mobileOpen);
+  backdrop.hidden=!(mobile()&&mobileOpen);
+  backdrop.setAttribute("aria-hidden",String(!(mobile()&&mobileOpen)));
+  document.body.classList.toggle("studio-drawer-open",mobile()&&mobileOpen);
+  toggle.setAttribute("aria-expanded",String(mobile()?mobileOpen:true));
+  toggle.title=mobile()?(mobileOpen?"Close Studio panel":"Open Studio panel"):"Move Studio panel to the "+(side==="left"?"right":"left");
+  toggle.setAttribute("aria-label",toggle.title);
+  if(position){
+   position.textContent=side==="left"?"Move to right ↗":"↙ Move to left";
+   position.setAttribute("aria-label","Move panel to "+(side==="left"?"right":"left"));
+  }
  }
- leftBtn.addEventListener("click",()=>{if(mobile())mobileLeftOpen=!mobileLeftOpen;else leftOpen=!leftOpen;render();save()});
- rightBtn.addEventListener("click",()=>{if(mobile())mobileRightOpen=!mobileRightOpen;else rightOpen=!rightOpen;render();save()});
- backdrop.addEventListener("click",closeDrawers);
- shell.addEventListener("click",event=>{if(event.target.closest("[data-studio-panel-close]")){const panel=event.target.closest("#studioLeftPanel,#studioRightPanel");if(panel?.id==="studioLeftPanel")mobileLeftOpen=false;if(panel?.id==="studioRightPanel")mobileRightOpen=false;render();save()}});
- document.addEventListener("keydown",event=>{if(event.key==="Escape"&&(mobileLeftOpen||mobileRightOpen))closeDrawers()});
- window.addEventListener("resize",()=>{if(!mobile()){mobileLeftOpen=false;mobileRightOpen=false;document.body.classList.remove("studio-drawer-open")}render()});
+ function movePanel(){side=side==="left"?"right":"left";save();render();}
+ toggle.addEventListener("click",()=>{if(mobile()){mobileOpen=!mobileOpen;}else{movePanel();}render();});
+ position?.addEventListener("click",movePanel);
+ backdrop.addEventListener("click",()=>{mobileOpen=false;render();});
+ panel.addEventListener("click",event=>{if(event.target.closest("[data-studio-panel-close]")){mobileOpen=false;render();}});
+ document.addEventListener("keydown",event=>{if(event.key==="Escape"&&mobileOpen){mobileOpen=false;render();}});
+ window.addEventListener("resize",()=>{if(!mobile())mobileOpen=false;render();});
  shell.addEventListener("click",event=>{
   const room=event.target.closest("[data-studio-room]");
-  if(room){const target=document.querySelector('#nav button[data-v="'+room.dataset.studioRoom+'"]');if(target)target.click();if(mobile())closeDrawers();return}
+  if(room){const target=document.querySelector('#nav button[data-v="'+room.dataset.studioRoom+'"]');if(target)target.click();if(mobile()){mobileOpen=false;render();}return;}
   const project=event.target.closest("[data-studio-project]");
-  if(project){window.PennioWorkspace?.openProject?.(project.dataset.studioProject);if(mobile())closeDrawers();return}
+  if(project){window.PennioWorkspace?.openProject?.(project.dataset.studioProject);if(mobile()){mobileOpen=false;render();}return;}
   const action=event.target.closest("[data-studio-action]");
-  if(action){const target=document.getElementById(action.dataset.studioAction);if(target)target.click()}
+  if(action){const target=document.getElementById(action.dataset.studioAction);if(target)target.click();}
  });
  const labels={ayan:["Beat · Àyàn","Production tools and session controls for the active beat."],write:["Write · Akéwì","Songwriting, lyric development and recording prompts."],faajiplace:["Fàájíplace","Story development, scenes and film references."],beauty:["Model","Visual references and model tools."],home:["Projects","Your projects and their saved creative work."]};
  function updateContext(){
@@ -5582,7 +5621,7 @@ nav#nav[hidden]{display:none!important}
   const inspectorProject=document.getElementById("studioInspectorProject");if(inspectorProject)inspectorProject.textContent=name;
  }
  document.getElementById("nav")?.addEventListener("click",()=>requestAnimationFrame(updateContext));
- document.getElementById("studioNavNewProject")?.addEventListener("click",()=>{document.getElementById("dashNewProject")?.click();if(mobile())closeDrawers();});
+ document.getElementById("studioNavNewProject")?.addEventListener("click",()=>document.getElementById("dashNewProject")?.click());
  document.getElementById("studioNavSearchFocus")?.addEventListener("click",()=>document.getElementById("studioNavSearch")?.focus());
  document.getElementById("studioNavSearch")?.addEventListener("input",()=>window.PennioWorkspace?.refreshNavigation?.());
  document.getElementById("pname")?.addEventListener("input",updateContext);
