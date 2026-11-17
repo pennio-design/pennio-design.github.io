@@ -1748,7 +1748,7 @@ A clear image or action.
   <div class="cr-lead">
     <div class="cr-kicker">Fàájìplace · film room</div>
     <h1>Score the story while it is still moving.</h1>
-    <p class="sub">Plan the script, capture real places and performances, then keep reference footage and scene cues together for your AI generator or edit. Your footage stays on this device.</p>
+    <p class="sub">Plan the script, add reference footage from this device, then keep media and scene cues together for your AI generator or edit. Your footage stays on this device.</p>
   </div>
   <div class="fr-desk" id="filmDesk">
     <div class="fr-top">
@@ -4663,8 +4663,7 @@ const TOURS=[
     {sel:"#filmLogline",t:"Write what changes in the scene. Prompt: what should a viewer notice, and what should they feel?"},
     {sel:"#filmScriptNotes",t:"Paste a script excerpt or bring scene headings from Write. Keep the action concrete and visible."},
     {sel:"#filmShotPlan",t:"Plan three references: a wide view of the place, the key movement, and one close detail."},
-    {sel:"#filmOpenCapture",t:"Open the camera preview to capture real location, light and movement as a reference clip. The camera asks permission before it starts.",tap:true},
-    {sel:"#studioRecStart",t:"Tap Open camera for a live framing preview. After you check the shot, tap Record scene."},
+    {sel:"#studioRecStart",t:"Record a voice note, melody or beatbox, then review and trim the take before sending it to a room."},
     {sel:"#studioRecStop",t:"Stop the take to review and trim it. Wait for the preview and Film handoff to appear.",until:()=>{const b=document.getElementById("studioRecFilm");return !!b&&!b.hidden;}},
     {sel:"#studioRecFilm",t:"Send the reference into this Film project. Save to device if you want to load it into an external AI generator.",cta:{label:"Use this reference in Film",target:"#studioRecFilm",finish:true}}
   ]}
@@ -4968,7 +4967,7 @@ document.getElementById("sylIn").oninput=sylRender;
   renderCues();
   filmTitle.addEventListener("input",saveFilmSoon);
   filmLogline.addEventListener("input",saveFilmSoon); $("filmScriptNotes").addEventListener("input",saveFilmSoon); $("filmShotPlan").addEventListener("input",saveFilmSoon);
-  $("filmOpenCapture").addEventListener("click",()=>{const launch=$("studioRecLaunch"),mode=document.querySelector('[data-rec-mode="video"]');if(launch&&!$("studioRecorder").classList.contains("open"))launch.click();if(mode)mode.click();$("studioRecorder").scrollIntoView({behavior:"smooth",block:"center"});});filmFile.addEventListener("change",async()=>{
+filmFile.addEventListener("change",async()=>{
     const file=filmFile.files&&filmFile.files[0];if(!file)return;
     try{
       const asset=window.PennioWorkspace?await window.PennioWorkspace.addAsset({blob:file,name:file.name,kind:"video"}):null;
