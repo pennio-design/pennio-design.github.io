@@ -101,7 +101,7 @@ function buildUI(){
  #pennioWorkspaceDock .ws-toggle{cursor:pointer;touch-action:manipulation}
  #pennioWorkspaceDock .ws-minimize{border:1px solid var(--line,rgba(255,255,255,.16));background:transparent;border-radius:9px;width:32px;height:32px;font-size:17px;cursor:pointer}
  #pennioWorkspaceDock .ws-restore{display:none;border:0;background:transparent;color:inherit;font-size:12px;font-weight:600;padding:5px 7px;cursor:pointer}
- #pennioWorkspaceDock.is-minimized{width:auto;max-width:calc(100vw - 20px)}
+ #pennioWorkspaceDock.is-minimized{width:max-content;max-width:calc(100vw - 32px);margin-left:auto}
  #pennioWorkspaceDock.is-minimized .ws-shell{border-radius:999px}
  #pennioWorkspaceDock.is-minimized .ws-head{gap:10px;padding:7px 9px;min-height:0}
  #pennioWorkspaceDock.is-minimized .ws-head-copy,#pennioWorkspaceDock.is-minimized .ws-minimize,#pennioWorkspaceDock.is-minimized .ws-toggle{display:none}
