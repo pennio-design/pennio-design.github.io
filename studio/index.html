@@ -3735,7 +3735,8 @@ function P16(str){ return str.split("").map(c=>c==="."?0:+c); }
 document.getElementById("vbeat").onclick=()=>{
   if(!rawBuf) return;
   const btn=document.getElementById("vbeat"); btn.disabled=true; btn.textContent="Listening…";
-  setTimeout(()=>{ try{ beatFromVoice(); }catch(e){ toast("Could not read a rhythm from this recording."); } btn.disabled=false; btn.textContent="Make another beat from my voice"; },30);
+  window.PennioStudioProgress?.begin("Finding your groove","Analysing the vocal rhythm and preparing a beat. Playback is paused until this finishes.");
+  setTimeout(()=>{ try{ beatFromVoice(); window.PennioStudioProgress?.finish("Your beat is ready"); }catch(e){ toast("Could not read a rhythm from this recording."); window.PennioStudioProgress?.fail(e.message||"Could not read a rhythm from this recording."); } finally{ btn.disabled=false; btn.textContent="Make another beat from my voice"; } },30);
 };
 /* tempo and downbeat from the voice's onset strength, or from the user's own taps */
 function tempoFromFlux(flux,hop){
@@ -5262,8 +5263,10 @@ document.getElementById("sylIn").oninput=sylRender;
 </script>
 <div class="studio-progress-monitor" id="studioProgressMonitor" role="status" aria-live="polite" aria-atomic="true" data-indeterminate="true"><strong id="studioProgressTitle">Working</strong><small id="studioProgressDetail">Your work is being prepared.</small><div class="studio-progress-track"><i id="studioProgressFill"></i></div></div>
 <script id="studio-progress-api">
-(()=>{const root=document.getElementById("studioProgressMonitor"),title=document.getElementById("studioProgressTitle"),detail=document.getElementById("studioProgressDetail"),fill=document.getElementById("studioProgressFill");let timer=0;
-window.PennioStudioProgress={begin(label="Working",description="Your work is being prepared."){clearTimeout(timer);title.textContent=label;detail.textContent=description;root.dataset.indeterminate="true";fill.style.width="35%";root.classList.add("is-visible");},update(percent,description){root.dataset.indeterminate="false";fill.style.width=Math.max(0,Math.min(100,Number(percent)||0))+"%";if(description)detail.textContent=description;},finish(description="Ready"){root.dataset.indeterminate="false";fill.style.width="100%";title.textContent=description;detail.textContent="You can continue working.";timer=setTimeout(()=>root.classList.remove("is-visible"),1600);},fail(description="Something needs attention"){root.dataset.indeterminate="false";title.textContent="Could not finish";detail.textContent=description;root.classList.add("is-visible");}};
+(()=>{const root=document.getElementById("studioProgressMonitor"),title=document.getElementById("studioProgressTitle"),detail=document.getElementById("studioProgressDetail"),fill=document.getElementById("studioProgressFill");let timer=0,locked=false;const playbackIds=["play","firstPlay","dawPlay","dawPlaySelection","vprev","tgHear"],prior=new Map();
+function lockPlayback(){if(locked)return;locked=true;window.PennioBeatControl?.stop?.();window.PennioDAWAudioControl?.stop?.();playbackIds.forEach(id=>{const el=document.getElementById(id);if(!el)return;prior.set(id,el.disabled);el.disabled=true;el.setAttribute("aria-disabled","true");});}
+function unlockPlayback(){locked=false;playbackIds.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.disabled=prior.has(id)?prior.get(id):false;el.removeAttribute("aria-disabled");});prior.clear();}
+window.PennioStudioProgress={begin(label="Working",description="Your work is being prepared."){clearTimeout(timer);lockPlayback();title.textContent=label;detail.textContent=description;root.dataset.indeterminate="true";fill.style.width="35%";root.classList.add("is-visible");},update(percent,description){root.dataset.indeterminate="false";fill.style.width=Math.max(0,Math.min(100,Number(percent)||0))+"%";if(description)detail.textContent=description;},finish(description="Ready"){unlockPlayback();root.dataset.indeterminate="false";fill.style.width="100%";title.textContent=description;detail.textContent="You can continue working.";timer=setTimeout(()=>root.classList.remove("is-visible"),1600);},fail(description="Something needs attention"){unlockPlayback();root.dataset.indeterminate="false";title.textContent="Could not finish";detail.textContent=description;root.classList.add("is-visible");}};
 })();
 </script>
 <script src="/studio/workspace.js" defer></script>
