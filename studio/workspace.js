@@ -90,7 +90,8 @@ function buildUI(){
  #pennioWorkspaceDock[hidden],#pennioWorkspaceDock .ws-body[hidden]{display:none}
 
  #pennioWorkspaceDock .ws-head{user-select:none}
- #pennioWorkspaceDock .ws-head-copy{cursor:grab}
+ #pennioWorkspaceDock .ws-head-copy{cursor:grab;touch-action:none}
+ #pennioWorkspaceDock .ws-mark{touch-action:none}
  #pennioWorkspaceDock .ws-toggle{cursor:grab;touch-action:none}
  #pennioWorkspaceDock.ws-dragging .ws-shell{box-shadow:0 24px 72px #0008;border-color:#ff6a00}
  #pennioWorkspaceDock.ws-dragging .ws-head{cursor:grabbing}
