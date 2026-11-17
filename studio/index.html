@@ -1344,7 +1344,28 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .ms button.h{min-width:42px}
 @media(max-width:560px){.row{grid-template-columns:132px minmax(0,1fr)!important}.ms button{min-height:26px}}
 </style>
-</head>
+<style id="pennio-inline-lane-controls">
+.row{grid-template-columns:minmax(132px,168px) minmax(420px,1fr)}
+.name{min-width:0;align-items:flex-start}
+.name .nmb{max-width:100%;text-align:left}
+.name .nmb b{display:block;white-space:normal;overflow-wrap:anywhere}
+.ms{display:flex;flex-wrap:wrap;align-items:center;gap:3px}
+.ms button{width:auto;min-width:25px;padding:0 5px;min-height:25px}
+.ms .lane-rec{border-color:#8b4a27;color:#ffb27d;min-width:44px}
+.ms .lane-rec[aria-pressed="true"]{background:#b74322;color:#fff;border-color:#b74322}
+.lane-more{width:100%;max-width:168px;margin-top:4px;border-top:1px solid #292929;padding-top:4px}
+.lane-more summary{font-size:10px;color:var(--mute);cursor:pointer;list-style:none;min-height:24px;display:flex;align-items:center;gap:5px}
+.lane-more summary::-webkit-details-marker{display:none}
+.lane-more summary:before{content:"＋";color:var(--orange)}
+.lane-more[open] summary:before{content:"−"}
+.lane-more-body{display:grid;gap:8px;padding:7px 2px 4px}
+.lane-range label{display:flex;justify-content:space-between;gap:6px;color:var(--mute);font-size:10px;margin-bottom:5px}
+.lane-range input{width:100%;min-width:0}
+.lane-actions{display:flex;flex-wrap:wrap;gap:5px}
+.lane-actions button{font-size:10px;padding:6px 8px;border:1px solid var(--line2);border-radius:7px}
+.lane-actions button.danger{color:#e99a85}
+@media(max-width:560px){.row{grid-template-columns:122px minmax(420px,1fr)}.name{padding-left:0}.ms button{min-height:28px}.lane-more{max-width:122px}}
+</style></head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
   <div class="auth-gate-top"><a class="auth-gate-brand" href="https://pennio.agency/" aria-label="PENNIO home"><span class="auth-gate-mark" aria-hidden="true"><svg viewBox="0 0 81.67 102.67" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></span><span>PENNIO <i>STUDIO</i></span></a><span class="auth-gate-label">CREATIVE WORKSPACE</span></div>
@@ -1603,11 +1624,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 </div>
 </section>
 
-  <div class="card">
-    <h3>Layers</h3>
-    <p>Every sound in your track. Switch a layer on or off, set its volume, and tune it up or down in semitones.</p>
-    <p class="layer-isolation-status" id="laneIsolationStatus" hidden></p><div class="layers" id="layers"></div>
-  </div>
+
 
   <div class="card">
     <div class="ilu-head"><svg class="ilu-big" id="iluBig" viewBox="0 0 64 64" aria-hidden="true"><use href="#iluFace"/><circle class="ilu-rip" cx="32" cy="32" r="21"/></svg><h3>Ìlù: the drum speaks your voice</h3></div>
@@ -2045,7 +2062,7 @@ function paintIsolationState(){
     row.classList.toggle("isolation-muted",temporary);
     row.title=temporary?"Temporarily muted while another lane is held solo":"";
     const hold=row.querySelector(".h"); if(hold){hold.classList.toggle("on",isolationActive&&id===activeSoloLaneId);hold.setAttribute("aria-pressed",String(isolationActive&&id===activeSoloLaneId));}
-    row.querySelectorAll(".m,.s,.nmb").forEach(button=>button.disabled=isolationActive);
+    row.querySelectorAll(".m,.s,.nmb,.lane-rec,.lane-more input,.lane-recreate,.lane-clear").forEach(button=>button.disabled=isolationActive);
   });
   layersEl?.querySelectorAll(".layer[data-l]").forEach(el=>{
     const id=el.dataset.l, temporary=isolationActive&&id!==activeSoloLaneId&&(isolationSource==="daw"||!!preSoloStates?.[id]);
@@ -2478,6 +2495,47 @@ function cellDesc(id,v){ if(!v) return "empty"; const t=cellText(id,v); return (
 function styleCell(b,id,i){ const v=pattern[id][i], a=Math.abs(v), grp=N===12?3:4;
   b.className="step"+(i%grp===0?" beat":"")+(i>0&&i%grp===0?" g":"")+(a?" v"+a:"")+(v<0?" ghost":"");
   b.textContent=cellText(id,v); b.setAttribute("aria-label",(LANES.find(l=>l.id===id)||{}).name+", step "+(i+1)+" of "+N+", "+cellDesc(id,v)); }
+let activeLaneCapture=null;
+async function finishLaneCapture(){
+ const active=activeLaneCapture;if(!active)return;
+ activeLaneCapture=null;active.button.textContent="Voice";active.button.setAttribute("aria-pressed","false");active.button.disabled=true;
+ try{
+  const blob=new Blob(active.chunks,{type:active.recorder.mimeType||"audio/webm"});
+  active.stream.getTracks().forEach(t=>t.stop());
+  if(!blob.size)throw new Error("No audio was captured. Try again.");
+  ensureAudio();
+  const decoded=await ac.decodeAudioData(await blob.arrayBuffer());
+  const lane=LANES.find(x=>x.id===active.id);if(!lane)throw new Error("That lane is no longer available.");
+  const channel=decoded.getChannelData(0),duration=decoded.duration,hop=Math.max(1,Math.floor(decoded.sampleRate*.01)),frame=Math.max(1,Math.floor(decoded.sampleRate*.02)),energy=[];
+  for(let start=0;start<channel.length;start+=hop){let sum=0,count=Math.min(frame,channel.length-start);for(let j=0;j<count;j++){const v=channel[start+j];sum+=v*v;}energy.push({t:start/decoded.sampleRate,e:Math.sqrt(sum/Math.max(1,count))});}
+  const sorted=energy.map(x=>x.e).sort((a,b)=>a-b),floor=sorted[Math.floor(sorted.length*.25)]||0,peak=sorted[sorted.length-1]||0,threshold=Math.max(.002,floor*2.2,peak*.16),minGap=.065,onsets=[];let last=-1;
+  for(let i=1;i<energy.length-1;i++){const p=energy[i-1],v=energy[i],n=energy[i+1];if(v.e>=threshold&&v.e>=p.e*1.35&&v.e>=n.e&&v.t-last>=minGap){onsets.push(v);last=v.t;}}
+  if(!onsets.length&&peak>.003){const strongest=energy.reduce((best,v)=>v.e>best.e?v:best,energy[0]);onsets.push(strongest);}
+  if(!onsets.length)throw new Error("No clear vocal attacks were detected. Try a sharper hum or beatbox.");
+  const next=new Array(N).fill(0),stepTimes=new Map();
+  onsets.forEach(hit=>{const step=Math.min(N-1,Math.max(0,Math.round(hit.t/Math.max(.01,duration)*N)));const previous=stepTimes.get(step)||0;stepTimes.set(step,Math.max(previous,hit.e));});
+  const maxEnergy=Math.max(...stepTimes.values(),.001);
+  stepTimes.forEach((value,step)=>{const strength=value/maxEnergy;next[step]=lane.states===1?1:Math.min(lane.states,Math.max(1,Math.ceil(strength*lane.states)));});
+  pushHist();pattern[lane.id]=next;banks[bank]=pattern;shownRows.add(lane.id);render();saveSoon();
+  window.dispatchEvent(new CustomEvent("pennio:studio-media",{detail:{blob,name:"Voice craft · "+lane.name,kind:"audio",laneId:lane.id,projectId:window.PennioWorkspace?.activeProjectId||"__studio_default__"}}));
+  toast(onsets.length+" vocal attacks mapped to "+lane.name+". Undo restores the previous lane.");
+ }catch(error){toast(error.message||"Could not map that recording to the lane.");}
+ finally{active.button.disabled=false;}
+}
+async function toggleLaneCapture(id,button){
+ if(activeLaneCapture){if(activeLaneCapture.id===id){if(activeLaneCapture.recorder.state==="recording")activeLaneCapture.recorder.stop();return;}toast("Stop the current lane recording first.");return;}
+ if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){toast("Voice crafting needs microphone access in a secure browser.");return;}
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+  const mime=["audio/webm;codecs=opus","audio/mp4","audio/webm"].find(type=>MediaRecorder.isTypeSupported(type));
+  const recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined),chunks=[];
+  activeLaneCapture={id,button,stream,recorder,chunks};button.textContent="Stop";button.setAttribute("aria-pressed","true");
+  recorder.ondataavailable=event=>{if(event.data?.size)chunks.push(event.data);};
+  recorder.onerror=()=>{stream.getTracks().forEach(t=>t.stop());activeLaneCapture=null;button.disabled=false;button.textContent="Voice";button.setAttribute("aria-pressed","false");toast("Lane recording failed. Try again.");};
+  recorder.onstop=finishLaneCapture;recorder.start(150);
+  toast("Recording for "+(LANES.find(x=>x.id===id)?.name||"this lane")+". Stop when the phrase is complete.");
+ }catch(error){toast("Microphone unavailable. Check browser permission and try again.");}
+}
 let soloLaneId=null;
 function render(){
   rowsEl.innerHTML=""; const add=document.getElementById("addRows"); if(add) add.innerHTML="";
@@ -2487,12 +2545,21 @@ function render(){
       return; }
     const row=document.createElement("div"); row.className="row "+l.id+(laneOn(l.id)?"":" off")+(isolationActive&&activeSoloLaneId===l.id?" isolation-active":"")+(isolationActive&&activeSoloLaneId!==l.id&&(isolationSource==="daw"||!!preSoloStates?.[l.id])?" isolation-muted":""); row.dataset.l=l.id; row.hidden=!!(soloLaneId&&soloLaneId!==l.id);
     const nm=document.createElement("div"); nm.className="name"+(muted[l.id]?" muted":"");
-    nm.innerHTML='<button class="nmb" aria-label=""><b></b><small></small></button><span class="ms"><button class="m" aria-label="Mute" title="Toggle lane mute">M</button><button class="s" aria-label="Solo lane" title="Toggle persistent solo" aria-pressed="false">S</button><button class="h" aria-label="Hold to isolate lane" title="Hold to hear this lane alone" aria-pressed="false">Hold</button><button class="eye" aria-label="Show only this lane in the grid" title="Hide the other grid lanes">◉</button></span>';
+    nm.innerHTML='<button class="nmb" aria-label=""><b></b><small></small></button><span class="ms"><button class="m" aria-label="Mute" title="Toggle lane mute">M</button><button class="s" aria-label="Solo lane" title="Toggle persistent solo" aria-pressed="false">S</button><button class="h" aria-label="Hold to isolate lane" title="Hold to hear this lane alone" aria-pressed="false">Hold</button><button class="eye" aria-label="Show only this lane in the grid" title="Hide the other grid lanes">◉</button><button class="lane-rec" type="button" aria-pressed="false" title="Record a vocal phrase and map its attacks to this lane">Voice</button></span><details class="lane-more"><summary>Track controls</summary><div class="lane-more-body"><label class="lane-range"><label>Volume <b class="lane-vol"></b></label><input type="range" min="0" max="150" data-k="vol"></label><label class="lane-range"><label>Tuning <b class="lane-tune"></b></label><input type="range" min="-12" max="12" data-k="tune"></label><div class="lane-actions"><button type="button" class="lane-recreate">Recreate lane</button><button type="button" class="lane-clear danger">Clear lane</button></div></div></details>';
     nm.querySelector("b").textContent=l.name; nm.querySelector("small").textContent=l.sub;
     if(l.id==="dd"||l.id==="bata") nm.querySelector(".nmb").insertAdjacentHTML("afterbegin",'<svg class="ilu-row" viewBox="0 0 64 64" aria-hidden="true"><use href="#iluFace"/></svg>');
     nm.querySelector(".nmb").setAttribute("aria-label",(muted[l.id]?"Unmute ":"Mute ")+l.name);
     nm.querySelector(".nmb").onclick=()=>{ muted[l.id]=!muted[l.id]; render(); renderLayers(); };
-    const mb=nm.querySelector(".m"), sb=nm.querySelector(".s"), hb=nm.querySelector(".h"), eye=nm.querySelector(".eye");
+    const mb=nm.querySelector(".m"), sb=nm.querySelector(".s"), hb=nm.querySelector(".h"), eye=nm.querySelector(".eye"), rec=nm.querySelector(".lane-rec");
+    rec.onclick=()=>toggleLaneCapture(l.id,rec);
+    const volume=nm.querySelector('[data-k="vol"]'),tuning=nm.querySelector('[data-k="tune"]');
+    volume.value=Math.round(gainsV[l.id]*100);nm.querySelector(".lane-vol").textContent=volume.value+"%";
+    tuning.value=tuneV[l.id];nm.querySelector(".lane-tune").textContent=(tuneV[l.id]>0?"+":"")+tuneV[l.id]+" st";
+    volume.onpointerdown=tuning.onpointerdown=()=>pushHist();
+    volume.oninput=()=>{gainsV[l.id]=+volume.value/100;nm.querySelector(".lane-vol").textContent=volume.value+"%";syncLaneBusGains();saveSoon();};
+    tuning.oninput=()=>{tuneV[l.id]=+tuning.value;nm.querySelector(".lane-tune").textContent=(tuneV[l.id]>0?"+":"")+tuneV[l.id]+" st";if(+tuning.value!==0&&ac)trigger(l.id,ac,busses[l.id],ac.currentTime+.01,l.states>1?2:1,0);saveSoon();};
+    nm.querySelector(".lane-recreate").onclick=()=>recreateLane(l.id);
+    nm.querySelector(".lane-clear").onclick=()=>clearLane(l.id);
     mb.classList.toggle("on",!!muted[l.id]); sb.classList.toggle("on",soloed.has(l.id)); sb.setAttribute("aria-pressed",String(soloed.has(l.id)));
     hb.classList.toggle("on",isolationActive&&activeSoloLaneId===l.id);hb.setAttribute("aria-pressed",String(isolationActive&&activeSoloLaneId===l.id));bindHold(hb,l.id);
     eye.onclick=()=>{soloLaneId=soloLaneId===l.id?null:l.id;render();}; eye.classList.toggle("on",soloLaneId===l.id);
