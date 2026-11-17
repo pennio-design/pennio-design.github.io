@@ -1183,13 +1183,6 @@ html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
 <style id="pennio-zero-gate-first-play">
 #hero,.inst,#bkpBar{display:none!important}
 #v-ayan{padding-top:12px}
-.first-play{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 14px;padding:14px 16px;border:1px solid #60402d;border-radius:15px;background:linear-gradient(110deg,#211811,#14110f)}
-.first-play>div{display:grid;gap:4px;min-width:0}
-.first-play>div>span{font-size:9px;letter-spacing:.15em;font-weight:700;color:#d99a6c}
-.first-play b{font-size:15px;letter-spacing:-.02em;font-weight:600}
-.first-play small{font-size:11px;line-height:1.4;color:#b9aaa0}
-.first-play button{flex:none;min-height:44px;padding:0 14px;border-radius:10px;background:var(--orange);color:#090909;font-size:12px;font-weight:700}
-.first-play button span{margin-left:6px}.first-play button:disabled{opacity:.45;cursor:wait}
 .local-status{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:10px;color:var(--mute);padding:6px 9px;border:1px solid var(--line);border-radius:999px}
 .local-status i{width:6px;height:6px;border-radius:50%;background:#72b88a}
 .local-status.changed{color:var(--text);border-color:#9a713d}
@@ -5280,7 +5273,7 @@ filmFile.addEventListener("change",async()=>{
 <script src="/studio/audio/dsp/offlineRenderer.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
-<script id="pennio-first-play-bind">(()=>{const b=document.getElementById("firstPlay"),p=document.getElementById("play");if(!b||!p)return;b.addEventListener("click",()=>p.click());p.addEventListener("click",()=>{setTimeout(()=>{b.innerHTML=p.getAttribute("aria-label")==="Stop (Space)"?"Stop the groove":"Hear the groove <span>↗</span>";},0);});})();</script>
+
 
 <style id="pennio-ui-system-v2">
 /* Keep every navigation and utility surface on the document plane. */
