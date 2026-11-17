@@ -4149,9 +4149,10 @@ document.getElementById("obForm").onsubmit=async e=>{
   if(!name){ err.textContent="Add your name."; return; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ err.textContent="Add a valid email."; return; }
   const prev=lsGet("ps.profile")||{};
-  const prof={name,email,make:obMake,joined:prev.joined||Date.now(),sent:prev.sent&&prev.email===email&&prev.name===name,kit:false,kitPending:false,kitAttemptAt:0};
+  const sameAccount=String(prev.email||"").trim().toLowerCase()===email.toLowerCase();
+  const prof={name,email,make:obMake,joined:sameAccount&&prev.joined?prev.joined:Date.now(),sent:sameAccount&&!!prev.sent,kit:sameAccount&&!!prev.kit,kitPending:sameAccount&&!!prev.kitPending,kitAttemptAt:sameAccount?(prev.kitAttemptAt||0):0};
   lsSet("ps.profile",prof); await kvSet("profile",prof);
-  const mailStatus=await sendProfileIfNeeded();
+  const mailStatus=await sendProfileIfNeeded(true);
   try{ if(navigator.storage&&navigator.storage.persist) await navigator.storage.persist(); }catch(e){}
   ob.classList.remove("on");
   toast(mailStatus==="accepted"?"Welcome. Your studio guide email has been accepted for delivery.":mailStatus==="unverified"?"Welcome. Your profile is saved. We submitted the guide email request; check your inbox and spam folder. You can resend it from your profile.":"Welcome. Your profile is saved, but the guide email could not be submitted. You can retry from your profile.");
@@ -4367,14 +4368,26 @@ async function startPENNIOWorkspace(authState){
   pennioWorkspaceStarted=true;
   document.body.classList.remove("auth-locked");
   document.getElementById("authGate").hidden=true;
-  const prof=lsGet("ps.profile")||(await kvGet("profile"));
+  const authEmail=(sbSess&&sbSess.user&&sbSess.user.email||"").trim().toLowerCase();
+  let prof=lsGet("ps.profile")||(await kvGet("profile"));
+  if(prof&&authEmail&&String(prof.email||"").trim().toLowerCase()!==authEmail) prof=null;
   const curId=lsGet("ps.current")||(await kvGet("current"));
   let rec=curId? await tx("projects","readonly",st=>st.get(curId)) : null;
   if(!rec){ const list=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated); rec=list[0]||null; }
   if(!rec && !db){ const last=lsGet("ps.last"); if(last) rec={id:last.id,name:last.name,state:last.state,audio:null}; }
   if(rec){ await openProject(rec); ready=true; document.getElementById("savedNote").textContent="Restored"; }
   else { await newProject(); }
-  renderWords(); sendProfileIfNeeded();
+  renderWords();
+  if(!prof){
+    const obEmail=document.getElementById("obEmail");
+    document.getElementById("obName").value="";
+    obEmail.value=authEmail;
+    obEmail.readOnly=!!authEmail;
+    document.getElementById("obErr").textContent="";
+    ob.classList.add("on");
+  }else{
+    sendProfileIfNeeded();
+  }
   const firstPlayButton=document.getElementById("firstPlay"); if(firstPlayButton) firstPlayButton.disabled=false;
   if(!lsGet("ps.heroSeen")){ document.getElementById("hero").hidden=false; lsSet("ps.heroSeen",1); }
   paintAvatar();
