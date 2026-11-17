@@ -1,6 +1,6 @@
 {
-  "name": "pennio.studio",
-  "short_name": "pennio.studio",
+  "name": "PENNIO Studio",
+  "short_name": "PENNIO Studio",
   "description": "Record your voice and build a groove on Yoruba drums, the talking drum and melody. Write Yoruba with tone marks.",
   "id": "/studio/",
   "start_url": "/studio/?source=app",
