@@ -1334,7 +1334,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 
 <main class="wrap"><!-- STUDIO DASHBOARD -->
 <section class="view" id="v-home">
-  <div class="dash-topline"><span class="dash-kicker">PENNIO CREATIVE PLATFORM</span><span class="dash-local"><i></i> Your workspace · This device</span></div>
+  <div class="dash-topline"><span class="dash-kicker">PENNIO CREATIVE PLATFORM</span><span class="dash-local"><i></i> <span id="dashAccountIdentity">Authenticated workspace</span></span></div>
   <div class="dash-intro"><div><h1>Make something<br><em>worth keeping.</em></h1><p>One workspace for sound, language, image and story.</p></div><button class="dash-new" id="dashNewProject"><span>＋</span> New project</button></div>
   <div class="dash-command">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
@@ -1778,6 +1778,7 @@ A clear image or action.
     </div>
     <div class="set-actions">
       <div class="set-action"><div><b id="profileName">Your profile</b><small id="profileEmail">Profile details saved on this device</small></div></div>
+      <div class="set-action profile-id-row"><div><b>Account ID</b><small id="profileAccountId">Loading authenticated account ID…</small></div><button class="btn" id="copyProfileId" type="button">Copy ID</button></div>
       <div class="set-action"><div><b>Workspace storage</b><small id="profileStorage">Your work is currently saved in this browser on this device.</small></div></div>
     </div>
     <p class="note" id="profileCloudNote">Cloud sign-in is paused until PENNIO’s email sender is configured. Your projects remain stored on this device.</p>
@@ -4377,6 +4378,8 @@ async function startPENNIOWorkspace(authState){
   const firstPlayButton=document.getElementById("firstPlay"); if(firstPlayButton) firstPlayButton.disabled=false;
   if(!lsGet("ps.heroSeen")){ document.getElementById("hero").hidden=false; lsSet("ps.heroSeen",1); }
   paintAvatar();
+  const identity=document.getElementById("dashAccountIdentity");
+  if(identity&&sbSess&&sbSess.user){identity.textContent="Signed in · "+(sbSess.user.email||"PENNIO account");}
   const g=new URLSearchParams(location.search).get("g");
   if(g){ try{ const st=grooveDecode(g); await saveNow(); const shared={id:newId(), name:"Shared groove", created:Date.now(), updated:Date.now(), state:{...st, banks:null}, audio:null};
       await openProject(shared); ready=true; await saveNow(); toast("Opened a shared groove as a new session. Your own work is in Sessions."); }
@@ -4519,16 +4522,20 @@ addEventListener("click",e=>{ if(!navEl.hidden && !e.target.closest(".more")) me
 function paintAvatar(){ const pf=lsGet("ps.profile"); const a=document.getElementById("avatar"); if(a) a.textContent=(pf&&pf.name? pf.name.trim()[0] : "·").toUpperCase(); }
 function openProfile(){
   const p=lsGet("ps.profile")||(typeof kvGet==="function"?null:null);
+  const accountId=sbSess&&sbSess.user&&sbSess.user.id?sbSess.user.id:"";
   const name=document.getElementById("profileName"), email=document.getElementById("profileEmail");
   name.textContent=p&&p.name?p.name:"PENNIO Studio creator";
-  email.textContent=p&&p.email?p.email:"No profile email saved on this device";
-  document.getElementById("profileCloudNote").textContent="Cloud sync is not yet enabled. Your projects remain stored locally until cloud sync is fully tested.";
+  email.textContent=(sbSess&&sbSess.user&&sbSess.user.email)||(p&&p.email)||"No profile email saved on this device";
+  document.getElementById("profileAccountId").textContent=accountId||"No authenticated account ID available";
+  document.getElementById("copyProfileId").disabled=!accountId;
+  document.getElementById("profileCloudNote").textContent=accountId?"Signed in with Supabase. This stable account ID identifies your cloud-owned work.":"No authenticated account is available in this session.";
   const pf=lsGet("ps.profile")||{};
   document.getElementById("profileMailStatus").textContent=pf.kit?"Your guide email request was accepted by Kit.":pf.kitPending?"The guide email request was submitted, but delivery could not be verified.":"Your guide email has not been confirmed. You can request it again.";
   document.getElementById("profileResend").disabled=!pf.email;
   document.getElementById("profileSheet").classList.add("on");
 }
 document.getElementById("avatar").onclick=openProfile;
+document.getElementById("copyProfileId").onclick=async()=>{const id=sbSess&&sbSess.user&&sbSess.user.id;if(!id)return;try{await navigator.clipboard.writeText(id);toast("Account ID copied");}catch(e){const field=document.createElement("textarea");field.value=id;document.body.append(field);field.select();document.execCommand("copy");field.remove();toast("Account ID copied");}};
 document.getElementById("profileResend").onclick=async()=>{
   const b=document.getElementById("profileResend"),status=document.getElementById("profileMailStatus");
   b.disabled=true;b.textContent="Sending…";status.textContent="Submitting a fresh email request…";
@@ -5078,5 +5085,34 @@ document.getElementById("sylIn").oninput=sylRender;
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
 <script id="pennio-first-play-bind">(()=>{const b=document.getElementById("firstPlay"),p=document.getElementById("play");if(!b||!p)return;b.addEventListener("click",()=>p.click());p.addEventListener("click",()=>{setTimeout(()=>{b.innerHTML=p.getAttribute("aria-label")==="Stop (Space)"?"Stop the groove":"Hear the groove <span>↗</span>";},0);});})();</script>
+
+<style id="pennio-ui-system-v2">
+/* Keep every navigation and utility surface on the document plane. */
+nav#nav{position:static;right:auto;top:auto;display:flex;flex-wrap:wrap;gap:4px;min-width:0;padding:3px;border-radius:12px;box-shadow:none;z-index:auto;background:var(--surface-1);border:1px solid var(--border)}
+nav#nav[hidden]{display:none!important}
+nav#nav button{white-space:normal;min-width:0}
+.more{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.morebtn{display:inline-flex}
+.sheet{position:static;inset:auto;z-index:auto;width:min(100% - 32px,720px);margin:18px auto;background:transparent;backdrop-filter:none;display:none;align-items:initial;justify-content:initial}
+.sheet.on{display:block}.sheet .panel{width:100%;max-width:none;max-height:none;overflow:visible;border-radius:18px;box-shadow:none;background:var(--off);color:var(--text)}
+.dash-modal-backdrop{position:static;inset:auto;z-index:auto;display:block;background:transparent;padding:0;margin:14px 0}.dash-modal-backdrop[hidden]{display:none!important}
+.dash-modal{width:100%;max-width:none;box-shadow:none;background:var(--off);color:var(--text);border-color:var(--line2)}
+.dash-modal input,.dash-modal select{background:var(--black);color:var(--text);border-color:var(--line2)}
+.dash-room{background:var(--surface);border-color:var(--line2);color:var(--text)}.dash-room-feature{background:var(--surface-2,var(--surface));border-color:var(--orange)}
+.dash-room-desc,.dash-empty p,.dash-start-panel p,.dash-project-copy small{color:var(--mute)}
+.dash-panel{background:var(--off);border-color:var(--line2);color:var(--text)}.dash-project{background:var(--surface);border-color:var(--line2);color:var(--text)}
+.dash-project-actions button{color:var(--text);background:var(--surface);border-color:var(--line2)}.dash-command{background:var(--surface);border-color:var(--line2)}.dash-room-foot{border-color:var(--line2)}.dash-room-index{color:var(--mute)}
+.dash-modal p,.dash-modal label{color:var(--mute)}.profile-id-row small{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;user-select:text}#copyProfileId{flex:none}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:82px;color:var(--text);background:var(--surface);border-color:var(--line2)}
+.theme-toggle svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+html[data-theme="light"] .dash-room{background:#FFFFFF;color:#090909;border-color:rgba(9,9,9,.18)}html[data-theme="light"] .dash-room-feature{background:#F1EDE7;border-color:#D96A35}
+html[data-theme="light"] .dash-room-desc,html[data-theme="light"] .dash-empty p,html[data-theme="light"] .dash-start-panel p{color:#514B45}
+html[data-theme="light"] .dash-panel,html[data-theme="light"] .dash-modal,html[data-theme="light"] .sheet .panel{background:#FFFFFF;color:#090909;border-color:rgba(9,9,9,.18)}
+html[data-theme="light"] .dash-project,html[data-theme="light"] .dash-command{background:#F1F0EC;color:#090909;border-color:rgba(9,9,9,.18)}html[data-theme="light"] .dash-project-actions button{background:#FFFFFF;color:#090909;border-color:rgba(9,9,9,.22)}
+html[data-theme="light"] .dash-room-index,html[data-theme="light"] .dash-project-copy small,html[data-theme="light"] .dash-modal p,html[data-theme="light"] .dash-modal label{color:#625E58}
+html[data-theme="light"] .dash-start-panel{background:#F1EDE7;color:#090909;border-color:#D7CFC5}html[data-theme="light"] .dash-start-panel h2,html[data-theme="light"] .dash-start-panel p{color:#090909}
+html[data-theme="light"] .dash-modal input,html[data-theme="light"] .dash-modal select{background:#F6F5F2;color:#090909;border-color:rgba(9,9,9,.22)}html[data-theme="light"] .theme-toggle{background:#FFFFFF;color:#090909;border-color:rgba(9,9,9,.22)}
+@media(max-width:760px){.bar{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 0;gap:8px}.hright{flex-wrap:wrap}.more{width:100%;order:5}.morebtn{display:inline-flex}nav#nav{width:100%;display:flex;flex-wrap:wrap}nav#nav button{flex:1 1 120px}.sheet{width:calc(100% - 24px)}.dash-topline{align-items:flex-start;flex-wrap:wrap}.dash-local{flex-wrap:wrap}}
+@media(max-width:420px){.logo span{display:none}.hright{gap:5px}.theme-toggle{min-width:42px;width:42px}.dash-rooms{grid-template-columns:1fr 1fr}.dash-room{min-width:0}.dash-room-foot{gap:6px}}
+</style>
 </body>
 </html>
