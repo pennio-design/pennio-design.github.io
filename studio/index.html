@@ -5260,6 +5260,12 @@ document.getElementById("sylIn").oninput=sylRender;
   button.addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light"));
 })();
 </script>
+<div class="studio-progress-monitor" id="studioProgressMonitor" role="status" aria-live="polite" aria-atomic="true" data-indeterminate="true"><strong id="studioProgressTitle">Working</strong><small id="studioProgressDetail">Your work is being prepared.</small><div class="studio-progress-track"><i id="studioProgressFill"></i></div></div>
+<script id="studio-progress-api">
+(()=>{const root=document.getElementById("studioProgressMonitor"),title=document.getElementById("studioProgressTitle"),detail=document.getElementById("studioProgressDetail"),fill=document.getElementById("studioProgressFill");let timer=0;
+window.PennioStudioProgress={begin(label="Working",description="Your work is being prepared."){clearTimeout(timer);title.textContent=label;detail.textContent=description;root.dataset.indeterminate="true";fill.style.width="35%";root.classList.add("is-visible");},update(percent,description){root.dataset.indeterminate="false";fill.style.width=Math.max(0,Math.min(100,Number(percent)||0))+"%";if(description)detail.textContent=description;},finish(description="Ready"){root.dataset.indeterminate="false";fill.style.width="100%";title.textContent=description;detail.textContent="You can continue working.";timer=setTimeout(()=>root.classList.remove("is-visible"),1600);},fail(description="Something needs attention"){root.dataset.indeterminate="false";title.textContent="Could not finish";detail.textContent=description;root.classList.add("is-visible");}};
+})();
+</script>
 <script src="/studio/workspace.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
@@ -5452,6 +5458,41 @@ html[data-theme="light"] .og-slide-copy-full{background:radial-gradient(ellipse 
 html[data-theme="light"] .og-project-head>a,html[data-theme="light"] .og-project-link,html[data-theme="light"] .og-carousel-nav button{color:#090909}
 @media(max-width:600px){.og-project{padding:14px;margin:18px 0 22px}.og-project-head{display:grid;gap:10px}.og-project-head>a{justify-self:start}.og-slide{grid-template-columns:1fr}.og-slide>img{height:190px;min-height:190px;max-height:190px}.og-slide-copy{padding:20px}.og-slide-copy h3{font-size:clamp(27px,9vw,38px);margin-top:12px}.og-slide-copy p{font-size:13px;margin-top:10px}.og-slide-copy-full{min-height:245px}.og-carousel{min-height:245px}.og-carousel-controls{padding-top:10px}}
 @media(prefers-reduced-motion:no-preference){.og-slide:not([hidden]){animation:ogSlideIn .22s ease-out}@keyframes ogSlideIn{from{opacity:.65;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}}
+
+/* Studio layout system: shared grid, deliberate spacing and readable hierarchy. */
+:root{--studio-grid-gap:clamp(14px,2vw,24px);--studio-section-space:clamp(28px,4vw,52px)}
+.studio-shell,.studio-main,.studio-content,.view,.daw-room,.daw-workbench,.daw-main{min-width:0}
+.view{width:min(100%,1440px);margin-inline:auto;padding:clamp(18px,3vw,36px)}
+.view>*{min-width:0}
+.view>.cr-lead,.view>.dr-section-head,.view>.jump,.view>.dr-desk,.view>.steps3,.view>.card{margin-bottom:var(--studio-grid-gap)}
+.cr-lead{max-width:850px;margin-bottom:var(--studio-section-space)}
+.cr-lead h1{max-width:14ch;font-size:clamp(32px,5vw,58px);line-height:1.04;letter-spacing:-.045em;text-wrap:balance}
+.cr-lead .sub{max-width:66ch;font-size:clamp(14px,1.5vw,17px);line-height:1.65;margin-top:16px}
+.dr-section-head,.daw-head,.daw-selection-head{display:flex;align-items:flex-end;justify-content:space-between;gap:var(--studio-grid-gap);flex-wrap:wrap}
+.dr-section-head h2{font-size:clamp(24px,3.2vw,38px);line-height:1.1;letter-spacing:-.035em}
+.jump{display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center}
+.dr-desk,.daw,.card,.stp{border-radius:16px}
+.dr-desk{padding:clamp(16px,2.2vw,28px)}
+.steps3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--studio-grid-gap)}
+.steps3>*{min-width:0}
+.daw-workbench{display:grid;grid-template-columns:minmax(190px,230px) minmax(0,1fr);gap:var(--studio-grid-gap);align-items:start}
+.daw-main{display:grid;gap:16px}
+.daw-toolbar{display:grid;grid-template-columns:repeat(6,max-content) minmax(72px,max-content) minmax(140px,1fr);gap:8px;align-items:center}
+.daw-status{min-width:0;line-height:1.45}
+.daw-tracks{display:grid;gap:12px;min-width:0}
+.daw-track-details{align-items:end}
+.daw-head h3{font-size:clamp(22px,2.4vw,30px);letter-spacing:-.035em}
+.daw-head p{max-width:58ch;line-height:1.55}
+.studio-progress-monitor{position:fixed;z-index:1000;top:12px;right:12px;width:min(340px,calc(100vw - 24px));padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 12px 40px rgba(0,0,0,.18);opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .18s,transform .18s}
+.studio-progress-monitor.is-visible{opacity:1;transform:translateY(0);pointer-events:auto}
+.studio-progress-monitor strong{display:block;font-size:13px;font-weight:650}
+.studio-progress-monitor small{display:block;margin-top:4px;color:var(--mute);font-size:11px}
+.studio-progress-track{height:3px;margin-top:12px;background:var(--line);overflow:hidden;border-radius:8px}
+.studio-progress-track i{display:block;width:35%;height:100%;background:var(--orange);transition:width .2s}
+.studio-progress-monitor[data-indeterminate="true"] .studio-progress-track i{animation:studio-progress 1.1s ease-in-out infinite}
+@keyframes studio-progress{from{transform:translateX(-110%)}to{transform:translateX(300%)}}
+@media(max-width:980px){.daw-workbench{grid-template-columns:minmax(0,1fr)}.daw-sidebar{position:static}.daw-engineer-modes{display:flex;gap:8px;overflow-x:auto}.daw-mode-group{min-width:max-content}.daw-toolbar{grid-template-columns:repeat(3,max-content) minmax(70px,1fr)}.steps3{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.view{padding:16px 12px}.daw-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.daw-toolbar>*{min-width:0}.daw-toolbar .daw-clock{grid-column:1}.daw-status{grid-column:1/-1}.daw-track-details{grid-template-columns:repeat(2,minmax(0,1fr))}.dr-footer{display:grid;grid-template-columns:1fr}.cr-lead h1{font-size:clamp(30px,9vw,42px)}}
 </style>
 <script id="ojug-project-carousel-bind">
 (()=>{document.querySelectorAll("[data-ojug-carousel]").forEach(root=>{
