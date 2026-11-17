@@ -1206,6 +1206,7 @@ html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
 #v-ayan .row.dd .step.v3::before{top:70%;background:#9b6855}
 #v-ayan .row.dd .step.ghost::before{opacity:.5;outline:1px dashed #d4b18d}
 </style>
+<style id="pennio-speak-once-dock">#studioRecTongue{border-color:#8f6849;color:var(--text)}#studioRecTongue:active{background:#2a211a}</style>
 </head>
 <body class="in-studio">
 <header>
@@ -1480,7 +1481,7 @@ A clear image or action.
       <div class="k">Step 2</div>
       <h3>Say it and add the recording</h3>
       <p>Say the phrase at a normal pace, close to the phone, somewhere quiet. Short phrases work best.</p>
-      <div class="row2"><button class="btn primary wmic" id="wrecRec" hidden>● Record</button><label class="btn file">Add recording<input type="file" id="wrec" accept="audio/*"></label><span class="vmeta" id="wrecNote" style="margin:0"></span></div>
+      <div class="row2"><button class="btn primary wmic" id="wrecRec" hidden>● Record</button><label class="btn file">Add recording<input type="file" id="wrec" accept="audio/*"></label><button class="btn" id="wrecUseDock" type="button" hidden>Align voice with text</button><span class="vmeta" id="wrecNote" style="margin:0"></span></div>
     </div>
     <details class="stp cal" id="wcalBox">
       <summary><span class="k">Optional · about a minute, once</span><span class="h3">Calibrate your voice for steadier tones</span></summary>
@@ -1642,7 +1643,7 @@ A clear image or action.
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary" id="studioRecTrimApply">Apply trim</button><button type="button" class="btn" id="studioRecTrimReset" disabled>Restore original</button></div>
     <small style="display:block;margin-top:8px;opacity:.7">Choose the section to keep. The original take remains available until you start a new recording.</small>
   </div>
-  <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Add to Àyàn</button><button type="button" class="btn" id="studioRecFilm">Use in Film</button><button type="button" class="btn" id="studioRecExtract" hidden>Extract audio</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
+  <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Send to Beat</button><button type="button" class="btn" id="studioRecTongue">Send to Tongue</button><button type="button" class="btn" id="studioRecFilm">Use in Film</button><button type="button" class="btn" id="studioRecExtract" hidden>Extract audio</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
   <p class="studio-rec-status" id="studioRecStatus" aria-live="polite">Your recording stays on this device until you save or use it.</p>
 </aside>
 <button type="button" class="studio-rec-launch" id="studioRecLaunch" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Record</button>
@@ -3176,6 +3177,22 @@ function buildWrite(){
   wState.final=out.join(" ");
 }
 function matchCase(typed,w){ return typed[0]&&typed[0]===typed[0].toUpperCase()&&typed[0]!==typed[0].toLowerCase()? w[0].toUpperCase()+w.slice(1) : w; }
+let pendingVoicePhrase=null,pendingVoicePhraseBusy=false;
+async function applyPendingVoicePhrase(){
+ if(!pendingVoicePhrase||!wtext.value.trim()||pendingVoicePhraseBusy)return;
+ pendingVoicePhraseBusy=true;const blob=pendingVoicePhrase,note=document.getElementById("wrecNote");note.textContent="Listening to the same take…";
+ try{const buffer=await decodeFile(blob),before=wState;phraseFrom(buffer);if(wState!==before){pendingVoicePhrase=null;const action=document.getElementById("wrecUseDock");if(action)action.hidden=true;}}
+ catch(error){note.textContent="Could not read that take. Try another audio format.";}
+ finally{pendingVoicePhraseBusy=false;}
+}
+window.addEventListener("pennio:write-audio",event=>{
+ const blob=event.detail&&event.detail.blob;if(!blob)return;pendingVoicePhrase=blob;
+ const note=document.getElementById("wrecNote");
+ const action=document.getElementById("wrecUseDock");if(action)action.hidden=false;
+ if(!wtext.value.trim()){note.textContent="Audio received. Type the Yoruba phrase you spoke, then tap Align voice with text.";wtext.focus();}
+ else applyPendingVoicePhrase();
+});
+document.getElementById("wrecUseDock").addEventListener("click",applyPendingVoicePhrase);
 function phraseFrom(b){
   const note=document.getElementById("wrecNote");
   const words=wtext.value.trim().split(/\s+/).filter(Boolean);

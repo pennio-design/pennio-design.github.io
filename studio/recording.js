@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
-const dock=$("studioRecorder"),launch=$("studioRecLaunch"),start=$("studioRecStart"),stop=$("studioRecStop"),preview=$("studioRecPreview"),result=$("studioRecResult"),status=$("studioRecStatus"),clock=$("studioRecClock"),useAyan=$("studioRecUse"),useFilm=$("studioRecFilm"),extract=$("studioRecExtract");
+const dock=$("studioRecorder"),launch=$("studioRecLaunch"),start=$("studioRecStart"),stop=$("studioRecStop"),preview=$("studioRecPreview"),result=$("studioRecResult"),status=$("studioRecStatus"),clock=$("studioRecClock"),useAyan=$("studioRecUse"),useTongue=$("studioRecTongue"),useFilm=$("studioRecFilm"),extract=$("studioRecExtract");
 const trimPanel=$("studioRecTrim"),trimStart=$("studioRecTrimStart"),trimEnd=$("studioRecTrimEnd"),trimStartValue=$("studioRecTrimStartValue"),trimEndValue=$("studioRecTrimEndValue"),trimDuration=$("studioRecTrimDuration"),trimApply=$("studioRecTrimApply"),trimReset=$("studioRecTrimReset");
 
 if(!dock||!launch)return;
@@ -18,7 +18,7 @@ async function prepareTakeProject(room){
  if(window.PennioWorkspace?.openRoom)await window.PennioWorkspace.openRoom(room);
  return projectId;
 }
-function clearTake(){if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null;}takeProjectId=null;blob=null;sourceBlob=null;mediaDuration=0;preview.innerHTML="";preview.hidden=true;result.hidden=true;trimPanel.hidden=true;trimReset.disabled=true;clock.textContent="00:00";extract.hidden=true;useAyan.hidden=false;useFilm.hidden=false;}
+function clearTake(){if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null;}takeProjectId=null;blob=null;sourceBlob=null;mediaDuration=0;preview.innerHTML="";preview.hidden=true;result.hidden=true;trimPanel.hidden=true;trimReset.disabled=true;clock.textContent="00:00";extract.hidden=true;useAyan.hidden=false;useTongue.hidden=false;useFilm.hidden=false;}
 function fmtTime(value){const s=Math.max(0,Math.floor(value||0));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
 function configureTrim(media){
  trimPanel.hidden=true;
@@ -82,7 +82,7 @@ start.addEventListener("click",async()=>{
    document.body.classList.remove("recorder-active");stopTracks();blob=new Blob(chunks,{type:recorder.mimeType|| (mode==="audio"?"audio/webm":"video/webm")});
    if(!blob.size){setStatus("No recording was captured. Try again.");return;}
    sourceBlob=blob;showPreview();result.hidden=false;
-   useAyan.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=mode!=="video";
+   useAyan.hidden=mode!=="audio";useTongue.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=mode!=="video";
    setStatus(mode==="audio"?"Take ready. Add it to Àyàn or save it to your device.":"Video take ready. Preview it, use it in Film or save it to your device.");
    start.disabled=false;stop.disabled=true;clearInterval(ticker);
   };
@@ -94,9 +94,16 @@ stop.addEventListener("click",()=>{if(recorder&&recorder.state==="recording"){re
 $("studioRecSave").addEventListener("click",()=>{if(!blob||!blobUrl)return;const a=document.createElement("a");a.href=blobUrl;const ext=(blob.type.includes("mp4")?"mp4":blob.type.includes("ogg")?"ogg":"webm");a.download=(mode==="audio"?"pennio-voice-take":"pennio-video-take")+"."+ext;document.body.append(a);a.click();a.remove();setStatus("Recording saved to your device.");});
 
 
-async function extractVideoAudio(){if(!blob||mode!=="video")return;setStatus("Extracting the video's audio…");let url=URL.createObjectURL(blob),video=document.createElement("video"),stream=null,mr=null;video.preload="auto";video.src=url;video.playsInline=true;try{await new Promise((resolve,reject)=>{video.onloadedmetadata=resolve;video.onerror=()=>reject(Error("This video could not be opened."));});const capture=video.captureStream||video.mozCaptureStream;if(!capture)throw Error("Audio extraction is not supported in this browser. Try a desktop Chrome browser.");stream=capture.call(video);const tracks=stream.getAudioTracks();if(!tracks.length)throw Error("This video has no audio track to extract.");const audioStream=new MediaStream(tracks),candidates=["audio/webm;codecs=opus","audio/mp4","audio/webm"],mime=candidates.find(t=>MediaRecorder.isTypeSupported(t));mr=new MediaRecorder(audioStream,mime?{mimeType:mime}:undefined);const parts=[];mr.ondataavailable=e=>{if(e.data&&e.data.size)parts.push(e.data);};const finished=new Promise((resolve,reject)=>{mr.onerror=e=>reject(e.error||Error("Audio extraction failed."));mr.onstop=()=>resolve(new Blob(parts,{type:mr.mimeType||"audio/webm"}));});mr.start(250);const playbackEnded=new Promise(resolve=>{video.onended=resolve;});await video.play();await playbackEnded;mr.stop();const audio=await finished;if(!audio.size)throw Error("No audio was captured from this video.");blob=audio;sourceBlob=blob;mode="audio";setMode("audio");clearInterval(ticker);showPreview();result.hidden=false;useAyan.hidden=false;useFilm.hidden=false;extract.hidden=true;setStatus("Audio extracted. Add it to Àyàn for Ìlù, or move it into Film.");}catch(e){setStatus(e.message||"Could not extract audio from this video.");}finally{if(stream)stream.getTracks().forEach(t=>t.stop());video.pause();video.removeAttribute("src");video.load();URL.revokeObjectURL(url);}}
+async function extractVideoAudio(){if(!blob||mode!=="video")return;setStatus("Extracting the video's audio…");let url=URL.createObjectURL(blob),video=document.createElement("video"),stream=null,mr=null;video.preload="auto";video.src=url;video.playsInline=true;try{await new Promise((resolve,reject)=>{video.onloadedmetadata=resolve;video.onerror=()=>reject(Error("This video could not be opened."));});const capture=video.captureStream||video.mozCaptureStream;if(!capture)throw Error("Audio extraction is not supported in this browser. Try a desktop Chrome browser.");stream=capture.call(video);const tracks=stream.getAudioTracks();if(!tracks.length)throw Error("This video has no audio track to extract.");const audioStream=new MediaStream(tracks),candidates=["audio/webm;codecs=opus","audio/mp4","audio/webm"],mime=candidates.find(t=>MediaRecorder.isTypeSupported(t));mr=new MediaRecorder(audioStream,mime?{mimeType:mime}:undefined);const parts=[];mr.ondataavailable=e=>{if(e.data&&e.data.size)parts.push(e.data);};const finished=new Promise((resolve,reject)=>{mr.onerror=e=>reject(e.error||Error("Audio extraction failed."));mr.onstop=()=>resolve(new Blob(parts,{type:mr.mimeType||"audio/webm"}));});mr.start(250);const playbackEnded=new Promise(resolve=>{video.onended=resolve;});await video.play();await playbackEnded;mr.stop();const audio=await finished;if(!audio.size)throw Error("No audio was captured from this video.");blob=audio;sourceBlob=blob;mode="audio";setMode("audio");clearInterval(ticker);showPreview();result.hidden=false;useAyan.hidden=false;useTongue.hidden=false;useFilm.hidden=false;extract.hidden=true;setStatus("Audio extracted. Send it to Beat for Ìlù or Tongue for tone alignment.");}catch(e){setStatus(e.message||"Could not extract audio from this video.");}finally{if(stream)stream.getTracks().forEach(t=>t.stop());video.pause();video.removeAttribute("src");video.load();URL.revokeObjectURL(url);}}
 extract.addEventListener("click",extractVideoAudio);
-window.addEventListener("pennio:studio-media",e=>{const d=e.detail||{};if(!d.blob)return;clearTake();takeProjectId=d.projectId||window.PennioWorkspace?.activeProjectId||"__studio_default__";blob=d.blob;sourceBlob=blob;mode=d.kind==="video"?"video":"audio";setMode(mode);showPreview();result.hidden=false;useAyan.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=mode!=="video";setStatus((d.name||"Media")+" received from another Studio room. Choose where to use it.");showDock(true);});
+window.addEventListener("pennio:studio-media",e=>{const d=e.detail||{};if(!d.blob)return;clearTake();takeProjectId=d.projectId||window.PennioWorkspace?.activeProjectId||"__studio_default__";blob=d.blob;sourceBlob=blob;mode=d.kind==="video"?"video":"audio";setMode(mode);showPreview();result.hidden=false;useAyan.hidden=mode!=="audio";useTongue.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=mode!=="video";setStatus((d.name||"Media")+" received from another Studio room. Choose where to use it.");showDock(true);});
+useTongue.addEventListener("click",()=>{
+ if(!blob||mode!=="audio")return;
+ const target=document.querySelector('nav button[data-v="write"]');if(target)target.click();
+ window.dispatchEvent(new CustomEvent("pennio:write-audio",{detail:{blob,name:"Studio audio take"}}));
+ setStatus("Sent to Tongue. Type the words you spoke to align the recording with Yoruba tone marks.");
+ showDock(false);
+});
 useAyan.addEventListener("click",async()=>{
  if(!blob||mode!=="audio")return;
  try{
