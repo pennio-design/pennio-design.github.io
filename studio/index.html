@@ -4371,6 +4371,7 @@ async function startPENNIOWorkspace(authState){
   const authEmail=(sbSess&&sbSess.user&&sbSess.user.email||"").trim().toLowerCase();
   let prof=lsGet("ps.profile")||(await kvGet("profile"));
   if(prof&&authEmail&&String(prof.email||"").trim().toLowerCase()!==authEmail) prof=null;
+  if(prof) lsSet("ps.profile",prof);
   const curId=lsGet("ps.current")||(await kvGet("current"));
   let rec=curId? await tx("projects","readonly",st=>st.get(curId)) : null;
   if(!rec){ const list=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated); rec=list[0]||null; }
