@@ -910,7 +910,7 @@ html[data-theme="light"] .cast:focus-visible{outline:3px solid #704438;outline-o
 .set-actions{display:grid;gap:10px;margin-top:18px}.set-action{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:14px;border:1px solid var(--line2);border-radius:14px;background:var(--surface)}.set-action div{flex:1;min-width:0}.set-action b{display:block;font-size:14px}.set-action small{display:block;margin-top:4px;color:var(--mute);font-size:12px;line-height:1.45}.set-action .btn{flex:none}
 @media(max-width:480px){.set-action{align-items:flex-start;flex-direction:column}.set-action .btn{width:100%}}
 
-/* Àyàn DAW light theme: keep the editor readable and coherent. */
+/* PENNIO DAW light theme: keep the editor readable and coherent. */
 html[data-theme="light"] .daw-room,
 html[data-theme="light"] .daw-panel,
 html[data-theme="light"] .daw-shell{background:#fff!important;color:#171513;border-color:#d9d4cc}
@@ -1303,7 +1303,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
   <div class="auth-gate-top"><a class="auth-gate-brand" href="https://pennio.agency/" aria-label="PENNIO home"><span class="auth-gate-mark" aria-hidden="true"><svg viewBox="0 0 81.67 102.67" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></span><span>PENNIO <i>STUDIO</i></span></a><span class="auth-gate-label">CREATIVE WORKSPACE</span></div>
   <div class="auth-gate-main">
     <div class="auth-gate-copy"><span class="auth-gate-eyebrow">A CREATIVE PLATFORM BY PENNIO</span><h1>Make something<br><em>worth keeping.</em></h1><p>Sound, language, image and story. One workspace for ideas that deserve a form.</p>
-      <div class="auth-gate-rooms"><div><b>01</b><span><strong>Àyàn</strong><small>Music and sound</small></span></div><div><b>02</b><span><strong>Akéwì</strong><small>Writing and poetry</small></span></div><div><b>03</b><span><strong>Fàájíplace</strong><small>Film and image</small></span></div><div><b>04</b><span><strong>Beauty Room</strong><small>Camera and portraiture</small></span></div></div>
+      <div class="auth-gate-rooms"><div><b>01</b><span><strong>Àyàn</strong><small>Music and sound</small></span></div><div><b>02</b><span><strong>Ewì</strong><small>Writing and poetry</small></span></div><div><b>03</b><span><strong>Fàájíplace</strong><small>Film and image</small></span></div><div><b>04</b><span><strong>Beauty Room</strong><small>Camera and portraiture</small></span></div></div>
     </div>
     <section class="auth-gate-card" aria-labelledby="authGateTitle"><span class="auth-gate-eyebrow">YOUR PENNIO ACCOUNT</span><h2 id="authGateTitle">Enter your workspace.</h2><p>Sign in with your email. We’ll send you a secure one-time code.</p>
       <label for="gateEmail">Email address</label><input id="gateEmail" type="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
@@ -1365,7 +1365,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <span class="dash-room-index">01 / SOUND</span><span class="dash-room-icon">◉</span><b>Àyàn</b><span class="dash-room-desc">Record, arrange, produce. Let the talking drum answer your voice.</span><span class="dash-room-foot"><span>Open music studio</span><span>↗</span></span>
     </button>
     <button class="dash-room" data-room="write" data-search="write poetry screenplay lyrics akewi">
-      <span class="dash-room-index">02 / LANGUAGE</span><span class="dash-room-icon">Aa</span><b>Akéwì</b><span class="dash-room-desc">Write poetry, lyrics, scenes and stories with Yoruba tone support.</span><span class="dash-room-foot"><span>Open writing room</span><span>↗</span></span>
+      <span class="dash-room-index">02 / LANGUAGE</span><span class="dash-room-icon">Aa</span><b>Ewì</b><span class="dash-room-desc">Write poetry, lyrics, scenes and stories with Yoruba tone support.</span><span class="dash-room-foot"><span>Open writing room</span><span>↗</span></span>
     </button>
     <button class="dash-room" data-room="faajiplace" data-search="film video filmmaking faajiplace">
       <span class="dash-room-index">03 / IMAGE</span><span class="dash-room-icon">▣</span><b>Fàájíplace</b><span class="dash-room-desc">Shape scenes, plan shots and build a film from an idea.</span><span class="dash-room-foot"><span>Open film room</span><span>↗</span></span>
@@ -1507,7 +1507,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
   </div>
 
   <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
-  <div class="daw-head" id="dawHead"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
+  <div class="daw-head" id="dawHead"><div><h3>PENNIO DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><button class="btn" id="dawMagicAdjust" type="button" title="Balance track levels while preserving timing and pan">✧ Magic Wand</button><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
   <div class="daw-workbench"><aside class="daw-sidebar" aria-label="Engineer workflow">
   <div class="daw-sidebar-title"><small>ÀYÀN ENGINEER</small><b>Work modes</b></div>
   <nav class="daw-engineer-modes" aria-label="Engineer modes">
@@ -1517,7 +1517,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <div class="daw-mode-group"><small>FINISH</small><button type="button" data-engineer-mode="plan" aria-pressed="false"><span>Plan</span><em>Session brief</em></button><button type="button" data-engineer-mode="merge" aria-pressed="false"><span>Merge</span><em>Bounce & export</em></button></div>
   </nav><p class="daw-mode-help" id="dawModeHelp" aria-live="polite">Record with the beat, or import audio to start a session.</p>
 </aside><div class="daw-main">
-  <div class="daw-toolbar" id="dawToolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawMerge" disabled>Merge to track</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><button class="btn" id="dawSendStudio" disabled>Send mix to Studio</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
+  <div class="daw-toolbar" id="dawToolbar"><button class="btn primary" id="dawPlay" aria-label="Play arrangement">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawMerge" disabled>Merge to track</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><button class="btn" id="dawSendStudio" disabled>Send mix to Studio</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
   <div class="daw-plan" id="dawPlanPanel" hidden><label for="dawPlan">Session plan</label><textarea id="dawPlan" maxlength="4000" placeholder="Capture the goal, record order, edit notes or mix intent for this session."></textarea><small>Saved with this project on this device.</small></div><div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
   <div class="daw-selection" id="dawSelectionPanel">
   <div class="daw-selection-head"><div><b>Selected passage</b><small id="dawSelectionReadout">Drag across a waveform to select a timeframe.</small></div><button class="btn" id="dawClearSelection" disabled>Clear</button></div>
@@ -4631,7 +4631,7 @@ const TOURS=[
     {sel:"#tgCard",t:"Use the tone game to practise hearing high, mid and low tones."}
   ]},
   {id:"engineer",n:"Engineer a track",d:"Record · play · mix · edit · plan · merge",view:"ayan",steps:[
-    {sel:"#dawHead",t:"The Àyàn DAW is the engineering workspace. Import audio or keep the Beat playing while you record an overdub."},
+    {sel:"#dawHead",t:"The PENNIO DAW is the engineering workspace. Import audio or keep the Beat playing while you record an overdub."},
     {sel:'[data-engineer-mode="record"]',t:"Record mode keeps the accompaniment available. Use headphones for the cleanest vocal take.",tap:true},
     {sel:'[data-engineer-mode="mix"]',t:"Mix mode takes you to level and effects controls. Change one control at a time and compare." ,tap:true},
     {sel:'[data-engineer-mode="edit"]',t:"Edit mode brings up selection, trim, punch-in and hum-to-beat tools.",tap:true},
@@ -5170,7 +5170,7 @@ document.getElementById("sylIn").oninput=sylRender;
  const read=()=>{try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}};
  const write=list=>{try{localStorage.setItem(KEY,JSON.stringify(list));return true}catch(e){return false}};
  const rooms=$("dashRooms"),search=$("dashSearch"),projects=$("dashProjects");
- const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Ojuloge"};
+ const roomNames={ayan:"Àyàn",write:"Ewì",faajiplace:"Fàájíplace",beauty:"Ojuloge"};
  let showAllProjects=false;
  function go(room){const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();try{history.replaceState(null,"",room==="home"?"/studio/":"#"+room)}catch(e){}window.scrollTo({top:0,behavior:"smooth"});}
  rooms.addEventListener("click",e=>{const card=e.target.closest("[data-room]");if(card&&roomNames[card.dataset.room])go(card.dataset.room);});
@@ -5180,7 +5180,7 @@ document.getElementById("sylIn").oninput=sylRender;
  const style=document.createElement("style");
  style.textContent='.dash-modal-backdrop{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.dash-modal{width:min(100%,460px);background:var(--panel,#151515);color:var(--text,#fff);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;padding:24px;box-shadow:0 24px 80px #0008}.dash-modal h2{margin:0 0 8px;font-size:24px}.dash-modal p{margin:0 0 20px;color:var(--muted,#aaa);font-size:14px}.dash-modal label{display:block;margin:14px 0 7px;font-size:12px;color:var(--muted,#aaa)}.dash-modal input,.dash-modal select{width:100%;min-height:46px;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:9px;background:var(--surface,#202020);color:inherit;padding:0 12px;font:inherit}.dash-modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}.dash-modal-actions button{min-height:42px;padding:0 15px;border-radius:9px;border:1px solid var(--line,rgba(255,255,255,.2));background:transparent;color:inherit}.dash-modal-actions button.primary{background:var(--accent,#ff6a00);border-color:var(--accent,#ff6a00);color:#fff}.dash-project-actions button{cursor:pointer}';
  document.head.append(style);
- const backdrop=document.createElement("div");backdrop.className="dash-modal-backdrop";backdrop.hidden=true;backdrop.innerHTML='<form class="dash-modal" role="dialog" aria-modal="true" aria-labelledby="dashModalTitle"><h2 id="dashModalTitle">New project</h2><p id="dashModalCopy">Give the work a name and choose where it begins.</p><label for="dashProjectName">Project name</label><input id="dashProjectName" maxlength="70" required placeholder="A name worth returning to"><label for="dashProjectRoom">Starting room</label><select id="dashProjectRoom"><option value="ayan">Àyàn · Music</option><option value="write">Akéwì · Writing</option><option value="faajiplace">Fàájíplace · Film</option><option value="beauty">Ojuloge</option></select><div class="dash-modal-actions"><button type="button" id="dashModalCancel">Cancel</button><button class="primary" type="submit">Save project</button></div></form>';
+ const backdrop=document.createElement("div");backdrop.className="dash-modal-backdrop";backdrop.hidden=true;backdrop.innerHTML='<form class="dash-modal" role="dialog" aria-modal="true" aria-labelledby="dashModalTitle"><h2 id="dashModalTitle">New project</h2><p id="dashModalCopy">Give the work a name and choose where it begins.</p><label for="dashProjectName">Project name</label><input id="dashProjectName" maxlength="70" required placeholder="A name worth returning to"><label for="dashProjectRoom">Starting room</label><select id="dashProjectRoom"><option value="ayan">Àyàn · Music</option><option value="write">Ewì · Writing</option><option value="faajiplace">Fàájíplace · Film</option><option value="beauty">Ojuloge</option></select><div class="dash-modal-actions"><button type="button" id="dashModalCancel">Cancel</button><button class="primary" type="submit">Save project</button></div></form>';
  document.body.append(backdrop);
  const form=backdrop.querySelector("form"),nameInput=$("dashProjectName"),roomInput=$("dashProjectRoom");
  let editingId=null;
