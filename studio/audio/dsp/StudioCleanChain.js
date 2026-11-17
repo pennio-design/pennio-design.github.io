@@ -40,8 +40,8 @@ class StudioCleanChain{
    leftSum.connect(merger,0,0);rightSum.connect(merger,0,1);source=merger;this.widthNode=sideBlend;
   }
   const glue=make(()=>context.createDynamicsCompressor());glue.threshold.value=p.compThresholdDb;glue.knee.value=6;glue.ratio.value=p.compRatio;glue.attack.value=.015;glue.release.value=.12;source.connect(glue);source=glue;
-  const limiter=make(()=>context.createDynamicsCompressor());limiter.threshold.value=-1;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.001;limiter.release.value=.05;source.connect(limiter);source=limiter;
-  const makeup=make(()=>context.createGain());makeup.gain.value=db(p.makeupGainDb);source.connect(makeup);makeup.connect(this.wet);this.wet.connect(this.output);
+  const makeup=make(()=>context.createGain());makeup.gain.value=db(p.makeupGainDb);source.connect(makeup);source=makeup;
+  const limiter=make(()=>context.createDynamicsCompressor());limiter.threshold.value=-1;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.001;limiter.release.value=.05;source.connect(limiter);limiter.connect(this.wet);this.wet.connect(this.output);
   this.params={hpf,box,presence,air,glue,limiter,makeup};
   this.setState(this.state,0);
  }
