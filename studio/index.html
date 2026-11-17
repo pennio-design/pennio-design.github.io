@@ -1370,8 +1370,8 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <button class="dash-room" data-room="faajiplace" data-search="film video filmmaking faajiplace">
       <span class="dash-room-index">03 / IMAGE</span><span class="dash-room-icon">▣</span><b>Fàájíplace</b><span class="dash-room-desc">Shape scenes, plan shots and build a film from an idea.</span><span class="dash-room-foot"><span>Open film room</span><span>↗</span></span>
     </button>
-    <button class="dash-room" data-room="beauty" data-search="model beauty camera portrait fashion face">
-      <span class="dash-room-index">04 / PRESENCE</span><span class="dash-room-icon">◌</span><b>Model / Beauty</b><span class="dash-room-desc">Use the camera, explore looks and create portraits.</span><span class="dash-room-foot"><span>Open beauty room</span><span>↗</span></span>
+    <button class="dash-room" data-room="beauty" data-search="ojuloge beauty camera portrait fashion hairstyles face">
+      <span class="dash-room-index">04 / PRESENCE</span><span class="dash-room-icon">◌</span><b>Ojuloge</b><span class="dash-room-desc">Use the camera, explore looks and create portraits.</span><span class="dash-room-foot"><span>Open Ojuloge</span><span>↗</span></span>
     </button>
     <div class="dash-room dash-room-soon" data-search="claps atewo rhythm percussion" aria-disabled="true">
       <span class="dash-room-index">05 / RHYTHM</span><span class="dash-room-icon">✳</span><b>Àtẹ́wọ́</b><span class="dash-room-desc">Claps, body percussion and rhythm patterns.</span><span class="dash-room-foot"><span>In development</span><span>—</span></span>
@@ -1571,7 +1571,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
   <div class="cr-lead">
     <div class="cr-kicker">Write room · lyrics & screenplay</div>
     <h1>A place where Write meets Àyàn.</h1>
-    <p class="sub">Shape a scene or a song, then carry a line into Àyàn and find its rhythm with your voice. Send scene headings to Fàájìplace for picture cues. Drafts stay on this device until you export them.</p>
+    <p class="sub">Shape a scene or a song, then carry a line into Àyàn and find its rhythm with your voice. Send scene headings to Eré for picture cues. Drafts stay on this device until you export them.</p>
   </div>
   <div class="jump" role="navigation" aria-label="In this tab"><a href="#draftRoom">Draft room</a><a href="#wtext">Tone marks</a><a href="#hkCard">Songwriting</a><a href="#tgCard">Tone game</a><a href="#ogbCard">Translate</a></div>
   <div class="dr-section-head" id="draftRoom"><div><div class="cr-kicker">One working draft</div><h2>Build the scene. Find the line.</h2></div><p id="draftStatus" aria-live="polite">Saved on this device</p></div>
@@ -1695,7 +1695,7 @@ A clear image or action.
 <!-- FILM -->
 <section class="view" id="v-faajiplace">
   <div class="cr-lead">
-    <div class="cr-kicker">Fàájìplace · film room</div>
+    <div class="cr-kicker">Eré · film room</div>
     <h1>Score the story while it is still moving.</h1>
     <p class="sub">Plan the script, capture real places and performances, then keep reference footage and scene cues together for your AI generator or edit. Your footage stays on this device.</p>
   </div> 
@@ -1751,7 +1751,7 @@ A clear image or action.
     <div class="fr-cue-empty" id="filmCueEmpty"><b>Your first cue is one moment away.</b>Add a clip, pause on a story turn, then mark it. You can also bring scene headings over from Write.</div>
   </div>
   <div class="card fr-story">
-    <div class="ogb-h"><h3>Stories with roots</h3><span class="ogb-tag">Fàájìplace</span></div>
+    <div class="ogb-h"><h3>Stories with roots</h3><span class="ogb-tag">Eré</span></div>
     <p>Explore five Yoruba story worlds, or send a story of your own. The room above is for shaping picture and sound around the stories you are making.</p>
     <div class="cta2"><a class="p" href="/faajiplace/send/">Send me your story</a><a class="s" href="/faajiplace/">Read the story worlds</a></div>
   </div>
@@ -1764,7 +1764,7 @@ A clear image or action.
   </div>
 </section>
 <section class="view" id="v-beauty">
- <div class="cr-lead"><div class="cr-kicker">Model / Beauty · camera room</div><h1>Find your look.</h1><p class="sub">Take a portrait, try a look, and save the result. Switch between your front and rear camera whenever you need.</p></div> 
+ <div class="cr-lead"><div class="cr-kicker">Ojuloge · camera room</div><h1>Find your look.</h1><p class="sub">Take a portrait, try a look, and save the result. Switch between your front and rear camera whenever you need.</p></div> 
  <section class="og-project" data-ojug-carousel aria-label="Ojú Gbooro featured project">
   <div class="og-project-head"><div><div class="cr-kicker">Ojuloge / featured project</div><h2>Hair carries memory.</h2><p>A living record of Yoruba hair craft, the people who practise it, and the models who carry the work.</p></div><a href="/oju-gbooro/">Explore project ↗</a></div>
   <div class="og-carousel" aria-roledescription="carousel">
@@ -4738,7 +4738,7 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   if((e.ctrlKey||e.metaKey) && k==="z"){ e.preventDefault(); (e.shiftKey? redoBtn : undoBtn).click(); }
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
-  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="home"?"Projects":v==="ayan"?"Beat":v==="write"?"Tongue":v==="beauty"?"Model / Beauty":"Fàájíplace";
+  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="home"?"Projects":v==="ayan"?"Beat":v==="write"?"Tongue":v==="beauty"?"Ojuloge":"Fàájíplace";
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
@@ -4747,7 +4747,7 @@ const hs=x=>{x=x.replace("#",""); return x==="film"?"faajiplace":x;};
 const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan"||h==="home") show(h); else show("ayan");
 window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write"||x==="beauty") show(x);});
 
-/* Model / Beauty camera controls */
+/* Ojuloge camera controls */
 (()=>{
  const video=document.getElementById("beautyVideo"),still=document.getElementById("beautyStill"),empty=document.getElementById("beautyEmpty"),status=document.getElementById("beautyStatus");if(!video)return;
  let stream=null,facing="user",captured=null;const keys=["Brightness","Contrast","Saturate","Warmth","Soft"];
@@ -5170,7 +5170,7 @@ document.getElementById("sylIn").oninput=sylRender;
  const read=()=>{try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}};
  const write=list=>{try{localStorage.setItem(KEY,JSON.stringify(list));return true}catch(e){return false}};
  const rooms=$("dashRooms"),search=$("dashSearch"),projects=$("dashProjects");
- const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Model / Beauty"};
+ const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Ojuloge"};
  let showAllProjects=false;
  function go(room){const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();try{history.replaceState(null,"",room==="home"?"/studio/":"#"+room)}catch(e){}window.scrollTo({top:0,behavior:"smooth"});}
  rooms.addEventListener("click",e=>{const card=e.target.closest("[data-room]");if(card&&roomNames[card.dataset.room])go(card.dataset.room);});
@@ -5180,7 +5180,7 @@ document.getElementById("sylIn").oninput=sylRender;
  const style=document.createElement("style");
  style.textContent='.dash-modal-backdrop{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.dash-modal{width:min(100%,460px);background:var(--panel,#151515);color:var(--text,#fff);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;padding:24px;box-shadow:0 24px 80px #0008}.dash-modal h2{margin:0 0 8px;font-size:24px}.dash-modal p{margin:0 0 20px;color:var(--muted,#aaa);font-size:14px}.dash-modal label{display:block;margin:14px 0 7px;font-size:12px;color:var(--muted,#aaa)}.dash-modal input,.dash-modal select{width:100%;min-height:46px;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:9px;background:var(--surface,#202020);color:inherit;padding:0 12px;font:inherit}.dash-modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}.dash-modal-actions button{min-height:42px;padding:0 15px;border-radius:9px;border:1px solid var(--line,rgba(255,255,255,.2));background:transparent;color:inherit}.dash-modal-actions button.primary{background:var(--accent,#ff6a00);border-color:var(--accent,#ff6a00);color:#fff}.dash-project-actions button{cursor:pointer}';
  document.head.append(style);
- const backdrop=document.createElement("div");backdrop.className="dash-modal-backdrop";backdrop.hidden=true;backdrop.innerHTML='<form class="dash-modal" role="dialog" aria-modal="true" aria-labelledby="dashModalTitle"><h2 id="dashModalTitle">New project</h2><p id="dashModalCopy">Give the work a name and choose where it begins.</p><label for="dashProjectName">Project name</label><input id="dashProjectName" maxlength="70" required placeholder="A name worth returning to"><label for="dashProjectRoom">Starting room</label><select id="dashProjectRoom"><option value="ayan">Àyàn · Music</option><option value="write">Akéwì · Writing</option><option value="faajiplace">Fàájíplace · Film</option><option value="beauty">Model / Beauty</option></select><div class="dash-modal-actions"><button type="button" id="dashModalCancel">Cancel</button><button class="primary" type="submit">Save project</button></div></form>';
+ const backdrop=document.createElement("div");backdrop.className="dash-modal-backdrop";backdrop.hidden=true;backdrop.innerHTML='<form class="dash-modal" role="dialog" aria-modal="true" aria-labelledby="dashModalTitle"><h2 id="dashModalTitle">New project</h2><p id="dashModalCopy">Give the work a name and choose where it begins.</p><label for="dashProjectName">Project name</label><input id="dashProjectName" maxlength="70" required placeholder="A name worth returning to"><label for="dashProjectRoom">Starting room</label><select id="dashProjectRoom"><option value="ayan">Àyàn · Music</option><option value="write">Akéwì · Writing</option><option value="faajiplace">Fàájíplace · Film</option><option value="beauty">Ojuloge</option></select><div class="dash-modal-actions"><button type="button" id="dashModalCancel">Cancel</button><button class="primary" type="submit">Save project</button></div></form>';
  document.body.append(backdrop);
  const form=backdrop.querySelector("form"),nameInput=$("dashProjectName"),roomInput=$("dashProjectRoom");
  let editingId=null;
