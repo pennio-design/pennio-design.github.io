@@ -1321,7 +1321,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <div class="hright">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
       <button class="btn ic" id="siteSettingsBtn" type="button" aria-label="Studio settings" title="Studio settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
-      <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Beat</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+            <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Beat</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
         <nav id="nav" hidden>
           <button data-v="ayan" class="on">Beat <small>Àyàn</small></button>
           <button data-v="write">Tongue <small>Ìlù + Write</small></button>
@@ -1331,6 +1331,23 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     </div>
   </div>
 </header>
+<aside class="studio-rec" id="studioRecorder" aria-label="Studio recorder">
+  <div class="studio-rec-top"><div><span class="studio-rec-kicker">PENNIO capture</span><b id="studioRecTitle">Record a new idea</b><small id="studioRecHint">Capture audio or video from any room.</small></div><button type="button" class="studio-rec-close" id="studioRecClose" aria-label="Close recorder">×</button></div>
+  <div class="studio-rec-controls"><div class="studio-rec-modes" role="group" aria-label="Recording type"><button type="button" class="on" data-rec-mode="audio">Voice / audio</button><button type="button" data-rec-mode="video">Video</button></div><button type="button" class="btn primary" id="studioRecStart">● Record</button><button type="button" class="btn" id="studioRecStop" disabled>Stop</button><span class="studio-rec-clock" id="studioRecClock">00:00</span></div>
+  <div class="studio-rec-live" id="studioRecLive" hidden><div class="studio-rec-live-frame" id="studioRecLiveFrame" data-aspect="landscape"><video id="studioRecLiveVideo" autoplay playsinline muted></video><div class="studio-rec-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="studio-rec-live-label" id="studioRecLiveLabel">CAMERA PREVIEW</span><span class="studio-rec-rec" id="studioRecRec" hidden>REC</span></div><div class="studio-rec-camera-tools"><button type="button" class="btn" id="studioRecFlip" disabled>Flip camera</button><span>Framing guide</span><button type="button" class="btn on" data-rec-aspect="landscape">16:9</button><button type="button" class="btn" data-rec-aspect="portrait">9:16</button><button type="button" class="btn" data-rec-aspect="square">1:1</button></div></div><div class="studio-rec-preview" id="studioRecPreview" hidden></div>
+  <div class="studio-rec-trim" id="studioRecTrim" hidden style="padding:12px;margin:10px 0;border:1px solid var(--line,rgba(255,255,255,.16));border-radius:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px"><b>Trim take</b><small id="studioRecTrimDuration">00:00</small></div>
+    <label for="studioRecTrimStart" style="display:flex;justify-content:space-between;gap:10px;font-size:12px">Start <output id="studioRecTrimStartValue">00:00</output></label>
+    <input id="studioRecTrimStart" type="range" min="0" max="1" step="0.1" value="0" style="width:100%;display:block;margin:6px 0 12px">
+    <label for="studioRecTrimEnd" style="display:flex;justify-content:space-between;gap:10px;font-size:12px">End <output id="studioRecTrimEndValue">00:00</output></label>
+    <input id="studioRecTrimEnd" type="range" min="0.1" max="1" step="0.1" value="1" style="width:100%;display:block;margin:6px 0 12px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary" id="studioRecTrimApply">Apply trim</button><button type="button" class="btn" id="studioRecTrimReset" disabled>Restore original</button></div>
+    <small style="display:block;margin-top:8px;opacity:.7">Choose the section to keep. The original take remains available until you start a new recording.</small>
+  </div>
+  <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Send to Beat</button><button type="button" class="btn" id="studioRecTongue">Send to Tongue</button><button type="button" class="btn" id="studioRecFilm">Use in Film</button><button type="button" class="btn" id="studioRecExtract" hidden>Extract audio</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
+  <p class="studio-rec-status" id="studioRecStatus" aria-live="polite">Your recording stays on this device until you save or use it.</p>
+</aside>
+
 
 <main class="wrap"><!-- STUDIO DASHBOARD -->
 <section class="view" id="v-home">
@@ -1738,22 +1755,7 @@ A clear image or action.
     <p>Skilled traditional hairdressers, and models to wear their work. Send your entry →</p>
   </a>
 </section>
-<aside class="studio-rec" id="studioRecorder" aria-label="Studio recorder">
-  <div class="studio-rec-top"><div><span class="studio-rec-kicker">PENNIO capture</span><b id="studioRecTitle">Record a new idea</b><small id="studioRecHint">Capture audio or video from any room.</small></div><button type="button" class="studio-rec-close" id="studioRecClose" aria-label="Close recorder">×</button></div>
-  <div class="studio-rec-controls"><div class="studio-rec-modes" role="group" aria-label="Recording type"><button type="button" class="on" data-rec-mode="audio">Voice / audio</button><button type="button" data-rec-mode="video">Video</button></div><button type="button" class="btn primary" id="studioRecStart">● Record</button><button type="button" class="btn" id="studioRecStop" disabled>Stop</button><span class="studio-rec-clock" id="studioRecClock">00:00</span></div>
-  <div class="studio-rec-live" id="studioRecLive" hidden><div class="studio-rec-live-frame" id="studioRecLiveFrame" data-aspect="landscape"><video id="studioRecLiveVideo" autoplay playsinline muted></video><div class="studio-rec-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="studio-rec-live-label" id="studioRecLiveLabel">CAMERA PREVIEW</span><span class="studio-rec-rec" id="studioRecRec" hidden>REC</span></div><div class="studio-rec-camera-tools"><button type="button" class="btn" id="studioRecFlip" disabled>Flip camera</button><span>Framing guide</span><button type="button" class="btn on" data-rec-aspect="landscape">16:9</button><button type="button" class="btn" data-rec-aspect="portrait">9:16</button><button type="button" class="btn" data-rec-aspect="square">1:1</button></div></div><div class="studio-rec-preview" id="studioRecPreview" hidden></div>
-  <div class="studio-rec-trim" id="studioRecTrim" hidden style="padding:12px;margin:10px 0;border:1px solid var(--line,rgba(255,255,255,.16));border-radius:12px">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px"><b>Trim take</b><small id="studioRecTrimDuration">00:00</small></div>
-    <label for="studioRecTrimStart" style="display:flex;justify-content:space-between;gap:10px;font-size:12px">Start <output id="studioRecTrimStartValue">00:00</output></label>
-    <input id="studioRecTrimStart" type="range" min="0" max="1" step="0.1" value="0" style="width:100%;display:block;margin:6px 0 12px">
-    <label for="studioRecTrimEnd" style="display:flex;justify-content:space-between;gap:10px;font-size:12px">End <output id="studioRecTrimEndValue">00:00</output></label>
-    <input id="studioRecTrimEnd" type="range" min="0.1" max="1" step="0.1" value="1" style="width:100%;display:block;margin:6px 0 12px">
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary" id="studioRecTrimApply">Apply trim</button><button type="button" class="btn" id="studioRecTrimReset" disabled>Restore original</button></div>
-    <small style="display:block;margin-top:8px;opacity:.7">Choose the section to keep. The original take remains available until you start a new recording.</small>
-  </div>
-  <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Send to Beat</button><button type="button" class="btn" id="studioRecTongue">Send to Tongue</button><button type="button" class="btn" id="studioRecFilm">Use in Film</button><button type="button" class="btn" id="studioRecExtract" hidden>Extract audio</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
-  <p class="studio-rec-status" id="studioRecStatus" aria-live="polite">Your recording stays on this device until you save or use it.</p>
-</aside>
+
 <button type="button" class="studio-rec-launch" id="studioRecLaunch" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Record</button>
 <p class="foot"><a href="/studio/guide/" style="color:inherit">How to use PENNIO Studio</a> · PENNIO Studio by PENNIO</p>
 </main>
@@ -1768,7 +1770,7 @@ A clear image or action.
     <div class="err" id="obErr"></div>
     <button class="btn primary" type="submit" style="width:100%;margin-top:6px;padding:13px">Enter the studio</button>
   </form>
-  <button class="btn" id="obReturn" style="width:100%;margin-top:10px">I have used PENNIO Studio before: restore my work</button>
+  <button class="btn" id="obReturn" type="button" style="width:100%;margin-top:10px">Sign out and leave</button>
 </div></div>
 
 <div class="sheet" id="profileSheet" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
@@ -4158,7 +4160,9 @@ document.getElementById("obForm").onsubmit=async e=>{
   const mailStatus=await sendProfileIfNeeded(true);
   try{ if(navigator.storage&&navigator.storage.persist) await navigator.storage.persist(); }catch(e){}
   ob.classList.remove("on");
-  toast(mailStatus==="accepted"?"Welcome. Your studio guide email has been accepted for delivery.":mailStatus==="unverified"?"Welcome. Your profile is saved. We submitted the guide email request; check your inbox and spam folder. You can resend it from your profile.":"Welcome. Your profile is saved, but the guide email could not be submitted. You can retry from your profile.");
+  pennioProfileGateOpen=false;document.body.classList.remove("profile-required","auth-locked");
+  await startPENNIOWorkspace(pendingWorkspaceAuthState||{});pendingWorkspaceAuthState=null;
+  toast(mailStatus==="accepted"?"Profile saved. Your studio guide email has been accepted for delivery.":mailStatus==="unverified"?"Profile saved. Your guide email request was submitted. Check your inbox and spam folder.":"Profile saved. Your guide email could not be submitted, but you can retry from your profile.");
 };
 
 /* ---------- cloud saving: Supabase, called over plain HTTPS (no third-party script) ---------- */
@@ -4362,19 +4366,17 @@ document.getElementById("sbWipe").onclick=async()=>{
     toast("Your cloud copy is deleted. Your work is still in this browser.");
   }catch(e){ toast("Could not delete right now. Email contact@pennio.agency and we will remove it."); }
 };
-document.getElementById("obReturn").onclick=()=>{ ob.classList.remove("on"); renderWork(); workEl.classList.add("on"); renderCloud(); setTimeout(()=>{ document.getElementById("cloud").scrollIntoView({behavior:"smooth",block:"start"}); document.getElementById("sbEmail").focus(); },200); };
+document.getElementById("obReturn").onclick=async()=>{ try{if(sbSess)await sbFetch("/auth/v1/logout",{method:"POST"});}catch(e){} sbClear(); location.reload(); };
 
 /* boot: the workspace is mounted only after Supabase confirms a valid account session. */
-let pennioWorkspaceStarted=false;
+let pennioWorkspaceStarted=false, pennioProfileGateOpen=false, pendingWorkspaceAuthState=null;
 async function startPENNIOWorkspace(authState){
-  if(pennioWorkspaceStarted) return;
-  pennioWorkspaceStarted=true;
-  document.body.classList.remove("auth-locked");
-  document.getElementById("authGate").hidden=true;
+  if(pennioWorkspaceStarted||pennioProfileGateOpen) return;
   const authEmail=(sbSess&&sbSess.user&&sbSess.user.email||"").trim().toLowerCase();
   let prof=lsGet("ps.profile")||(await kvGet("profile"));
-  if(prof&&authEmail&&String(prof.email||"").trim().toLowerCase()!==authEmail) prof=null;
-  if(prof) lsSet("ps.profile",prof);
+  if(prof&&((authEmail&&String(prof.email||"").trim().toLowerCase()!==authEmail)||!String(prof.name||"").trim())) prof=null;
+  if(!prof){pendingWorkspaceAuthState=authState||{};pennioProfileGateOpen=true;document.getElementById("authGate").hidden=true;document.body.classList.add("profile-required");const obEmail=document.getElementById("obEmail");document.getElementById("obName").value="";obEmail.value=authEmail;obEmail.readOnly=!!authEmail;document.getElementById("obErr").textContent="";ob.classList.add("on");requestAnimationFrame(()=>document.getElementById("obName").focus());return;}
+  pennioWorkspaceStarted=true;lsSet("ps.profile",prof);document.body.classList.remove("auth-locked","profile-required");document.getElementById("authGate").hidden=true;
   const curId=lsGet("ps.current")||(await kvGet("current"));
   let rec=curId? await tx("projects","readonly",st=>st.get(curId)) : null;
   if(!rec){ const list=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated); rec=list[0]||null; }
@@ -4382,16 +4384,7 @@ async function startPENNIOWorkspace(authState){
   if(rec){ await openProject(rec); ready=true; document.getElementById("savedNote").textContent="Restored"; }
   else { await newProject(); }
   renderWords();
-  if(!prof){
-    const obEmail=document.getElementById("obEmail");
-    document.getElementById("obName").value="";
-    obEmail.value=authEmail;
-    obEmail.readOnly=!!authEmail;
-    document.getElementById("obErr").textContent="";
-    ob.classList.add("on");
-  }else{
-    sendProfileIfNeeded();
-  }
+  sendProfileIfNeeded();
   const firstPlayButton=document.getElementById("firstPlay"); if(firstPlayButton) firstPlayButton.disabled=false;
   if(!lsGet("ps.heroSeen")){ document.getElementById("hero").hidden=false; lsSet("ps.heroSeen",1); }
   paintAvatar();
@@ -5200,5 +5193,15 @@ body.auth-locked{overflow-x:hidden;overflow-y:auto;min-height:100%;height:auto}
 }
 </style>
 
+
+<style id="pennio-first-login-and-flow">
+body.profile-required{overflow:hidden!important;min-height:100dvh}body.profile-required>*:not(#onboard):not(script):not(style){display:none!important;visibility:hidden!important;pointer-events:none!important}
+body.profile-required #onboard.sheet,body.profile-required #onboard.sheet.on{position:fixed!important;inset:0!important;z-index:10000!important;width:100%!important;height:100dvh!important;max-height:100dvh!important;margin:0!important;padding:24px!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow-y:auto!important;background:rgba(5,5,5,.94)!important;backdrop-filter:blur(14px)!important}
+body.profile-required #onboard .panel{width:min(100%,520px)!important;max-height:calc(100dvh - 48px)!important;overflow-y:auto!important;margin:auto!important;padding:clamp(22px,4vw,36px)!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:20px!important;background:#111!important;color:#fff!important;box-shadow:0 24px 90px rgba(0,0,0,.5)!important}
+body.profile-required #onboard h2{font-size:clamp(24px,4vw,32px)!important;line-height:1.1!important}body.profile-required #onboard p{color:#b8b2aa!important;line-height:1.65!important}body.profile-required #onboard .field{margin-top:18px!important}body.profile-required #onboard input{width:100%!important;min-width:0!important}body.profile-required #onboard #obReturn{margin-top:14px!important;border-color:rgba(255,255,255,.2)!important;color:#d7d1c8!important}
+html[data-theme="light"] body.profile-required #onboard.sheet{background:rgba(245,243,239,.96)!important}html[data-theme="light"] body.profile-required #onboard .panel{background:#fff!important;color:#090909!important;border-color:rgba(9,9,9,.16)!important}html[data-theme="light"] body.profile-required #onboard p{color:#625e58!important}
+.studio-rec{position:static!important;z-index:auto!important;width:min(100% - 32px,900px)!important;max-width:900px!important;margin:12px auto 0!important;box-shadow:0 8px 28px rgba(0,0,0,.16)!important;backdrop-filter:none!important}.studio-rec-launch{position:static!important;z-index:auto!important;margin:0!important;box-shadow:none!important;white-space:nowrap}body.workspace-open .studio-rec-launch{display:inline-flex!important}
+@media(max-width:760px){.studio-rec{width:calc(100% - 24px)!important;margin:10px auto 0!important}.studio-rec-launch{min-height:40px;padding:9px 12px!important}}
+</style>
 </body>
 </html>
