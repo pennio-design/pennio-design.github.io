@@ -1166,6 +1166,18 @@ html[data-theme="light"] .dash-panel select{background:#fff!important;color:#201
 html[data-theme="light"] .card input::placeholder,
 html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;opacity:1}
 </style>
+<style id="studio-touch-grid">
+@media(max-width:760px){
+  #v-ayan .row{width:max-content;min-width:100%;grid-template-columns:76px max-content}
+  #v-ayan .steps{min-width:max-content}
+  #v-ayan .step{width:40px;min-width:40px;min-height:44px;aspect-ratio:auto}
+}
+@media(max-width:420px){
+  #v-ayan .row{grid-template-columns:66px max-content}
+  #v-ayan .steps{gap:4px}
+}
+html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
+</style>
 
 <style id="pennio-zero-gate-first-play">
 #hero,.inst,#bkpBar{display:none!important}
@@ -1203,7 +1215,7 @@ html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;
     <div class="hright">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
       <button class="btn ic" id="siteSettingsBtn" type="button" aria-label="Studio settings" title="Studio settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
-      <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Overview</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Beat</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
         <nav id="nav" hidden>
           <button data-v="ayan" class="on">Beat <small>Àyàn</small></button>
           <button data-v="write">Tongue <small>Ìlù + Write</small></button>
@@ -1333,7 +1345,7 @@ html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;
   </div>
   <div class="grid"><div id="rows"></div>
     <div class="addrows" id="addRows"></div>
-    <div class="legend"><span><i class="lg hit"></i>Hit</span><span><i class="lg gh"></i>Ghost: hold or right-click</span><span><i class="lg ph"></i>Playhead</span><span class="kbd">Space play · Ctrl Z undo · tap a name to mute</span></div>
+    <div class="legend"><span><i class="lg hit"></i>Hit · tap to hear this lane</span><span><i class="lg gh"></i>Ghost: hold or right-click</span><span><i class="lg ph"></i>Playhead</span><span class="kbd">Space play · Ctrl Z undo · tap a name to mute</span></div>
   </div>
 
   <div class="card" id="voiceCard">
@@ -2527,7 +2539,7 @@ function addPennioCredit(blob){
     const n=data.length;frame[4]=(n>>>24)&255;frame[5]=(n>>>16)&255;frame[6]=(n>>>8)&255;frame[7]=n&255;
     frame.set(data,10);return frame;
   };
-  const frames=[makeFrame("TENC","PENNIO Studio"),makeFrame("TCOP","Created with PENNIO Studio - https://pennio.agency/studio/")];
+  const frames=[makeFrame("TENC","PENNIO Studio"),makeFrame("TIT1","Created with PENNIO Studio - https://pennio.agency/studio/")];
   const size=frames.reduce((sum,frame)=>sum+frame.length,0),body=new Uint8Array(size);
   let offset=0;for(const frame of frames){body.set(frame,offset);offset+=frame.length;}
   const header=new Uint8Array([73,68,51,3,0,0,(size>>>21)&127,(size>>>14)&127,(size>>>7)&127,size&127]);
