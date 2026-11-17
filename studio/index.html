@@ -1508,7 +1508,15 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 
   <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
   <div class="daw-head" id="dawHead"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
-  <nav class="daw-engineer-modes" aria-label="Engineer modes"><button type="button" class="on" data-engineer-mode="record" aria-pressed="true">Record</button><button type="button" data-engineer-mode="play" aria-pressed="false">Play</button><button type="button" data-engineer-mode="mix" aria-pressed="false">Mix</button><button type="button" data-engineer-mode="edit" aria-pressed="false">Edit</button><button type="button" data-engineer-mode="plan" aria-pressed="false">Plan</button><button type="button" data-engineer-mode="merge" aria-pressed="false">Merge</button></nav><p class="daw-mode-help" id="dawModeHelp" aria-live="polite">Record with the beat, or import audio to start a session.</p>
+  <div class="daw-workbench"><aside class="daw-sidebar" aria-label="Engineer workflow">
+  <div class="daw-sidebar-title"><small>ÀYÀN ENGINEER</small><b>Work modes</b></div>
+  <nav class="daw-engineer-modes" aria-label="Engineer modes">
+    <div class="daw-mode-group"><small>CAPTURE</small><button type="button" class="on" data-engineer-mode="record" aria-pressed="true"><span>Record</span><em>Voice & overdubs</em></button></div>
+    <div class="daw-mode-group"><small>SESSION</small><button type="button" data-engineer-mode="play" aria-pressed="false"><span>Play</span><em>Listen & review</em></button><button type="button" data-engineer-mode="edit" aria-pressed="false"><span>Edit</span><em>Trim & punch in</em></button></div>
+    <div class="daw-mode-group"><small>SHAPE</small><button type="button" data-engineer-mode="mix" aria-pressed="false"><span>Mix</span><em>Levels & effects</em></button></div>
+    <div class="daw-mode-group"><small>FINISH</small><button type="button" data-engineer-mode="plan" aria-pressed="false"><span>Plan</span><em>Session brief</em></button><button type="button" data-engineer-mode="merge" aria-pressed="false"><span>Merge</span><em>Bounce & export</em></button></div>
+  </nav><p class="daw-mode-help" id="dawModeHelp" aria-live="polite">Record with the beat, or import audio to start a session.</p>
+</aside><div class="daw-main">
   <div class="daw-toolbar" id="dawToolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawMerge" disabled>Merge to track</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><button class="btn" id="dawSendStudio" disabled>Send mix to Studio</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
   <div class="daw-plan" id="dawPlanPanel" hidden><label for="dawPlan">Session plan</label><textarea id="dawPlan" maxlength="4000" placeholder="Capture the goal, record order, edit notes or mix intent for this session."></textarea><small>Saved with this project on this device.</small></div><div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
   <div class="daw-selection" id="dawSelectionPanel">
@@ -1525,6 +1533,8 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
     <div class="daw-status">Audio is processed in your browser. Imported tracks are not uploaded. Export creates a stereo WAV mix.</div>
   </div>
+  </div>
+</div>
 </section>
 
   <div class="card">
@@ -1541,7 +1551,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
   <div class="card">
     <h3>Layers</h3>
     <p>Every sound in your track. Switch a layer on or off, set its volume, and tune it up or down in semitones.</p>
-    <div class="layers" id="layers"></div>
+    <p class="layer-isolation-status" id="laneIsolationStatus" hidden></p><div class="layers" id="layers"></div>
   </div>
 
   <div class="card">
@@ -1949,8 +1959,87 @@ let pattern = {};
 let muted = {};
 LANES.forEach(l=>{pattern[l.id]=new Array(16).fill(0);muted[l.id]=false});
 let banks={A:pattern,B:null,C:null,D:null,E:null,F:null}, bank="A";
+window.PennioLaneIsolation=window.PennioLaneIsolation||{
+  active:null,listeners:new Set(),
+  subscribe(fn){this.listeners.add(fn);return()=>this.listeners.delete(fn);},
+  begin(source,id,token,states){this.active={source,id,token,states};this.listeners.forEach(fn=>fn(this.active));},
+  end(token){if(!this.active||this.active.token!==token)return;this.active=null;this.listeners.forEach(fn=>fn(null));}
+};
 const soloed=new Set(), shownRows=new Set();
-const laneOn=id=>!muted[id] && (!soloed.size || soloed.has(id));
+let isolationActive=false, activeSoloLaneId=null, preSoloStates=null, activeHoldPointerId=null, isolationSource=null;
+const permanentLaneAudible=id=>{
+  const available=id==="full"?LAY.full:id==="drumv"?LAY.drum:id==="vox"?LAY.vox&&!muted.vox:!muted[id];
+  return !!available && (!soloed.size || soloed.has(id));
+};
+const laneOn=id=>isolationActive
+  ? !!preSoloStates?.[id] && id===activeSoloLaneId
+  : permanentLaneAudible(id);
+function setLaneBusGain(id){
+  const bus=busses&&busses[id]; if(!bus||!ac)return;
+  const audible=isolationActive ? !!preSoloStates?.[id]&&id===activeSoloLaneId : permanentLaneAudible(id);
+  const level=audible?(gainsV[id]??1):0, p=bus.gain, now=ac.currentTime;
+  p.cancelScheduledValues(now); p.setValueAtTime(p.value,now); p.linearRampToValueAtTime(level,now+.008);
+}
+function syncLaneBusGains(){ if(!busses)return; Object.keys(busses).forEach(setLaneBusGain); }
+function paintIsolationState(){
+  const banner=document.getElementById("laneIsolationStatus");
+  if(banner){banner.hidden=!isolationActive;banner.textContent=isolationSource==="daw"?"A DAW track is isolated. Release its Hold control to restore the full Beat mix.":isolationActive?"Holding "+((LANES.find(l=>l.id===activeSoloLaneId)||{}).name||"lane")+" alone. Release to restore the mix.":"";}
+  rowsEl?.querySelectorAll(".row[data-l]").forEach(row=>{
+    const id=row.dataset.l, temporary=isolationActive&&id!==activeSoloLaneId&&(isolationSource==="daw"||!!preSoloStates?.[id]);
+    row.classList.toggle("isolation-active",isolationActive&&id===activeSoloLaneId);
+    row.classList.toggle("isolation-muted",temporary);
+    row.title=temporary?"Temporarily muted while another lane is held solo":"";
+    const hold=row.querySelector(".h"); if(hold){hold.classList.toggle("on",isolationActive&&id===activeSoloLaneId);hold.setAttribute("aria-pressed",String(isolationActive&&id===activeSoloLaneId));}
+    row.querySelectorAll(".m,.s,.nmb").forEach(button=>button.disabled=isolationActive);
+  });
+  layersEl?.querySelectorAll(".layer[data-l]").forEach(el=>{
+    const id=el.dataset.l, temporary=isolationActive&&id!==activeSoloLaneId&&(isolationSource==="daw"||!!preSoloStates?.[id]);
+    el.classList.toggle("isolation-active",isolationActive&&id===activeSoloLaneId);
+    el.classList.toggle("isolation-muted",temporary);
+    const note=el.querySelector(".layer-temp"); if(note)note.hidden=!temporary;
+    const hold=el.querySelector(".layer-hold"); if(hold){hold.classList.toggle("on",isolationActive&&id===activeSoloLaneId);hold.setAttribute("aria-pressed",String(isolationActive&&id===activeSoloLaneId));}
+    el.querySelectorAll(".layer-solo,.sw").forEach(button=>button.disabled=isolationActive||button.dataset.unavailable==="true");
+  });
+}
+function beginLaneIsolation(id,token){
+  if(!isolationActive){
+    preSoloStates=Object.fromEntries([...new Set([...LANES.map(l=>l.id),"full","drumv"])].map(key=>[key,permanentLaneAudible(key)]));
+  }
+  isolationActive=true; isolationSource="beat"; activeSoloLaneId=id; activeHoldPointerId=token;
+  window.PennioLaneIsolation?.begin("beat",id,token,preSoloStates);syncLaneBusGains();paintIsolationState();
+}
+function endLaneIsolation(token){
+  if(!isolationActive||token!==activeHoldPointerId)return;
+  isolationActive=false; isolationSource=null; activeSoloLaneId=null; activeHoldPointerId=null; preSoloStates=null;
+  window.PennioLaneIsolation?.end(token);syncLaneBusGains();paintIsolationState();
+}
+function bindHold(button,id){
+  button.addEventListener("pointerdown",e=>{
+    if(e.button!==undefined&&e.button!==0)return;
+    e.preventDefault();e.stopPropagation();
+    try{button.setPointerCapture(e.pointerId);}catch(_){}
+    beginLaneIsolation(id,e.pointerId);
+  });
+  button.addEventListener("pointerup",e=>{e.stopPropagation();endLaneIsolation(e.pointerId);});
+  button.addEventListener("pointercancel",e=>{e.stopPropagation();endLaneIsolation(e.pointerId);});
+  button.addEventListener("lostpointercapture",e=>endLaneIsolation(e.pointerId));
+  button.addEventListener("keydown",e=>{if((e.key===" "||e.key==="Enter")&&!e.repeat){e.preventDefault();beginLaneIsolation(id,"key:"+id);}});
+  button.addEventListener("keyup",e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();endLaneIsolation("key:"+id);}});
+  button.addEventListener("click",e=>e.preventDefault());
+}
+window.PennioLaneIsolation?.subscribe(active=>{
+  if(active?.source==="beat")return;
+  if(active){
+    if(!isolationActive)preSoloStates=Object.fromEntries([...new Set([...LANES.map(l=>l.id),"full","drumv"])].map(id=>[id,permanentLaneAudible(id)]));
+    isolationActive=true;isolationSource=active.source;activeSoloLaneId="daw:"+active.id;activeHoldPointerId=active.token;
+  }else if(isolationSource==="daw"){
+    isolationActive=false;isolationSource=null;activeSoloLaneId=null;activeHoldPointerId=null;preSoloStates=null;
+  }
+  syncLaneBusGains();paintIsolationState();
+});
+addEventListener("pointerup",e=>endLaneIsolation(e.pointerId));
+addEventListener("pointercancel",e=>endLaneIsolation(e.pointerId));
+addEventListener("blur",()=>{if(isolationActive)endLaneIsolation(activeHoldPointerId);});
 const COLLAPSE=["duru","clap","keys","pluck","flute","reed","vox"];
 function fillLanes(p){ LANES.forEach(l=>{ if(!p[l.id]) p[l.id]=new Array(16).fill(0); }); return p; }
 
@@ -2043,7 +2132,7 @@ function setTransportOutput(level){
 function ensureAudio(){
   if(!ac){
     const C=window.AudioContext||window.webkitAudioContext;
-    ac=new C(); master=makeMaster(ac); busses=makeBusses(ac,master);
+    ac=new C(); master=makeMaster(ac); busses=makeBusses(ac,master); syncLaneBusGains();
   }
   if(ac.state==="suspended") ac.resume();
 }
@@ -2341,16 +2430,19 @@ function render(){
     if(COLLAPSE.includes(l.id) && !laneUsed(l.id) && !shownRows.has(l.id)){
       if(add){ const c=document.createElement("button"); c.className="addrow"; c.textContent="+ "+l.name; c.onclick=()=>{ shownRows.add(l.id); render(); }; add.appendChild(c); }
       return; }
-    const row=document.createElement("div"); row.className="row "+l.id+(laneOn(l.id)?"":" off"); row.dataset.l=l.id; row.hidden=!!(soloLaneId&&soloLaneId!==l.id);
+    const row=document.createElement("div"); row.className="row "+l.id+(laneOn(l.id)?"":" off")+(isolationActive&&activeSoloLaneId===l.id?" isolation-active":"")+(isolationActive&&activeSoloLaneId!==l.id&&(isolationSource==="daw"||!!preSoloStates?.[l.id])?" isolation-muted":""); row.dataset.l=l.id; row.hidden=!!(soloLaneId&&soloLaneId!==l.id);
     const nm=document.createElement("div"); nm.className="name"+(muted[l.id]?" muted":"");
-    nm.innerHTML='<button class="nmb" aria-label=""><b></b><small></small></button><span class="ms"><button class="m" aria-label="Mute">M</button><button class="s" aria-label="Solo">S</button><button class="eye" aria-label="Solo lane" title="Show only this lane">◉</button></span>';
+    nm.innerHTML='<button class="nmb" aria-label=""><b></b><small></small></button><span class="ms"><button class="m" aria-label="Mute" title="Toggle lane mute">M</button><button class="s" aria-label="Solo lane" title="Toggle persistent solo" aria-pressed="false">S</button><button class="h" aria-label="Hold to isolate lane" title="Hold to hear this lane alone" aria-pressed="false">H</button><button class="eye" aria-label="Show only this lane in the grid" title="Hide the other grid lanes">◉</button></span>';
     nm.querySelector("b").textContent=l.name; nm.querySelector("small").textContent=l.sub;
     if(l.id==="dd"||l.id==="bata") nm.querySelector(".nmb").insertAdjacentHTML("afterbegin",'<svg class="ilu-row" viewBox="0 0 64 64" aria-hidden="true"><use href="#iluFace"/></svg>');
     nm.querySelector(".nmb").setAttribute("aria-label",(muted[l.id]?"Unmute ":"Mute ")+l.name);
     nm.querySelector(".nmb").onclick=()=>{ muted[l.id]=!muted[l.id]; render(); renderLayers(); };
-    const mb=nm.querySelector(".m"), sb=nm.querySelector(".s"), eye=nm.querySelector(".eye"); mb.classList.toggle("on",!!muted[l.id]); sb.classList.toggle("on",soloed.has(l.id)); eye.onclick=()=>{soloLaneId=soloLaneId===l.id?null:l.id;render();}; eye.classList.toggle("on",soloLaneId===l.id);
-    mb.onclick=()=>{ muted[l.id]=!muted[l.id]; render(); renderLayers(); };
-    sb.onclick=()=>{ soloed.has(l.id)? soloed.delete(l.id) : soloed.add(l.id); render(); };
+    const mb=nm.querySelector(".m"), sb=nm.querySelector(".s"), hb=nm.querySelector(".h"), eye=nm.querySelector(".eye");
+    mb.classList.toggle("on",!!muted[l.id]); sb.classList.toggle("on",soloed.has(l.id)); sb.setAttribute("aria-pressed",String(soloed.has(l.id)));
+    hb.classList.toggle("on",isolationActive&&activeSoloLaneId===l.id);hb.setAttribute("aria-pressed",String(isolationActive&&activeSoloLaneId===l.id));bindHold(hb,l.id);
+    eye.onclick=()=>{soloLaneId=soloLaneId===l.id?null:l.id;render();}; eye.classList.toggle("on",soloLaneId===l.id);
+    mb.onclick=()=>{ muted[l.id]=!muted[l.id]; syncLaneBusGains(); render(); renderLayers(); };
+    sb.onclick=()=>{ soloed.has(l.id)? soloed.delete(l.id) : soloed.add(l.id); syncLaneBusGains(); render(); renderLayers(); };
     const st=document.createElement("div"); st.className="steps"; st.style.gridTemplateColumns="repeat("+N+",minmax(28px,1fr))";
     if(l.id==="vox" && !rawBuf){
       st.className="steps voxempty"; const b=document.createElement("button"); b.className="voxrec"; b.innerHTML='<i></i>Record your voice: the studio chops it onto this row';
@@ -2746,7 +2838,7 @@ async function loadVoice(bytes,name,fromRestore){
     if(!pattern.vox.some(Boolean)){ pattern.vox=new Array(16).fill(0); for(let i=0;i<N;i+=4) pattern.vox[i]=1; pattern.vox[N-2]=1; }
     vocalOffset=0; vocalNudge=0; drumBuf=null; LAY.drum=false;
   }
-  render(); renderLayers(); drawWave(); vprev.disabled=false; document.getElementById("vbeat").disabled=false; document.getElementById("vtap").disabled=false; document.getElementById("vdel").disabled=false; if(typeof updateTake==="function") updateTake();
+  render(); renderLayers(); drawWave(); vprev.disabled=false; document.getElementById("vbeat").disabled=false; document.getElementById("vtap").disabled=false; document.getElementById("vdel").disabled=false; paintIsolationState(); syncLaneBusGains(); if(typeof updateTake==="function") updateTake();
   document.getElementById('toDrum').disabled=false; document.getElementById('sayNote').textContent='Ready. Works best with clear speech or singing, one voice, little background noise.';
   vmeta.textContent=voiceMeta();
   saveSoon(true);
@@ -3022,7 +3114,7 @@ const LAYER_DEFS=[
   {id:"full",name:"Full vocal",sub:"your whole recording over the beat",kind:"full"},
   {id:"drumv",name:"Talking drum",sub:"the dùndún line made from your voice",kind:"drumv"}
 ];
-function layerOn(d){ return d.kind==="drum"? !muted[d.id] : d.kind==="vox"? LAY.vox : d.kind==="full"? LAY.full : LAY.drum; }
+function layerOn(d){ return layerAvail(d) && permanentLaneAudible(d.id); }
 function layerAvail(d){ return d.kind==="drum" || (d.kind==="drumv"? !!drumBuf : !!rawBuf); }
 let layersAll=false;
 function renderLayers(){
@@ -3030,13 +3122,13 @@ function renderLayers(){
   try{ navPaint(-1); }catch(e){}
   layersEl.innerHTML="";
   LAYER_DEFS.forEach(d=>{
-    const avail=layerAvail(d), on=avail&&layerOn(d);
-    const el=document.createElement("div"); el.className="layer"+(on?"":" off");
+    const avail=layerAvail(d), on=avail&&layerOn(d), temporary=isolationActive&&d.id!==activeSoloLaneId&&(isolationSource==="daw"||!!preSoloStates?.[d.id]);
+    const el=document.createElement("div"); el.className="layer"+(on?"":" off")+(temporary?" isolation-muted":"")+(isolationActive&&activeSoloLaneId===d.id?" isolation-active":""); el.dataset.l=d.id;
     const second = d.kind==="full"
       ? '<div><label>Timing <b>'+(vocalNudge>0?"+":"")+vocalNudge+' ms</b></label><input type="range" min="-150" max="150" step="5" value="'+vocalNudge+'" data-k="nudge" aria-label="Full vocal timing"></div>'
       : d.kind==="drumv" ? '<div></div>'
       : '<div><label>Tune <b>'+(tuneV[d.id]>0?"+":"")+tuneV[d.id]+'</b></label><input type="range" min="-12" max="12" step="1" value="'+tuneV[d.id]+'" data-k="tune" aria-label="'+d.name+' tune in semitones"></div>';
-    el.innerHTML='<div class="lh"><div><b></b><small></small></div><button class="sw'+(on?" on":"")+'" role="switch" aria-checked="'+on+'" aria-label="'+d.name+' on or off"'+(avail?"":" disabled")+'><i></i></button></div>'+
+    el.innerHTML='<div class="lh"><div><b></b><small class="layer-sub"></small><small class="layer-temp"'+(temporary?"":" hidden")+'>Temporarily muted during hold-to-isolate</small></div><div class="lh-tools"><button class="layer-solo'+(soloed.has(d.id)?" on":"")+'" type="button" aria-label="Solo '+d.name+'" aria-pressed="'+soloed.has(d.id)+'"'+(avail?"":" disabled")+' title="Toggle persistent solo">S</button><button class="layer-hold'+(isolationActive&&activeSoloLaneId===d.id?" on":"")+'" type="button" aria-label="Hold to isolate '+d.name+'" aria-pressed="'+(isolationActive&&activeSoloLaneId===d.id)+'"'+(avail?"":" disabled")+' title="Hold to hear this lane alone">H</button><button class="sw'+(on?" on":"")+'" role="switch" aria-checked="'+on+'" aria-label="'+d.name+' on or off" data-unavailable="'+(!avail)+'"'+(avail?"":" disabled")+'><i></i></button></div></div>'+
       '<div class="ls"><div><label>Volume <b>'+Math.round(gainsV[d.id]*100)+'</b></label><input type="range" min="0" max="150" value="'+Math.round(gainsV[d.id]*100)+'" data-k="vol" aria-label="'+d.name+' volume"></div>'+second+'</div>';
     if(d.kind==="full" && avail){
       const la=document.createElement("div"); la.className="la";
@@ -3054,20 +3146,22 @@ function renderLayers(){
       el.appendChild(la);
     }
     el.querySelector("b").textContent=d.name;
-    el.querySelector("small").textContent= avail? d.sub : (d.kind==="drumv"? "Use Ìlù below to make it first" : "Add or record your voice first");
+    el.querySelector(".layer-sub").textContent=avail?d.sub:(d.kind==="drumv"?"Use Ìlù below to make it first":"Add or record your voice first");
+    const solo=el.querySelector(".layer-solo");solo.onclick=()=>{soloed.has(d.id)?soloed.delete(d.id):soloed.add(d.id);syncLaneBusGains();render();renderLayers();};
+    bindHold(el.querySelector(".layer-hold"),d.id);
     el.querySelector(".sw").onclick=()=>{
       pushHist();
-      if(d.kind==="drum"){ muted[d.id]=!muted[d.id]; render(); }
+      if(d.kind==="drum") muted[d.id]=!muted[d.id];
       else if(d.kind==="vox") LAY.vox=!LAY.vox;
-      else if(d.kind==="full"){ LAY.full=!LAY.full; restartTracks(); }
-      else { LAY.drum=!LAY.drum; restartTracks(); }
-      renderLayers(); saveSoon();
+      else if(d.kind==="full") LAY.full=!LAY.full;
+      else LAY.drum=!LAY.drum;
+      syncLaneBusGains();render();renderLayers();saveSoon();
     };
     el.querySelectorAll("input[type=range]").forEach(r=>{
       r.onpointerdown=()=>pushHist();
       r.oninput=()=>{
         const k=r.dataset.k, lab=r.previousElementSibling.querySelector("b");
-        if(k==="vol"){ gainsV[d.id]=r.value/100; lab.textContent=r.value; if(busses&&busses[d.id]) busses[d.id].gain.setTargetAtTime(gainsV[d.id],ac.currentTime,.02); }
+        if(k==="vol"){ gainsV[d.id]=r.value/100; lab.textContent=r.value; syncLaneBusGains(); }
         else if(k==="tune"){ tuneV[d.id]=+r.value; lab.textContent=(r.value>0?"+":"")+r.value; if(+r.value!==0 && ac){ /* audition */ const v=d.id==="dd"?2:1; if(d.kind==="drum") trigger(d.id,ac,busses[d.id],ac.currentTime+.01,v,0); } }
         else if(k==="nudge"){ vocalNudge=+r.value; lab.textContent=(vocalNudge>0?"+":"")+vocalNudge+" ms"; }
         saveSoon();
@@ -5232,6 +5326,60 @@ body.profile-required #onboard h2{font-size:clamp(24px,4vw,32px)!important;line-
 html[data-theme="light"] body.profile-required #onboard.sheet{background:rgba(245,243,239,.96)!important}html[data-theme="light"] body.profile-required #onboard .panel{background:#fff!important;color:#090909!important;border-color:rgba(9,9,9,.16)!important}html[data-theme="light"] body.profile-required #onboard p{color:#625e58!important}
 .studio-rec{position:static!important;z-index:auto!important;width:min(100% - 32px,900px)!important;max-width:900px!important;margin:12px auto 0!important;box-shadow:0 8px 28px rgba(0,0,0,.16)!important;backdrop-filter:none!important}.studio-rec-launch{position:static!important;z-index:auto!important;margin:0!important;box-shadow:none!important;white-space:nowrap}body.workspace-open .studio-rec-launch{display:inline-flex!important}
 @media(max-width:760px){.studio-rec{width:calc(100% - 24px)!important;margin:10px auto 0!important}.studio-rec-launch{min-height:40px;padding:9px 12px!important}}
+</style>
+<style id="pennio-workbench-and-isolation">
+/* Stable room navigation: keep every destination visible and horizontally usable. */
+header .bar{gap:12px;min-width:0}
+nav#nav{justify-content:center;flex-wrap:nowrap;max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+nav#nav::-webkit-scrollbar{display:none}
+nav#nav button{flex:0 0 auto;white-space:nowrap}
+@media(max-width:760px){header .bar{display:flex;flex-wrap:wrap;align-items:center}.bar .logo{flex:none}.bar .hright{margin-left:auto}nav#nav{order:4;width:100%;justify-content:flex-start;flex-wrap:nowrap}nav#nav button{flex:0 0 auto}}
+@media(max-width:420px){nav#nav button{padding:8px 11px;font-size:12px}.bar .hright{max-width:calc(100% - 52px)}}
+/* Hold-to-isolate controls. */
+.ms .h,.layer-hold,.layer-solo{touch-action:none;user-select:none}
+.ms .h.on,.layer-hold.on{background:var(--orange);border-color:var(--orange);color:#090909}
+.ms .h:disabled,.layer-hold:disabled,.layer-solo:disabled{opacity:.45}
+.row.isolation-active{outline:1px solid var(--orange);outline-offset:-1px}
+.row.isolation-muted{opacity:.43}.daw-track.isolation-active{outline:1px solid var(--orange)!important}.daw-track.isolation-muted{opacity:.45}
+.layer.isolation-active{border-color:var(--orange)}
+.layer.isolation-muted{opacity:.56}
+.layer-temp{font-size:10px!important;color:var(--orange)!important}.layer-isolation-status{margin-top:10px;padding:9px 11px;border:1px solid var(--orange);border-radius:9px;color:var(--orange);font-size:11px;line-height:1.45}.layer-isolation-status[hidden]{display:none!important}
+.layer-temp[hidden]{display:none!important}
+.layer .lh-tools{display:flex;align-items:center;gap:5px;flex:none}
+.layer .lh-tools>button:not(.sw){width:34px;height:34px;border:1px solid var(--line2);border-radius:8px;color:var(--mute);font-family:inherit;font-size:11px;font-weight:600}
+.layer .lh-tools .layer-solo.on{background:var(--text);border-color:var(--text);color:var(--black)}
+.layer .lh-tools .layer-hold.on{background:var(--orange);border-color:var(--orange);color:#090909}
+.layer .lh-tools button:disabled{opacity:.45}
+/* Engineer workspace: persistent workflow rail, wide timeline, contextual inspector. */
+.daw-workbench{display:grid;grid-template-columns:188px minmax(0,1fr);gap:14px;align-items:start}
+.daw-sidebar{position:sticky;top:72px;align-self:start;padding:14px 10px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.daw-sidebar-title{display:grid;gap:4px;padding:4px 8px 14px}
+.daw-sidebar-title small,.daw-mode-group>small{font-size:9px;font-weight:750;letter-spacing:.14em;color:var(--mute)}
+.daw-sidebar-title b{font-size:17px;letter-spacing:-.03em}
+.daw-engineer-modes{display:grid;gap:12px;overflow:visible;padding:0;border:0;background:transparent;margin:0}
+.daw-mode-group{display:grid;gap:4px}
+.daw-mode-group>small{padding:4px 9px}
+.daw-engineer-modes button{display:grid;gap:3px;flex:none;width:100%;min-height:50px;padding:9px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text);text-align:left}
+.daw-engineer-modes button span{font-size:12px;font-weight:700}
+.daw-engineer-modes button em{font-size:10px;font-style:normal;color:var(--mute);font-weight:400}
+.daw-engineer-modes button.on{background:var(--orange);color:#090909}
+.daw-engineer-modes button.on em{color:#342016}
+.daw-mode-help{margin:14px 7px 4px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;line-height:1.5}
+.daw-main{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(235px,.82fr);gap:12px;align-items:start;min-width:0}
+.daw-main>#dawToolbar{grid-column:1/-1}
+.daw-main>#dawTracks{grid-column:1;grid-row:2 / span 3;min-width:0}
+.daw-main>#dawSelectionPanel,.daw-main>#dawPlanPanel,.daw-main>#dawBottom{grid-column:2}
+.daw-main>#dawPlanPanel[hidden]{display:none!important}
+.daw-main>#dawBottom{display:grid;gap:12px;align-self:start}
+.daw-mode-focus{border-color:var(--orange)!important;box-shadow:0 0 0 1px rgba(255,107,53,.24)}
+#dawRoom[data-mode="record"] #dawTracks,#dawRoom[data-mode="play"] #dawTracks{grid-column:1}
+#dawRoom[data-mode="mix"] #dawBottom,#dawRoom[data-mode="edit"] #dawSelectionPanel,#dawRoom[data-mode="plan"] #dawPlanPanel,#dawRoom[data-mode="merge"] #dawToolbar{border-color:var(--orange)}
+html[data-theme="light"] .daw-sidebar{background:#fff;border-color:#d5cfc6}
+html[data-theme="light"] .daw-engineer-modes button{color:#201d19}
+html[data-theme="light"] .daw-engineer-modes button.on{background:#b94317;color:#fff}
+html[data-theme="light"] .daw-engineer-modes button.on em{color:#fff}
+@media(max-width:880px){.daw-workbench{grid-template-columns:1fr}.daw-sidebar{position:static}.daw-engineer-modes{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.daw-mode-group{align-content:start;border:1px solid var(--line);border-radius:11px;padding:6px}.daw-sidebar-title{padding-bottom:9px}.daw-mode-help{margin:10px 7px 3px}.daw-main{grid-template-columns:minmax(0,1fr) minmax(220px,.72fr)}}
+@media(max-width:620px){.ms{display:flex}.row .name{gap:5px}.daw-engineer-modes{grid-template-columns:repeat(2,minmax(0,1fr))}.daw-main{grid-template-columns:1fr}.daw-main>#dawToolbar,.daw-main>#dawTracks,.daw-main>#dawSelectionPanel,.daw-main>#dawPlanPanel,.daw-main>#dawBottom{grid-column:1;grid-row:auto}.daw-main>#dawTracks{grid-row:auto}.daw-track{grid-template-columns:minmax(112px,145px) minmax(170px,1fr)}.daw-sidebar{padding:11px}.daw-toolbar{align-items:stretch}.daw-toolbar .daw-status{flex-basis:100%}}
 </style>
 </body>
 </html>
