@@ -172,7 +172,20 @@ function selectEngineerMode(mode){
  if(innerWidth<760)target?.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 document.querySelectorAll("[data-engineer-mode]").forEach(button=>button.addEventListener("click",()=>selectEngineerMode(button.dataset.engineerMode)));
-$("dawPlan").addEventListener("input",()=>{state.plan=$("dawPlan").value;queueSessionSave();});$("dawPlay").onclick=play;$("dawStop").onclick=()=>{state.offset=0;stop();queueSessionSave();};$("dawMerge").onclick=()=>exportMix(false,true);$("dawExport").onclick=()=>exportMix(false);$("dawSendStudio").onclick=()=>exportMix(true);
+$("dawPlan").addEventListener("input",()=>{state.plan=$("dawPlan").value;queueSessionSave();});$("dawPlay").onclick=play;
+const magicAdjustButton=$("dawMagicAdjust");
+magicAdjustButton?.addEventListener("click",()=>{
+ if(!state.tracks.length){status("Add at least one track before balancing the room.");return;}
+ if(state.playing||state.busy){status("Wait until playback or processing finishes before using Magic Wand.");return;}
+ const measurements=state.tracks.map(t=>{let sum=0,peak=0;const data=t.buffer.getChannelData(0),from=Math.floor(t.start*t.buffer.sampleRate),to=Math.min(data.length,Math.ceil(t.end*t.buffer.sampleRate));for(let i=from;i<to;i++){const v=data[i];sum+=v*v;peak=Math.max(peak,Math.abs(v));}const rms=Math.sqrt(sum/Math.max(1,to-from));return {track:t,rms,peak};}).filter(x=>x.rms>0);
+ if(!measurements.length){status("There is no usable audio to balance.");return;}
+ const target=Math.pow(10,-20/20),average=measurements.reduce((sum,x)=>sum+x.rms,0)/measurements.length;
+ snapshot();
+ measurements.forEach(({track,rms,peak})=>{const desired=target/Math.max(rms,.0001),ceiling=peak>0?.92/peak:1;track.gain=Math.max(.05,Math.min(1.5,desired,ceiling));});
+ syncTrackGains();render();queueSessionSave();
+ status("Magic Wand balanced "+measurements.length+" track levels. Timing, pan and source audio were preserved. Undo restores the previous mix.");
+});
+$("dawStop").onclick=()=>{state.offset=0;stop();queueSessionSave();};$("dawMerge").onclick=()=>exportMix(false,true);$("dawExport").onclick=()=>exportMix(false);$("dawSendStudio").onclick=()=>exportMix(true);
 $("dawUndo").onclick=()=>{const s=state.undo.pop();if(!s)return;state.tracks=s.tracks;state.selected=s.selected;$("dawUndo").disabled=!state.undo.length;render();status("Last track change undone.");queueSessionSave();};
 $("dawTrimStart").oninput=e=>{const t=selected();if(!t)return;t.start=Math.min(+e.target.value,t.end-.02);queueSessionSave();};
 $("dawTrimEnd").oninput=e=>{const t=selected();if(!t)return;t.end=Math.max(+e.target.value,t.start+.02);queueSessionSave();};
