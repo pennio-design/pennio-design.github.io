@@ -884,6 +884,13 @@ html[data-theme="light"] .fr-cue{background:rgba(255,255,255,.72)}
 html[data-theme="light"] .dr-editor{background:#fff}
 html[data-theme="light"] .fr-player{background:#090909}
 html[data-theme="light"] .ilu-rip{stroke:var(--orange)}
+/* Light mode: keep the casting card and tonal drum labels readable. */
+html[data-theme="light"]{--h:#A8421B;--m:#76512F;--l:#704438}
+html[data-theme="light"] .cast{background:linear-gradient(150deg,#FFFFFF,#F2EEE8 78%);border-color:#C8BFB2}
+html[data-theme="light"] .cast .k{color:#704438}
+html[data-theme="light"] .cast .yo{color:#090909}
+html[data-theme="light"] .cast p{color:#4E4942}
+html[data-theme="light"] .cast:focus-visible{outline:3px solid #704438;outline-offset:3px}
 @media(max-width:560px){
  .bar{height:auto;min-height:56px;flex-wrap:wrap;gap:4px 8px;padding:6px 0}
  .logo{font-size:14px;gap:7px}.logo-mark{width:28px;height:28px}
@@ -1323,7 +1330,7 @@ html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;
     <div class="recopts" id="recOpts" hidden>
       <div class="sw-row"><button class="sw on" id="swOver" role="switch" aria-checked="true"><i></i></button><span><b>Record over the beat</b> the groove plays while you sing</span></div>
       <div class="sw-row"><button class="sw on" id="swCount" role="switch" aria-checked="true"><i></i></button><span><b>Count-in</b> one bar of 4, 3, 2, 1 before the beat</span></div>
-      <div class="sw-row"><button class="sw on" id="swBeat" role="switch" aria-checked="true"><i></i></button><span><b>Beat in the count-in</b> hear the groove from the first count, not only the clicks</span></div>
+      <div class="sw-row"><button class="sw" id="swBeat" role="switch" aria-checked="false"><i></i></button><span><b>Beat in the count-in</b> hear the groove from the first count, not only the clicks</span></div>
       <div class="sw-row"><button class="sw on" id="swClick" role="switch" aria-checked="true"><i></i></button><span><b>Click</b> a tick on every beat while you record</span></div>
       <div class="lat">
         <label>Delay fix <b id="latV">auto</b></label>
@@ -3267,7 +3274,9 @@ document.getElementById("wdrum").onclick=()=>{
 const vrec=document.getElementById("vrec"); let mrec=null, mchunks=[], mstream=null, mtimer=null, mstart=0;
 const recOpts=document.getElementById("recOpts"), latEl=document.getElementById("lat"), latV=document.getElementById("latV"), countEl=document.getElementById("countin");
 if(!inClaude && navigator.mediaDevices && window.MediaRecorder){ vrec.style.display=""; recOpts.hidden=false; }
-const recSet=Object.assign({over:true,count:true,click:true,beat:true}, lsGet("ps.recSet")||{});
+const savedRecSet=lsGet("ps.recSet")||{};
+const recSet=Object.assign({over:true,count:true,click:true,beat:false},savedRecSet);
+if(!savedRecSet.countInBeatDefaultV2){ recSet.beat=false; recSet.countInBeatDefaultV2=true; lsSet("ps.recSet",recSet); }
 function bindSwitch(id,key){ const b=document.getElementById(id); const paint=()=>{ b.classList.toggle("on",recSet[key]); b.setAttribute("aria-checked",recSet[key]); }; paint(); b.onclick=()=>{ recSet[key]=!recSet[key]; lsSet("ps.recSet",recSet); paint(); }; }
 bindSwitch("swOver","over"); bindSwitch("swCount","count"); bindSwitch("swClick","click"); bindSwitch("swBeat","beat");
 /* delay fix: measured round trip, or an estimate until measured */
