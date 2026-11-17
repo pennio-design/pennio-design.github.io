@@ -1330,7 +1330,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 @media(max-width:760px){
  .studio-shell,.studio-shell.left-collapsed,.studio-shell.right-collapsed,.studio-shell.left-collapsed.right-collapsed{display:block;padding:0 10px}
  .studio-main{padding:0 2px 28px}
- body.studio-drawer-open{overflow:hidden;touch-action:none}
+ body.studio-drawer-open{overflow:hidden;overscroll-behavior:none}
 .studio-panel-backdrop{display:block;position:fixed;inset:0;z-index:79;background:transparent;touch-action:manipulation}
  .studio-panel-backdrop[hidden]{display:none!important}
  .studio-side{position:fixed;z-index:81;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);width:min(86vw,340px);max-height:none;margin:0;border-radius:0;background:var(--off);box-shadow:0 12px 40px rgba(0,0,0,.28);transition:transform .22s ease;overscroll-behavior:contain}
