@@ -6,7 +6,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PENNIO Studio · Make beats on Yoruba drums, free in your browser</title>
-<meta name="description" content="Record your voice and build a groove on dùndún, bàtá, agogo and ṣẹ̀kẹ̀rẹ̀, free in your browser. The talking drum follows your voice. No login.">
+<meta name="description" content="Record your voice and build a groove on dùndún, bàtá, agogo and ṣẹ̀kẹ̀rẹ̀ in your browser. Sign in to access your workspace. The talking drum follows your voice.">
 <meta name="theme-color" content="#090909">
 <link rel="canonical" href="https://pennio.agency/studio/">
 <meta property="og:title" content="PENNIO Studio · Make beats on Yoruba drums, free in your browser">
@@ -1268,7 +1268,7 @@ html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
 @media(max-width:560px){.daw-engineer-modes button{padding-inline:12px}.studio-rec-live-frame[data-aspect="portrait"]{max-height:52vh}}
 </style><style id="pennio-auth-root-gate">
 body.auth-locked{overflow:hidden}
-body.auth-locked>header,body.auth-locked>main{display:none!important}
+body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .auth-gate{position:relative;z-index:9999;min-height:100svh;padding:28px clamp(20px,5vw,76px) 22px;background:#090909;color:#f5f1eb;display:flex;flex-direction:column}
 .auth-gate[hidden]{display:none!important}
 .auth-gate-top,.auth-gate-bottom{display:flex;align-items:center;justify-content:space-between;gap:18px}
@@ -4086,7 +4086,7 @@ document.getElementById("rpAll").onclick=()=>{ const all=(rpData.projects||[]).m
 document.getElementById("rpCancel").onclick=()=>{ rpData=null; document.getElementById("rPrev").hidden=true; };
 document.getElementById("restoreFile").onchange=async e=>{
   const f=e.target.files&&e.target.files[0]; if(!f) return; e.target.value="";
-  try{ const data=JSON.parse(await f.text()); if(data.app!=="PENNIO Studio") throw 0;
+  try{ const data=JSON.parse(await f.text()); if(data.app!=="PENNIO Studio" && data.app!=="pennio.studio") throw 0;
     rpData=data; rpHave=new Map(((await allProjects())||[]).map(x=>[x.id,x]));
     rpPick=new Set((data.projects||[]).filter(r=>{ const m=rpHave.get(r.id); return !m || m.updated<r.updated; }).map(r=>r.id));
     const n=(data.projects||[]).length;
@@ -4303,7 +4303,7 @@ async function cloudBoot(){
   const fromLink=await sbFromLink();
   if(!sbSess||!sbSess.access_token){ renderCloud(); return {ok:false}; }
   let valid=false;
-  try{ valid=await sbLoadUser(); }catch(e){ valid=false; }
+  try{ valid=await sbLoadUser(); }catch(e){ renderCloud(); return {ok:false,transient:true}; }
   if(!valid){ sbClear(); renderCloud(); return {ok:false}; }
   renderCloud();
   return {ok:true,fromLink};
@@ -4395,6 +4395,7 @@ window.__pennioAyanBoot=(async()=>{
     document.body.classList.add("auth-locked");
     document.getElementById("authGate").hidden=false;
     const saved=lsGet("ps.sbEmail"); if(saved) document.getElementById("gateEmail").value=saved;
+    if(authState&&authState.transient) document.getElementById("gateStatus").textContent="We could not verify your saved session. Check your connection and reload to try again.";
     return;
   }
   await startPENNIOWorkspace(authState);
