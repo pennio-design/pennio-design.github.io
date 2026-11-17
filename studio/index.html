@@ -4152,6 +4152,9 @@ document.getElementById("obForm").onsubmit=async e=>{
   const sameAccount=String(prev.email||"").trim().toLowerCase()===email.toLowerCase();
   const prof={name,email,make:obMake,joined:sameAccount&&prev.joined?prev.joined:Date.now(),sent:sameAccount&&!!prev.sent,kit:sameAccount&&!!prev.kit,kitPending:sameAccount&&!!prev.kitPending,kitAttemptAt:sameAccount?(prev.kitAttemptAt||0):0};
   lsSet("ps.profile",prof); await kvSet("profile",prof);
+  paintAvatar();
+  const greetingName=document.getElementById("dashUserName");
+  if(greetingName) greetingName.textContent=name.trim().split(/\s+/)[0]+".";
   const mailStatus=await sendProfileIfNeeded(true);
   try{ if(navigator.storage&&navigator.storage.persist) await navigator.storage.persist(); }catch(e){}
   ob.classList.remove("on");
