@@ -1481,7 +1481,7 @@ A clear image or action.
       <div class="k">Step 2</div>
       <h3>Say it and add the recording</h3>
       <p>Say the phrase at a normal pace, close to the phone, somewhere quiet. Short phrases work best.</p>
-      <div class="row2"><button class="btn primary wmic" id="wrecRec" hidden>● Record</button><label class="btn file">Add recording<input type="file" id="wrec" accept="audio/*"></label><span class="vmeta" id="wrecNote" style="margin:0"></span></div>
+      <div class="row2"><button class="btn primary wmic" id="wrecRec" hidden>● Record</button><label class="btn file">Add recording<input type="file" id="wrec" accept="audio/*"></label><button class="btn" id="wrecUseDock" type="button" hidden>Align voice with text</button><span class="vmeta" id="wrecNote" style="margin:0"></span></div>
     </div>
     <details class="stp cal" id="wcalBox">
       <summary><span class="k">Optional · about a minute, once</span><span class="h3">Calibrate your voice for steadier tones</span></summary>
@@ -3181,17 +3181,18 @@ let pendingVoicePhrase=null,pendingVoicePhraseBusy=false;
 async function applyPendingVoicePhrase(){
  if(!pendingVoicePhrase||!wtext.value.trim()||pendingVoicePhraseBusy)return;
  pendingVoicePhraseBusy=true;const blob=pendingVoicePhrase,note=document.getElementById("wrecNote");note.textContent="Listening to the same take…";
- try{const buffer=await decodeFile(blob);phraseFrom(buffer);pendingVoicePhrase=null;}
+ try{const buffer=await decodeFile(blob),before=wState;phraseFrom(buffer);if(wState!==before){pendingVoicePhrase=null;const action=document.getElementById("wrecUseDock");if(action)action.hidden=true;}}
  catch(error){note.textContent="Could not read that take. Try another audio format.";}
  finally{pendingVoicePhraseBusy=false;}
 }
 window.addEventListener("pennio:write-audio",event=>{
  const blob=event.detail&&event.detail.blob;if(!blob)return;pendingVoicePhrase=blob;
  const note=document.getElementById("wrecNote");
- if(!wtext.value.trim()){note.textContent="Audio received. Type the Yoruba phrase you spoke, then the studio will align its tones.";wtext.focus();}
+ const action=document.getElementById("wrecUseDock");if(action)action.hidden=false;
+ if(!wtext.value.trim()){note.textContent="Audio received. Type the Yoruba phrase you spoke, then tap Align voice with text.";wtext.focus();}
  else applyPendingVoicePhrase();
 });
-wtext.addEventListener("input",()=>{if(pendingVoicePhrase)applyPendingVoicePhrase();});
+document.getElementById("wrecUseDock").addEventListener("click",applyPendingVoicePhrase);
 function phraseFrom(b){
   const note=document.getElementById("wrecNote");
   const words=wtext.value.trim().split(/\s+/).filter(Boolean);
