@@ -2551,6 +2551,7 @@ function render(){
     nm.querySelector(".nmb").setAttribute("aria-label",(muted[l.id]?"Unmute ":"Mute ")+l.name);
     nm.querySelector(".nmb").onclick=()=>{ muted[l.id]=!muted[l.id]; render(); renderLayers(); };
     const mb=nm.querySelector(".m"), sb=nm.querySelector(".s"), hb=nm.querySelector(".h"), eye=nm.querySelector(".eye"), rec=nm.querySelector(".lane-rec");
+    rec.textContent=activeLaneCapture?.id===l.id?"Stop":"Voice";rec.setAttribute("aria-pressed",String(activeLaneCapture?.id===l.id));if(activeLaneCapture?.id===l.id)activeLaneCapture.button=rec;
     rec.onclick=()=>toggleLaneCapture(l.id,rec);
     const volume=nm.querySelector('[data-k="vol"]'),tuning=nm.querySelector('[data-k="tune"]');
     volume.value=Math.round(gainsV[l.id]*100);nm.querySelector(".lane-vol").textContent=volume.value+"%";
