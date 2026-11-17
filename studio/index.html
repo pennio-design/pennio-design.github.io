@@ -5138,5 +5138,67 @@ html[data-theme="light"] .dash-modal input,html[data-theme="light"] .dash-modal 
 @media(max-width:760px){.bar{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 0;gap:8px}.hright{flex-wrap:wrap}.more{width:100%;order:5}.morebtn{display:inline-flex}nav#nav{width:100%;display:flex;flex-wrap:wrap}nav#nav button{flex:1 1 120px}.sheet{width:calc(100% - 24px)}.dash-topline{align-items:flex-start;flex-wrap:wrap}.dash-local{flex-wrap:wrap}}
 @media(max-width:420px){.logo span{display:none}.hright{gap:5px}.theme-toggle{min-width:42px;width:42px}.dash-rooms{grid-template-columns:1fr 1fr}.dash-room{min-width:0}.dash-room-foot{gap:6px}}
 </style>
+
+<style id="pennio-viewport-fit">
+/* Auth gate: allow the full sign-in card to remain reachable on short and narrow screens. */
+html,body{min-width:0}
+body.auth-locked{overflow-x:hidden;overflow-y:auto;min-height:100%;height:auto}
+.auth-gate{box-sizing:border-box;width:100%;min-height:100svh;min-height:100dvh;height:auto;overflow:visible}
+.auth-gate *{box-sizing:border-box}
+.auth-gate-main{min-width:0}
+.auth-gate-copy,.auth-gate-card{min-width:0;width:100%}
+.auth-gate-card{max-width:100%;overflow-wrap:anywhere}
+.auth-gate-card input,.auth-gate-card button{max-width:100%;min-width:0}
+.auth-gate-card [hidden]{display:none!important}
+.auth-gate-bottom{flex-wrap:wrap}
+@media(max-width:760px){
+  .auth-gate{padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+  .auth-gate-top{align-items:flex-start;flex-wrap:wrap}
+  .auth-gate-main{width:100%;margin:0;grid-template-columns:minmax(0,1fr);gap:22px;padding:clamp(24px,6vh,44px) 0}
+  .auth-gate-copy h1{font-size:clamp(40px,11vw,60px);overflow-wrap:normal}
+  .auth-gate-copy>p{font-size:13px}
+  .auth-gate-rooms{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin-top:22px}
+  .auth-gate-card{padding:22px 18px;border-radius:16px}
+  .auth-gate-card h2{font-size:23px}
+  .auth-gate-card label{margin-top:18px}
+  .auth-gate-bottom{gap:8px;padding-top:12px}
+}
+@media(max-width:380px){
+  .auth-gate{padding-inline:12px}
+  .auth-gate-label{font-size:8px;letter-spacing:.1em}
+  .auth-gate-rooms{column-gap:10px}
+  .auth-gate-rooms strong{font-size:12px}
+  .auth-gate-card{padding:18px 14px}
+}
+@media(max-height:740px) and (min-width:761px){
+  .auth-gate{padding-top:16px;padding-bottom:14px}
+  .auth-gate-main{padding:24px 0;gap:clamp(24px,5vw,64px)}
+  .auth-gate-rooms{margin-top:24px;gap:12px 20px}
+}
+@media(max-height:620px){
+  .auth-gate-main{margin:18px auto}
+}
+/* Portrait capture: constrain by available viewport height as well as width. */
+.studio-rec-live-frame[data-aspect="portrait"]{
+  width:min(100%,calc((100dvh - 250px)*9/16));
+  max-width:420px;
+  max-height:calc(100dvh - 250px);
+  aspect-ratio:9/16;
+}
+.studio-rec-live-frame[data-aspect="portrait"] video{width:100%;height:100%;object-fit:cover}
+@media(max-width:760px){
+  .studio-rec-live-frame[data-aspect="portrait"]{
+    width:min(100%,calc((100dvh - 210px)*9/16));
+    max-height:calc(100dvh - 210px);
+  }
+}
+@media(max-height:620px){
+  .studio-rec-live-frame[data-aspect="portrait"]{
+    width:min(100%,calc((100dvh - 170px)*9/16));
+    max-height:calc(100dvh - 170px);
+  }
+}
+</style>
+
 </body>
 </html>
