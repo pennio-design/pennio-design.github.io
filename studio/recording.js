@@ -84,7 +84,7 @@ start.addEventListener("click",async()=>{
   recorder.onstop=()=>{
    document.body.classList.remove("recorder-active");stopTracks();blob=new Blob(chunks,{type:recorder.mimeType||"audio/webm"});
    if(!blob.size){setStatus("No recording was captured. Try again.");return;}
-   sourceBlob=blob;showPreview();result.hidden=false;useAyan.hidden=false;useTongue.hidden=false;useFilm.hidden=false;extract.hidden=true;
+   sourceBlob=blob;showPreview();result.hidden=false;useAyan.hidden=false;useTongue.hidden=false;useFilm.hidden=false;
    setStatus("Take ready. Add it to Beat or Write, or save it to your device.");
    start.disabled=false;stop.disabled=true;clearInterval(ticker);
   };
@@ -95,7 +95,7 @@ start.addEventListener("click",async()=>{
 $("studioRecSave").addEventListener("click",()=>{if(!blob||!blobUrl)return;const a=document.createElement("a");a.href=blobUrl;const ext=(blob.type.includes("mp4")?"mp4":blob.type.includes("ogg")?"ogg":"webm");a.download="pennio-voice-take."+ext;document.body.append(a);a.click();a.remove();setStatus("Recording saved to your device.");});
 
 
-window.addEventListener("pennio:studio-media",e=>{const d=e.detail||{};if(!d.blob)return;clearTake();takeProjectId=d.projectId||window.PennioWorkspace?.activeProjectId||"__studio_default__";blob=d.blob;sourceBlob=blob;mode=d.kind==="video"?"video":"audio";showPreview();result.hidden=false;useAyan.hidden=mode!=="audio";useTongue.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=true;setStatus((d.name||"Media")+" received from another Studio room. Choose where to use it.");showDock(true);});
+window.addEventListener("pennio:studio-media",e=>{const d=e.detail||{};if(!d.blob)return;clearTake();takeProjectId=d.projectId||window.PennioWorkspace?.activeProjectId||"__studio_default__";blob=d.blob;sourceBlob=blob;mode=d.kind==="video"?"video":"audio";showPreview();result.hidden=false;useAyan.hidden=mode!=="audio";useTongue.hidden=mode!=="audio";useFilm.hidden=false;setStatus((d.name||"Media")+" received from another Studio room. Choose where to use it.");showDock(true);});
 useTongue.addEventListener("click",()=>{
  if(!blob||mode!=="audio")return;
  const target=document.querySelector('nav button[data-v="write"]');if(target)target.click();
