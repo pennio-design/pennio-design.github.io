@@ -1362,19 +1362,19 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
   <div class="dash-section-head"><div><span class="dash-overline">YOUR WORKSPACE</span><h2>Choose a room</h2></div><span class="dash-count" id="dashRoomCount">4 active rooms</span></div>
   <div class="dash-rooms" id="dashRooms">
     <button class="dash-room dash-room-feature" data-room="ayan" data-search="music beat recording voice drum ayaan">
-      <span class="dash-room-index">01 / SOUND</span><span class="dash-room-icon">◉</span><b>Àyàn</b><span class="dash-room-desc">Record, arrange, produce. Let the talking drum answer your voice.</span><span class="dash-room-foot"><span>Open music studio</span><span>↗</span></span>
+      <span class="dash-room-index">01 / SOUND</span><span class="dash-room-icon room-icon-sound" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 20h7l7-7v22l-7-7H8z"/><path d="M29 18c3 3 3 9 0 12M34 13c6 6 6 16 0 22"/><path d="M8 39h32" opacity=".35"/></svg></span><b>Àyàn</b><span class="dash-room-desc">Record, arrange, produce. Let the talking drum answer your voice.</span><span class="dash-room-foot"><span>Open music studio</span><span>↗</span></span>
     </button>
     <button class="dash-room" data-room="write" data-search="write poetry screenplay lyrics akewi">
-      <span class="dash-room-index">02 / LANGUAGE</span><span class="dash-room-icon">Aa</span><b>Ewì</b><span class="dash-room-desc">Write poetry, lyrics, scenes and stories with Yoruba tone support.</span><span class="dash-room-foot"><span>Open writing room</span><span>↗</span></span>
+      <span class="dash-room-index">02 / LANGUAGE</span><span class="dash-room-icon room-icon-write" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M11 36 23 9h3l12 27M16 26h19"/><path d="M9 41h30M31 9l8 8" opacity=".5"/></svg></span><b>Ewì</b><span class="dash-room-desc">Write poetry, lyrics, scenes and stories with Yoruba tone support.</span><span class="dash-room-foot"><span>Open writing room</span><span>↗</span></span>
     </button>
     <button class="dash-room" data-room="faajiplace" data-search="film video filmmaking faajiplace">
-      <span class="dash-room-index">03 / IMAGE</span><span class="dash-room-icon">▣</span><b>Eré</b><span class="dash-room-desc">Shape scenes, plan shots and build a film from an idea.</span><span class="dash-room-foot"><span>Open film room</span><span>↗</span></span>
+      <span class="dash-room-index">03 / IMAGE</span><span class="dash-room-icon room-icon-film" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="24" rx="3"/><path d="m20 18 11 6-11 6z"/><path d="M13 8v4m8-4v4m8-4v4m8-4v4M13 36v4m8-4v4m8-4v4m8-4v4" opacity=".55"/></svg></span><b>Eré</b><span class="dash-room-desc">Shape scenes, plan shots and build a film from an idea.</span><span class="dash-room-foot"><span>Open film room</span><span>↗</span></span>
     </button>
     <button class="dash-room" data-room="beauty" data-search="ojuloge beauty camera portrait fashion hairstyles face">
-      <span class="dash-room-index">04 / PRESENCE</span><span class="dash-room-icon">◌</span><b>Ojuloge</b><span class="dash-room-desc">Use the camera, explore looks and create portraits.</span><span class="dash-room-foot"><span>Open Ojuloge</span><span>↗</span></span>
+      <span class="dash-room-index">04 / PRESENCE</span><span class="dash-room-icon room-icon-portrait" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 39c2-9 8-13 16-13s14 4 16 13"/><circle cx="24" cy="16" r="8"/><path d="M7 8h8M7 8v8M41 8h-8m8 0v8M7 40h8m-8 0v-8m34 8h-8m8 0v-8" opacity=".5"/></svg></span><b>Ojuloge</b><span class="dash-room-desc">Use the camera, explore looks and create portraits.</span><span class="dash-room-foot"><span>Open Ojuloge</span><span>↗</span></span>
     </button>
     <div class="dash-room dash-room-soon" data-search="claps atewo rhythm percussion" aria-disabled="true">
-      <span class="dash-room-index">05 / RHYTHM</span><span class="dash-room-icon">✳</span><b>Àtẹ́wọ́</b><span class="dash-room-desc">Claps, body percussion and rhythm patterns.</span><span class="dash-room-foot"><span>In development</span><span>—</span></span>
+      <span class="dash-room-index">05 / RHYTHM</span><span class="dash-room-icon room-icon-clap" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="m10 25 8-13c1-2 4-1 4 1v10l5-13c1-2 4-1 4 1l-2 12 5-8c1-2 4 0 3 2l-5 17c-2 6-7 9-13 7l-7-3c-5-2-6-8-2-13z"/><path d="m9 9 4 4m11-8v5m12 0-4 4" opacity=".55"/></svg></span><b>Àtẹ́wọ́</b><span class="dash-room-desc">Claps, body percussion and rhythm patterns.</span><span class="dash-room-foot"><span>In development</span><span>—</span></span>
     </div>
   </div>
   <div class="dash-lower">
@@ -5518,5 +5518,18 @@ html[data-theme="light"] .og-project-head>a,html[data-theme="light"] .og-project
 });})();
 </script>
 
+
+<style id="pennio-room-icon-language">
+.dash-room-icon{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(145deg,var(--surface-2,rgba(255,255,255,.07)),transparent);color:var(--orange);margin-top:9px;overflow:hidden;position:relative}
+.dash-room-icon:after{content:"";position:absolute;width:28px;height:28px;border:1px solid currentColor;border-radius:50%;opacity:.10;right:-10px;bottom:-12px}
+.dash-room-icon svg{width:31px;height:31px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.dash-room-feature .dash-room-icon{background:rgba(255,106,0,.11);border-color:rgba(255,106,0,.35)}
+.dash-room:nth-child(2) .dash-room-icon{color:#d8b78e}.dash-room:nth-child(3) .dash-room-icon{color:#a8b8dc}.dash-room:nth-child(4) .dash-room-icon{color:#d9a9c1}.dash-room:nth-child(5) .dash-room-icon{color:#d7c27a}
+html[data-theme="light"] .dash-room-icon{background:#F5F1EB;border-color:rgba(20,20,20,.14)}
+html[data-theme="light"] .dash-room-feature .dash-room-icon{background:#FCE8D9;border-color:#E7A477}
+.dash-room:hover .dash-room-icon{transform:translateY(-2px);transition:transform .18s ease}
+.dash-room-icon{transition:transform .18s ease}
+@media(prefers-reduced-motion:reduce){.dash-room-icon,.dash-room:hover .dash-room-icon{transition:none;transform:none}}
+</style>
 </body>
 </html>
