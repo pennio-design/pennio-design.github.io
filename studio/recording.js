@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
-const dock=$("studioRecorder"),launch=$("studioRecLaunch"),start=$("studioRecStart"),stop=$("studioRecStop"),preview=$("studioRecPreview"),result=$("studioRecResult"),status=$("studioRecStatus"),clock=$("studioRecClock"),useAyan=$("studioRecUse"),useTongue=$("studioRecTongue"),useFilm=$("studioRecFilm"),extract=$("studioRecExtract");
+const dock=$("studioRecorder"),launch=$("studioRecLaunch"),start=$("studioRecStart"),stop=$("studioRecStop"),preview=$("studioRecPreview"),result=$("studioRecResult"),status=$("studioRecStatus"),clock=$("studioRecClock"),useAyan=$("studioRecUse"),useTongue=$("studioRecTongue"),useFilm=$("studioRecFilm");
 const trimPanel=$("studioRecTrim"),trimStart=$("studioRecTrimStart"),trimEnd=$("studioRecTrimEnd"),trimStartValue=$("studioRecTrimStartValue"),trimEndValue=$("studioRecTrimEndValue"),trimDuration=$("studioRecTrimDuration"),trimApply=$("studioRecTrimApply"),trimReset=$("studioRecTrimReset");
 const liveRec=$("studioRecRec");
 
@@ -20,7 +20,7 @@ async function prepareTakeProject(room){
  if(window.PennioWorkspace?.openRoom)await window.PennioWorkspace.openRoom(room);
  return projectId;
 }
-function clearTake(){if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null;}takeProjectId=null;blob=null;sourceBlob=null;mediaDuration=0;preview.innerHTML="";preview.hidden=true;result.hidden=true;trimPanel.hidden=true;trimReset.disabled=true;clock.textContent="00:00";extract.hidden=true;useAyan.hidden=false;useTongue.hidden=false;useFilm.hidden=false;}
+function clearTake(){if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null;}takeProjectId=null;blob=null;sourceBlob=null;mediaDuration=0;mode="audio";preview.innerHTML="";preview.hidden=true;result.hidden=true;trimPanel.hidden=true;trimReset.disabled=true;clock.textContent="00:00";useAyan.hidden=false;useTongue.hidden=false;useFilm.hidden=false;}
 function fmtTime(value){const s=Math.max(0,Math.floor(value||0));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
 function configureTrim(media){
  trimPanel.hidden=true;
