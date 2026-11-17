@@ -121,6 +121,31 @@ nav#nav[hidden]{display:none!important}
  .room-nav .room-nav-projects{margin-left:0}
 }
 
+/* Àyàn mode switch: compact controls with one focused work area. */
+.daw-workbench{grid-template-columns:minmax(0,1fr);gap:10px}
+.daw-sidebar{position:static;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:8px 0;border:0;border-radius:0;background:transparent}
+.daw-sidebar-title{padding:0 6px}
+.daw-sidebar-title small{font-size:9px}
+.daw-sidebar-title b{font-size:13px}
+.daw-engineer-modes{display:flex;align-items:center;gap:3px;min-width:0;overflow-x:auto;scrollbar-width:none;padding:4px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}
+.daw-engineer-modes::-webkit-scrollbar{display:none}
+.daw-engineer-modes button{display:flex;align-items:center;justify-content:center;flex:none;width:auto;min-width:62px;min-height:34px;padding:7px 11px;border:0;border-radius:8px;background:transparent;text-align:center;white-space:nowrap}
+.daw-engineer-modes button span{font-size:12px;font-weight:600}
+.daw-engineer-modes button em{display:none}
+.daw-engineer-modes button.on{background:var(--orange);color:#090909}
+.daw-mode-help{grid-column:1/-1;margin:0 6px;padding:0;border:0;font-size:11px;color:var(--mute)}
+.daw-main{grid-template-columns:minmax(0,1fr);gap:10px}
+.daw-main>#dawToolbar,.daw-main>#dawTracks,.daw-main>#dawSelectionPanel,.daw-main>#dawPlanPanel,.daw-main>#dawBottom{grid-column:1;grid-row:auto}
+#dawRoom[data-mode="beat"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="beat"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="beat"] .daw-main>#dawBottom,
+#dawRoom[data-mode="record"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="record"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="record"] .daw-main>#dawBottom,
+#dawRoom[data-mode="overlay"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="overlay"] .daw-main>#dawBottom,
+#dawRoom[data-mode="edit"] .daw-main>#dawPlanPanel,
+#dawRoom[data-mode="mix"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="mix"] .daw-main>#dawPlanPanel,
+#dawRoom[data-mode="merge"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="merge"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="merge"] .daw-main>#dawBottom,
+#dawRoom[data-mode="plan"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="plan"] .daw-main>#dawBottom{display:none!important}
+@media(max-width:880px){.daw-workbench{grid-template-columns:minmax(0,1fr)}.daw-sidebar{grid-template-columns:1fr}.daw-engineer-modes{display:flex;grid-template-columns:none}}
+@media(max-width:620px){.daw-sidebar{padding:5px 0}.daw-sidebar-title{display:none}.daw-engineer-modes{gap:2px}.daw-engineer-modes button{min-width:58px;padding:7px 9px}.daw-main{grid-template-columns:minmax(0,1fr)}}
+
 </style>
 <style>
 :root{
@@ -1548,14 +1573,18 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 
   <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
   <div class="daw-head" id="dawHead"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
-  <div class="daw-workbench"><aside class="daw-sidebar" aria-label="Engineer workflow">
-  <div class="daw-sidebar-title"><small>ÀYÀN ENGINEER</small><b>Work modes</b></div>
-  <nav class="daw-engineer-modes" aria-label="Engineer modes">
-    <div class="daw-mode-group"><small>CAPTURE</small><button type="button" class="on" data-engineer-mode="record" aria-pressed="true"><span>Record</span><em>Voice & overdubs</em></button></div>
-    <div class="daw-mode-group"><small>SESSION</small><button type="button" data-engineer-mode="play" aria-pressed="false"><span>Play</span><em>Listen & review</em></button><button type="button" data-engineer-mode="edit" aria-pressed="false"><span>Edit</span><em>Trim & punch in</em></button></div>
-    <div class="daw-mode-group"><small>SHAPE</small><button type="button" data-engineer-mode="mix" aria-pressed="false"><span>Mix</span><em>Levels & effects</em></button></div>
-    <div class="daw-mode-group"><small>FINISH</small><button type="button" data-engineer-mode="plan" aria-pressed="false"><span>Plan</span><em>Session brief</em></button><button type="button" data-engineer-mode="merge" aria-pressed="false"><span>Merge</span><em>Bounce & export</em></button></div>
-  </nav><p class="daw-mode-help" id="dawModeHelp" aria-live="polite">Record with the beat, or import audio to start a session.</p>
+  <div class="daw-workbench"><aside class="daw-sidebar" aria-label="Àyàn workspace modes">
+  <div class="daw-sidebar-title"><small>ÀYÀN WORKSPACE</small><b>Choose a mode</b></div>
+  <nav class="daw-engineer-modes" aria-label="Workspace modes">
+    <button type="button" class="on" data-engineer-mode="beat" aria-pressed="true"><span>Beat</span></button>
+    <button type="button" data-engineer-mode="record" aria-pressed="false"><span>Record</span></button>
+    <button type="button" data-engineer-mode="overlay" aria-pressed="false"><span>Overlay</span></button>
+    <button type="button" data-engineer-mode="edit" aria-pressed="false"><span>Edit</span></button>
+    <button type="button" data-engineer-mode="mix" aria-pressed="false"><span>Mix</span></button>
+    <button type="button" data-engineer-mode="merge" aria-pressed="false"><span>Export</span></button>
+    <button type="button" data-engineer-mode="plan" aria-pressed="false"><span>Notes</span></button>
+  </nav>
+  <p class="daw-mode-help" id="dawModeHelp" aria-live="polite">Build and arrange your beat, then switch modes when you are ready to record or shape the sound.</p>
 </aside><div class="daw-main">
   <div class="daw-toolbar" id="dawToolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawMerge" disabled>Merge to track</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><button class="btn" id="dawSendStudio" disabled>Send mix to Studio</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
   <div class="daw-plan" id="dawPlanPanel" hidden><label for="dawPlan">Session plan</label><textarea id="dawPlan" maxlength="4000" placeholder="Capture the goal, record order, edit notes or mix intent for this session."></textarea><small>Saved with this project on this device.</small></div><div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
