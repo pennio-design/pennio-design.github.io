@@ -5,7 +5,7 @@ const db=v=>Math.pow(10,v/20);
 class StudioCleanChain{
  constructor(context,initialState,options={}){
   if(!context||typeof context.createGain!=="function")throw new TypeError("StudioCleanChain needs a BaseAudioContext.");
-  this.context=context;this.state={enabled:false,preset:"natural",enhanceAmount:.75,normalizeLufs:true,...initialState};this.disposed=false;this.nodes=[];
+  this.context=context;this.state={enabled:false,preset:"natural",enhanceAmount:.75,normalizeLufs:true,...initialState};this.disposed=false;this.nodes=[];this.gateNode=options.gateNode||null;
   const make=(factory)=>{const n=factory();this.nodes.push(n);return n;};
   this.input=make(()=>context.createGain());this.output=make(()=>context.createGain());
   this.dry=make(()=>context.createGain());this.wet=make(()=>context.createGain());
@@ -43,17 +43,17 @@ class StudioCleanChain{
   this.params={hpf,box,presence,air,glue,limiter,makeup};
   this.setState(this.state,0);
  }
- static async create(context,state){
+ static async create(context,state,options={}){
   let gateNode=null;
   try{if(context.audioWorklet&&typeof AudioWorkletNode!=="undefined"){await context.audioWorklet.addModule("/studio/audio/dsp/worklets/noiseGateProcessor.js");gateNode=new AudioWorkletNode(context,"studio-noise-gate",{numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[2],processorOptions:{thresholdDb:(root.StudioCleanPresets?.[state?.preset]||root.StudioCleanPresets?.natural)?.gateThresholdDb??-58}});}}
   catch(e){console.warn("Studio Clean noise gate worklet unavailable; continuing without the gate.",e);}
-  return new StudioCleanChain(context,state,{gateNode});
+  return new StudioCleanChain(context,state,{...options,gateNode});
  }
  setState(next={},ramp=.015){
   if(this.disposed)return;this.state={...this.state,...next};const p=root.StudioCleanPresets?.[this.state.preset]||root.StudioCleanPresets.natural,now=this.context.currentTime;
   const set=(param,value)=>{param.cancelScheduledValues(now);param.setTargetAtTime(value,now,Math.max(.001,ramp));};
   set(this.params.hpf.frequency,p.highpassHz);set(this.params.box.gain,p.lowMidCutDb);set(this.params.presence.gain,p.presenceBoostDb);set(this.params.air.gain,p.airShelfDb);
-  set(this.deEsser.threshold,p.deEsserThresholdDb);set(this.params.glue.threshold,p.compThresholdDb);set(this.params.glue.ratio,p.compRatio);set(this.params.makeup.gain,db(p.makeupGainDb));
+  set(this.deEsser.threshold,p.deEsserThresholdDb);if(this.gateNode?.port)this.gateNode.port.postMessage({thresholdDb:p.gateThresholdDb});set(this.params.glue.threshold,p.compThresholdDb);set(this.params.glue.ratio,p.compRatio);set(this.params.makeup.gain,db(p.makeupGainDb));
   set(this.widthNode.gain,1+(p.stereoWidth*.35));
   const amount=clamp(this.state.enabled?this.state.enhanceAmount:0,0,1);
   set(this.dry.gain,Math.cos(amount*Math.PI/2));set(this.wet.gain,Math.sin(amount*Math.PI/2));
