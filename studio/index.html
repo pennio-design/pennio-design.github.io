@@ -5553,7 +5553,7 @@ nav#nav[hidden]{display:none!important}
  window.addEventListener("resize",()=>{if(!mobile()){mobileLeftOpen=false;mobileRightOpen=false;document.body.classList.remove("studio-drawer-open")}render()});
  shell.addEventListener("click",event=>{
   const room=event.target.closest("[data-studio-room]");
-  if(room){const target=document.querySelector('#nav button[data-v="'+room.dataset.studioRoom+'"]');if(target)target.click();return}
+  if(room){const target=document.querySelector('#nav button[data-v="'+room.dataset.studioRoom+'"]');if(target)target.click();if(mobile())closeDrawers();return}
   const project=event.target.closest("[data-studio-project]");
   if(project){window.PennioWorkspace?.openProject?.(project.dataset.studioProject);if(mobile())closeDrawers();return}
   const action=event.target.closest("[data-studio-action]");
@@ -5568,7 +5568,7 @@ nav#nav[hidden]{display:none!important}
   const inspectorProject=document.getElementById("studioInspectorProject");if(inspectorProject)inspectorProject.textContent=name;
  }
  document.getElementById("nav")?.addEventListener("click",()=>requestAnimationFrame(updateContext));
- document.getElementById("studioNavNewProject")?.addEventListener("click",()=>document.getElementById("dashNewProject")?.click());
+ document.getElementById("studioNavNewProject")?.addEventListener("click",()=>{document.getElementById("dashNewProject")?.click();if(mobile())closeDrawers();});
  document.getElementById("studioNavSearchFocus")?.addEventListener("click",()=>document.getElementById("studioNavSearch")?.focus());
  document.getElementById("studioNavSearch")?.addEventListener("input",()=>window.PennioWorkspace?.refreshNavigation?.());
  document.getElementById("pname")?.addEventListener("input",updateContext);
