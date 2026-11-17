@@ -1298,7 +1298,47 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .auth-gate-bottom a{color:#aaa49c;text-decoration:none}
 @media(max-width:760px){.auth-gate{padding:20px 20px 16px}.auth-gate-main{grid-template-columns:1fr;gap:30px;padding:48px 0}.auth-gate-copy h1{font-size:clamp(48px,13vw,68px)}.auth-gate-rooms{margin-top:28px}.auth-gate-card{max-width:520px}.auth-gate-bottom{font-size:8px;letter-spacing:.08em}}
 </style>
-</head>
+<style>
+/* Shared three-column Studio shell with independently collapsible panels. */
+.studio-panel-toggles{display:flex;align-items:center;gap:5px;flex:none}
+.studio-panel-toggles button{display:flex;align-items:center;gap:6px;min-height:34px;padding:6px 9px;border:1px solid var(--line2);border-radius:9px;color:var(--mute);font-size:11px;white-space:nowrap}
+.studio-panel-toggles button[aria-expanded="true"]{color:var(--text);background:var(--surface)}
+.studio-panel-toggles svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6}
+.studio-shell{width:min(1600px,100%);margin:0 auto;padding:0 14px;display:grid;grid-template-columns:230px minmax(0,1fr) 260px;gap:12px;align-items:start}
+.studio-main{width:100%;max-width:none;min-width:0;padding:0 4px 30px}
+.studio-side{position:sticky;top:126px;align-self:start;min-width:0;max-height:calc(100vh - 142px);overflow:auto;padding:15px 12px;border:1px solid var(--line);border-radius:14px;background:var(--off);scrollbar-width:thin}
+.studio-side[hidden]{display:none!important}
+.studio-side-head{display:grid;gap:5px;padding:2px 5px 13px;border-bottom:1px solid var(--line)}
+.studio-side-head>span,.studio-side-section>small{font-size:9px;letter-spacing:.13em;font-weight:700;color:var(--mute)}
+.studio-side-head>b{font-size:16px;letter-spacing:-.025em}
+.studio-side-project{padding:10px;margin:11px 0;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-size:12px;font-weight:600;overflow-wrap:anywhere}
+.studio-side-section{display:grid;gap:4px;padding:12px 2px;border-top:1px solid var(--line)}
+.studio-side-section>small{padding:0 5px 5px}
+.studio-side-section button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:38px;padding:8px 9px;border-radius:8px;text-align:left;color:var(--mute);font-size:12px}
+.studio-side-section button:hover,.studio-side-section button:focus-visible{background:var(--surface);color:var(--text);outline:none}
+.studio-side-section button span{font-size:10px;opacity:.7}
+.studio-side-note{padding:8px 5px;color:var(--mute);font-size:10px;line-height:1.55}
+.studio-inspector-context{padding:13px 5px;color:var(--mute);font-size:12px;line-height:1.55}
+.studio-shell.left-collapsed{grid-template-columns:minmax(0,1fr) 260px}
+.studio-shell.right-collapsed{grid-template-columns:230px minmax(0,1fr)}
+.studio-shell.left-collapsed.right-collapsed{grid-template-columns:minmax(0,1fr)}
+.studio-shell.left-collapsed #studioLeftPanel,.studio-shell.right-collapsed #studioRightPanel{display:none}
+@media(max-width:1100px){.studio-shell{grid-template-columns:205px minmax(0,1fr) 230px;gap:8px;padding:0 8px}.studio-shell.left-collapsed{grid-template-columns:minmax(0,1fr) 230px}.studio-shell.right-collapsed{grid-template-columns:205px minmax(0,1fr)}}
+@media(max-width:760px){
+ .studio-shell,.studio-shell.left-collapsed,.studio-shell.right-collapsed,.studio-shell.left-collapsed.right-collapsed{display:block;padding:0 10px}
+ .studio-main{padding:0 2px 28px}
+ .studio-side{position:fixed;z-index:80;top:0;bottom:0;width:min( min(86vw,320px), 320px);max-height:none;margin:0;border-radius:0;background:var(--off);box-shadow:0 0 0 100vmax #0009;transition:transform .2s ease}
+ .studio-side-left{left:0;transform:translateX(-110%)}
+ .studio-side-right{right:0;transform:translateX(110%)}
+ .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{display:block}
+ .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{transform:translateX(0)}
+ .studio-panel-toggles button{width:36px;justify-content:center;padding:6px}
+ .studio-panel-toggles button span{display:none}
+ .bar{gap:7px}
+ .hsess{display:none}
+}
+@media(prefers-reduced-motion:reduce){.studio-side{transition:none}}
+</style></head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
   <div class="auth-gate-top"><a class="auth-gate-brand" href="https://pennio.agency/" aria-label="PENNIO home"><span class="auth-gate-mark" aria-hidden="true"><svg viewBox="0 0 81.67 102.67" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></span><span>PENNIO <i>STUDIO</i></span></a><span class="auth-gate-label">CREATIVE WORKSPACE</span></div>
@@ -1320,7 +1360,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <div class="logo"><svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81.67 102.67" role="img" aria-label="PENNIO"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg>PENNIO Studio <span>· PENNIO</span></div>
     <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span><span class="local-status" id="localStatus"><i></i>Saved on device</span></div>
     <div class="hright">
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
+      <div class="studio-panel-toggles" role="group" aria-label="Workspace panels"><button type="button" id="leftPanelToggle" aria-controls="studioLeftPanel" aria-expanded="true" title="Hide left panel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg><span>Left panel</span></button><button type="button" id="rightPanelToggle" aria-controls="studioRightPanel" aria-expanded="true" title="Hide right panel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg><span>Right panel</span></button></div><button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
       <button class="btn ic" id="siteSettingsBtn" type="button" aria-label="Studio settings" title="Studio settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
       <button type="button" class="studio-rec-launch" id="studioRecLaunch" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Capture</button>
       <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
@@ -1356,7 +1396,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 </aside>
 
 
-<main class="wrap"><!-- STUDIO DASHBOARD -->
+<div class="studio-shell" id="studioShell"><aside class="studio-side studio-side-left" id="studioLeftPanel" aria-label="Project navigation"><div class="studio-side-head"><span>WORKSPACE</span><b>Project</b></div><div class="studio-side-project" id="studioSideProjectName">Studio workspace</div><div class="studio-side-section"><small>DESTINATIONS</small><button type="button" data-studio-room="ayan">Beat <span>Àyàn</span></button><button type="button" data-studio-room="write">Write <span>Akéwì</span></button><button type="button" data-studio-room="faajiplace">Fàájíplace</button><button type="button" data-studio-room="beauty">Model</button><button type="button" data-studio-room="home">Projects</button></div><div class="studio-side-section"><small>IN THIS SESSION</small><button type="button" data-studio-action="openWork">Sessions</button><button type="button" data-studio-action="openHist">History</button><button type="button" data-studio-action="guideLink">Learn</button></div><p class="studio-side-note">Your work stays organised by project.</p></aside><main class="wrap studio-main"><!-- STUDIO DASHBOARD -->
 <section class="view" id="v-home">
   <div class="dash-topline"><span class="dash-kicker">PENNIO CREATIVE PLATFORM</span><span class="dash-local"><i></i> <span id="dashAccountIdentity">Authenticated workspace</span></span></div>
   <div class="dash-intro"><div><h1>Welcome back,<br><em id="dashUserName">creator.</em></h1><p>Your creative workspace is ready.</p></div><button class="dash-new" id="dashNewProject"><span>＋</span> New project</button></div>
@@ -1779,7 +1819,7 @@ A clear image or action.
 
 
 <p class="foot"><a href="/studio/guide/" style="color:inherit">How to use PENNIO Studio</a> · PENNIO Studio by PENNIO</p>
-</main>
+</main><aside class="studio-side studio-side-right" id="studioRightPanel" aria-label="Contextual tools"><div class="studio-side-head"><span>INSPECTOR</span><b id="studioInspectorTitle">Workspace tools</b></div><div class="studio-inspector-context" id="studioInspectorContext">Choose a destination to see its available tools.</div><div class="studio-side-section"><small>QUICK ACTIONS</small><button type="button" data-studio-action="studioRecLaunch">Capture a take</button><button type="button" data-studio-action="openWork">Open sessions</button><button type="button" data-studio-action="openHist">Open history</button></div><div class="studio-side-section"><small>PROJECT</small><div class="studio-side-project" id="studioInspectorProject">Studio workspace</div><p class="studio-side-note">Tools and properties will follow the selected room and item.</p></div></aside></div>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to PENNIO Studio.</h2>
   <p id="obIntro">No password. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your work saves in this browser on this device, so download a backup from Sessions now and then.</p>
@@ -5462,5 +5502,48 @@ nav#nav[hidden]{display:none!important}
 
 
 </style>
+<script>
+/* Independent Studio panel controls. State is shared across rooms and reloads. */
+(()=>{
+ const shell=document.getElementById("studioShell");
+ if(!shell)return;
+ const key="pennio.studio.panels.v1";
+ const left=document.getElementById("studioLeftPanel"),right=document.getElementById("studioRightPanel");
+ const leftBtn=document.getElementById("leftPanelToggle"),rightBtn=document.getElementById("rightPanelToggle");
+ const read=()=>{try{return JSON.parse(localStorage.getItem(key)||"{}")}catch(e){return {}}};
+ const save=()=>{try{localStorage.setItem(key,JSON.stringify({left:leftOpen,right:rightOpen}))}catch(e){}};
+ const mobile=()=>window.matchMedia("(max-width:760px)").matches;
+ let state=read(),leftOpen=state.left!==false,rightOpen=state.right!==false;
+ function render(){
+  shell.classList.toggle("left-collapsed",!leftOpen);shell.classList.toggle("right-collapsed",!rightOpen);
+  shell.classList.toggle("mobile-left-open",mobile()&&leftOpen);shell.classList.toggle("mobile-right-open",mobile()&&rightOpen);
+  leftBtn.setAttribute("aria-expanded",String(leftOpen));rightBtn.setAttribute("aria-expanded",String(rightOpen));
+  leftBtn.title=leftOpen?"Hide left panel":"Show left panel";rightBtn.title=rightOpen?"Hide right panel":"Show right panel";
+  leftBtn.setAttribute("aria-label",leftBtn.title);rightBtn.setAttribute("aria-label",rightBtn.title);
+ }
+ leftBtn.addEventListener("click",()=>{leftOpen=!leftOpen;render();save()});
+ rightBtn.addEventListener("click",()=>{rightOpen=!rightOpen;render();save()});
+ window.addEventListener("resize",render);
+ shell.addEventListener("click",event=>{
+  const room=event.target.closest("[data-studio-room]");
+  if(room){const target=document.querySelector('#nav button[data-v="'+room.dataset.studioRoom+'"]');if(target)target.click();return}
+  const action=event.target.closest("[data-studio-action]");
+  if(action){const target=document.getElementById(action.dataset.studioAction);if(target)target.click()}
+ });
+ const labels={ayan:["Beat · Àyàn","Production tools and session controls for the active beat."],write:["Write · Akéwì","Songwriting, lyric development and recording prompts."],faajiplace:["Fàájíplace","Story development, scenes and film references."],beauty:["Model","Visual references and model tools."],home:["Projects","Your projects and their saved creative work."]};
+ function updateContext(){
+  const active=document.querySelector('#nav button[data-v].on'),id=active?.dataset.v||"ayan",item=labels[id]||labels.ayan;
+  document.getElementById("studioInspectorTitle").textContent=item[0];
+  document.getElementById("studioInspectorContext").textContent=item[1];
+  const name=document.getElementById("pname")?.value||"Studio workspace";
+  document.getElementById("studioSideProjectName").textContent=name;
+  document.getElementById("studioInspectorProject").textContent=name;
+ }
+ document.getElementById("nav")?.addEventListener("click",()=>requestAnimationFrame(updateContext));
+ document.getElementById("pname")?.addEventListener("input",updateContext);
+ document.addEventListener("click",event=>{if(event.target.closest("#nav button[data-v]"))requestAnimationFrame(updateContext)});
+ window.addEventListener("pennio:workspace-project-open",updateContext);
+ updateContext();render();
+})();</script>
 </body>
 </html>
