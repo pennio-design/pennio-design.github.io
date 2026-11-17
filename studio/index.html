@@ -4112,7 +4112,7 @@ document.getElementById("obForm").onsubmit=async e=>{
 
 /* ---------- cloud saving: Supabase, called over plain HTTPS (no third-party script) ---------- */
 /* Cloud saving stays hidden until a real email sender (SMTP) is connected in Supabase. Set to true to switch it on. */
-const CLOUD_ON=false;
+const CLOUD_ON=true;
 const SB_URL="https://rgkxqcmfejglfslhrpsm.supabase.co", SB_KEY="sb_publishable_LyoN0Fi7EQPagzBHyHuR9Q_8O8mhp2x";
 let sbSess=lsGet("ps.sb"), sbSyncing=false, cloudDirty=new Set(), cloudT=null;
 function setSession(d){ sbSess={access_token:d.access_token, refresh_token:d.refresh_token, expires_at:Date.now()+(+d.expires_in||3600)*1000, user: d.user? {id:d.user.id,email:d.user.email} : (sbSess&&sbSess.user)||null}; lsSet("ps.sb",sbSess); }
@@ -4136,12 +4136,23 @@ async function sbFetch(path,opts){
 }
 async function sbLoadUser(){ const r=await sbFetch("/auth/v1/user"); if(r.ok){ const u=await r.json(); sbSess.user={id:u.id,email:u.email}; lsSet("ps.sb",sbSess); } return r.ok; }
 async function sbSendLink(email){
-  const r=await fetch(SB_URL+"/auth/v1/otp?redirect_to="+encodeURIComponent(location.origin+"/studio/"),{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({email,create_user:true})});
-  if(!r.ok){ const t=await r.text().catch(()=> ""); throw new Error(r.status===429||/rate/i.test(t)? "rate" : "send"); }
+  const url=SB_URL+"/auth/v1/otp?redirect_to="+encodeURIComponent(location.origin+"/studio/");
+  const r=await fetch(url,{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({email:email.trim().toLowerCase(),create_user:true})});
+  if(!r.ok){
+    const t=await r.text().catch(()=> "");
+    let detail=t; try{const j=JSON.parse(t);detail=j.msg||j.message||j.error_description||j.error||t;}catch(e){}
+    if(r.status===429||/rate limit|too many requests/i.test(detail)) throw new Error("rate");
+    throw new Error("auth-send:"+r.status+":"+String(detail).slice(0,180));
+  }
+  return true;
 }
 async function sbVerify(email,code){
-  const r=await fetch(SB_URL+"/auth/v1/verify",{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({type:"email",email,token:code})});
-  if(!r.ok) throw new Error("code");
+  const r=await fetch(SB_URL+"/auth/v1/verify",{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:JSON.stringify({type:"email",email:email.trim().toLowerCase(),token:code.trim()})});
+  if(!r.ok){
+    const t=await r.text().catch(()=> "");
+    let detail=t; try{const j=JSON.parse(t);detail=j.msg||j.message||j.error_description||j.error||t;}catch(e){}
+    throw new Error("auth-verify:"+r.status+":"+String(detail).slice(0,180));
+  }
   setSession(await r.json()); if(!sbSess.user) await sbLoadUser();
 }
 /* a sign-in link lands here with the session in the address */
@@ -4256,7 +4267,7 @@ document.getElementById("sbSend").onclick=async()=>{
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ toast("Add a valid email."); return; }
   btn.disabled=true; btn.textContent="Sending…";
   try{ await sbSendLink(email); lsSet("ps.sbEmail",email); document.getElementById("sbCodeRow").hidden=false; btn.textContent="Send again"; toast("Sign-in email sent to "+email); }
-  catch(e){ btn.textContent="Send sign-in link"; toast(e.message==="rate"? "Too many sign-in emails just now. Try again in a little while." : "Could not send the email. Check your connection and try again."); }
+  catch(e){ btn.textContent="Send sign-in link"; toast(e.message==="rate"? "Too many sign-in emails just now. Try again in a little while." : e.message.startsWith("auth-send:")? "Supabase rejected the sign-in request ("+e.message.split(":")[1]+"). Check Auth settings and allowed redirect URLs." : "Could not reach Supabase. Check your connection and try again."); }
   btn.disabled=false;
 };
 document.getElementById("sbVerify").onclick=async()=>{
@@ -4264,7 +4275,7 @@ document.getElementById("sbVerify").onclick=async()=>{
   if(!code){ toast("Type the code from the email."); return; }
   const btn=document.getElementById("sbVerify"); btn.disabled=true; btn.textContent="Signing in…";
   try{ await sbVerify(email,code); renderCloud(); const fresh=((await allProjects())||[]).every(p=>!p.audio && Date.now()-(p.created||0)<15*60000); await cloudSyncAll({fresh}); toast("Cloud saving is on"); }
-  catch(e){ toast("That code did not work. Check it, or send a new email."); }
+  catch(e){ console.error("[PENNIO Supabase verify]",e); toast(e.message.startsWith("auth-verify:")? "Supabase rejected that code ("+e.message.split(":")[1]+"). Request a fresh code and try again." : "That code did not work. Check it, or send a new email."); }
   btn.disabled=false; btn.textContent="Sign in";
 };
 document.getElementById("sbSync").onclick=()=>cloudSyncAll();
