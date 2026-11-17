@@ -1167,22 +1167,39 @@ html[data-theme="light"] .card input::placeholder,
 html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;opacity:1}
 </style>
 
+<style id="pennio-zero-gate-first-play">
+#hero,.inst,#bkpBar{display:none!important}
+#v-ayan{padding-top:12px}
+.first-play{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 14px;padding:14px 16px;border:1px solid #60402d;border-radius:15px;background:linear-gradient(110deg,#211811,#14110f)}
+.first-play>div{display:grid;gap:4px;min-width:0}
+.first-play>div>span{font-size:9px;letter-spacing:.15em;font-weight:700;color:#d99a6c}
+.first-play b{font-size:15px;letter-spacing:-.02em;font-weight:600}
+.first-play small{font-size:11px;line-height:1.4;color:#b9aaa0}
+.first-play button{flex:none;min-height:44px;padding:0 14px;border-radius:10px;background:var(--orange);color:#090909;font-size:12px;font-weight:700}
+.first-play button span{margin-left:6px}
+.local-status{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:10px;color:var(--mute);padding:6px 9px;border:1px solid var(--line);border-radius:999px}
+.local-status i{width:6px;height:6px;border-radius:50%;background:#72b88a}
+.local-status.changed{color:var(--text);border-color:#9a713d}
+.local-status.changed i{background:#e3a33c;box-shadow:0 0 0 3px #e3a33c22}
+.dash-room[data-room="faajiplace"]{display:none}
+.next-pennio{color:var(--mute);text-decoration:none;letter-spacing:0;font-size:10px}
+.next-pennio:hover{color:var(--orange)}
+@media(max-width:768px){.first-play{align-items:flex-start;flex-direction:column;gap:10px;padding:13px}.first-play button{width:100%}.local-status{display:none}}
+</style>
 </head>
 <body class="in-studio">
 <header>
   <div class="wrap bar">
     <div class="logo"><svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="PENNIO Studio"><rect width="256" height="256" rx="28" fill="#FF6B00"/><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42" transform="translate(68.8 53.5) scale(1.45)"/></svg>pennio.studio <span>· PENNIO</span></div>
-    <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span></div>
+    <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span><span class="local-status" id="localStatus"><i></i>Saved on device</span></div>
     <div class="hright">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
       <button class="btn ic" id="siteSettingsBtn" type="button" aria-label="Studio settings" title="Studio settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
       <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Overview</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
         <nav id="nav" hidden>
-          <button data-v="home" class="on">Overview <small>Workspace</small></button>
-          <button data-v="ayan">Studio <small>Àyàn</small></button>
-          <button data-v="write">Write <small>Yoruba with tones</small></button>
-          <button data-v="faajiplace">Film <small>Picture & story</small></button>
-          <button data-v="beauty">Model / Beauty <small>Camera & looks</small></button>
+          <button data-v="ayan" class="on">Beat <small>Àyàn</small></button>
+          <button data-v="write">Tongue <small>Ìlù + Write</small></button>
+          <button data-v="home">Projects <small>My work</small></button>
         </nav></div>
       <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
     </div>
@@ -1190,7 +1207,7 @@ html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;
 </header>
 
 <main class="wrap"><!-- STUDIO DASHBOARD -->
-<section class="view on" id="v-home">
+<section class="view" id="v-home">
   <div class="dash-topline"><span class="dash-kicker">PENNIO CREATIVE PLATFORM</span><span class="dash-local"><i></i> Your workspace · This device</span></div>
   <div class="dash-intro"><div><h1>Make something<br><em>worth keeping.</em></h1><p>One workspace for sound, language, image and story.</p></div><button class="dash-new" id="dashNewProject"><span>＋</span> New project</button></div>
   <div class="dash-command">
@@ -1226,11 +1243,11 @@ html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;
       <div class="dash-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </section>
   </div>
-  <div class="dash-footer"><span>PENNIO STUDIO</span><span>Made for ideas that deserve a form.</span><button id="dashHelp">How Studio works ↗</button></div>
+  <div class="dash-footer"><span>PENNIO STUDIO</span><span>Made for ideas that deserve a form.</span><a href="/faajiplace/" class="next-pennio">Next from PENNIO · Fàájíplace ↗</a><button id="dashHelp">How Studio works ↗</button></div>
 </section>
 
 <!-- MUSIC -->
-<section class="view" id="v-ayan">
+<section class="view on" id="v-ayan">
   <div class="stabs" role="tablist" aria-label="Session">
     <button id="openWork" role="tab">Sessions</button>
     <button id="openHist" role="tab">History</button>
@@ -1260,6 +1277,7 @@ html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;
   <h1>Bring your voice. Leave with a record.</h1>
   <p class="sub">Àyàn is the studio. Add a voice note or any sound, enhance it in one tap, chop it onto the grid with Yoruba percussion under it, let the talking drum answer in your own intonation, then remix until it feels right.</p></div>
 
+  <div class="first-play" id="firstPlayCard"><div><span>YOUR FIRST GROOVE</span><b>Tap to hear what a voice can become.</b><small>A working Yoruba percussion pattern is ready. Press play, then make it yours.</small></div><button type="button" id="firstPlay">Hear the groove <span>↗</span></button></div>
   <div class="transport" id="tp">
     <button class="play ilu" id="play" aria-label="Play (Space)"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><radialGradient id="iluSkinGradient" cx="42%" cy="38%" r="70%"><stop offset="0" stop-color="#3a3229"/><stop offset=".75" stop-color="#211d19"/><stop offset="1" stop-color="#18161a"/></radialGradient></defs><path class="ilu-lace" d="M57.80 32.00L62.60 32.00M57.41 36.48L62.14 37.31M56.24 40.82L60.75 42.47M54.34 44.90L58.50 47.30M51.76 48.58L55.44 51.67M48.58 51.76L51.67 55.44M44.90 54.34L47.30 58.50M40.82 56.24L42.47 60.75M36.48 57.41L37.31 62.14M32.00 57.80L32.00 62.60M27.52 57.41L26.69 62.14M23.18 56.24L21.53 60.75M19.10 54.34L16.70 58.50M15.42 51.76L12.33 55.44M12.24 48.58L8.56 51.67M9.66 44.90L5.50 47.30M7.76 40.82L3.25 42.47M6.59 36.48L1.86 37.31M6.20 32.00L1.40 32.00M6.59 27.52L1.86 26.69M7.76 23.18L3.25 21.53M9.66 19.10L5.50 16.70M12.24 15.42L8.56 12.33M15.42 12.24L12.33 8.56M19.10 9.66L16.70 5.50M23.18 7.76L21.53 3.25M27.52 6.59L26.69 1.86M32.00 6.20L32.00 1.40M36.48 6.59L37.31 1.86M40.82 7.76L42.47 3.25M44.90 9.66L47.30 5.50M48.58 12.24L51.67 8.56M51.76 15.42L55.44 12.33M54.34 19.10L58.50 16.70M56.24 23.18L60.75 21.53M57.41 27.52L62.14 26.69"/><circle class="ilu-hoop" cx="32" cy="32" r="24.4"/><circle class="ilu-lap" cx="32" cy="32" r="22.3"/><g class="ilu-skin" id="iluSkin"><circle cx="32" cy="32" r="21.4" fill="url(#iluSkinGradient)"/><circle class="ilu-ring" cx="32" cy="32" r="14"/><circle class="ilu-ring" cx="32" cy="32" r="7.5"/></g><circle class="ilu-rip" id="iluRip" cx="32" cy="32" r="21"/><g class="ilu-glyph" id="playIcon"><path d="M28 24.5l11 7.5-11 7.5z"/></g></svg></button>
     <div class="pos" id="pos" aria-hidden="true"><span class="pos-t"><b id="posBar">Bar 1</b><em id="posCh"></em></span><span class="pos-d" id="posDots"><i></i><i></i><i></i><i></i></span></div>
@@ -3870,8 +3888,8 @@ document.getElementById("backup").onclick=doBackup;
 /* backup reminders: after each new recording, and weekly while there is work worth keeping */
 const DAY=86400000;
 function agoText(t){ if(!t) return "never"; const d=Math.floor((Date.now()-t)/DAY); return d<1?"today": d===1?"yesterday": d+" days ago"; }
-function showBkp(title,text){ if(!downloads) return; document.getElementById("bkpTitle").textContent=title; document.getElementById("bkpText").textContent=text; document.getElementById("bkpBar").hidden=false; }
-function nudgeAfterRecording(){ showBkp("New recording added", "Your DAW sessions and project media live only in this browser until you back them up. Last backup: "+agoText(lsGet("ps.lastBackup"))+"."); }
+function showBkp(title,text){ const pill=document.getElementById("localStatus"); if(pill){ pill.classList.add("changed"); pill.innerHTML="<i></i>"+(title||"Saved on device"); } }
+function nudgeAfterRecording(){ showBkp("New recording saved", ""); }
 async function nudgeWeekly(){
   if(!document.getElementById("bkpBar").hidden) return;
   const last=lsGet("ps.lastBackup")||0, snooze=lsGet("ps.bkpSnooze")||0;
@@ -4155,14 +4173,14 @@ document.getElementById("obReturn").onclick=()=>{ ob.classList.remove("on"); ren
 window.__pennioAyanBoot=(async()=>{
   db=await idb();
   const prof=lsGet("ps.profile")||(await kvGet("profile"));
-  if(!prof){ if(location.hash==="#film"||location.hash==="#faajiplace") window.__gatePending=true; else ob.classList.add("on"); } /* a shared Film link opens the page itself, the sign-up waits until someone opens a tool */
+  /* First play is open to everyone. Profile details are optional and requested only when the user chooses profile or cloud features. */
   const curId=lsGet("ps.current")||(await kvGet("current"));
   let rec=curId? await tx("projects","readonly",st=>st.get(curId)) : null;
   if(!rec){ const list=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated); rec=list[0]||null; }
   if(!rec && !db){ const last=lsGet("ps.last"); if(last) rec={id:last.id,name:last.name,state:last.state,audio:null}; }
   if(rec){ await openProject(rec); ready=true; document.getElementById("savedNote").textContent="Restored"; }
   else { await newProject(); }
-  renderWords(); sendProfileIfNeeded(); setTimeout(nudgeWeekly,1500);
+  renderWords(); sendProfileIfNeeded();
   if(!lsGet("ps.heroSeen")){ document.getElementById("hero").hidden=false; lsSet("ps.heroSeen",1); }
   paintAvatar();
   const g=new URLSearchParams(location.search).get("g");
@@ -4327,14 +4345,13 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   if((e.ctrlKey||e.metaKey) && k==="z"){ e.preventDefault(); (e.shiftKey? redoBtn : undoBtn).click(); }
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
-  if(v!=="faajiplace" && window.__gatePending){ window.__gatePending=false; ob.classList.add("on"); }
-  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="home"?"Overview":v==="ayan"?"Àyàn":v==="write"?"Akéwì":v==="beauty"?"Model / Beauty":"Fàájíplace";
+  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="home"?"Projects":v==="ayan"?"Beat":v==="write"?"Tongue":v==="beauty"?"Model / Beauty":"Fàájíplace";
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"",b.dataset.v==="home"?"/studio/":"#"+b.dataset.v);}catch(e){} });
 const hs=x=>{x=x.replace("#",""); return x==="film"?"faajiplace":x;};
-const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan"||h==="home") show(h);
+const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan"||h==="home") show(h); else show("ayan");
 window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write"||x==="beauty") show(x);});
 
 /* Model / Beauty camera controls */
@@ -4851,5 +4868,6 @@ document.getElementById("sylIn").oninput=sylRender;
 <script src="/studio/workspace.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
+<script id="pennio-first-play-bind">(()=>{const b=document.getElementById("firstPlay"),p=document.getElementById("play");if(!b||!p)return;b.addEventListener("click",()=>p.click());})();</script>
 </body>
 </html>
