@@ -3135,7 +3135,7 @@ document.getElementById("remix").onclick=()=>{
 const layersEl=document.getElementById("layers");
 function newLanePattern(id){
   const lane=LANES.find(l=>l.id===id);if(!lane)return new Array(N).fill(0);
-  const current=(pattern[id]||new Array(N).fill(0)).slice(0,N);
+  const current=(pattern[id]||new Array(16).fill(0)).slice(0,16);
   const options=PRESETS.map((preset,index)=>({preset,index,steps:preset.p&&preset.p[id]}))
     .filter(item=>Array.isArray(item.steps)&&item.steps.length===N&&item.steps.some(Boolean))
     .map(item=>({...item,distance:item.steps.reduce((sum,value,index)=>sum+(value!==current[index]?1:0),0)}))
@@ -3143,7 +3143,8 @@ function newLanePattern(id){
     .sort((a,b)=>a.distance-b.distance||a.index-b.index);
   if(options.length){
     const bestDistance=options[0].distance,tied=options.filter(item=>item.distance===bestDistance);
-    const selected=tied[(Math.max(0,version)%tied.length)].steps.slice();
+    const selected=new Array(16).fill(0),candidate=tied[(Math.max(0,version)%tied.length)].steps;
+    candidate.forEach((value,index)=>{selected[index]=value;});
     if(current[0])selected[0]=current[0];
     return selected;
   }
