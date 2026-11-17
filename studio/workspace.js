@@ -251,10 +251,24 @@ async function importProjectData(data){
   tx.onabort=()=>reject(tx.error||Error("Studio project import was interrupted."));
  });
 }
+
+async function listSavedSessions(){const d=await openDB();return new Promise((resolve,reject)=>{const tx=d.transaction("sessions","readonly"),req=tx.objectStore("sessions").getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});}
+function openProject(id){const project=projectById(id);if(!project)return false;setActive(project);const room=roomNames[project.room]?project.room:"ayan";window.PennioWorkspace.openRoom(room).catch(error=>window.toast?.("Could not open this project: "+error.message));return true;}
+async function refreshNavigation(){
+ const projects=readProjects().slice().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0)),host=$("studioNavProjects"),recent=$("studioNavRecent"),count=$("studioNavProjectCount"),search=$("studioNavSearch");
+ if(!host||!recent)return;const query=(search?.value||"").trim().toLowerCase(),sessions=await listSavedSessions().catch(()=>[]),byProject=new Map(sessions.map(s=>[s.projectId,s]));
+ const matches=projects.filter(p=>!query||(p.name||"").toLowerCase().includes(query)||(byProject.get(p.id)?.name||"").toLowerCase().includes(query));count.textContent=String(projects.length);host.replaceChildren();
+ if(!matches.length){const empty=document.createElement("p");empty.className="studio-nav-empty";empty.textContent=query?"No matching projects.":"Create a project to start organising your work.";host.append(empty);}
+ matches.forEach(p=>{const b=document.createElement("button");b.type="button";b.className="studio-nav-item";b.dataset.studioProject=p.id;if(p.id===activeProjectId)b.setAttribute("aria-current","page");const mark=document.createElement("i");mark.className="studio-nav-mark";const copy=document.createElement("span");copy.className="studio-nav-copy";const name=document.createElement("b");name.textContent=p.name||"Untitled project";const meta=document.createElement("small");meta.textContent=roomNames[p.room]||"Project";copy.append(name,meta);b.append(mark,copy);host.append(b);});
+ const recentItems=sessions.slice().sort((a,b)=>(b.updated||0)-(a.updated||0)).filter(s=>projects.some(p=>p.id===s.projectId)&&(!query||(s.name||"").toLowerCase().includes(query)||(projects.find(p=>p.id===s.projectId)?.name||"").toLowerCase().includes(query))).slice(0,12);
+ recent.replaceChildren();if(!recentItems.length){const empty=document.createElement("p");empty.className="studio-nav-empty";empty.textContent=query?"No saved sessions match.":"Your saved work will appear here as you create it.";recent.append(empty);}
+ recentItems.forEach(s=>{const p=projects.find(x=>x.id===s.projectId);if(!p)return;const b=document.createElement("button");b.type="button";b.className="studio-nav-item";b.dataset.studioProject=p.id;if(p.id===activeProjectId)b.setAttribute("aria-current","page");const mark=document.createElement("i");mark.className="studio-nav-mark";const copy=document.createElement("span");copy.className="studio-nav-copy";const name=document.createElement("b");name.textContent=s.name||p.name||"Untitled session";const meta=document.createElement("small");meta.textContent=new Date(s.updated||p.updated||Date.now()).toLocaleDateString();copy.append(name,meta);b.append(mark,copy);recent.append(b);});
+}
 window.PennioWorkspace={
  get activeProjectId(){return activeProjectId;},
  setActiveProject:setActive,
  getProject:projectById,
+ listProjects:readProjects,listSavedSessions,openProject,refreshNavigation,
  listAssets:()=>getAssets(),
  getAsset,
  addAsset:storeAsset,
@@ -289,7 +303,7 @@ window.addEventListener("pennio:workspace-media-save",e=>{storeAsset(e.detail||{
 window.addEventListener("pennio:film-media",e=>{const d=e.detail||{};if(!d.blob||d.assetId)return;const kind=d.kind||(d.blob.type.startsWith("audio/")?"audio":"video");storeAsset({...d,kind}).then(asset=>window.dispatchEvent(new CustomEvent("pennio:film-media-saved",{detail:{id:asset.id,name:asset.name,kind:asset.kind,projectId:asset.projectId}}))).catch(reportMediaError);});
 buildUI();
 const saved=(()=>{try{return localStorage.getItem(ACTIVE_KEY)}catch(e){return null}})();
-setActive(projectById(saved)||null);refreshProjectSelect();refreshAssets();refreshStorageHealth();window.addEventListener("storage",refreshStorageHealth);
+setActive(projectById(saved)||null);refreshProjectSelect();refreshAssets();refreshStorageHealth();refreshNavigation();window.addEventListener("storage",()=>{refreshStorageHealth();refreshNavigation();});window.addEventListener("pennio:workspace-project-open",refreshNavigation);
 if(activeProjectId&&["#ayan","#faajiplace","#film"].includes(location.hash))window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:location.hash.slice(1)}}));
 window.dispatchEvent(new CustomEvent("pennio:workspace-ready",{detail:{projectId:activeProjectId}}));
 })();
