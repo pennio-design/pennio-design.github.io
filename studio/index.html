@@ -5548,7 +5548,7 @@ nav#nav[hidden]{display:none!important}
   const room=event.target.closest("[data-studio-room]");
   if(room){const target=document.querySelector('#nav button[data-v="'+room.dataset.studioRoom+'"]');if(target)target.click();if(mobile()){mobileOpen=false;render();}return;}
   const project=event.target.closest("[data-studio-project]");
-  if(project){window.PennioWorkspace?.openProject?.(project.dataset.studioProject);if(mobile()){mobileOpen=false;render();}return;}
+  if(project){window.PennioWorkspace?.openProject?.(project.dataset.studioProject).catch(error=>window.toast?.("Could not open this project: "+error.message));if(mobile()){mobileOpen=false;render();}return;}
   const action=event.target.closest("[data-studio-action]");
   if(action){const target=document.getElementById(action.dataset.studioAction);if(target)target.click();}
  });
