@@ -5078,7 +5078,8 @@ document.getElementById("sylIn").oninput=sylRender;
     if(meta)meta.content=light?"#F6F5F2":"#090909";
     try{localStorage.setItem("ps.theme",light?"light":"dark");}catch(e){}
   };
-  setTheme(document.documentElement.dataset.theme||"dark");
+  let savedTheme="dark";try{savedTheme=localStorage.getItem("ps.theme")==="light"?"light":"dark";}catch(e){}
+  setTheme(savedTheme);
   button.addEventListener("click",()=>setTheme(document.documentElement.dataset.theme==="light"?"dark":"light"));
 })();
 </script>
