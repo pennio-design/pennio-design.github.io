@@ -22,8 +22,9 @@ class StudioCleanChain{
   const low=make(()=>context.createBiquadFilter());low.type="lowpass";low.frequency.value=4500;low.Q.value=.707;
   const high=make(()=>context.createBiquadFilter());high.type="highpass";high.frequency.value=4500;high.Q.value=.707;
   const band=make(()=>context.createBiquadFilter());band.type="lowpass";band.frequency.value=9500;band.Q.value=.707;
+  const airBand=make(()=>context.createBiquadFilter());airBand.type="highpass";airBand.frequency.value=9500;airBand.Q.value=.707;
   const deComp=make(()=>context.createDynamicsCompressor());deComp.threshold.value=p.deEsserThresholdDb;deComp.knee.value=3;deComp.ratio.value=6;deComp.attack.value=.002;deComp.release.value=.04;
-  const sum=make(()=>context.createGain());source.connect(low);source.connect(high);high.connect(band);band.connect(deComp);low.connect(sum);deComp.connect(sum);source=sum;
+  const sum=make(()=>context.createGain());source.connect(low);source.connect(high);source.connect(airBand);high.connect(band);band.connect(deComp);low.connect(sum);deComp.connect(sum);airBand.connect(sum);source=sum;
   this.deEsser=deComp;
   // Mid/side width processing. The delayed side signal cancels when L+R is summed to mono.
   const splitter=make(()=>context.createChannelSplitter(2)),merger=make(()=>context.createChannelMerger(2));
@@ -32,7 +33,7 @@ class StudioCleanChain{
   splitter.connect(sideL,0);splitter.connect(sideR,1);sideL.gain.value=.5;sideR.gain.value=-.5;
   sideL.connect(sideDelay);sideR.connect(sideDelay);sideDelay.delayTime.value=.011;
   sideDelay.connect(sideBlend);sideBlend.gain.value=1;
-  mid.connect(leftSum);sideBlend.connect(leftSum);mid.connect(rightSum);sideBlend.connect(rightSum);
+  mid.connect(leftSum);sideBlend.connect(leftSum);mid.connect(rightSum);
   const invert=make(()=>context.createGain());invert.gain.value=-1;sideBlend.connect(invert);invert.connect(rightSum);
   leftSum.connect(merger,0,0);rightSum.connect(merger,0,1);source=merger;
   this.widthNode=sideBlend;this.widthBase=sideBlend.gain.value;
@@ -52,7 +53,7 @@ class StudioCleanChain{
   if(this.disposed)return;this.state={...this.state,...next};const p=root.StudioCleanPresets?.[this.state.preset]||root.StudioCleanPresets.natural,now=this.context.currentTime;
   const set=(param,value)=>{param.cancelScheduledValues(now);param.setTargetAtTime(value,now,Math.max(.001,ramp));};
   set(this.params.hpf.frequency,p.highpassHz);set(this.params.box.gain,p.lowMidCutDb);set(this.params.presence.gain,p.presenceBoostDb);set(this.params.air.gain,p.airShelfDb);
-  set(this.params.glue.threshold,p.compThresholdDb);set(this.params.glue.ratio,p.compRatio);set(this.params.makeup.gain,db(p.makeupGainDb));
+  set(this.deEsser.threshold,p.deEsserThresholdDb);set(this.params.glue.threshold,p.compThresholdDb);set(this.params.glue.ratio,p.compRatio);set(this.params.makeup.gain,db(p.makeupGainDb));
   set(this.widthNode.gain,1+(p.stereoWidth*.35));
   const amount=clamp(this.state.enabled?this.state.enhanceAmount:0,0,1);
   set(this.dry.gain,Math.cos(amount*Math.PI/2));set(this.wet.gain,Math.sin(amount*Math.PI/2));
