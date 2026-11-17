@@ -55,7 +55,15 @@ async function trimVideo(input,a,b){
 trimApply.addEventListener("click",async()=>{if(!blob||!mediaDuration)return;const a=Number(trimStart.value),b=Number(trimEnd.value);if(b-a<.2){setStatus("Choose a section at least 0.2 seconds long.");return;}trimApply.disabled=true;setStatus("Trimming your "+mode+"…");try{if(!sourceBlob)sourceBlob=blob;const trimmed=mode==="audio"?await trimAudio(blob,a,b):await trimVideo(blob,a,b);blob=trimmed;showPreview();trimReset.disabled=false;setStatus("Trim applied. Preview, save or send this section to another Studio room.");}catch(e){setStatus(e.message||"Could not trim this take.");}finally{trimApply.disabled=false;}});
 trimReset.addEventListener("click",()=>{if(!sourceBlob)return;blob=sourceBlob;showPreview();trimReset.disabled=true;setStatus("Original take restored.");});
 
-function showDock(open){dock.classList.toggle("open",open);launch.setAttribute("aria-expanded",String(open));}
+function showDock(open){
+ if(!open&&recorder&&recorder.state==="recording"){setStatus("Stop the recording before closing this panel.");return}
+ dock.classList.toggle("open",open);launch.setAttribute("aria-expanded",String(open));document.body.classList.toggle("recorder-open",open);
+ if(open)window.dispatchEvent(new CustomEvent("pennio:overlay-open",{detail:{source:"recorder"}}));
+}
+window.addEventListener("pennio:overlay-open",event=>{
+ if(event.detail?.source==="recorder"||recorder&&recorder.state==="recording")return;
+ showDock(false);
+});
 launch.addEventListener("click",()=>showDock(!dock.classList.contains("open")));
 $("studioRecClose").addEventListener("click",()=>showDock(false));
 document.querySelectorAll("[data-rec-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.recMode)));
@@ -71,16 +79,16 @@ start.addEventListener("click",async()=>{
   recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
   recorder.onerror=e=>setStatus("Recording error: "+(e.error?.message||"unknown error"));
   recorder.onstop=()=>{
-   stopTracks();blob=new Blob(chunks,{type:recorder.mimeType|| (mode==="audio"?"audio/webm":"video/webm")});
+   document.body.classList.remove("recorder-active");stopTracks();blob=new Blob(chunks,{type:recorder.mimeType|| (mode==="audio"?"audio/webm":"video/webm")});
    if(!blob.size){setStatus("No recording was captured. Try again.");return;}
    sourceBlob=blob;showPreview();result.hidden=false;
    useAyan.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=mode!=="video";
    setStatus(mode==="audio"?"Take ready. Add it to Àyàn or save it to your device.":"Video take ready. Preview it, use it in Film or save it to your device.");
    start.disabled=false;stop.disabled=true;clearInterval(ticker);
   };
-  recorder.start(250);started=Date.now();start.disabled=true;stop.disabled=false;setStatus(mode==="audio"?"Recording audio…":"Recording video…");
+  recorder.start(250);document.body.classList.add("recorder-active");started=Date.now();start.disabled=true;stop.disabled=false;setStatus(mode==="audio"?"Recording audio…":"Recording video…");
   ticker=setInterval(()=>{const sec=Math.floor((Date.now()-started)/1000);clock.textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");},250);
- }catch(e){stopTracks();start.disabled=false;stop.disabled=true;setStatus("Could not start recording: "+(e.message||"Check microphone/camera permission and try again."));}
+ }catch(e){document.body.classList.remove("recorder-active");stopTracks();start.disabled=false;stop.disabled=true;setStatus("Could not start recording: "+(e.message||"Check microphone/camera permission and try again."));}
 });
 stop.addEventListener("click",()=>{if(recorder&&recorder.state==="recording"){recorder.stop();setStatus("Preparing your take…");}});
 $("studioRecSave").addEventListener("click",()=>{if(!blob||!blobUrl)return;const a=document.createElement("a");a.href=blobUrl;const ext=(blob.type.includes("mp4")?"mp4":blob.type.includes("ogg")?"ogg":"webm");a.download=(mode==="audio"?"pennio-voice-take":"pennio-video-take")+"."+ext;document.body.append(a);a.click();a.remove();setStatus("Recording saved to your device.");});
