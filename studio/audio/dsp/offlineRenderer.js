@@ -18,24 +18,30 @@ function measureIntegratedLufs(buffer){
  const mean=kept.reduce((a,b)=>a+b,0)/kept.length;return -0.691+10*Math.log10(mean);
 }
 function estimateTruePeak(channels){let peak=0;for(const data of channels){for(let i=0;i<data.length;i++){const a=data[i],b=data[Math.min(i+1,data.length-1)];peak=Math.max(peak,Math.abs(a));for(let k=1;k<4;k++)peak=Math.max(peak,Math.abs(a+(b-a)*(k/4)));}}return peak;}
+function applyBoundaryFades(buffer,fadeSeconds=.015){
+ const fade=Math.min(Math.floor(buffer.sampleRate*fadeSeconds),Math.floor(buffer.length/2));
+ if(!fade)return buffer;
+ for(let c=0;c<buffer.numberOfChannels;c++){const data=buffer.getChannelData(c);for(let i=0;i<fade;i++){const fadeIn=.5-.5*Math.cos(Math.PI*i/fade),fadeOut=.5-.5*Math.cos(Math.PI*(fade-i)/fade);data[i]*=fadeIn;data[data.length-1-i]*=fadeOut;}}
+ return buffer;
+}
 function normalizeAndFade(buffer,targetLufs=-14,peakDb=-1,fadeSeconds=.015){
  const channels=Array.from({length:buffer.numberOfChannels},(_,c)=>buffer.getChannelData(c)),lufs=measureIntegratedLufs(buffer),peak=estimateTruePeak(channels);
  let gain=Number.isFinite(lufs)?Math.pow(10,(targetLufs-lufs)/20):1;const ceiling=Math.pow(10,peakDb/20);if(peak>0)gain=Math.min(gain,ceiling/peak);
- const fade=Math.min(Math.floor(buffer.sampleRate*fadeSeconds),Math.floor(buffer.length/2));
- for(const data of channels){for(let i=0;i<data.length;i++){let envelope=1;if(fade&&i<fade)envelope=.5-.5*Math.cos(Math.PI*i/fade);else if(fade&&i>=data.length-fade){const x=(data.length-1-i)/fade;envelope=.5-.5*Math.cos(Math.PI*Math.max(0,x));}data[i]*=gain*envelope;}}
+ for(const data of channels)for(let i=0;i<data.length;i++)data[i]*=gain;
+ applyBoundaryFades(buffer,fadeSeconds);
  return {buffer,measuredLufs:lufs,appliedGain:gain,peakDbfs:peak>0?20*Math.log10(peak*gain):-Infinity};
 }
 async function renderMix(tracks,options={}){
  const rate=options.sampleRate||44100,seconds=Math.max(.1,options.duration||tracks.reduce((m,t)=>Math.max(m,(t.timeline||0)+t.end-t.start),0)),length=Math.ceil(seconds*rate),Offline=root.OfflineAudioContext||root.webkitOfflineAudioContext;
  if(!Offline)throw new Error("Offline audio rendering is not supported in this browser.");
  const context=new Offline(2,length,rate),sources=[];
- for(const track of tracks){if(track.mute||(options.solo&& !track.solo))continue;const source=context.createBufferSource();source.buffer=track.buffer;const chain=await root.StudioCleanChain.create(context,track.dsp||root.StudioCleanDefaults);source.connect(chain.input);chain.output.connect(context.destination);
+ for(const track of tracks){if(track.mute||(options.solo&& !track.solo))continue;const source=context.createBufferSource();source.buffer=track.buffer;const chain=await root.StudioCleanChain.create(context,track.dsp||root.StudioCleanDefaults,{mono:track.buffer.numberOfChannels===1});source.connect(chain.input);chain.output.connect(context.destination);
   const level=context.createGain();level.gain.value=track.gain??1;chain.output.disconnect();chain.output.connect(level);const pan=context.createStereoPanner?context.createStereoPanner():null;if(pan){pan.pan.value=track.pan||0;level.connect(pan);pan.connect(context.destination);}else level.connect(context.destination);
   const elapsed=Math.max(0,(options.offset||0)-(track.timeline||0)),offset=track.start+elapsed,remaining=track.end-offset;if(remaining>0)source.start(Math.max(0,(track.timeline||0)-(options.offset||0)),offset,remaining);sources.push({source,chain});
  }
  const rendered=await context.startRendering();sources.forEach(x=>x.chain.dispose());
- const norm=options.normalize===false?{buffer:rendered,measuredLufs:measureIntegratedLufs(rendered),appliedGain:1,peakDbfs:null}:normalizeAndFade(rendered,options.targetLufs??-14,-1,.015);
+ const norm=options.normalize===false?{buffer:applyBoundaryFades(rendered,.015),measuredLufs:measureIntegratedLufs(rendered),appliedGain:1,peakDbfs:null}:normalizeAndFade(rendered,options.targetLufs??-14,-1,.015);
  return {...norm,buffer:rendered};
 }
-root.StudioCleanOffline={renderMix,measureIntegratedLufs,normalizeAndFade};
+root.StudioCleanOffline={renderMix,measureIntegratedLufs,normalizeAndFade,applyBoundaryFades};
 })(window);
