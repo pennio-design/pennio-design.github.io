@@ -1166,6 +1166,18 @@ html[data-theme="light"] .dash-panel select{background:#fff!important;color:#201
 html[data-theme="light"] .card input::placeholder,
 html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;opacity:1}
 </style>
+<style id="studio-touch-grid">
+@media(max-width:760px){
+  #v-ayan .row{width:max-content;min-width:100%;grid-template-columns:76px max-content}
+  #v-ayan .steps{min-width:max-content}
+  #v-ayan .step{width:40px;min-width:40px;min-height:44px;aspect-ratio:auto}
+}
+@media(max-width:420px){
+  #v-ayan .row{grid-template-columns:66px max-content}
+  #v-ayan .steps{gap:4px}
+}
+html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
+</style>
 
 </head>
 <body class="in-studio">
@@ -1307,7 +1319,7 @@ html[data-theme="light"] .dash-panel input::placeholder{color:#766e65!important;
   </div>
   <div class="grid"><div id="rows"></div>
     <div class="addrows" id="addRows"></div>
-    <div class="legend"><span><i class="lg hit"></i>Hit</span><span><i class="lg gh"></i>Ghost: hold or right-click</span><span><i class="lg ph"></i>Playhead</span><span class="kbd">Space play · Ctrl Z undo · tap a name to mute</span></div>
+    <div class="legend"><span><i class="lg hit"></i>Hit · tap to hear this lane</span><span><i class="lg gh"></i>Ghost: hold or right-click</span><span><i class="lg ph"></i>Playhead</span><span class="kbd">Space play · Ctrl Z undo · tap a name to mute</span></div>
   </div>
 
   <div class="card" id="voiceCard">
