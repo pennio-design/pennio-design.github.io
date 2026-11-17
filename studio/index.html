@@ -1299,7 +1299,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 @media(max-width:760px){.auth-gate{padding:20px 20px 16px}.auth-gate-main{grid-template-columns:1fr;gap:30px;padding:48px 0}.auth-gate-copy h1{font-size:clamp(48px,13vw,68px)}.auth-gate-rooms{margin-top:28px}.auth-gate-card{max-width:520px}.auth-gate-bottom{font-size:8px;letter-spacing:.08em}}
 </style>
 <style>
-/* Shared three-column Studio shell with independently collapsible panels. */
+/* One unified Studio panel with a movable desktop position and mobile drawer. */
 .studio-panel-toggles{display:flex;align-items:center;gap:5px;flex:none}
 .studio-panel-toggles button{display:flex;align-items:center;gap:6px;min-height:34px;padding:6px 9px;border:1px solid var(--line2);border-radius:9px;color:var(--mute);font-size:11px;white-space:nowrap}
 .studio-panel-toggles button[aria-expanded="true"]{color:var(--text);background:var(--surface)}
@@ -1338,33 +1338,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .studio-nav-item small{font-size:9px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.studio-nav-item .studio-nav-mark{width:7px;height:7px;border-radius:2px;background:var(--orange);flex:none}
 .studio-nav-empty{padding:8px 7px;color:var(--mute);font-size:10px;line-height:1.5}.studio-side-section>small span{font-weight:500;letter-spacing:0}
 .studio-inspector-context{padding:13px 5px;color:var(--mute);font-size:12px;line-height:1.55}
-.studio-shell.left-collapsed{grid-template-columns:minmax(0,1fr) 260px}
-.studio-shell.right-collapsed{grid-template-columns:230px minmax(0,1fr)}
-.studio-shell.left-collapsed.right-collapsed{grid-template-columns:minmax(0,1fr)}
-.studio-shell.left-collapsed #studioLeftPanel,.studio-shell.right-collapsed #studioRightPanel{display:none}
-@media(max-width:1100px){.studio-shell{grid-template-columns:205px minmax(0,1fr) 230px;gap:8px;padding:0 8px}.studio-shell.left-collapsed{grid-template-columns:minmax(0,1fr) 230px}.studio-shell.right-collapsed{grid-template-columns:205px minmax(0,1fr)}}
-.studio-side-head{position:relative;padding-right:42px}
-.studio-side-close{display:none}
-.studio-panel-backdrop{display:none}
-@media(max-width:760px){
- .studio-shell,.studio-shell.left-collapsed,.studio-shell.right-collapsed,.studio-shell.left-collapsed.right-collapsed{display:block;padding:0 10px}
- .studio-main{padding:0 2px 28px}
- body.studio-drawer-open{overflow:hidden;overscroll-behavior:none}
-.studio-panel-backdrop{display:block;position:fixed;inset:0;z-index:79;background:transparent;touch-action:manipulation}
- .studio-panel-backdrop[hidden]{display:none!important}
- .studio-side{position:fixed;z-index:81;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);width:min(86vw,340px);max-height:none;margin:0;border-radius:0;background:var(--off);box-shadow:0 12px 40px rgba(0,0,0,.28);transition:transform .22s ease;overscroll-behavior:contain}
- .studio-side-left{left:0;transform:translateX(-105%);border-radius:0 14px 14px 0}
- .studio-side-right{right:0;transform:translateX(105%);border-radius:14px 0 0 14px}
- .studio-shell.mobile-left-open.mobile-right-open .studio-side{width:48vw;max-width:none}
- .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{display:block;transform:translateX(0)}
- .studio-side-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:20px;line-height:1}
- .studio-panel-toggles{position:relative;z-index:82}
- .studio-panel-toggles button{width:36px;justify-content:center;padding:6px}
- .studio-panel-toggles button span{display:none}
- .bar{gap:7px}
- .hsess{display:none}
-}
-@media(prefers-reduced-motion:reduce){.studio-side{transition:none}}
+
 </style>
 </head>
 <body class="in-studio auth-locked">
@@ -5599,20 +5573,12 @@ nav#nav[hidden]{display:none!important}
 <style id="studio-landscape-tablet-layout">
 /* Landscape phones and compact tablets use drawers instead of squeezing three columns. */
 @media (min-width:761px) and (max-width:1024px){
-  .studio-shell,.studio-shell.left-collapsed,.studio-shell.right-collapsed,.studio-shell.left-collapsed.right-collapsed{display:block;padding:0 12px}
+
   .studio-main{width:100%;max-width:none;min-width:0;padding:0 2px 30px}
   body.studio-drawer-open{overflow:hidden;overscroll-behavior:none}
   .studio-panel-backdrop{display:block;position:fixed;inset:0;z-index:79;background:transparent;touch-action:manipulation}
   .studio-panel-backdrop[hidden]{display:none!important}
-  .studio-side{position:fixed;z-index:81;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);width:min(42vw,360px);max-height:none;margin:0;border-radius:0;background:var(--off);box-shadow:0 12px 40px rgba(0,0,0,.28);transition:transform .22s ease;overscroll-behavior:contain}
-  .studio-side-left{left:0;transform:translateX(-105%);border-radius:0 14px 14px 0}
-  .studio-side-right{right:0;transform:translateX(105%);border-radius:14px 0 0 14px}
-  .studio-shell.mobile-left-open.mobile-right-open .studio-side{width:48vw;max-width:none}
-  .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{display:block;transform:translateX(0)}
-  .studio-side-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:20px;line-height:1}
-  .studio-panel-toggles{position:relative;z-index:82}
-  .studio-panel-toggles button{width:36px;justify-content:center;padding:6px}
-  .studio-panel-toggles button span{display:none}
+
   .bar{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 0;gap:8px}
   .hright{flex-wrap:wrap;gap:6px}
   .room-nav-wrap{overflow-x:auto}
