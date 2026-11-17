@@ -1260,7 +1260,7 @@ html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
 .daw-plan{display:grid;gap:8px;margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}.daw-plan label{font-size:12px;font-weight:700}.daw-plan textarea{min-height:110px;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;resize:vertical}.daw-plan small{color:var(--mute)}
 .studio-rec-controls #studioRecStart[data-ready="true"]{background:#b23c25}
 @media(max-width:560px){.daw-engineer-modes button{padding-inline:12px}.studio-rec-live-frame[data-aspect="portrait"]{max-height:52vh}}
-</style><style id="pennio-auth-root-gate">
+.auth-gate-loading{min-height:55vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:#f5f1eb}.auth-gate-loading[hidden]{display:none!important}.auth-gate-loading .auth-gate-mark{width:44px;height:44px;font-weight:800;font-size:22px}.auth-gate-loading b{font-size:18px;font-weight:600}.auth-gate-loading small{font-size:12px;color:#aaa}.auth-gate-loading i{display:block;width:110px;height:2px;margin-top:12px;background:linear-gradient(90deg,transparent,#ff6b00,transparent);animation:authLoad 1.2s ease-in-out infinite}@keyframes authLoad{0%{transform:translateX(-22px);opacity:.35}50%{opacity:1}100%{transform:translateX(22px);opacity:.35}}</style><style id="pennio-auth-root-gate">
 body.auth-locked{overflow:hidden}
 body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .auth-gate{position:relative;z-index:9999;min-height:100svh;padding:28px clamp(20px,5vw,76px) 22px;background:#090909;color:#f5f1eb;display:flex;flex-direction:column}
@@ -1341,7 +1341,8 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <div class="auth-gate-copy"><span class="auth-gate-eyebrow">A CREATIVE PLATFORM BY PENNIO</span><h1>Make something<br><em>worth keeping.</em></h1><p>Sound, language, image and story. One workspace for ideas that deserve a form.</p>
       <div class="auth-gate-rooms"><div><b>01</b><span><strong>Àyàn</strong><small>Music and sound</small></span></div><div><b>02</b><span><strong>Akéwì</strong><small>Writing and poetry</small></span></div><div><b>03</b><span><strong>Fàájíplace</strong><small>Film and image</small></span></div><div><b>04</b><span><strong>Beauty Room</strong><small>Camera and portraiture</small></span></div></div>
     </div>
-    <section class="auth-gate-card" aria-labelledby="authGateTitle"><span class="auth-gate-eyebrow">YOUR PENNIO ACCOUNT</span><h2 id="authGateTitle">Enter your workspace.</h2><p>Sign in with your email. We’ll send you a secure one-time code.</p>
+    <div class="auth-gate-loading" id="authGateLoading" role="status" aria-live="polite"><span class="auth-gate-mark" aria-hidden="true">P</span><b>Restoring your workspace</b><small>Checking your session and saved work.</small><i></i></div>
+  <section class="auth-gate-card" id="authGateCard" aria-labelledby="authGateTitle" hidden><span class="auth-gate-eyebrow">YOUR PENNIO ACCOUNT</span><h2 id="authGateTitle">Enter your workspace.</h2><p>Sign in with your email. We’ll send you a secure one-time code.</p>
       <label for="gateEmail">Email address</label><input id="gateEmail" type="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
       <button id="gateSend" type="button">Send sign-in code <span>↗</span></button>
       <div id="gateCodeRow" hidden><label for="gateCode">Verification code</label><input id="gateCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Enter the code from your email"><button id="gateVerify" type="button">Verify and enter <span>↗</span></button></div>
@@ -4545,11 +4546,15 @@ async function startPENNIOWorkspace(authState){
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"&&ready){ saveNow(); if(edits>editsAtCk) checkpoint("When you left"); } });
 }
 window.__pennioAyanBoot=(async()=>{
+  const gateCard=document.getElementById("authGateCard"),gateLoading=document.getElementById("authGateLoading");
+  if(gateCard)gateCard.hidden=true;if(gateLoading)gateLoading.hidden=false;
   db=await idb();
   const authState=await cloudBoot();
   if(!authState||!authState.ok){
     document.body.classList.add("auth-locked");
     document.getElementById("authGate").hidden=false;
+    document.getElementById("authGateLoading").hidden=true;
+    document.getElementById("authGateCard").hidden=false;
     const saved=lsGet("ps.sbEmail"); if(saved) document.getElementById("gateEmail").value=saved;
     if(authState&&authState.transient) document.getElementById("gateStatus").textContent="We could not verify your saved session. Check your connection and reload to try again.";
     return;
@@ -5575,6 +5580,7 @@ nav#nav[hidden]{display:none!important}
 }
 </style>
 <style>
+#studioLeftPanel{overscroll-behavior:contain;scrollbar-gutter:stable}#studioLeftPanel>.studio-side-section{flex:0 0 auto}#studioLeftPanel>.studio-side-head,#studioLeftPanel>.studio-nav-actions,#studioLeftPanel>.studio-nav-search{flex:0 0 auto}
 /* Final responsive override: one unified panel across phones and compact tablets. */
 .studio-shell{grid-template-columns:250px minmax(0,1fr)!important;gap:14px!important;align-items:start}
 #studioLeftPanel{grid-column:1;grid-row:1;display:flex!important;flex-direction:column;gap:0;position:sticky;top:126px;width:220px;min-width:0;max-height:calc(100dvh - 142px);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
