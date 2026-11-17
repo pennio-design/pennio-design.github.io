@@ -111,7 +111,7 @@ function buildUI(){
  toggle.addEventListener("click",()=>{
   if(document.body.classList.contains("recorder-active")){window.toast?.("Stop recording before opening project media.");return}
   const open=body.hidden;body.hidden=!open;toggle.setAttribute("aria-expanded",String(open));
-  if(open)window.dispatchEvent(new CustomEvent("pennio:overlay-open",{detail:{source:"workspace"}}));
+  if(open){refreshNavigation();window.dispatchEvent(new CustomEvent("pennio:overlay-open",{detail:{source:"workspace"}}));}
  });
  window.addEventListener("pennio:overlay-open",event=>{
   if(event.detail?.source!=="workspace"&&!body.hidden){body.hidden=true;toggle.setAttribute("aria-expanded","false");}
@@ -175,7 +175,7 @@ async function saveSession(projectId,session){
    audio.forEach(item=>{if(item.force||!existing.has(item.id))audioStore.put({id:item.id,projectId,blob:item.blob});});
   };
   req.onerror=()=>{try{tx.abort();}catch(e){}};
-  tx.oncomplete=()=>resolve(true);
+  tx.oncomplete=()=>{window.dispatchEvent(new CustomEvent("pennio:workspace-session-saved",{detail:{projectId}}));resolve(true);};
   tx.onerror=()=>reject(tx.error||Error("Could not save this session."));
   tx.onabort=()=>reject(tx.error||Error("Session save was interrupted."));
  });
@@ -342,7 +342,7 @@ window.addEventListener("pennio:workspace-media-save",e=>{storeAsset(e.detail||{
 window.addEventListener("pennio:film-media",e=>{const d=e.detail||{};if(!d.blob||d.assetId)return;const kind=d.kind||(d.blob.type.startsWith("audio/")?"audio":"video");storeAsset({...d,kind}).then(asset=>window.dispatchEvent(new CustomEvent("pennio:film-media-saved",{detail:{id:asset.id,name:asset.name,kind:asset.kind,projectId:asset.projectId}}))).catch(reportMediaError);});
 buildUI();
 const saved=(()=>{try{return localStorage.getItem(ACTIVE_KEY)}catch(e){return null}})();
-setActive(projectById(saved)||null);refreshProjectSelect();refreshAssets();refreshStorageHealth();refreshNavigation();window.addEventListener("storage",()=>{refreshStorageHealth();refreshNavigation();});window.addEventListener("pennio:workspace-project-open",refreshNavigation);
+setActive(projectById(saved)||null);refreshProjectSelect();refreshAssets();refreshStorageHealth();refreshNavigation();window.addEventListener("storage",()=>{refreshStorageHealth();refreshNavigation();});window.addEventListener("pennio:workspace-project-open",refreshNavigation);window.addEventListener("pennio:workspace-media-saved",refreshNavigation);window.addEventListener("pennio:workspace-session-saved",refreshNavigation);
 if(activeProjectId&&["#ayan","#faajiplace","#film"].includes(location.hash))window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:location.hash.slice(1)}}));
 window.dispatchEvent(new CustomEvent("pennio:workspace-ready",{detail:{projectId:activeProjectId}}));
 })();
