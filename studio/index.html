@@ -489,7 +489,7 @@ canvas#wave{border-color:var(--line);border-radius:14px;background:var(--off)}
 .tour-card small{font-size:12px;color:var(--tt)}
 .tour-card p{font-size:15px;line-height:1.5;margin-top:4px;color:var(--tp)}
 .tour-btns{display:flex;gap:8px;align-items:center;margin-top:12px}
-.tour-btns .spacer{flex:1}
+.tour-btns .spacer{flex:1}.tour-cta{width:100%;margin-top:10px}.tour-cta[hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){.tour-ring{transition:none}}
 .tours{display:grid;gap:8px;margin-top:14px}
 .tours button{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;padding:12px 14px;border:1px solid var(--border);border-radius:12px;min-height:56px;background:none;color:var(--tp)}
@@ -1886,10 +1886,10 @@ A clear image or action.
 <div class="toast" id="toast"></div>
 <div class="tour" id="tour" hidden><div class="tour-ring" id="tourRing"></div>
   <div class="tour-card" id="tourCard" role="dialog" aria-live="polite" aria-labelledby="tourText"><small id="tourStep"></small><p id="tourText"></p>
-    <div class="tour-btns"><button class="btn ghost" id="tourSkip">End</button><span class="spacer"></span><button class="btn" id="tourBack">Back</button><button class="btn primary" id="tourNext">Next</button></div></div></div>
+    <div class="tour-btns"><button class="btn ghost" id="tourSkip">End</button><span class="spacer"></span><button class="btn" id="tourBack">Back</button><button class="btn primary" id="tourNext">Next</button></div><button class="btn primary tour-cta" id="tourAction" hidden></button></div></div>
 <div class="sheet" id="learn"><div class="panel">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><h2>Learn the studio</h2><button class="btn" id="closeLearn">Close</button></div>
-  <p>Short walkthroughs that point at each button. Tap what is highlighted and the next step appears.</p>
+  <p>Choose a quick tour, follow the prompts, then use its action button to open the next step in your workflow.</p>
   <div class="tours" id="tourList"></div>
   <p style="margin-top:14px"><a href="/studio/guide/" style="color:var(--text)">Read the full guide</a></p>
 </div></div>
@@ -4464,33 +4464,60 @@ async function sendProfileIfNeeded(force=false){
 /* ---------- walkthroughs: point at a button, wait for the tap, move on ---------- */
 const mobile=()=>innerWidth<=768;
 const TOURS=[
-  {id:"beat", n:"Your first beat", d:"1 minute · groove, squares, play, banks", steps:[
-    {sel:"#presets .chip:nth-child(4)", t:"Start with a groove. Tap Afrobeats.", tap:true},
-    {sel:'#rows .row[data-l="clap"] .step[data-i="6"]', t:"Each square is one step of the bar. Tap it to add a hit, tap again to change it. Hold it for a soft ghost hit.", tap:true},
-    {sel:"#play", t:"Press play. On a computer the space bar works too.", tap:true},
-    {sel:()=>mobile()?"#tpVal":"#bpm", t:()=>mobile()? "Tap the BPM to open tempo, swing, undo and clear." : "Slide the tempo to speed the groove up or slow it down.", tap:()=>mobile()},
-    {sel:"#bank button[data-b=B]", t:"Each take starts as a copy of the beat. Change a few squares, then switch between takes A to F while it plays.", tap:true},
-    {sel:"#export", t:"When it feels right, Export makes an MP3 or WAV, shares to WhatsApp, or copies a link to your groove."}]},
-  {id:"voice", n:"A beat from your voice", d:"2 minutes · record, voice style, beat, tap along", steps:[
-    {sel:"#voiceCard", t:"Your voice comes in here. Use a quiet room and hold the phone close."},
-    {sel:()=>document.getElementById("vrec").style.display!=="none"?"#vrec":"#voiceCard .file", t:"Record a short phrase, 8 to 20 seconds, or add a voice note you already have. The studio removes background noise and evens out your level.", until:()=>!!rawBuf},
-    {sel:"#vstyle", t:"Pick a voice style. Studio is the default. Natural keeps it plain, Radio is close and punchy, Afro vocal adds a slap echo, Hall adds space."},
-    {sel:"#vbeat", t:"Make a beat from my voice finds your tempo and puts beat one where you come in.", tap:true},
-    {sel:"#vtap", t:"If the beat feels off, tap Tap along and tap on every beat while your voice plays. The beat locks to your taps."}]},
-  {id:"melody", n:"Melody and chords", d:"1 minute · key, chords, guitar, more instruments", steps:[
-    {sel:"#hKey", t:"Choose a key. Every melody instrument follows it, so nothing clashes."},
-    {sel:"#hProg", t:"Choose the chords. One chord plays per bar, and the chord names light up as they play."},
-    {sel:'#rows .row[data-l="gtr"] .step[data-i="2"]', t:"Guitar picks the notes of each chord. Tap a square: R is the root, tap again for 3, 5, 8 and 10.", tap:true},
-    {sel:"#addRows", t:"Add Fèrè, Dùrù, Reed, Vox and other rows when you want them."}]},
-  {id:"save", n:"Sessions, history and backups", d:"1 minute · name, go back, start new", steps:[
-    {sel:"#pname", t:"Name your session here. It saves as you work."},
-    {sel:"#openHist", t:"History keeps checkpoints. You can go back to any of them, or copy one into a new session."},
-    {sel:"#openWork", t:"Sessions is where you start a new session, continue an old one, and download or restore a backup."}]},
-  {id:"write", n:"Write Yoruba with tones", d:"2 minutes · calibrate, type, say it, tone game", view:"write", steps:[
-    {sel:()=>document.getElementById("wcalRec").hidden?"#wcal":"#wcalRec", t:"Once, sing do re mi slowly so the studio learns your low, mid and high."},
-    {sel:"#wtext", t:"Type a word or phrase without tone marks."},
-    {sel:()=>document.getElementById("wrecRec").hidden?"#wrec":"#wrecRec", t:"Say it and record. Your voice decides the tone marks."},
-    {sel:"#tgCard", t:"Practise with the tone game: say what you see and open new levels."}]}
+  {id:"beat",n:"Build your first beat",d:"Groove · lanes · takes · share",steps:[
+    {sel:"#presets .chip:nth-child(4)",t:"Choose a groove. Prompt: make a four-bar pattern that could carry one line you want people to remember.",tap:true},
+    {sel:'#rows .row[data-l="clap"] .step[data-i="6"]',t:"Add a handclap on this step. Tap again to change the hit; hold for a softer ghost hit.",tap:true},
+    {sel:"#play",t:"Play the groove. Listen for space between the hits, then add only what the phrase needs.",tap:true},
+    {sel:()=>mobile()?"#tpVal":"#bpm",t:()=>mobile()?"Open tempo and swing. Try 100 BPM, then 112 BPM and compare.":"Set Tempo and Swing. Try 100 BPM, then 112 BPM and compare.",tap:()=>mobile()},
+    {sel:"#bank button[data-b=B]",t:"Take B starts as a copy. Make one change, then switch A and B while the beat plays.",tap:true},
+    {sel:"#export",t:"Export an MP3 or WAV, share through WhatsApp, or copy the groove link. Shared exports credit PENNIO.",cta:{label:"Open share options",target:"#export",finish:true}}
+  ]},
+  {id:"voice",n:"Record over the beat",d:"Count-in · voice take · timing",steps:[
+    {sel:"#voiceCard",t:"Set one clear goal before you record. Prompt: what short line should the listener remember? Keep it to one breath."},
+    {sel:()=>document.getElementById("vrec").style.display!=="none"?"#vrec":"#voiceCard .file",t:"Record a short phrase or add a voice note. The beat is on for the take; headphones help keep it out of the microphone.",until:()=>!!rawBuf},
+    {sel:"#swOver",t:"Record over the beat stays on by default. The count-in starts with clicks; the beat enters after it. Keep the count-in beat off unless you want to hear the groove from the first count."},
+    {sel:"#vstyle",t:"Choose the sound after you capture the performance. Natural keeps it plain; Studio, Radio, Afro vocal and Hall shape the voice."},
+    {sel:"#vbeat",t:"Make a beat from my voice can find tempo and place beat one at your entrance.",tap:true},
+    {sel:"#vtap",t:"If the tempo feels off, tap along to the voice and let the groove follow your timing.",tap:true},
+    {sel:'[data-engineer-mode="record"]',t:"For a multi-track take, open Record mode in the DAW. Your beat can keep playing while you overdub.",cta:{label:"Open DAW Record mode",target:'[data-engineer-mode="record"]',finish:true}}
+  ]},
+  {id:"melody",n:"Melody and chords",d:"Key · harmony · melodic lanes",steps:[
+    {sel:"#hKey",t:"Choose a key. Prompt: pick a key that sits comfortably in the voice you recorded."},
+    {sel:"#hProg",t:"Try a chord progression. Listen to how the mood changes before adding more instruments."},
+    {sel:'#rows .row[data-l="gtr"] .step[data-i="2"]',t:"Guitar picks chord tones. Tap a step to cycle through root, third, fifth, octave and tenth.",tap:true},
+    {sel:"#addRows",t:"Add Fèrè, Dùrù, Reed, Vox and other lanes when the arrangement needs them."}
+  ]},
+  {id:"save",n:"Projects, history and backups",d:"Name · restore · protect your work",steps:[
+    {sel:"#pname",t:"Name the session after the idea, not just the instrument. It saves as you work."},
+    {sel:"#openHist",t:"History keeps checkpoints. Restore a moment or copy it into a new session."},
+    {sel:"#openWork",t:"Projects and workspace keep sessions and media together. Download a backup before clearing site data or changing devices."}
+  ]},
+  {id:"write",n:"Write a scene or lyric",d:"Prompt · voice · tone · Film handoff",view:"write",steps:[
+    {sel:"#draftText",t:"Start with a prompt: where are we, what does the character need, and what changes before the scene ends? Write the image first.",cta:{label:"Send a scene to Film",target:"#draftToFilm",finish:true}},
+    {sel:"#wtext",t:"Type Yorùbá without tone marks. Prompt: write the line as you would say it, then let your voice help resolve the tones."},
+    {sel:()=>document.getElementById("wrecRec").hidden?"#wrec":"#wrecRec",t:"Say the phrase at a natural pace. Short phrases make tone correction easier."},
+    {sel:"#tgCard",t:"Use the tone game to practise hearing high, mid and low tones."}
+  ]},
+  {id:"engineer",n:"Engineer a track",d:"Record · play · mix · edit · plan · merge",view:"ayan",steps:[
+    {sel:"#dawHead",t:"The Àyàn DAW is the engineering workspace. Import audio or keep the Beat playing while you record an overdub."},
+    {sel:'[data-engineer-mode="record"]',t:"Record mode keeps the accompaniment available. Use headphones for the cleanest vocal take.",tap:true},
+    {sel:'[data-engineer-mode="mix"]',t:"Mix mode takes you to level and effects controls. Change one control at a time and compare." ,tap:true},
+    {sel:'[data-engineer-mode="edit"]',t:"Edit mode brings up selection, trim, punch-in and hum-to-beat tools.",tap:true},
+    {sel:'[data-engineer-mode="plan"]',t:"Plan mode keeps a session brief with this project. Prompt: what should be recorded first, and what should the final mix feel like?",tap:true},
+    {sel:"#dawPlan",t:"Write the record order or mix notes here. Your plan saves with the project."},
+    {sel:'[data-engineer-mode="merge"]',t:"Merge creates a stereo mix track and mutes the original layers without deleting them.",tap:true},
+    {sel:"#dawMerge",t:"When you are ready, merge a working copy. Undo restores the original track state.",cta:{label:"Merge a working copy",target:"#dawMerge",finish:true}}
+  ]},
+  {id:"film",n:"Plan and capture a Film reference",d:"Script · shot plan · live camera · scene cue",view:"faajiplace",steps:[
+    {sel:"#filmTitle",t:"Name the project after the scene or campaign. Your notes and local media stay with this Film project."},
+    {sel:"#filmLogline",t:"Write what changes in the scene. Prompt: what should a viewer notice, and what should they feel?"},
+    {sel:"#filmScriptNotes",t:"Paste a script excerpt or bring scene headings from Write. Keep the action concrete and visible."},
+    {sel:"#filmShotPlan",t:"Plan three references: a wide view of the place, the key movement, and one close detail."},
+    {sel:"#filmOpenCapture",t:"Open the camera preview to capture real location, light and movement as a reference clip. The camera asks permission before it starts.",tap:true},
+    {sel:"#studioRecStart",t:"Tap Open camera for a live framing preview. After you check the shot, tap Record scene."},
+    {sel:"#studioRecStop",t:"Stop the take to review and trim it. Wait for the preview and Film handoff to appear.",until:()=>{const b=document.getElementById("studioRecFilm");return !!b&&!b.hidden;}},
+    {sel:"#studioRecFilm",t:"Send the reference into this Film project. Save to device if you want to load it into an external AI generator.",cta:{label:"Use this reference in Film",target:"#studioRecFilm",finish:true}}
+  ]}
 ];
 let tour=null;
 const tourEl=document.getElementById("tour"), ring=document.getElementById("tourRing"), card=document.getElementById("tourCard");
@@ -4510,6 +4537,7 @@ function tourShow(){
   const el=tourTarget(); if(el && !el.closest("#tp") && !el.closest("header")) el.scrollIntoView({block:"center",behavior:"smooth"});
   document.getElementById("tourStep").textContent=tour.t.n+" · "+(tour.i+1)+" of "+tour.t.steps.length;
   document.getElementById("tourText").textContent=val(st.t);
+  const action=document.getElementById("tourAction"); action.hidden=!st.cta; action.textContent=st.cta?st.cta.label:"";
   const waits=val(st.tap)||st.until; document.getElementById("tourNext").textContent= tour.i===tour.t.steps.length-1? "Done" : waits? "Skip step" : "Next";
   document.getElementById("tourBack").hidden=tour.i===0;
   clearInterval(tour.poll); if(st.until) tour.poll=setInterval(()=>{ if(st.until()) tourGo(1); },400);
@@ -4520,11 +4548,12 @@ function tourStart(id){ const t=TOURS.find(x=>x.id===id); if(!t) return; tourEnd
 function tourEnd(done){ if(!tour) return; cancelAnimationFrame(tour.raf); clearInterval(tour.poll); if(done){ const d=lsGet("ps.tours")||{}; d[tour.t.id]=1; lsSet("ps.tours",d); toast("Walkthrough done. More are under Learn."); } tour=null; tourEl.hidden=true; }
 document.addEventListener("click",e=>{ if(!tour) return; const st=tour.t.steps[tour.i]; if(!val(st.tap)) return; const el=tourTarget(); if(el && el.contains(e.target)) setTimeout(()=>tourGo(1),350); },true);
 document.getElementById("tourNext").onclick=()=>tourGo(1);
+document.getElementById("tourAction").onclick=()=>{ if(!tour)return; const cta=tour.t.steps[tour.i].cta; if(cta?.target)document.querySelector(cta.target)?.click(); if(cta?.finish)tourEnd(true); else tourGo(1); };
 document.getElementById("tourBack").onclick=()=>tourGo(-1);
 document.getElementById("tourSkip").onclick=()=>tourEnd(false);
 addEventListener("keydown",e=>{ if(tour&&e.key==="Escape") tourEnd(false); });
 function renderTours(){ const d=lsGet("ps.tours")||{}, box=document.getElementById("tourList"); box.innerHTML="";
-  TOURS.forEach(t=>{ const b=document.createElement("button"); b.innerHTML="<div><b></b><small></small></div><span class='ok'></span>"; b.querySelector("b").textContent=t.n; b.querySelector("small").textContent=t.d; b.querySelector(".ok").textContent=d[t.id]?"Done ✓":"Start"; b.onclick=()=>tourStart(t.id); box.appendChild(b); }); }
+  TOURS.forEach(t=>{ const b=document.createElement("button"); b.innerHTML="<div><b></b><small></small></div><span class='ok'></span>"; b.querySelector("b").textContent=t.n; b.querySelector("small").textContent=t.d; b.querySelector(".ok").textContent=d[t.id]?"Done ✓":"Start tour ↗"; b.onclick=()=>tourStart(t.id); box.appendChild(b); }); }
 document.getElementById("guideLink").onclick=()=>{ renderTours(); document.getElementById("learn").classList.add("on"); };
 document.getElementById("closeLearn").onclick=()=>document.getElementById("learn").classList.remove("on");
 document.getElementById("learn").onclick=e=>{ if(e.target.id==="learn") e.target.classList.remove("on"); };
