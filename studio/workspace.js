@@ -254,21 +254,60 @@ async function importProjectData(data){
 
 async function listSavedSessions(){const d=await openDB();return new Promise((resolve,reject)=>{const tx=d.transaction("sessions","readonly"),req=tx.objectStore("sessions").getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});}
 function openProject(id){const project=projectById(id);if(!project)return false;setActive(project);const room=roomNames[project.room]?project.room:"ayan";window.PennioWorkspace.openRoom(room).catch(error=>window.toast?.("Could not open this project: "+error.message));return true;}
+function readProjectRoomValue(base,projectId){
+ try{const raw=localStorage.getItem(base+"."+projectId);if(!raw)return null;return JSON.parse(raw);}catch(e){return null;}
+}
+function getProjectContents(projectId,allAssets,allSessions){
+ const projectAssets=(allAssets||[]).filter(item=>item.projectId===projectId);
+ const session=(allSessions||[]).find(item=>item.projectId===projectId)||null;
+ const draft=readProjectRoomValue("ps.write.draft",projectId);
+ const story=readProjectRoomValue("ps.film.room",projectId);
+ const writeText=draft&&typeof draft.text==="string"?draft.text.trim():"";
+ const hasWriting=!!(writeText||(draft&&Array.isArray(draft.entries)&&draft.entries.length));
+ const storyCues=story&&Array.isArray(story.cues)?story.cues.length:0;
+ const hasStory=!!(story&&(story.title&&story.title!=="Untitled film"||story.logline||story.scriptNotes||story.shotPlan||storyCues));
+ return {
+  projectId,assets:projectAssets,session,writing:hasWriting?draft:null,story:hasStory?story:null,
+  counts:{audio:projectAssets.filter(item=>item.kind!=="video").length,video:projectAssets.filter(item=>item.kind==="video").length,
+   beatSession:session?1:0,writing:hasWriting?1:0,story:hasStory?1:0}
+ };
+}
 async function refreshNavigation(){
  const projects=readProjects().slice().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0)),host=$("studioNavProjects"),recent=$("studioNavRecent"),count=$("studioNavProjectCount"),search=$("studioNavSearch");
- if(!host||!recent)return;const query=(search?.value||"").trim().toLowerCase(),sessions=await listSavedSessions().catch(()=>[]),byProject=new Map(sessions.map(s=>[s.projectId,s]));
- const matches=projects.filter(p=>!query||(p.name||"").toLowerCase().includes(query)||(byProject.get(p.id)?.name||"").toLowerCase().includes(query));count.textContent=String(projects.length);host.replaceChildren();
+ if(!host||!recent)return;
+ const query=(search?.value||"").trim().toLowerCase();
+ const [sessions,allAssets]=await Promise.all([listSavedSessions().catch(()=>[]),getAssets().catch(()=>[])]);
+ const byProject=new Map(sessions.map(s=>[s.projectId,s]));
+ const contents=new Map(projects.map(p=>[p.id,getProjectContents(p.id,allAssets,sessions)]));
+ const matches=projects.filter(p=>!query||(p.name||"").toLowerCase().includes(query)||(byProject.get(p.id)?.name||"").toLowerCase().includes(query));
+ count.textContent=String(projects.length);host.replaceChildren();
  if(!matches.length){const empty=document.createElement("p");empty.className="studio-nav-empty";empty.textContent=query?"No matching projects.":"Create a project to start organising your work.";host.append(empty);}
- matches.forEach(p=>{const b=document.createElement("button");b.type="button";b.className="studio-nav-item";b.dataset.studioProject=p.id;if(p.id===activeProjectId)b.setAttribute("aria-current","page");const mark=document.createElement("i");mark.className="studio-nav-mark";const copy=document.createElement("span");copy.className="studio-nav-copy";const name=document.createElement("b");name.textContent=p.name||"Untitled project";const meta=document.createElement("small");meta.textContent=roomNames[p.room]||"Project";copy.append(name,meta);b.append(mark,copy);host.append(b);});
+ matches.forEach(p=>{
+  const b=document.createElement("button");b.type="button";b.className="studio-nav-item";b.dataset.studioProject=p.id;
+  if(p.id===activeProjectId)b.setAttribute("aria-current","page");
+  const mark=document.createElement("i");mark.className="studio-nav-mark";
+  const copy=document.createElement("span");copy.className="studio-nav-copy";
+  const name=document.createElement("b");name.textContent=p.name||"Untitled project";
+  const meta=document.createElement("small"),c=contents.get(p.id).counts,parts=[];
+  if(c.beatSession)parts.push("Beat session");
+  if(c.writing)parts.push("Writing");
+  if(c.story)parts.push("Story");
+  if(c.audio)parts.push(c.audio+" audio");
+  if(c.video)parts.push(c.video+" video");
+  meta.textContent=(roomNames[p.room]||"Project")+(parts.length?" · "+parts.join(" · "):" · No saved material yet");
+  copy.append(name,meta);b.append(mark,copy);host.append(b);
+ });
  const recentItems=sessions.slice().sort((a,b)=>(b.updated||0)-(a.updated||0)).filter(s=>projects.some(p=>p.id===s.projectId)&&(!query||(s.name||"").toLowerCase().includes(query)||(projects.find(p=>p.id===s.projectId)?.name||"").toLowerCase().includes(query))).slice(0,12);
- recent.replaceChildren();if(!recentItems.length){const empty=document.createElement("p");empty.className="studio-nav-empty";empty.textContent=query?"No saved sessions match.":"Your saved work will appear here as you create it.";recent.append(empty);}
- recentItems.forEach(s=>{const p=projects.find(x=>x.id===s.projectId);if(!p)return;const b=document.createElement("button");b.type="button";b.className="studio-nav-item";b.dataset.studioProject=p.id;if(p.id===activeProjectId)b.setAttribute("aria-current","page");const mark=document.createElement("i");mark.className="studio-nav-mark";const copy=document.createElement("span");copy.className="studio-nav-copy";const name=document.createElement("b");name.textContent=s.name||p.name||"Untitled session";const meta=document.createElement("small");meta.textContent=new Date(s.updated||p.updated||Date.now()).toLocaleDateString();copy.append(name,meta);b.append(mark,copy);recent.append(b);});
+ recent.replaceChildren();
+ if(!recentItems.length){const empty=document.createElement("p");empty.className="studio-nav-empty";empty.textContent=query?"No saved sessions match.":"Your saved work will appear here as you create it.";recent.append(empty);}
+ recentItems.forEach(s=>{const p=projects.find(x=>x.id===s.projectId);if(!p)return;const b=document.createElement("button");b.type="button";b.className="studio-nav-item";b.dataset.studioProject=p.id;if(p.id===activeProjectId)b.setAttribute("aria-current","page");const mark=document.createElement("i");mark.className="studio-nav-mark";const copy=document.createElement("span");copy.className="studio-nav-copy";const name=document.createElement("b");name.textContent=s.name||p.name||"Untitled session";const meta=document.createElement("small");meta.textContent="Beat session · "+new Date(s.updated||p.updated||Date.now()).toLocaleDateString();copy.append(name,meta);b.append(mark,copy);recent.append(b);});
 }
 window.PennioWorkspace={
  get activeProjectId(){return activeProjectId;},
  setActiveProject:setActive,
  getProject:projectById,
  listProjects:readProjects,listSavedSessions,openProject,refreshNavigation,
+ getProjectContents:async projectId=>{const [allAssets,allSessions]=await Promise.all([getAssets(),listSavedSessions()]);return getProjectContents(projectId,allAssets,allSessions);},
  listAssets:()=>getAssets(),
  getAsset,
  addAsset:storeAsset,
