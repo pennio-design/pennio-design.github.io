@@ -88,12 +88,57 @@ function buildUI(){
  #pennioWorkspaceDock .ws-storage-meter i{display:block;height:100%;width:0;background:#ff6a00;border-radius:9px}
  #pennioWorkspaceDock .ws-storage button{justify-self:start;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:7px;background:transparent;color:inherit;padding:5px 8px;font:inherit}
  #pennioWorkspaceDock[hidden],#pennioWorkspaceDock .ws-body[hidden]{display:none}
+
+ #pennioWorkspaceDock .ws-head{user-select:none}
+ #pennioWorkspaceDock .ws-head-copy{cursor:grab;touch-action:none}
+ #pennioWorkspaceDock .ws-mark{touch-action:none}
+ #pennioWorkspaceDock .ws-toggle{cursor:grab;touch-action:none}
+ #pennioWorkspaceDock.ws-dragging .ws-shell{box-shadow:0 24px 72px #0008;border-color:#ff6a00}
+ #pennioWorkspaceDock.ws-dragging .ws-head{cursor:grabbing}
+ #pennioWorkspaceDock .ws-minimize{border:1px solid var(--line,rgba(255,255,255,.16));background:transparent;border-radius:9px;width:32px;height:32px;font-size:17px;cursor:pointer}
+ #pennioWorkspaceDock .ws-restore{display:none;touch-action:none;cursor:grab;border:0;background:transparent;color:inherit;font-size:12px;font-weight:600;padding:5px 7px;cursor:pointer}
+ #pennioWorkspaceDock.is-minimized{width:auto;max-width:calc(100vw - 20px)}
+ #pennioWorkspaceDock.is-minimized .ws-shell{border-radius:999px}
+ #pennioWorkspaceDock.is-minimized .ws-head{gap:10px;padding:7px 9px;min-height:0}
+ #pennioWorkspaceDock.is-minimized .ws-head-copy,#pennioWorkspaceDock.is-minimized .ws-minimize,#pennioWorkspaceDock.is-minimized .ws-toggle{display:none}
+ #pennioWorkspaceDock.is-minimized .ws-restore{display:block}
+ #pennioWorkspaceDock.is-minimized .ws-body{display:none}
  @media(max-width:560px){#pennioWorkspaceDock{right:10px;bottom:10px;width:min(360px,calc(100vw - 20px))}}
  `;
  document.head.append(style);
- const dock=document.createElement("aside");dock.id="pennioWorkspaceDock";dock.innerHTML='<div class="ws-shell"><div class="ws-head"><i class="ws-mark"></i><div class="ws-head-copy"><small>Shared workspace</small><b id="workspaceProjectName">Studio workspace</b></div><button type="button" class="ws-toggle" id="workspaceToggle" aria-expanded="false">Media · 0</button></div><div class="ws-body" id="workspaceBody" hidden><label for="workspaceProjectSelect" style="display:block;font-size:10px;opacity:.65;margin:0 0 5px">ACTIVE PROJECT</label><select class="ws-project" id="workspaceProjectSelect"><option value="">Studio workspace · all media</option></select><div class="ws-storage" id="workspaceStorage" aria-live="polite"><div class="ws-storage-line"><b id="workspaceStorageLabel">Checking device storage…</b><span id="workspaceStorageValue"></span></div><div class="ws-storage-meter"><i id="workspaceStorageFill"></i></div><button type="button" id="workspaceProtectStorage">Protect local work</button><small id="workspaceStorageNote">Studio data stays in this browser. Download backups regularly.</small></div><div class="ws-assets" id="workspaceAssets"><div class="ws-empty">Record or import media in any room. It will appear here for this project.</div></div></div></div>';
+ const dock=document.createElement("aside");dock.id="pennioWorkspaceDock";dock.innerHTML='<div class="ws-shell"><div class="ws-head"><i class="ws-mark"></i><div class="ws-head-copy"><small>Shared workspace</small><b id="workspaceProjectName">Studio workspace</b></div><button type="button" class="ws-toggle" id="workspaceToggle" aria-expanded="false">Media · 0</button><button type="button" class="ws-minimize" id="workspaceMinimize" aria-label="Minimize workspace" title="Minimize">−</button><button type="button" class="ws-restore" id="workspaceRestore" aria-label="Restore workspace">Workspace ↗</button></div><div class="ws-body" id="workspaceBody" hidden><label for="workspaceProjectSelect" style="display:block;font-size:10px;opacity:.65;margin:0 0 5px">ACTIVE PROJECT</label><select class="ws-project" id="workspaceProjectSelect"><option value="">Studio workspace · all media</option></select><div class="ws-storage" id="workspaceStorage" aria-live="polite"><div class="ws-storage-line"><b id="workspaceStorageLabel">Checking device storage…</b><span id="workspaceStorageValue"></span></div><div class="ws-storage-meter"><i id="workspaceStorageFill"></i></div><button type="button" id="workspaceProtectStorage">Protect local work</button><small id="workspaceStorageNote">Studio data stays in this browser. Download backups regularly.</small></div><div class="ws-assets" id="workspaceAssets"><div class="ws-empty">Record or import media in any room. It will appear here for this project.</div></div></div></div>';
  document.body.append(dock);
- $("workspaceToggle").addEventListener("click",()=>{const body=$("workspaceBody"),open=body.hidden;body.hidden=!open;$("workspaceToggle").setAttribute("aria-expanded",String(open));});
+ 
+ const dockStateKey="ps.studio.workspace.layout.v1",dock=$("pennioWorkspaceDock"),body=$("workspaceBody"),toggle=$("workspaceToggle");
+ const readDockState=()=>{try{return JSON.parse(localStorage.getItem(dockStateKey)||"{}")}catch(e){return {}}};
+ const saveDockState=patch=>{try{localStorage.setItem(dockStateKey,JSON.stringify({...readDockState(),...patch}))}catch(e){}};
+ function minimizeDock(value){dock.classList.toggle("is-minimized",!!value);if(value){body.hidden=true;toggle.setAttribute("aria-expanded","false")}saveDockState({minimized:!!value})}
+ $("workspaceMinimize").addEventListener("click",()=>minimizeDock(true));
+ $("workspaceRestore").addEventListener("click",()=>minimizeDock(false));
+ toggle.addEventListener("click",()=>{if(dock.classList.contains("is-minimized")){minimizeDock(false);return}const open=body.hidden;body.hidden=!open;toggle.setAttribute("aria-expanded",String(open))});
+ const savedDock=readDockState();
+ if(Number.isFinite(savedDock.left)&&Number.isFinite(savedDock.top)){dock.style.left=savedDock.left+"px";dock.style.top=savedDock.top+"px";dock.style.right="auto";dock.style.bottom="auto"}
+ minimizeDock(!!savedDock.minimized);
+ let dragState=null,suppressToggleClick=false;
+ dock.addEventListener("pointerdown",e=>{
+  if(e.button!==undefined&&e.button!==0)return;
+  if(!e.target.closest(".ws-head-copy,.ws-mark,#workspaceToggle,#workspaceRestore"))return;
+  const r=dock.getBoundingClientRect();dragState={id:e.pointerId,x:e.clientX,y:e.clientY,left:r.left,top:r.top,moved:false};
+  try{e.target.setPointerCapture(e.pointerId)}catch(err){}
+ });
+ dock.addEventListener("pointermove",e=>{
+  if(!dragState||e.pointerId!==dragState.id)return;
+  const dx=e.clientX-dragState.x,dy=e.clientY-dragState.y;
+  if(!dragState.moved&&Math.hypot(dx,dy)<5)return;
+  dragState.moved=true;suppressToggleClick=true;dock.classList.add("ws-dragging");
+  const r=dock.getBoundingClientRect(),left=Math.max(8,Math.min(innerWidth-r.width-8,dragState.left+dx)),top=Math.max(8,Math.min(innerHeight-r.height-8,dragState.top+dy));
+  dock.style.left=left+"px";dock.style.top=top+"px";dock.style.right="auto";dock.style.bottom="auto";e.preventDefault();
+ });
+ function finishDockDrag(e){if(!dragState||e.pointerId!==dragState.id)return;if(dragState.moved){const r=dock.getBoundingClientRect();saveDockState({left:r.left,top:r.top})}dragState=null;dock.classList.remove("ws-dragging");if(suppressToggleClick)setTimeout(()=>suppressToggleClick=false,0)}
+ dock.addEventListener("pointerup",finishDockDrag);dock.addEventListener("pointercancel",finishDockDrag);
+ $("workspaceRestore").addEventListener("click",e=>{if(suppressToggleClick){e.preventDefault();e.stopImmediatePropagation();suppressToggleClick=false}},true);
+ toggle.addEventListener("click",e=>{if(suppressToggleClick){e.preventDefault();e.stopImmediatePropagation();suppressToggleClick=false}},true);
+ window.addEventListener("resize",()=>{if(!dock.style.left)return;const r=dock.getBoundingClientRect(),left=Math.max(8,Math.min(innerWidth-r.width-8,r.left)),top=Math.max(8,Math.min(innerHeight-r.height-8,r.top));dock.style.left=left+"px";dock.style.top=top+"px";saveDockState({left,top})});
  $("workspaceProjectSelect").addEventListener("change",e=>{const p=projectById(e.target.value);setActive(p);});
  $("workspaceProtectStorage").addEventListener("click",async()=>{const button=$("workspaceProtectStorage");button.disabled=true;button.textContent="Checking…";try{if(!navigator.storage?.persist)throw Error("This browser cannot protect local site storage.");const granted=await navigator.storage.persist();button.textContent=granted?"Storage protection enabled":"Protection not granted";$("workspaceStorageNote").textContent=granted?"The browser has agreed to protect this site’s local data from routine storage cleanup. Backups are still required.":"Your browser declined persistent storage. Keep a current backup outside this device."; }catch(error){button.textContent="Protection unavailable";$("workspaceStorageNote").textContent=error.message+" Keep a current backup outside this device.";}finally{button.disabled=false;refreshStorageHealth();}});
 }
