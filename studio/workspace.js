@@ -2,7 +2,7 @@
 "use strict";
 const PROJECTS_KEY="ps.studio.projects.v1",ACTIVE_KEY="ps.studio.activeProject.v1";
 const $=id=>document.getElementById(id);
-let activeProjectId=null,dbPromise=null,assets=[],roomSwitchPromise=Promise.resolve(),roomRequestQueue=Promise.resolve(),projectSwitchQueue=Promise.resolve(),roomSwitchGeneration=0;
+let activeProjectId=null,dbPromise=null,assets=[],roomSwitchPromise=Promise.resolve(),roomRequestQueue=Promise.resolve(),roomRestoreQueue=Promise.resolve(),projectSwitchQueue=Promise.resolve(),roomSwitchGeneration=0;
 const deletingProjects=new Set(),pendingAssetWrites=new Map();
 const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Model / Beauty"};
 function readProjects(){try{const v=JSON.parse(localStorage.getItem(PROJECTS_KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
@@ -353,8 +353,8 @@ window.addEventListener("pennio:workspace-project-open",e=>{
  const p=e.detail&&e.detail.project,previous=activeProjectId;
  if(e.detail&&!Object.prototype.hasOwnProperty.call(e.detail,"previousProjectId"))e.detail.previousProjectId=previous;
  setActive(p||null,true);refreshProjectSelect();
- if(document.getElementById("dawRoom")?.getClientRects().length)roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(p||{id:"__studio_default__",name:"Studio workspace",room:"ayan"})).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
- if(document.getElementById("filmDesk")?.getClientRects().length)roomSwitchPromise=Promise.resolve(window.PennioFilmWorkspace?.restore(p||null)).catch(err=>{console.warn("Film project restore:",err);throw err;});
+ if(document.getElementById("dawRoom")?.getClientRects().length)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:"ayan"}}));
+ else if(document.getElementById("filmDesk")?.getClientRects().length)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:"faajiplace"}}));
 });
 document.addEventListener("click",e=>{
  const button=e.target.closest('nav button[data-v]');
@@ -363,12 +363,14 @@ document.addEventListener("click",e=>{
 window.addEventListener("pennio:workspace-room-open",e=>{
  const generation=++roomSwitchGeneration,room=e.detail?.room;
  const project=activeProjectId?projectById(activeProjectId):null;
- roomSwitchPromise=Promise.resolve().then(async()=>{
+ const operation=roomRestoreQueue.catch(()=>{}).then(async()=>{
   if(generation!==roomSwitchGeneration)return false;
   if(room==="ayan")await window.PennioAyanWorkspace?.open(project||{id:"__studio_default__",name:"Studio workspace",room:"ayan"});
   else if(room==="faajiplace"||room==="film")await window.PennioFilmWorkspace?.restore(project);
   return generation===roomSwitchGeneration;
- }).catch(err=>{console.warn("Studio room restore:",err);throw err;});
+ });
+ roomRestoreQueue=operation;
+ roomSwitchPromise=operation.catch(err=>{console.warn("Studio room restore:",err);throw err;});
 });
 function reportMediaError(error){const raw=error&&error.message||"Browser storage is unavailable.",message=error&&error.name==="QuotaExceededError"?"Device storage is full. Download a Studio backup and free space before recording more media.":raw;console.warn("Studio media save:",error);window.dispatchEvent(new CustomEvent("pennio:workspace-media-error",{detail:{message}}));refreshStorageHealth();}
 window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(reportMediaError);});
