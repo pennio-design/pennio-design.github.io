@@ -1333,6 +1333,17 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .studio-inspector-context{padding:13px 5px;color:var(--mute);font-size:12px;line-height:1.55}
 
 </style>
+<style id="pennio-lane-label-visibility">
+/* Keep full instrument identities and lane actions visible on touch screens. */
+.row{grid-template-columns:150px minmax(0,1fr)!important}
+.name{min-width:0;gap:5px}
+.name .nmb{max-width:100%;text-align:left}
+.name .nmb b{display:block;white-space:normal;overflow-wrap:anywhere}
+.ms{display:flex!important;align-items:center;gap:3px;flex-wrap:wrap}
+.ms button{width:auto;min-width:24px;padding:0 5px}
+.ms button.h{min-width:42px}
+@media(max-width:560px){.row{grid-template-columns:132px minmax(0,1fr)!important}.ms button{min-height:26px}}
+</style>
 </head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
