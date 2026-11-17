@@ -2,7 +2,22 @@
 "use strict";
 const $=id=>document.getElementById(id);
 if(!document.getElementById("dawSessionStyle")){const style=document.createElement("style");style.id="dawSessionStyle";style.textContent="#dawRoom.session-loading{opacity:.72;pointer-events:none;}";document.head.append(style);}
-const state={tracks:[],selected:null,ctx:null,sources:[],dspChains:[],playGeneration:0,playStarting:false,playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[],recordingDone:null,resolveRecordingDone:null,recordingKind:null,projectSwitching:false,lastSessionOperation:null,outputGain:null,plan:"",externalIsolation:null};
+if(!document.getElementById("dawTimelineStyle")){const style=document.createElement("style");style.id="dawTimelineStyle";style.textContent=`
+.daw-timeline-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;margin:0 0 10px;border:1px solid var(--line2,#343434);border-radius:10px;background:var(--surface,#171717);font-size:11px}
+.daw-timeline-switch{display:flex;gap:3px;padding:3px;border:1px solid var(--line2,#343434);border-radius:8px}
+.daw-timeline-switch button{padding:6px 11px;border-radius:6px;color:var(--mute,#999);font:inherit}
+.daw-timeline-switch button.on{background:var(--text,#fff);color:var(--black,#090909);font-weight:700}
+.daw-tempo-control,.daw-snap-control{display:flex;align-items:center;gap:6px;color:var(--mute,#999)}
+.daw-tempo-control input{width:58px;padding:6px;border:1px solid var(--line2,#343434);border-radius:6px;background:var(--black,#090909);color:var(--text,#fff);font:inherit}
+.daw-snap-control input{accent-color:var(--orange,#ff6b35)}
+.daw-timeline-hint{margin-left:auto;color:var(--mute,#999)}
+.daw-track-wave.daw-bars-view{background-image:linear-gradient(to right,transparent calc(100% - 1px),rgba(255,255,255,.12) 100%),linear-gradient(to right,transparent calc(100% - 1px),rgba(255,255,255,.055) 100%);background-size:var(--daw-bar-width,240px) 100%,var(--daw-beat-width,60px) 100%;background-repeat:repeat-x}
+.daw-track-wave.daw-bars-view canvas{position:relative;z-index:1}
+.daw-track-wave.daw-waves-view{background-image:none}
+.daw-timeline-controls button:focus-visible,.daw-timeline-controls input:focus-visible{outline:2px solid var(--orange,#ff6b35);outline-offset:2px}
+@media(max-width:560px){.daw-timeline-controls{gap:7px}.daw-timeline-hint{width:100%;margin:0}}
+`;document.head.append(style);}
+const state={tracks:[],selected:null,ctx:null,sources:[],dspChains:[],playGeneration:0,playStarting:false,playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[],recordingDone:null,resolveRecordingDone:null,recordingKind:null,projectSwitching:false,lastSessionOperation:null,outputGain:null,plan:"",externalIsolation:null,timelineView:"waves",tempo:120,barSnap:true};
 const status=(s)=>{const el=$("dawStatus");if(el)el.textContent=s;};
 function trackAudible(t){
  const isolation=window.PennioLaneIsolation?.active;
@@ -68,7 +83,7 @@ async function saveSessionNow(projectOverride){
   tracks.push({id:t.id,name:t.name,start:t.start,end:t.end,gain:t.gain,pan:t.pan,timeline:t.timeline,mute:!!t.mute,solo:!!t.solo,bypassFx:!!t.bypassFx,dsp:{...(t.dsp||window.StudioCleanDefaults)},audioKey:key});
   audio.push({id:key,blob:cached.blob,force:changed||!cached.persisted});
  }
- await window.PennioWorkspace.saveSession(projectId,{version:1,tracks,selected:state.selected,effects:{...state.effects},offset:savedOffset,range:state.range?{...state.range}:null,plan:state.plan||"",audio});
+ await window.PennioWorkspace.saveSession(projectId,{version:1,tracks,selected:state.selected,effects:{...state.effects},offset:savedOffset,range:state.range?{...state.range}:null,plan:state.plan||"",timelineView:state.timelineView,tempo:state.tempo,barSnap:state.barSnap,audio});
  for(const t of state.tracks){const cached=sessionBlobCache.get(projectId+":"+t.id);if(cached)cached.persisted=true;}
  return true;
 }
@@ -78,7 +93,7 @@ async function loadSessionFor(projectId){
  sessionRestoring=true;clearTimeout(sessionSaveTimer);const host=document.getElementById("dawRoom");host?.classList.add("session-loading");status("Restoring project session…");stop();
  try{
   const rec=await window.PennioWorkspace.loadSession(projectId||SESSION_DEFAULT);
-  state.tracks=[];state.selected=null;state.effects={eq:false,compressor:false,reverb:false,echo:false};state.offset=0;state.range=null;state.plan="";$("dawPlan").value="";sessionBlobCache.clear();
+  state.tracks=[];state.selected=null;state.effects={eq:false,compressor:false,reverb:false,echo:false};state.offset=0;state.range=null;state.plan="";state.timelineView=rec?.timelineView==="bars"?"bars":"waves";state.tempo=Math.max(40,Math.min(240,Number(rec?.tempo)||120));state.barSnap=rec?.barSnap!==false;$("dawPlan").value="";sessionBlobCache.clear();
   if(rec&&Array.isArray(rec.tracks)){
    const stored=new Map((rec.audio||[]).map(x=>[x.id,x.blob]));
    for(const meta of rec.tracks){
@@ -135,7 +150,36 @@ window.addEventListener("pennio:workspace-project-open",e=>{
 function snapshot(){state.undo.push({tracks:state.tracks.map(t=>({...t})),selected:state.selected});if(state.undo.length>20)state.undo.shift();$("dawUndo").disabled=false;}
 function context(){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error("Web Audio is not supported in this browser.");if(!state.ctx)state.ctx=new C();if(!state.outputGain){state.outputGain=state.ctx.createGain();state.outputGain.gain.value=1;state.outputGain.connect(state.ctx.destination);}if(state.ctx.state==="suspended")state.ctx.resume();return state.ctx;}function setOutputLevel(level){if(!state.ctx||!state.outputGain)return;const p=state.outputGain.gain,now=state.ctx.currentTime;p.cancelScheduledValues(now);p.setValueAtTime(p.value,now);p.linearRampToValueAtTime(level,now+.012);}
 function drawWave(track,canvas){const c=canvas.getContext("2d"),w=canvas.width=Math.max(320,canvas.clientWidth*2),h=canvas.height=180,light=document.documentElement.dataset.theme==="light";c.clearRect(0,0,w,h);const data=track.buffer.getChannelData(0),step=Math.max(1,Math.floor(data.length/w)),mid=h/2;c.strokeStyle=track.id===state.selected?(light?"#b94317":"#ff8a55"):(light?"#625b52":"#b7a79a");c.lineWidth=1.5;c.beginPath();for(let x=0;x<w;x++){let min=1,max=-1;for(let j=0;j<step;j++){const v=data[x*step+j]||0;if(v<min)min=v;if(v>max)max=v;}c.moveTo(x,mid+min*mid*.82);c.lineTo(x,mid+max*mid*.82);}c.stroke();c.strokeStyle=light?"#c9c2b8":"#333";c.beginPath();c.moveTo(0,mid);c.lineTo(w,mid);c.stroke();}
-function render(){const host=$("dawTracks");host.replaceChildren();if(!state.tracks.length){const e=document.createElement("div");e.className="daw-empty";e.textContent="Your tracks will appear here. Add vocals, instruments or field recordings.";host.append(e);}state.tracks.forEach(t=>{const row=document.createElement("div");row.className="daw-track";row.dataset.id=t.id;const head=document.createElement("div");head.className="daw-track-head";const name=document.createElement("input");name.className="daw-track-name";name.value=t.name;name.setAttribute("aria-label","Track name");name.onchange=()=>{t.name=name.value;queueSessionSave();};const controls=document.createElement("div");controls.className="daw-track-controls";[["M","mute","daw-track-mute"],["S","solo","daw-track-solo"]].forEach(([label,key,cls])=>{const b=document.createElement("button");b.className=cls;b.textContent=label;b.classList.toggle("on",!!t[key]);b.setAttribute("aria-pressed",String(!!t[key]));b.title=key==="mute"?"Toggle track mute":"Toggle persistent solo";b.onclick=()=>{t[key]=!t[key];syncTrackGains();render();queueSessionSave();};controls.append(b);});const hold=document.createElement("button");hold.className="daw-hold";hold.type="button";hold.textContent="H";hold.title="Hold to hear this track alone";hold.setAttribute("aria-label","Hold to isolate "+t.name);hold.setAttribute("aria-pressed","false");bindDawHold(hold,t);controls.append(hold);const remove=document.createElement("button");remove.textContent="×";remove.title="Remove track";remove.onclick=()=>{snapshot();if(state.playing)stop();disposeTrackDsp(t.id);state.tracks=state.tracks.filter(x=>x.id!==t.id);if(state.selected===t.id)state.selected=state.tracks[0]?.id||null;render();};controls.append(remove);const faders=document.createElement("div");faders.className="daw-track-faders";[["Level", "gain",0,1.5,.01],["Pan","pan",-1,1,.01],["Position","timeline",0,120,.1]].forEach(([label,key,min,max,step])=>{const lab=document.createElement("label");lab.textContent=label;const input=document.createElement("input");input.type="range";input.min=min;input.max=max;input.step=step;input.value=t[key];input.oninput=()=>{t[key]=+input.value;syncTrackGains();queueSessionSave();};lab.append(input);faders.append(lab);});head.append(name,controls,faders);const wave=document.createElement("div");wave.className="daw-track-wave";const canvas=document.createElement("canvas");wave.append(canvas);const region=document.createElement("div");region.className="daw-region";wave.append(region);const range=document.createElement("div");range.className="daw-range-select";wave.append(range);bindWaveSelection(wave,t);row.append(head,wave);row.style.outline=t.id===state.selected?"1px solid var(--orange)":"none";row.onclick=e=>{if(e.target.closest("button,input"))return;state.selected=t.id;syncTrim();render();};host.append(row);requestAnimationFrame(()=>drawWave(t,canvas));});syncRangeUI();renderStudioCleanInspector();$("dawExport").disabled=!state.tracks.length;$("dawSendStudio").disabled=!state.tracks.length;$("dawMerge").disabled=!state.tracks.length;syncTrim();queueSessionSave();}
+function ensureTimelineControls(){
+ const host=$("dawTracks");if(!host)return;
+ let bar=document.getElementById("dawTimelineControls");
+ if(!bar){
+  bar=document.createElement("div");bar.id="dawTimelineControls";bar.className="daw-timeline-controls";
+  bar.innerHTML='<div class="daw-timeline-switch" role="group" aria-label="Timeline display"><button type="button" data-timeline-view="bars" aria-pressed="false">Bars</button><button type="button" data-timeline-view="waves" aria-pressed="true">Waves</button></div><label class="daw-tempo-control">BPM <input id="dawTempo" type="number" min="40" max="240" step="1" value="120" inputmode="numeric"></label><label class="daw-snap-control"><input id="dawBarSnap" type="checkbox" checked> Snap to grid</label><span class="daw-timeline-hint" id="dawTimelineHint">Wave editing · free selection</span>';
+  host.parentNode.insertBefore(bar,host);
+  bar.querySelectorAll("[data-timeline-view]").forEach(button=>button.addEventListener("click",()=>{state.timelineView=button.dataset.timelineView;render();}));
+  const tempo=bar.querySelector("#dawTempo");tempo.addEventListener("change",()=>{state.tempo=Math.max(40,Math.min(240,Math.round(Number(tempo.value)||120)));tempo.value=state.tempo;queueSessionSave();render();});
+  const snap=bar.querySelector("#dawBarSnap");snap.addEventListener("change",()=>{state.barSnap=snap.checked;queueSessionSave();render();});
+ }
+ bar.querySelectorAll("[data-timeline-view]").forEach(button=>{const active=button.dataset.timelineView===state.timelineView;button.classList.toggle("on",active);button.setAttribute("aria-pressed",String(active));});
+ bar.querySelector("#dawTempo").value=state.tempo;
+ bar.querySelector("#dawTempo").disabled=state.timelineView!=="bars";
+ bar.querySelector("#dawBarSnap").checked=state.barSnap;
+ bar.querySelector("#dawBarSnap").disabled=state.timelineView!=="bars";
+ bar.querySelector("#dawTimelineHint").textContent=state.timelineView==="bars"?"Bar editing · 1/16 grid snapping":"Wave editing · free selection";
+}
+function applyTimelineView(wave){
+ wave.dataset.timelineView=state.timelineView;
+ wave.classList.toggle("daw-bars-view",state.timelineView==="bars");
+ wave.classList.toggle("daw-waves-view",state.timelineView==="waves");
+ if(state.timelineView!=="bars")return;
+ const bpm=Math.max(40,Math.min(240,state.tempo||120)),secondsPerBeat=60/bpm;
+ const pixelsPerSecond=Math.max(1,wave.clientWidth/(wave.closest(".daw-track")?.querySelector("canvas")?.dataset.duration||1));
+ const beatWidth=secondsPerBeat*pixelsPerSecond;
+ wave.style.setProperty("--daw-beat-width",beatWidth+"px");
+ wave.style.setProperty("--daw-bar-width",(beatWidth*4)+"px");
+}
+function render(){const host=$("dawTracks");ensureTimelineControls();host.replaceChildren();if(!state.tracks.length){const e=document.createElement("div");e.className="daw-empty";e.textContent="Your tracks will appear here. Add vocals, instruments or field recordings.";host.append(e);}state.tracks.forEach(t=>{const row=document.createElement("div");row.className="daw-track";row.dataset.id=t.id;const head=document.createElement("div");head.className="daw-track-head";const name=document.createElement("input");name.className="daw-track-name";name.value=t.name;name.setAttribute("aria-label","Track name");name.onchange=()=>{t.name=name.value;queueSessionSave();};const controls=document.createElement("div");controls.className="daw-track-controls";[["M","mute","daw-track-mute"],["S","solo","daw-track-solo"]].forEach(([label,key,cls])=>{const b=document.createElement("button");b.className=cls;b.textContent=label;b.classList.toggle("on",!!t[key]);b.setAttribute("aria-pressed",String(!!t[key]));b.title=key==="mute"?"Toggle track mute":"Toggle persistent solo";b.onclick=()=>{t[key]=!t[key];syncTrackGains();render();queueSessionSave();};controls.append(b);});const hold=document.createElement("button");hold.className="daw-hold";hold.type="button";hold.textContent="H";hold.title="Hold to hear this track alone";hold.setAttribute("aria-label","Hold to isolate "+t.name);hold.setAttribute("aria-pressed","false");bindDawHold(hold,t);controls.append(hold);const remove=document.createElement("button");remove.textContent="×";remove.title="Remove track";remove.onclick=()=>{snapshot();if(state.playing)stop();disposeTrackDsp(t.id);state.tracks=state.tracks.filter(x=>x.id!==t.id);if(state.selected===t.id)state.selected=state.tracks[0]?.id||null;render();};controls.append(remove);const faders=document.createElement("div");faders.className="daw-track-faders";[["Level", "gain",0,1.5,.01],["Pan","pan",-1,1,.01],["Position","timeline",0,120,.1]].forEach(([label,key,min,max,step])=>{const lab=document.createElement("label");lab.textContent=label;const input=document.createElement("input");input.type="range";input.min=min;input.max=max;input.step=step;input.value=t[key];input.oninput=()=>{t[key]=+input.value;syncTrackGains();queueSessionSave();};lab.append(input);faders.append(lab);});head.append(name,controls,faders);const wave=document.createElement("div");wave.className="daw-track-wave";const canvas=document.createElement("canvas");canvas.dataset.duration=t.buffer.duration;wave.append(canvas);const region=document.createElement("div");region.className="daw-region";wave.append(region);const range=document.createElement("div");range.className="daw-range-select";wave.append(range);applyTimelineView(wave);bindWaveSelection(wave,t);row.append(head,wave);row.style.outline=t.id===state.selected?"1px solid var(--orange)":"none";row.onclick=e=>{if(e.target.closest("button,input"))return;state.selected=t.id;syncTrim();render();};host.append(row);requestAnimationFrame(()=>drawWave(t,canvas));});syncRangeUI();renderStudioCleanInspector();$("dawExport").disabled=!state.tracks.length;$("dawSendStudio").disabled=!state.tracks.length;$("dawMerge").disabled=!state.tracks.length;syncTrim();queueSessionSave();}
 
 function renderStudioCleanInspector(){
  const host=$("studioCleanControls");if(!host)return;const t=selected();host.replaceChildren();
@@ -224,7 +268,7 @@ function syncRangeUI(){
 function clearRange(){state.range=null;syncRangeUI();queueSessionSave();}
 function bindWaveSelection(wave,t){
  let down=false,x0=0;
- const point=e=>{const rect=wave.getBoundingClientRect(),pct=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));return pct*t.buffer.duration;};
+ const point=e=>{const rect=wave.getBoundingClientRect(),pct=Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width));let time=pct*t.buffer.duration;if(state.timelineView==="bars"&&state.barSnap){const quantum=60/Math.max(40,state.tempo||120)/4;time=Math.round(time/quantum)*quantum;}return Math.max(t.start,Math.min(t.end,time));};
  wave.addEventListener("pointerdown",e=>{if(e.target.closest("button,input"))return;down=true;x0=point(e);state.selected=t.id;state.range={start:x0,end:x0+.1};wave.setPointerCapture?.(e.pointerId);syncRangeUI();});
  wave.addEventListener("pointermove",e=>{if(!down)return;const x=point(e);state.range={start:Math.min(x0,x),end:Math.max(x0,x)};syncRangeUI();});
  const finish=()=>{if(!down)return;down=false;const r=rangeTimes();if(!r)clearRange();else syncRangeUI();queueSessionSave();};
