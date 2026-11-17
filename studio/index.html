@@ -1329,6 +1329,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
  .studio-main{padding:0 2px 28px}
  .studio-side{position:fixed;z-index:80;top:0;bottom:0;width:min( min(86vw,320px), 320px);max-height:none;margin:0;border-radius:0;background:var(--off);box-shadow:0 0 0 100vmax #0009;transition:transform .2s ease}
  .studio-side-left{left:0;transform:translateX(-110%)}
+ .studio-shell.mobile-left-open.mobile-right-open .studio-side{width:44vw;max-width:320px}
  .studio-side-right{right:0;transform:translateX(110%)}
  .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{display:block}
  .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{transform:translateX(0)}
@@ -5511,18 +5512,19 @@ nav#nav[hidden]{display:none!important}
  const left=document.getElementById("studioLeftPanel"),right=document.getElementById("studioRightPanel");
  const leftBtn=document.getElementById("leftPanelToggle"),rightBtn=document.getElementById("rightPanelToggle");
  const read=()=>{try{return JSON.parse(localStorage.getItem(key)||"{}")}catch(e){return {}}};
- const save=()=>{try{localStorage.setItem(key,JSON.stringify({left:leftOpen,right:rightOpen}))}catch(e){}};
+ const save=()=>{try{localStorage.setItem(key,JSON.stringify({left:leftOpen,right:rightOpen,mobileLeft:mobileLeftOpen,mobileRight:mobileRightOpen}))}catch(e){}};
  const mobile=()=>window.matchMedia("(max-width:760px)").matches;
- let state=read(),leftOpen=state.left!==false,rightOpen=state.right!==false;
+ let state=read(),leftOpen=state.left!==false,rightOpen=state.right!==false,mobileLeftOpen=state.mobileLeft===true,mobileRightOpen=state.mobileRight===true;
  function render(){
   shell.classList.toggle("left-collapsed",!leftOpen);shell.classList.toggle("right-collapsed",!rightOpen);
-  shell.classList.toggle("mobile-left-open",mobile()&&leftOpen);shell.classList.toggle("mobile-right-open",mobile()&&rightOpen);
-  leftBtn.setAttribute("aria-expanded",String(leftOpen));rightBtn.setAttribute("aria-expanded",String(rightOpen));
-  leftBtn.title=leftOpen?"Hide left panel":"Show left panel";rightBtn.title=rightOpen?"Hide right panel":"Show right panel";
+  shell.classList.toggle("mobile-left-open",mobile()&&mobileLeftOpen);shell.classList.toggle("mobile-right-open",mobile()&&mobileRightOpen);
+  const leftVisible=mobile()?mobileLeftOpen:leftOpen,rightVisible=mobile()?mobileRightOpen:rightOpen;
+  leftBtn.setAttribute("aria-expanded",String(leftVisible));rightBtn.setAttribute("aria-expanded",String(rightVisible));
+  leftBtn.title=leftVisible?"Hide left panel":"Show left panel";rightBtn.title=rightVisible?"Hide right panel":"Show right panel";
   leftBtn.setAttribute("aria-label",leftBtn.title);rightBtn.setAttribute("aria-label",rightBtn.title);
  }
- leftBtn.addEventListener("click",()=>{leftOpen=!leftOpen;render();save()});
- rightBtn.addEventListener("click",()=>{rightOpen=!rightOpen;render();save()});
+ leftBtn.addEventListener("click",()=>{if(mobile())mobileLeftOpen=!mobileLeftOpen;else leftOpen=!leftOpen;render();save()});
+ rightBtn.addEventListener("click",()=>{if(mobile())mobileRightOpen=!mobileRightOpen;else rightOpen=!rightOpen;render();save()});
  window.addEventListener("resize",render);
  shell.addEventListener("click",event=>{
   const room=event.target.closest("[data-studio-room]");
