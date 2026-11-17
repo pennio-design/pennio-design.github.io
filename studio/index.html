@@ -1336,6 +1336,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
  .studio-side{position:fixed;z-index:81;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);width:min(86vw,340px);max-height:none;margin:0;border-radius:0;background:var(--off);box-shadow:0 12px 40px rgba(0,0,0,.28);transition:transform .22s ease;overscroll-behavior:contain}
  .studio-side-left{left:0;transform:translateX(-105%);border-radius:0 14px 14px 0}
  .studio-side-right{right:0;transform:translateX(105%);border-radius:14px 0 0 14px}
+ .studio-shell.mobile-left-open.mobile-right-open .studio-side{width:48vw;max-width:none}
  .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{display:block;transform:translateX(0)}
  .studio-side-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:20px;line-height:1}
  .studio-panel-toggles{position:relative;z-index:82}
@@ -1344,7 +1345,6 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
  .bar{gap:7px}
  .hsess{display:none}
 }
-@media(prefers-reduced-motion:reduce){.studio-side{transition:none}}
 @media(prefers-reduced-motion:reduce){.studio-side{transition:none}}
 </style></head>
 <body class="in-studio auth-locked">
@@ -5528,7 +5528,7 @@ nav#nav[hidden]{display:none!important}
   shell.classList.toggle("left-collapsed",!leftOpen);shell.classList.toggle("right-collapsed",!rightOpen);
   const isMobile=mobile(),anyDrawerOpen=isMobile&&(mobileLeftOpen||mobileRightOpen);
   shell.classList.toggle("mobile-left-open",isMobile&&mobileLeftOpen);shell.classList.toggle("mobile-right-open",isMobile&&mobileRightOpen);
-  backdrop.hidden=!anyDrawerOpen;
+  backdrop.hidden=!anyDrawerOpen;backdrop.setAttribute("aria-hidden",String(!anyDrawerOpen));
   document.body.classList.toggle("studio-drawer-open",anyDrawerOpen);
   const leftVisible=isMobile?mobileLeftOpen:leftOpen,rightVisible=isMobile?mobileRightOpen:rightOpen;
   leftBtn.setAttribute("aria-expanded",String(leftVisible));rightBtn.setAttribute("aria-expanded",String(rightVisible));
