@@ -11,14 +11,15 @@ function kWeight(data,rate){
 }
 function measureIntegratedLufs(buffer){
  const rate=buffer.sampleRate,channels=Array.from({length:buffer.numberOfChannels},(_,c)=>kWeight(buffer.getChannelData(c),rate)),block=Math.max(1,Math.floor(rate*.4)),energies=[];
- for(let start=0;start<buffer.length;start+=block){const end=Math.min(buffer.length,start+block);let energy=0;for(const channel of channels){let sum=0;for(let i=start;i<end;i++)sum+=channel[i]*channel[i];energy+=sum/Math.max(1,end-start);}energy/=channels.length;if(energy>1e-7)energies.push(energy);}
+ for(let start=0;start<buffer.length;start+=block){const end=Math.min(buffer.length,start+block);let energy=0;for(const channel of channels){let sum=0;for(let i=start;i<end;i++)sum+=channel[i]*channel[i];energy+=sum/Math.max(1,end-start);}if(energy>1e-7)energies.push(energy);}
  if(!energies.length)return -Infinity;
  const absGate=energies.filter(e=>-0.691+10*Math.log10(e)>-70);if(!absGate.length)return -Infinity;
  const ungated=absGate.reduce((a,b)=>a+b,0)/absGate.length,relativeGate=ungated*.1,kept=absGate.filter(e=>e>=relativeGate);if(!kept.length)return -Infinity;
  const mean=kept.reduce((a,b)=>a+b,0)/kept.length;return -0.691+10*Math.log10(mean);
 }
+function estimateTruePeak(channels){let peak=0;for(const data of channels){for(let i=0;i<data.length;i++){const a=data[i],b=data[Math.min(i+1,data.length-1)];peak=Math.max(peak,Math.abs(a));for(let k=1;k<4;k++)peak=Math.max(peak,Math.abs(a+(b-a)*(k/4)));}}return peak;}
 function normalizeAndFade(buffer,targetLufs=-14,peakDb=-1,fadeSeconds=.015){
- const channels=Array.from({length:buffer.numberOfChannels},(_,c)=>buffer.getChannelData(c)),lufs=measureIntegratedLufs(buffer),peak=channels.reduce((m,d)=>{for(let i=0;i<d.length;i++)m=Math.max(m,Math.abs(d[i]));return m;},0);
+ const channels=Array.from({length:buffer.numberOfChannels},(_,c)=>buffer.getChannelData(c)),lufs=measureIntegratedLufs(buffer),peak=estimateTruePeak(channels);
  let gain=Number.isFinite(lufs)?Math.pow(10,(targetLufs-lufs)/20):1;const ceiling=Math.pow(10,peakDb/20);if(peak>0)gain=Math.min(gain,ceiling/peak);
  const fade=Math.min(Math.floor(buffer.sampleRate*fadeSeconds),Math.floor(buffer.length/2));
  for(const data of channels){for(let i=0;i<data.length;i++){let envelope=1;if(fade&&i<fade)envelope=.5-.5*Math.cos(Math.PI*i/fade);else if(fade&&i>=data.length-fade){const x=(data.length-1-i)/fade;envelope=.5-.5*Math.cos(Math.PI*Math.max(0,x));}data[i]*=gain*envelope;}}
