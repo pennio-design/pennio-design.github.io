@@ -1335,7 +1335,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 <main class="wrap"><!-- STUDIO DASHBOARD -->
 <section class="view" id="v-home">
   <div class="dash-topline"><span class="dash-kicker">PENNIO CREATIVE PLATFORM</span><span class="dash-local"><i></i> <span id="dashAccountIdentity">Authenticated workspace</span></span></div>
-  <div class="dash-intro"><div><h1>Make something<br><em>worth keeping.</em></h1><p>One workspace for sound, language, image and story.</p></div><button class="dash-new" id="dashNewProject"><span>＋</span> New project</button></div>
+  <div class="dash-intro"><div><h1>Welcome back,<br><em id="dashUserName">creator.</em></h1><p>Your creative workspace is ready.</p></div><button class="dash-new" id="dashNewProject"><span>＋</span> New project</button></div>
   <div class="dash-command">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
     <input id="dashSearch" type="search" placeholder="Find a room or start with an idea…" autocomplete="off" aria-label="Search Studio rooms">
@@ -4380,6 +4380,11 @@ async function startPENNIOWorkspace(authState){
   paintAvatar();
   const identity=document.getElementById("dashAccountIdentity");
   if(identity&&sbSess&&sbSess.user){identity.textContent="Signed in · "+(sbSess.user.email||"PENNIO account");}
+  const profileForGreeting=lsGet("ps.profile")||{};
+  const emailName=sbSess&&sbSess.user&&sbSess.user.email?sbSess.user.email.split("@")[0].replace(/[._-]+/g," "):"";
+  const displayName=String(profileForGreeting.name||emailName||"creator").trim().split(/\s+/)[0];
+  const greetingName=document.getElementById("dashUserName");
+  if(greetingName)greetingName.textContent=(displayName.charAt(0).toUpperCase()+displayName.slice(1))+".";
   const g=new URLSearchParams(location.search).get("g");
   if(g){ try{ const st=grooveDecode(g); await saveNow(); const shared={id:newId(), name:"Shared groove", created:Date.now(), updated:Date.now(), state:{...st, banks:null}, audio:null};
       await openProject(shared); ready=true; await saveNow(); toast("Opened a shared groove as a new session. Your own work is in Sessions."); }
