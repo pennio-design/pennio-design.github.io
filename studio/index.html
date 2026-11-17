@@ -1318,6 +1318,15 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .studio-side-section button:hover,.studio-side-section button:focus-visible{background:var(--surface);color:var(--text);outline:none}
 .studio-side-section button span{font-size:10px;opacity:.7}
 .studio-side-note{padding:8px 5px;color:var(--mute);font-size:10px;line-height:1.55}
+.studio-clean-toggle{display:flex;align-items:center;gap:9px;padding:8px 2px;font-size:12px;font-weight:600}.studio-clean-toggle input{accent-color:var(--orange);width:16px;height:16px}
+.studio-clean-presets{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:7px 0}
+.studio-clean-presets button{padding:8px 6px;border:1px solid var(--line);border-radius:8px;font-size:10px;color:var(--mute)}
+.studio-clean-presets button.on{border-color:var(--orange);background:#2a1b13;color:var(--text)}
+.studio-clean-presets button:disabled{opacity:.4;cursor:not-allowed}
+.studio-clean-amount{display:grid;gap:7px;margin-top:10px;font-size:11px;color:var(--mute)}
+.studio-clean-amount span{display:flex;justify-content:space-between;color:var(--text)}
+.studio-clean-amount output{color:var(--orange);font-variant-numeric:tabular-nums}
+.studio-clean-amount input{width:100%;accent-color:var(--orange)}
 .studio-nav-actions{display:flex;gap:6px;margin:12px 0 8px}.studio-nav-actions button{min-height:38px;border:1px solid var(--line2);border-radius:9px;color:var(--text)}
 .studio-nav-new{flex:1;text-align:left;padding:8px 10px;background:var(--surface);font-size:12px;font-weight:600}.studio-nav-search-focus{width:38px;font-size:20px}
 .studio-nav-search{display:flex;align-items:center;gap:8px;height:38px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:#0d0d0d;color:var(--mute)}
@@ -1837,7 +1846,7 @@ A clear image or action.
 
 
 <p class="foot"><a href="/studio/guide/" style="color:inherit">How to use PENNIO Studio</a> · PENNIO Studio by PENNIO</p>
-</main><aside class="studio-side studio-side-right" id="studioRightPanel" aria-label="Contextual tools"><div class="studio-side-head"><span>INSPECTOR</span><b id="studioInspectorTitle">Workspace tools</b><button type="button" class="studio-side-close" data-studio-panel-close aria-label="Close right panel">×</button></div><div class="studio-inspector-context" id="studioInspectorContext">Choose a destination to see its available tools.</div><div class="studio-side-section"><small>QUICK ACTIONS</small><button type="button" data-studio-action="studioRecLaunch">Capture a take</button><button type="button" data-studio-action="openWork">Open sessions</button><button type="button" data-studio-action="openHist">Open history</button></div><div class="studio-side-section"><small>PROJECT</small><div class="studio-side-project" id="studioInspectorProject">Studio workspace</div><p class="studio-side-note">Tools and properties will follow the selected room and item.</p></div></aside></div>
+</main><aside class="studio-side studio-side-right" id="studioRightPanel" aria-label="Contextual tools"><div class="studio-side-head"><span>INSPECTOR</span><b id="studioInspectorTitle">Workspace tools</b><button type="button" class="studio-side-close" data-studio-panel-close aria-label="Close right panel">×</button></div><div class="studio-inspector-context" id="studioInspectorContext">Choose a destination to see its available tools.</div><div class="studio-side-section"><small>SELECTED AUDIO LAYER</small><div id="studioCleanControls"><p class="studio-side-note">Select an audio layer in Beat to adjust its sound.</p></div></div><div class="studio-side-section"><small>QUICK ACTIONS</small><button type="button" data-studio-action="studioRecLaunch">Capture a take</button><button type="button" data-studio-action="openWork">Open sessions</button><button type="button" data-studio-action="openHist">Open history</button></div><div class="studio-side-section"><small>PROJECT</small><div class="studio-side-project" id="studioInspectorProject">Studio workspace</div><p class="studio-side-note">Tools and properties will follow the selected room and item.</p></div></aside></div>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to PENNIO Studio.</h2>
   <p id="obIntro">No password. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your work saves in this browser on this device, so download a backup from Sessions now and then.</p>
@@ -5288,6 +5297,9 @@ document.getElementById("sylIn").oninput=sylRender;
 })();
 </script>
 <script src="/studio/workspace.js" defer></script>
+<script src="/studio/audio/dsp/presets.js" defer></script>
+<script src="/studio/audio/dsp/StudioCleanChain.js" defer></script>
+<script src="/studio/audio/dsp/offlineRenderer.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
 <script id="pennio-first-play-bind">(()=>{const b=document.getElementById("firstPlay"),p=document.getElementById("play");if(!b||!p)return;b.addEventListener("click",()=>p.click());p.addEventListener("click",()=>{setTimeout(()=>{b.innerHTML=p.getAttribute("aria-label")==="Stop (Space)"?"Stop the groove":"Hear the groove <span>↗</span>";},0);});})();</script>
