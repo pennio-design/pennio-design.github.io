@@ -86,6 +86,41 @@
 @media(max-width:800px){.dash-rooms{grid-template-columns:repeat(2,minmax(0,1fr))}.dash-lower{grid-template-columns:1fr}}
 @media(max-width:520px){#v-home{padding-top:20px}.dash-intro{align-items:flex-start;flex-direction:column;margin:30px 0 22px}.dash-intro h1{font-size:48px}.dash-new{width:100%;justify-content:center}.dash-rooms{grid-template-columns:1fr 1fr;gap:8px}.dash-room{min-height:215px;padding:13px}.dash-room>b{font-size:16px}.dash-room-desc{font-size:10px}.dash-room-foot{font-size:9px}.dash-panel{padding:15px}.dash-footer{align-items:flex-start;flex-wrap:wrap}.dash-local{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.dash-wave i{animation:none}.dash-room{transition:none}}
+
+/* Studio navigation: rooms are visible, utilities stay grouped. */
+.bar{height:58px;gap:16px}
+.logo{flex:none}
+.hsess{max-width:340px}
+.hright{gap:7px}
+.room-nav-wrap{padding-top:0;padding-bottom:10px}
+.room-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:0;border:0;border-radius:0;background:transparent}
+.room-nav-group{display:flex;align-items:center;gap:4px;min-width:0;overflow-x:auto;scrollbar-width:none}
+.room-nav-group::-webkit-scrollbar{display:none}
+.room-nav button{flex:none;min-height:36px;padding:7px 13px;border-radius:8px;color:var(--mute);font-size:13px;font-weight:500;white-space:nowrap}
+.room-nav button small{margin-left:5px;color:inherit;opacity:.68;font-size:11px}
+.room-nav button.on{background:var(--surface-2);color:var(--text)}
+.room-nav .room-nav-projects{margin-left:auto;border:1px solid var(--line);background:transparent}
+.room-nav .room-nav-projects.on{background:var(--text);color:var(--black);border-color:var(--text)}
+nav#nav{position:static;display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+nav#nav[hidden]{display:none!important}
+@media(max-width:760px){
+ .bar{height:auto;min-height:56px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px;gap:8px}
+ .logo{font-size:14px}
+ .logo span{display:none}
+ .hsess{order:3;flex-basis:100%;max-width:none}
+ .hsess input{font-size:14px}
+ .hright{gap:5px}
+ .theme-toggle{min-width:38px;padding:0 8px}
+ .theme-toggle span{display:none}
+ .studio-rec-launch{font-size:12px;padding:7px 9px}
+ .room-nav-wrap{padding-bottom:8px}
+ .room-nav{gap:8px}
+ .room-nav-group{flex:1}
+ .room-nav button{padding:7px 10px;font-size:12px}
+ .room-nav button small{display:none}
+ .room-nav .room-nav-projects{margin-left:0}
+}
+
 </style>
 <style>
 :root{
@@ -1322,14 +1357,21 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
       <button class="btn ic" id="siteSettingsBtn" type="button" aria-label="Studio settings" title="Studio settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
       <button type="button" class="studio-rec-launch" id="studioRecLaunch" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Record</button>
-      <div class="more"><button class="morebtn" id="moreBtn" aria-expanded="false" aria-controls="nav"><span id="moreLbl">Beat</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
-        <nav id="nav" hidden>
-          <button data-v="ayan" class="on">Beat <small>Àyàn</small></button>
-          <button data-v="write">Tongue <small>Ìlù + Write</small></button>
-          <button data-v="home">Projects <small>My work</small></button>
-        </nav></div>
+      <button class="studio-rec-launch" id="studioRecLaunch" type="button" aria-controls="studioRecorder" aria-expanded="false"><span>●</span> Capture</button>
+      <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
       <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
     </div>
+  </div>
+  <div class="wrap room-nav-wrap">
+    <nav id="nav" class="room-nav" aria-label="Studio rooms">
+      <div class="room-nav-group" aria-label="Creative rooms">
+        <button data-v="ayan" class="on">Beat <small>Àyàn</small></button>
+        <button data-v="write">Write <small>Akéwì</small></button>
+        <button data-v="faajiplace">Fàájíplace</button>
+        <button data-v="beauty">Model</button>
+      </div>
+      <button data-v="home" class="room-nav-projects">Projects</button>
+    </nav>
   </div>
 </header>
 <aside class="studio-rec" id="studioRecorder" aria-label="Studio recorder">
@@ -4654,10 +4696,7 @@ document.getElementById("learn").onclick=e=>{ if(e.target.id==="learn") e.target
 document.getElementById("heroGo").onclick=()=>{ document.getElementById("hero").hidden=true; tourStart("beat"); };
 
 /* ---------- views ---------- */
-const moreBtn=document.getElementById("moreBtn"), navEl=document.getElementById("nav");
-function menu(open){ navEl.hidden=!open; moreBtn.setAttribute("aria-expanded",String(open)); }
-moreBtn.onclick=e=>{ e.stopPropagation(); menu(navEl.hidden); };
-addEventListener("click",e=>{ if(!navEl.hidden && !e.target.closest(".more")) menu(false); });
+const navEl=document.getElementById("nav");
 function paintAvatar(){ const pf=lsGet("ps.profile"); const a=document.getElementById("avatar"); if(a) a.textContent=(pf&&pf.name? pf.name.trim()[0] : "·").toUpperCase(); }
 function openProfile(){
   const p=lsGet("ps.profile")||(typeof kvGet==="function"?null:null);
@@ -4700,11 +4739,11 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   if((e.ctrlKey||e.metaKey) && k==="z"){ e.preventDefault(); (e.shiftKey? redoBtn : undoBtn).click(); }
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
-  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="home"?"Projects":v==="ayan"?"Beat":v==="write"?"Tongue":v==="beauty"?"Model / Beauty":"Fàájíplace";
+  document.body.classList.toggle("in-studio",v==="ayan");
   document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"",b.dataset.v==="home"?"/studio/":"#"+b.dataset.v);}catch(e){} });
+document.querySelectorAll("#nav button[data-v]").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"",b.dataset.v==="home"?"/studio/":"#"+b.dataset.v);}catch(e){} });
 const hs=x=>{x=x.replace("#",""); return x==="film"?"faajiplace":x;};
 const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan"||h==="home") show(h); else show("ayan");
 window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write"||x==="beauty") show(x);});
