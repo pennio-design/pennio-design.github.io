@@ -21,7 +21,7 @@ function estimateTruePeak(channels){let peak=0;for(const data of channels){for(l
 function applyBoundaryFades(buffer,fadeSeconds=.015){
  const fade=Math.min(Math.floor(buffer.sampleRate*fadeSeconds),Math.floor(buffer.length/2));
  if(!fade)return buffer;
- for(let c=0;c<buffer.numberOfChannels;c++){const data=buffer.getChannelData(c);for(let i=0;i<fade;i++){const fadeIn=.5-.5*Math.cos(Math.PI*i/fade),fadeOut=.5-.5*Math.cos(Math.PI*(fade-i)/fade);data[i]*=fadeIn;data[data.length-1-i]*=fadeOut;}}
+ for(let c=0;c<buffer.numberOfChannels;c++){const data=buffer.getChannelData(c);for(let i=0;i<fade;i++){const fadeIn=.5-.5*Math.cos(Math.PI*i/fade),fadeOut=.5-.5*Math.cos(Math.PI*i/fade);data[i]*=fadeIn;data[data.length-1-i]*=fadeOut;}}
  return buffer;
 }
 function normalizeAndFade(buffer,targetLufs=-14,peakDb=-1,fadeSeconds=.015){
