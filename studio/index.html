@@ -146,6 +146,13 @@ nav#nav[hidden]{display:none!important}
 @media(max-width:880px){.daw-workbench{grid-template-columns:minmax(0,1fr)}.daw-sidebar{grid-template-columns:1fr}.daw-engineer-modes{display:flex;grid-template-columns:none}}
 @media(max-width:620px){.daw-sidebar{padding:5px 0}.daw-sidebar-title{display:none}.daw-engineer-modes{gap:2px}.daw-engineer-modes button{min-width:58px;padding:7px 9px}.daw-main{grid-template-columns:minmax(0,1fr)}}
 
+/* Keep mode-specific actions out of the way until they are needed. */
+#dawRoom[data-mode="beat"] #dawMerge,#dawRoom[data-mode="beat"] #dawExport,#dawRoom[data-mode="beat"] #dawSendStudio,
+#dawRoom[data-mode="record"] #dawMerge,#dawRoom[data-mode="record"] #dawExport,#dawRoom[data-mode="record"] #dawSendStudio,
+#dawRoom[data-mode="overlay"] #dawMerge,#dawRoom[data-mode="overlay"] #dawExport,#dawRoom[data-mode="overlay"] #dawSendStudio,
+#dawRoom[data-mode="edit"] #dawMerge,#dawRoom[data-mode="edit"] #dawExport,#dawRoom[data-mode="edit"] #dawSendStudio,
+#dawRoom[data-mode="mix"] #dawMerge,#dawRoom[data-mode="mix"] #dawExport,#dawRoom[data-mode="mix"] #dawSendStudio{display:none!important}
+
 </style>
 <style>
 :root{
@@ -4767,7 +4774,7 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
   document.body.classList.toggle("in-studio",v==="ayan");
-  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  document.querySelectorAll("#nav button[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
 document.querySelectorAll("#nav button[data-v]").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"",b.dataset.v==="home"?"/studio/":"#"+b.dataset.v);}catch(e){} });
