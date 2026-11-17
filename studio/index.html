@@ -5455,7 +5455,7 @@ html[data-theme="light"] .og-project-head>a,html[data-theme="light"] .og-project
 </style>
 <script id="ojug-project-carousel-bind">
 (()=>{document.querySelectorAll("[data-ojug-carousel]").forEach(root=>{
- const slides=[...root.querySelectorAll(".og-slide")],dots=[...root.querySelectorAll(".og-carousel-dots button")],status=root.querySelector("[data-carousel-status");
+ const slides=[...root.querySelectorAll(".og-slide")],dots=[...root.querySelectorAll(".og-carousel-dots button")],status=root.querySelector("[data-carousel-status]");
  let index=0;
  const show=next=>{index=(next+slides.length)%slides.length;slides.forEach((slide,i)=>{const active=i===index;slide.hidden=!active;slide.classList.toggle("is-active",active);slide.setAttribute("aria-hidden",String(!active));});dots.forEach((dot,i)=>{const active=i===index;dot.classList.toggle("is-active",active);if(active)dot.setAttribute("aria-current","true");else dot.removeAttribute("aria-current");});if(status)status.textContent=String(index+1).padStart(2,"0")+" / "+String(slides.length).padStart(2,"0");};
  root.querySelector("[data-carousel-prev]")?.addEventListener("click",()=>show(index-1));
