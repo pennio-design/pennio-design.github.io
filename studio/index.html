@@ -5233,8 +5233,12 @@ nav#nav{position:static;right:auto;top:auto;display:flex;flex-wrap:wrap;gap:4px;
 nav#nav[hidden]{display:none!important}
 nav#nav button{white-space:normal;min-width:0}
 .more{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.morebtn{display:inline-flex}
-.sheet{position:static;inset:auto;z-index:auto;width:min(100% - 32px,720px);margin:18px auto;background:transparent;backdrop-filter:none;display:none;align-items:initial;justify-content:initial}
-.sheet.on{display:block}.sheet .panel{width:100%;max-width:none;max-height:none;overflow:visible;border-radius:18px;box-shadow:none;background:var(--off);color:var(--text)}
+/* Restore modal behaviour for sessions, history, profile and learning panels. */
+.sheet{position:fixed;inset:0;z-index:60;width:auto;margin:0;padding:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center;overflow-y:auto}
+.sheet.on{display:flex}
+.sheet .panel{width:100%;max-width:560px;max-height:86vh;overflow:auto;padding:20px 16px 28px;border:1px solid var(--line2);border-radius:22px 22px 0 0;background:var(--off);color:var(--text);box-shadow:0 18px 70px #0008}
+@media(min-width:700px){.sheet{align-items:center}.sheet .panel{border-radius:22px}}
+
 .dash-modal-backdrop{position:static;inset:auto;z-index:auto;display:block;background:transparent;padding:0;margin:14px 0}.dash-modal-backdrop[hidden]{display:none!important}
 .dash-modal{width:100%;max-width:none;box-shadow:none;background:var(--off);color:var(--text);border-color:var(--line2)}
 .dash-modal input,.dash-modal select{background:var(--black);color:var(--text);border-color:var(--line2)}
@@ -5252,7 +5256,7 @@ html[data-theme="light"] .dash-project,html[data-theme="light"] .dash-command{ba
 html[data-theme="light"] .dash-room-index,html[data-theme="light"] .dash-project-copy small,html[data-theme="light"] .dash-modal p,html[data-theme="light"] .dash-modal label{color:#625E58}
 html[data-theme="light"] .dash-start-panel{background:#F1EDE7;color:#090909;border-color:#D7CFC5}html[data-theme="light"] .dash-start-panel h2,html[data-theme="light"] .dash-start-panel p{color:#090909}
 html[data-theme="light"] .dash-modal input,html[data-theme="light"] .dash-modal select{background:#F6F5F2;color:#090909;border-color:rgba(9,9,9,.22)}html[data-theme="light"] .theme-toggle{background:#FFFFFF;color:#090909;border-color:rgba(9,9,9,.22)}
-@media(max-width:760px){.bar{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 0;gap:8px}.hright{flex-wrap:wrap}.more{width:100%;order:5}.morebtn{display:inline-flex}nav#nav{width:100%;display:flex;flex-wrap:wrap}nav#nav button{flex:1 1 120px}.sheet{width:calc(100% - 24px)}.dash-topline{align-items:flex-start;flex-wrap:wrap}.dash-local{flex-wrap:wrap}}
+@media(max-width:760px){.bar{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 0;gap:8px}.hright{flex-wrap:wrap}.more{width:100%;order:5}.morebtn{display:inline-flex}nav#nav{width:100%;display:flex;flex-wrap:wrap}nav#nav button{flex:1 1 120px}.dash-topline{align-items:flex-start;flex-wrap:wrap}.dash-local{flex-wrap:wrap}}
 @media(max-width:420px){.logo span{display:none}.hright{gap:5px}.theme-toggle{min-width:42px;width:42px}.dash-rooms{grid-template-columns:1fr 1fr}.dash-room{min-width:0}.dash-room-foot{gap:6px}}
 </style>
 
