@@ -1616,6 +1616,19 @@ A clear image or action.
   <button class="btn" id="obReturn" style="width:100%;margin-top:10px">I have used pennio.studio before: restore my work</button>
 </div></div>
 
+<div class="sheet" id="profileSheet" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+      <h2 id="profileTitle">Your PENNIO profile</h2><button class="btn" id="closeProfile" type="button">Close</button>
+    </div>
+    <div class="set-actions">
+      <div class="set-action"><div><b id="profileName">Your profile</b><small id="profileEmail">Profile details saved on this device</small></div></div>
+      <div class="set-action"><div><b>Workspace storage</b><small id="profileStorage">Your work is currently saved in this browser on this device.</small></div></div>
+    </div>
+    <p class="note" id="profileCloudNote">Cloud sync is being prepared. Your projects remain safely stored on this device.</p>
+    <div class="crow"><button class="btn primary" id="profileSessions" type="button">Sessions & backups</button><button class="btn" id="profileSettings" type="button">Studio settings</button></div>
+  </div>
+</div>
 <div class="sheet" id="settingsSheet"><div class="panel">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
     <h2>Studio settings</h2><button class="btn" id="closeSettings">Close</button>
@@ -4241,7 +4254,19 @@ function menu(open){ navEl.hidden=!open; moreBtn.setAttribute("aria-expanded",St
 moreBtn.onclick=e=>{ e.stopPropagation(); menu(navEl.hidden); };
 addEventListener("click",e=>{ if(!navEl.hidden && !e.target.closest(".more")) menu(false); });
 function paintAvatar(){ const pf=lsGet("ps.profile"); const a=document.getElementById("avatar"); if(a) a.textContent=(pf&&pf.name? pf.name.trim()[0] : "·").toUpperCase(); }
-document.getElementById("avatar").onclick=()=>show("home");
+function openProfile(){
+  const p=lsGet("ps.profile")||(typeof kvGet==="function"?null:null);
+  const name=document.getElementById("profileName"), email=document.getElementById("profileEmail");
+  name.textContent=p&&p.name?p.name:"PENNIO Studio creator";
+  email.textContent=p&&p.email?p.email:"No profile email saved on this device";
+  document.getElementById("profileCloudNote").textContent="Cloud sync is not yet enabled. Your projects remain stored locally until cloud sync is fully tested.";
+  document.getElementById("profileSheet").classList.add("on");
+}
+document.getElementById("avatar").onclick=openProfile;
+document.getElementById("closeProfile").onclick=()=>document.getElementById("profileSheet").classList.remove("on");
+document.getElementById("profileSheet").onclick=e=>{if(e.target.id==="profileSheet")e.currentTarget.classList.remove("on");};
+document.getElementById("profileSessions").onclick=()=>{document.getElementById("profileSheet").classList.remove("on");workEl.classList.add("on");renderWork();};
+document.getElementById("profileSettings").onclick=()=>{document.getElementById("profileSheet").classList.remove("on");document.getElementById("settingsSheet").classList.add("on");};
 document.getElementById("heroX").onclick=()=>{ document.getElementById("hero").hidden=true; };
 const tpEl=document.getElementById("tp");
 function tpOpen(o){ tpEl.classList.toggle("open",o); document.getElementById("tpVal").setAttribute("aria-expanded",String(o)); document.getElementById("tpMore").setAttribute("aria-expanded",String(o)); }
