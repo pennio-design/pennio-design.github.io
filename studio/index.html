@@ -5521,9 +5521,9 @@ nav#nav[hidden]{display:none!important}
  const backdrop=document.getElementById("studioPanelBackdrop");
  const closeDrawers=()=>{mobileLeftOpen=false;mobileRightOpen=false;render();save()};
  const read=()=>{try{return JSON.parse(localStorage.getItem(key)||"{}")}catch(e){return {}}};
- const save=()=>{try{localStorage.setItem(key,JSON.stringify({left:leftOpen,right:rightOpen,mobileLeft:mobileLeftOpen,mobileRight:mobileRightOpen}))}catch(e){}};
+ const save=()=>{try{localStorage.setItem(key,JSON.stringify({left:leftOpen,right:rightOpen}))}catch(e){}};
  const mobile=()=>window.matchMedia("(max-width:760px)").matches;
- let state=read(),leftOpen=state.left!==false,rightOpen=state.right!==false,mobileLeftOpen=state.mobileLeft===true,mobileRightOpen=state.mobileRight===true;
+ let state=read(),leftOpen=state.left!==false,rightOpen=state.right!==false,mobileLeftOpen=false,mobileRightOpen=false;
  function render(){
   shell.classList.toggle("left-collapsed",!leftOpen);shell.classList.toggle("right-collapsed",!rightOpen);
   const isMobile=mobile(),anyDrawerOpen=isMobile&&(mobileLeftOpen||mobileRightOpen);
@@ -5538,7 +5538,7 @@ nav#nav[hidden]{display:none!important}
  leftBtn.addEventListener("click",()=>{if(mobile())mobileLeftOpen=!mobileLeftOpen;else leftOpen=!leftOpen;render();save()});
  rightBtn.addEventListener("click",()=>{if(mobile())mobileRightOpen=!mobileRightOpen;else rightOpen=!rightOpen;render();save()});
  backdrop.addEventListener("click",closeDrawers);
- shell.addEventListener("click",event=>{if(event.target.closest("[data-studio-panel-close]"))closeDrawers()});
+ shell.addEventListener("click",event=>{if(event.target.closest("[data-studio-panel-close]")){const panel=event.target.closest("#studioLeftPanel,#studioRightPanel");if(panel?.id==="studioLeftPanel")mobileLeftOpen=false;if(panel?.id==="studioRightPanel")mobileRightOpen=false;render();save()}});
  document.addEventListener("keydown",event=>{if(event.key==="Escape"&&(mobileLeftOpen||mobileRightOpen))closeDrawers()});
  window.addEventListener("resize",()=>{if(!mobile()){mobileLeftOpen=false;mobileRightOpen=false;document.body.classList.remove("studio-drawer-open")}render()});
  shell.addEventListener("click",event=>{
