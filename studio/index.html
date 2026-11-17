@@ -1255,7 +1255,18 @@ html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
 @media(prefers-reduced-motion:reduce){#v-ayan .step{transition:none}}
 </style>
 
-</head>
+<style id="pennio-engineer-capture">
+.studio-rec-live{margin:10px 0 12px}.studio-rec-live-frame{position:relative;overflow:hidden;width:100%;max-width:720px;aspect-ratio:16/9;margin:auto;border:1px solid var(--line);border-radius:14px;background:#080808}
+.studio-rec-live-frame[data-aspect="portrait"]{max-width:420px;aspect-ratio:9/16}.studio-rec-live-frame[data-aspect="square"]{max-width:560px;aspect-ratio:1}
+.studio-rec-live-frame video{width:100%;height:100%;object-fit:cover;display:block}.studio-rec-live-frame[data-facing="user"] video{transform:scaleX(-1)}
+.studio-rec-grid{position:absolute;inset:0;display:grid;grid-template:1fr 1fr/1fr 1fr;pointer-events:none}.studio-rec-grid i{border-right:1px solid #ffffff55;border-bottom:1px solid #ffffff55}
+.studio-rec-live-label,.studio-rec-rec{position:absolute;top:10px;padding:5px 8px;border-radius:5px;background:#090909b8;color:#fff;font:600 10px/1.2 ui-monospace,monospace;letter-spacing:.1em}.studio-rec-live-label{left:10px}.studio-rec-rec{right:10px;color:#fff;background:#a82020}
+.studio-rec-camera-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0;color:var(--mute);font-size:11px}.studio-rec-camera-tools .on{border-color:var(--orange);color:var(--text)}
+.daw-engineer-modes{display:flex;gap:6px;overflow:auto;padding:7px;margin:12px 0;border:1px solid var(--line);border-radius:14px;background:var(--card);scrollbar-width:thin}.daw-engineer-modes button{flex:1 0 auto;min-height:40px;padding:0 16px;border:1px solid transparent;border-radius:10px;background:transparent;color:var(--mute);font:inherit;font-size:12px;font-weight:650;cursor:pointer}.daw-engineer-modes button.on{background:var(--orange);color:#090909}.daw-mode-help{margin:0 0 10px;color:var(--mute);font-size:12px}
+.daw-plan{display:grid;gap:8px;margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}.daw-plan label{font-size:12px;font-weight:700}.daw-plan textarea{min-height:110px;padding:10px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;resize:vertical}.daw-plan small{color:var(--mute)}
+.studio-rec-controls #studioRecStart[data-ready="true"]{background:#b23c25}
+@media(max-width:560px){.daw-engineer-modes button{padding-inline:12px}.studio-rec-live-frame[data-aspect="portrait"]{max-height:52vh}}
+</style></head>
 <body class="in-studio">
 <header>
   <div class="wrap bar">
@@ -1432,9 +1443,10 @@ html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
   </div>
 
   <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
-  <div class="daw-head"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
-  <div class="daw-toolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><button class="btn" id="dawSendStudio" disabled>Send mix to Studio</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
-  <div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
+  <div class="daw-head" id="dawHead"><div><h3>Àyàn DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
+  <nav class="daw-engineer-modes" aria-label="Engineer modes"><button type="button" class="on" data-engineer-mode="record" aria-pressed="true">Record</button><button type="button" data-engineer-mode="play" aria-pressed="false">Play</button><button type="button" data-engineer-mode="mix" aria-pressed="false">Mix</button><button type="button" data-engineer-mode="edit" aria-pressed="false">Edit</button><button type="button" data-engineer-mode="plan" aria-pressed="false">Plan</button><button type="button" data-engineer-mode="merge" aria-pressed="false">Merge</button></nav><p class="daw-mode-help" id="dawModeHelp" aria-live="polite">Record with the beat, or import audio to start a session.</p>
+  <div class="daw-toolbar" id="dawToolbar"><button class="btn primary" id="dawPlay">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawMerge" disabled>Merge to track</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><button class="btn" id="dawSendStudio" disabled>Send mix to Studio</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
+  <div class="daw-plan" id="dawPlanPanel" hidden><label for="dawPlan">Session plan</label><textarea id="dawPlan" maxlength="4000" placeholder="Capture the goal, record order, edit notes or mix intent for this session."></textarea><small>Saved with this project on this device.</small></div><div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
   <div class="daw-selection" id="dawSelectionPanel">
   <div class="daw-selection-head"><div><b>Selected passage</b><small id="dawSelectionReadout">Drag across a waveform to select a timeframe.</small></div><button class="btn" id="dawClearSelection" disabled>Clear</button></div>
   <div class="daw-selection-actions">
@@ -1445,7 +1457,7 @@ html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
   </div>
   <p class="daw-selection-note">Re-record adds a new aligned take, preserving the original. Hum to beat sends your recording to Ìlù. Headphones are recommended when recording over playback.</p>
 </div>
-<div class="daw-bottom"><div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button><button class="btn" id="dawNormalize">Normalize selected</button><button class="btn" id="dawDelete">Delete selected</button></div>
+<div class="daw-bottom" id="dawBottom"><div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button><button class="btn" id="dawNormalize">Normalize selected</button><button class="btn" id="dawDelete">Delete selected</button></div>
     <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
     <div class="daw-status">Audio is processed in your browser. Imported tracks are not uploaded. Export creates a stereo WAV mix.</div>
   </div>
@@ -1611,7 +1623,7 @@ A clear image or action.
   <div class="cr-lead">
     <div class="cr-kicker">Fàájìplace · film room</div>
     <h1>Score the story while it is still moving.</h1>
-    <p class="sub">Bring in a clip, mark the moments that matter, and carry each scene into Àyàn as a clear score cue. Your footage stays on this device.</p>
+    <p class="sub">Plan the script, capture real places and performances, then keep reference footage and scene cues together for your AI generator or edit. Your footage stays on this device.</p>
   </div>
   <div class="fr-desk" id="filmDesk">
     <div class="fr-top">
@@ -1626,14 +1638,16 @@ A clear image or action.
           <div class="fr-empty" id="filmEmpty">
             <b>Your picture starts here</b>
             <span>Choose a video clip from this device. It is saved with this project on this device.</span>
-            <label class="btn primary fr-file">Choose a clip<input id="filmFile" type="file" accept="video/*" aria-label="Choose a video clip"></label>
+            <label class="btn primary fr-file">Choose a clip<input id="filmFile" type="file" accept="video/*" aria-label="Choose a video clip"></label><button type="button" class="btn" id="filmOpenCapture">Capture a scene reference</button><small class="fr-privacy">Capture a real location, light or movement as reference footage for your AI workflow.</small>
           </div>
         </div>
         <div class="fr-privacy" id="filmClipNote" style="margin-top:8px">No media loaded. Choose a video clip or send audio from another Studio room.</div>
       </div>
       <div class="fr-side">
         <label class="fr-logline"><span>Story note</span><textarea id="filmLogline" maxlength="1200" placeholder="What is changing in this story?"></textarea></label>
-        <p class="fr-privacy">Your video and audio stay in this project’s local media library. Story notes and scene cues are saved alongside them.</p>
+        <label class="fr-logline"><span>Script / scene excerpt</span><textarea id="filmScriptNotes" maxlength="8000" placeholder="Paste a scene or use Import from Write below."></textarea></label>
+        <label class="fr-logline"><span>Shot plan for your reference</span><textarea id="filmShotPlan" maxlength="4000" placeholder="1. Wide location reference&#10;2. Character entrance&#10;3. Close detail or movement"></textarea></label>
+        <p class="fr-privacy">Your video and audio stay in this project’s local media library. Story notes, script and scene cues stay with this project.</p>
       </div>
     </div>
     <div class="fr-cue-head">
@@ -1681,7 +1695,7 @@ A clear image or action.
 <aside class="studio-rec" id="studioRecorder" aria-label="Studio recorder">
   <div class="studio-rec-top"><div><span class="studio-rec-kicker">PENNIO capture</span><b id="studioRecTitle">Record a new idea</b><small id="studioRecHint">Capture audio or video from any room.</small></div><button type="button" class="studio-rec-close" id="studioRecClose" aria-label="Close recorder">×</button></div>
   <div class="studio-rec-controls"><div class="studio-rec-modes" role="group" aria-label="Recording type"><button type="button" class="on" data-rec-mode="audio">Voice / audio</button><button type="button" data-rec-mode="video">Video</button></div><button type="button" class="btn primary" id="studioRecStart">● Record</button><button type="button" class="btn" id="studioRecStop" disabled>Stop</button><span class="studio-rec-clock" id="studioRecClock">00:00</span></div>
-  <div class="studio-rec-preview" id="studioRecPreview" hidden></div>
+  <div class="studio-rec-live" id="studioRecLive" hidden><div class="studio-rec-live-frame" id="studioRecLiveFrame" data-aspect="landscape"><video id="studioRecLiveVideo" autoplay playsinline muted></video><div class="studio-rec-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="studio-rec-live-label" id="studioRecLiveLabel">CAMERA PREVIEW</span><span class="studio-rec-rec" id="studioRecRec" hidden>REC</span></div><div class="studio-rec-camera-tools"><button type="button" class="btn" id="studioRecFlip" disabled>Flip camera</button><span>Framing guide</span><button type="button" class="btn on" data-rec-aspect="landscape">16:9</button><button type="button" class="btn" data-rec-aspect="portrait">9:16</button><button type="button" class="btn" data-rec-aspect="square">1:1</button></div></div><div class="studio-rec-preview" id="studioRecPreview" hidden></div>
   <div class="studio-rec-trim" id="studioRecTrim" hidden style="padding:12px;margin:10px 0;border:1px solid var(--line,rgba(255,255,255,.16));border-radius:12px">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px"><b>Trim take</b><small id="studioRecTrimDuration">00:00</small></div>
     <label for="studioRecTrimStart" style="display:flex;justify-content:space-between;gap:10px;font-size:12px">Start <output id="studioRecTrimStartValue">00:00</output></label>
@@ -1965,7 +1979,16 @@ function makeMaster(ctx){
   comp.threshold.value=-14; comp.ratio.value=4; comp.attack.value=.004; comp.release.value=.15;
   const g=ctx.createGain(); g.gain.value=.85;
   comp.connect(g); g.connect(ctx.destination);
+  comp.pennioOutputGain=g;
   return comp;
+}
+function setTransportOutput(level){
+  const gain=master&&master.pennioOutputGain&&master.pennioOutputGain.gain;
+  if(!gain||!ac) return;
+  const now=ac.currentTime;
+  gain.cancelScheduledValues(now);
+  gain.setValueAtTime(gain.value,now);
+  gain.linearRampToValueAtTime(level,now+.012);
 }
 function ensureAudio(){
   if(!ac){
@@ -2121,7 +2144,7 @@ function fullTracks(){ const t=[]; if(LAY.full&&vbuf()) t.push({buf:vbuf(),off:v
 function barsFor(tr){ return Math.max(1,Math.ceil((tr.buf.duration-Math.max(0,tr.off))/(N*stepDur()))); }
 function playTrack(ctx,out,t,tr,k){ const s=ctx.createBufferSource(); s.buffer=tr.buf; s.connect(out); const pos=(k||0)*N*stepDur()+tr.off; if(pos>=0) s.start(t,Math.min(pos,tr.buf.duration-.05)); else s.start(t-pos,0); return s; }
 function playFull(ctx,out,t,buf){ if(!buf) return null; const s=ctx.createBufferSource(); s.buffer=buf; s.connect(out); s.start(t); return s; }
-function clickAt(ctx,t,accent){ const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=accent?2000:1500; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(accent?.7:.45,t+.002); g.gain.exponentialRampToValueAtTime(.0001,t+.035); o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+.05); }
+function clickAt(ctx,t,accent){ const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=accent?2000:1500; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(accent?.7:.45,t+.002); g.gain.exponentialRampToValueAtTime(.0001,t+.035); o.connect(g); g.connect(ctx===ac&&master?master:ctx.destination); o.start(t); o.stop(t+.05); }
 const bpmEl=document.getElementById("bpm"), swEl=document.getElementById("swing");
 function stepDur(){ return 60/(+bpmEl.value)/(N===12?3:4); }
 function swingOffset(i){ return (N===16 && i%2===1) ? stepDur()*(+swEl.value/100)*.5 : 0; }
@@ -2138,8 +2161,8 @@ function schedule(){
 }
 function stopTracks(){ fullSrcs.forEach(s=>{ try{s.stop();}catch(e){} }); fullSrcs=[]; }
 function stopTracksAt(t){ fullSrcs.forEach(s=>{ try{s.stop(t);}catch(e){} }); fullSrcs=[]; }
-function start(t0,bar,pre){ ensureAudio(); preRoll=pre||0; stopPreviews(); stopTracks(); clearInterval(timer); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
-function stop(){ playing=false; clearInterval(timer); seekFrom=-1; preRoll=0; stopTracks(); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
+function start(t0,bar,pre){ ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clearInterval(timer); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
+function stop(){ playing=false; clearInterval(timer); seekFrom=-1; preRoll=0; stopTracks(); setTransportOutput(0); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
 /* ---------- one sound at a time, shown in the Now playing bar ---------- */
 let npKind=null, prevSrc=null, drumPrev=null, npSrc=null, npT0=0, npDur=0, npRaf=0;
 const mmss=x=>{ x=Math.max(0,Math.round(x)); return Math.floor(x/60)+":"+String(x%60).padStart(2,"0"); };
@@ -2160,8 +2183,10 @@ function npUpdate(){
 function stopPreviews(){
   if(prevSrc){ const s=prevSrc; prevSrc=null; try{ s.onended=null; s.stop(); }catch(e){} vprev.textContent="Preview"; }
   if(drumPrev){ const s=drumPrev; drumPrev=null; try{ s.onended=null; s.stop(); }catch(e){} hearDrum.textContent="Hear the drum alone"; }
+  setTransportOutput(0);
 }
-function stopAll(){ stopPreviews(); if(playing) stop(); npUpdate(); }
+function stopAll(){ stopPreviews(); if(playing) stop(); else setTransportOutput(0); npUpdate(); }
+window.PennioBeatControl={stop:stopAll,isPlaying:()=>playing};
 document.getElementById("npStop").onclick=stopAll;
 function setIcon(){ npUpdate();
   document.getElementById("playIcon").innerHTML = playing ? '<path d="M26.5 25h4v14h-4zM33.5 25h4v14h-4z"/>' : '<path d="M28 24.5l11 7.5-11 7.5z"/>';
@@ -2288,12 +2313,12 @@ function render(){
 /* tap = cycle, hold or right-click = ghost, drag with a mouse = paint or erase */
 function tapCell(id,i){ pushHist(); const l=LANES.find(x=>x.id===id); const v=pattern[id][i];
   pattern[id][i]= v<0? -v : (v+1)%(l.states+1); const nv=pattern[id][i];
-  if(nv){ ensureAudio(); trigger(id,ac,busses[id],ac.currentTime+.005,nv,i); }
+  if(nv){ ensureAudio(); setTransportOutput(.85); trigger(id,ac,busses[id],ac.currentTime+.005,nv,i); }
   const c=rowsEl.querySelector('.row[data-l="'+id+'"] .step[data-i="'+i+'"]'); if(c) styleCell(c,id,i); markPresets(-1); saveSoon(); }
 let lastGhost=0;
 function ghostCell(id,i){ if(Date.now()-lastGhost<600) return; lastGhost=Date.now(); pushHist(); const v=pattern[id][i];
   pattern[id][i]= v>0? -v : v<0? -v : -1; const nv=pattern[id][i];
-  if(nv<0){ ensureAudio(); trigger(id,ac,busses[id],ac.currentTime+.005,nv,i); }
+  if(nv<0){ ensureAudio(); setTransportOutput(.85); trigger(id,ac,busses[id],ac.currentTime+.005,nv,i); }
   const c=rowsEl.querySelector('.row[data-l="'+id+'"] .step[data-i="'+i+'"]'); if(c) styleCell(c,id,i);
   if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){} markPresets(-1); saveSoon(); }
 let drag=null;
@@ -2806,7 +2831,7 @@ function setEnhanced(on){ const wasPrev=!!prevSrc; useEnhanced=on; if(wasPrev){ 
 document.querySelectorAll("#ab button").forEach(bn=>bn.onclick=()=>setEnhanced(bn.dataset.k==="pro"));
 function restartTracks(){ stopTracks(); loopIdx=0; }
 vprev.onclick=()=>{ ensureAudio(); if(prevSrc){ stopPreviews(); npUpdate(); return; }
-  stopAll(); prevSrc=playFull(ac,busses.full,ac.currentTime+.02,vbuf()); if(!prevSrc) return; vprev.textContent="Stop preview"; prevSrc.onended=()=>{prevSrc=null; vprev.textContent="Preview"; npUpdate();}; npUpdate(); };
+  stopAll(); setTransportOutput(.85); prevSrc=playFull(ac,busses.full,ac.currentTime+.02,vbuf()); if(!prevSrc) return; vprev.textContent="Stop preview"; prevSrc.onended=()=>{prevSrc=null; vprev.textContent="Preview"; npUpdate();}; npUpdate(); };
 
 /* ---------- voice to talking drum ---------- */
 function analysePitch(b){
@@ -2900,7 +2925,7 @@ toDrum.onclick=async()=>{
   toDrum.disabled=false; toDrum.textContent="Translate my voice to drum";
 };
 hearDrum.onclick=()=>{ ensureAudio(); if(drumPrev){ stopPreviews(); npUpdate(); return; }
-  stopAll(); drumPrev=playFull(ac,busses.dd,ac.currentTime+.02,drumBuf); if(!drumPrev) return; ddWatch(); hearDrum.textContent="Stop"; drumPrev.onended=()=>{drumPrev=null; hearDrum.textContent="Hear the drum alone"; npUpdate();}; npUpdate(); };
+  stopAll(); setTransportOutput(.85); drumPrev=playFull(ac,busses.dd,ac.currentTime+.02,drumBuf); if(!drumPrev) return; ddWatch(); hearDrum.textContent="Stop"; drumPrev.onended=()=>{drumPrev=null; hearDrum.textContent="Hear the drum alone"; npUpdate();}; npUpdate(); };
 
 /* ---------- remix ---------- */
 let version=1;
@@ -3388,10 +3413,7 @@ document.getElementById("wdrum").onclick=()=>{
 const vrec=document.getElementById("vrec"); let mrec=null, mchunks=[], mstream=null, mtimer=null, mstart=0;
 const recOpts=document.getElementById("recOpts"), latEl=document.getElementById("lat"), latV=document.getElementById("latV"), countEl=document.getElementById("countin");
 if(!inClaude && navigator.mediaDevices && window.MediaRecorder){ vrec.style.display=""; recOpts.hidden=false; }
-const savedRecSet=lsGet("ps.recSet")||{};
-const recSet=Object.assign({over:true,count:true,click:true,beat:false},savedRecSet);
-if(!savedRecSet.countInBeatDefaultV2){ recSet.beat=false; recSet.countInBeatDefaultV2=true; lsSet("ps.recSet",recSet); }
-function bindSwitch(id,key){ const b=document.getElementById(id); const paint=()=>{ b.classList.toggle("on",recSet[key]); b.setAttribute("aria-checked",recSet[key]); }; paint(); b.onclick=()=>{ recSet[key]=!recSet[key]; lsSet("ps.recSet",recSet); paint(); }; }
+const savedRecSet=lsGet("ps.recSet")||{}; const recSet=Object.assign({over:true,count:true,click:true,beat:false},savedRecSet); if(!savedRecSet.countInBeatDefaultV2){ recSet.beat=false; recSet.countInBeatDefaultV2=true; lsSet("ps.recSet",recSet); } function bindSwitch(id,key){ const b=document.getElementById(id); const paint=()=>{ b.classList.toggle("on",recSet[key]); b.setAttribute("aria-checked",recSet[key]); }; paint(); b.onclick=()=>{ recSet[key]=!recSet[key]; lsSet("ps.recSet",recSet); paint(); }; }
 bindSwitch("swOver","over"); bindSwitch("swCount","count"); bindSwitch("swClick","click"); bindSwitch("swBeat","beat");
 /* delay fix: measured round trip, or an estimate until measured */
 let latMs=lsGet("ps.latency");
@@ -3401,38 +3423,47 @@ latEl.oninput=()=>{ latMs=+latEl.value; lsSet("ps.latency",latMs); latV.textCont
 function beatDur(){ return (N===12?3:4)*stepDur(); }
 function showCount(txt,go){ document.getElementById("ciN").textContent=txt; const r=countEl.querySelector(".ilu-rip"); if(r && !reduceMotion.matches){ r.style.stroke=go?"var(--tp)":"var(--heritage)"; r.animate([{transform:"scale(.2)",opacity:1},{transform:"scale(1)",opacity:0}],{duration:520,easing:"cubic-bezier(.2,.7,.3,1)"}); } countEl.classList.toggle("go",!!go); countEl.classList.add("on"); }
 function hideCount(){ countEl.classList.remove("on"); }
-async function openMic(clean){
-  return navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:!clean,autoGainControl:!clean}});
+async function openMic(clean,echoCancellation=true){
+  return navigator.mediaDevices.getUserMedia({audio:{echoCancellation,noiseSuppression:!clean,autoGainControl:!clean}});
 }
 function recordStart(stream){
-  return new Promise(res=>{ const r=new MediaRecorder(stream); const chunks=[]; r.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); }; r.onstart=()=>res({r,chunks,t0:ac.currentTime}); r.start(); });
+  return new Promise(res=>{
+    const r=new MediaRecorder(stream);
+    const chunks=[];
+    r.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
+    r.onstart=()=>res({r,chunks,t0:ac.currentTime});
+    r.start();
+  });
 }
 let recBeatStart=null;
 vrec.onclick=async()=>{
   if(mrec&&mrec.state==="recording"){ mrec.stop(); return; }
   ensureAudio();
   try{
-    mstream=await openMic(false);
+    if(playing) stop();
+    mstream=await openMic(false,true);
     const {r,chunks,t0}=await recordStart(mstream); mrec=r; mchunks=chunks;
     recBeatStart=null;
-    /* a phone can mute or pause the page's sound the moment the mic opens: wake it before the beat is scheduled */
     if(ac.state!=="running"){ try{ await ac.resume(); }catch(e){} }
+    const bd=beatDur(), lead=recSet.count? 4*bd : 0, tStart=ac.currentTime+.25+lead;
+    const beatIn=recSet.over && recSet.count && recSet.beat;
+    if(recSet.count){
+      setTransportOutput(.85);
+      for(let k=0;k<4;k++){ const tk=tStart-lead+k*bd; if(recSet.click||!beatIn) clickAt(ac,tk,k===0); setTimeout(()=>showCount(String(4-k)),Math.max(0,(tk-ac.currentTime)*1000)); }
+      setTimeout(()=>{ showCount("Sing",true); setTimeout(hideCount,500); },Math.max(0,(tStart-ac.currentTime)*1000));
+    }
     if(recSet.over){
-      if(playing) stop();
-      const bd=beatDur(), lead=recSet.count? 4*bd : 0, tStart=ac.currentTime+.25+lead;
-      const beatIn= recSet.count && recSet.beat;   // the groove plays through the count-in bar
-      if(recSet.count){
-        for(let k=0;k<4;k++){ const tk=tStart-lead+k*bd; if(recSet.click||!beatIn) clickAt(ac,tk,k===0); setTimeout(()=>showCount(String(4-k)),Math.max(0,(tk-ac.currentTime)*1000)); }
-        setTimeout(()=>{ showCount("Sing",true); setTimeout(hideCount,500); },Math.max(0,(tStart-ac.currentTime)*1000));
-      }
       recClick=recSet.click;
       recBeatStart=tStart-t0;
       if(beatIn) start(tStart-lead,0,1); else start(tStart);
       setTimeout(()=>{ if(mrec&&mrec.state==="recording" && ac.state!=="running") toast("Your phone paused the sound when the mic opened. Stop, tap play once, then Record again."); },900);
-    } else toast("Recording without the beat. Switch on Record over the beat to sing along to it.");
+    }else{
+      recClick=false;
+      toast("Recording clean voice. Turn on Record over the beat when you want the groove during the take.");
+    }
     mrec.onstop=async()=>{
       clearInterval(mtimer); hideCount(); mstream.getTracks().forEach(t=>t.stop()); vrec.textContent="● Record"; recClick=false;
-      const over=recBeatStart!=null; if(over&&playing) stop();
+      const over=recBeatStart!=null; if(playing) stop();
       const blob=new Blob(mchunks,{type:mrec.mimeType||"audio/webm"});
       try{
         pushHist();
@@ -3446,21 +3477,22 @@ vrec.onclick=async()=>{
       }catch(e){ vmeta.textContent="That recording could not be read. Try again."; }
     };
     mstart=Date.now();
-    npUpdate(); mtimer=setInterval(()=>{ const s=Math.floor((Date.now()-mstart)/1000); vrec.textContent="■ Stop · "+s+"s"; if(s>=60) mrec.stop(); },250);
+    npUpdate();
+    mtimer=setInterval(()=>{ const s=Math.floor((Date.now()-mstart)/1000); vrec.textContent="■ Stop · "+s+"s"; if(s>=60) mrec.stop(); },250);
   }catch(e){ vrec.style.display="none"; recOpts.hidden=true; toast("Microphone is not available here. Use Add recording."); }
 };
 /* measure the round trip: play clicks through the speaker, hear them on the mic */
 document.getElementById("latTest").onclick=async()=>{
   const btn=document.getElementById("latTest");
-  ensureAudio(); if(playing) stop();
+  ensureAudio(); if(playing) stop(); setTransportOutput(.85);
   btn.disabled=true; btn.textContent="Listening… stay quiet";
   try{
-    const stream=await openMic(true);
+    const stream=await openMic(true,false);
     const {r,chunks,t0}=await recordStart(stream);
     const base=ac.currentTime+.6, gap=.5, n=6, times=[];
     for(let k=0;k<n;k++){ const t=base+k*gap; times.push(t-t0); clickAt(ac,t,true); }
     await new Promise(res=>setTimeout(res,(base+n*gap+.5-ac.currentTime)*1000));
-    const done=new Promise(res=>r.onstop=res); r.stop(); await done; stream.getTracks().forEach(t=>t.stop());
+    const done=new Promise(res=>r.onstop=res); r.stop(); await done; stream.getTracks().forEach(t=>t.stop()); setTransportOutput(0);
     const ab=await new Blob(chunks,{type:r.mimeType||"audio/webm"}).arrayBuffer();
     const rec=await new Promise((res,rej)=>{ const p=ac.decodeAudioData(ab,res,rej); if(p&&p.then) p.then(res,rej); });
     const d=rec.getChannelData(0), sr=rec.sampleRate; let mx=0; for(let i=0;i<d.length;i++){ const a=Math.abs(d[i]); if(a>mx) mx=a; }
@@ -4551,7 +4583,7 @@ document.getElementById("sylIn").oninput=sylRender;
     catch(e){if(status)status.textContent="Browser storage is full. Export your work to keep it.";}
   };
   const makeId=()=>Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
-  const initialFilm={title:"Untitled film",logline:"",clipName:"",cues:[]};
+  const initialFilm={title:"Untitled film",logline:"",scriptNotes:"",shotPlan:"",clipName:"",cues:[]};
   let film=Object.assign({},initialFilm,readRoomData(FILM_KEY,{}));
   film.cues=Array.isArray(film.cues)?film.cues:[];
   const filmTitle=$("filmTitle"), filmLogline=$("filmLogline"), filmVideo=$("filmVideo"), filmFile=$("filmFile");
@@ -4598,6 +4630,7 @@ document.getElementById("sylIn").oninput=sylRender;
   function saveFilm(){
     film.title=filmTitle.value.trim()||"Untitled film";
     film.logline=filmLogline.value;
+    film.scriptNotes=$("filmScriptNotes").value; film.shotPlan=$("filmShotPlan").value;
     safeWrite(roomKey(FILM_KEY),film,filmSave);
   }
   function saveFilmSoon(){
@@ -4640,12 +4673,12 @@ document.getElementById("sylIn").oninput=sylRender;
   }
   film.cues.forEach(c=>{if(!c.id)c.id=makeId();});
   filmTitle.value=film.title||"Untitled film";
-  filmLogline.value=film.logline||"";
+  filmLogline.value=film.logline||""; $("filmScriptNotes").value=film.scriptNotes||""; $("filmShotPlan").value=film.shotPlan||"";
   if(film.clipName)filmClipNote.textContent="Restoring "+film.clipName+" from this project’s local media library…";
   renderCues();
   filmTitle.addEventListener("input",saveFilmSoon);
-  filmLogline.addEventListener("input",saveFilmSoon);
-  filmFile.addEventListener("change",async()=>{
+  filmLogline.addEventListener("input",saveFilmSoon); $("filmScriptNotes").addEventListener("input",saveFilmSoon); $("filmShotPlan").addEventListener("input",saveFilmSoon);
+  $("filmOpenCapture").addEventListener("click",()=>{const launch=$("studioRecLaunch"),mode=document.querySelector('[data-rec-mode="video"]');if(launch&&!$("studioRecorder").classList.contains("open"))launch.click();if(mode)mode.click();$("studioRecorder").scrollIntoView({behavior:"smooth",block:"center"});});filmFile.addEventListener("change",async()=>{
     const file=filmFile.files&&filmFile.files[0];if(!file)return;
     try{
       const asset=window.PennioWorkspace?await window.PennioWorkspace.addAsset({blob:file,name:file.name,kind:"video"}):null;
@@ -4848,7 +4881,7 @@ document.getElementById("sylIn").oninput=sylRender;
     paintDraftMode();updateDraftStats();
     film=Object.assign({},initialFilm,readRoomData(FILM_KEY,{}));
     film.cues=Array.isArray(film.cues)?film.cues:[];film.cues.forEach(c=>{if(!c.id)c.id=makeId();});
-    filmTitle.value=film.title||"Untitled film";filmLogline.value=film.logline||"";
+    filmTitle.value=film.title||"Untitled film";filmLogline.value=film.logline||"";$("filmScriptNotes").value=film.scriptNotes||"";$("filmShotPlan").value=film.shotPlan||"";
     renderCues();renderActiveCue();renderWriteCue();clearFilmPreview();
     if(document.getElementById("filmDesk")?.getClientRects().length)restoreFilmAsset(project||null);
   }
