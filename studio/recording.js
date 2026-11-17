@@ -95,7 +95,7 @@ start.addEventListener("click",async()=>{
 $("studioRecSave").addEventListener("click",()=>{if(!blob||!blobUrl)return;const a=document.createElement("a");a.href=blobUrl;const ext=(blob.type.includes("mp4")?"mp4":blob.type.includes("ogg")?"ogg":"webm");a.download="pennio-voice-take."+ext;document.body.append(a);a.click();a.remove();setStatus("Recording saved to your device.");});
 
 
-window.addEventListener("pennio:studio-media",e=>{const d=e.detail||{};if(!d.blob)return;clearTake();takeProjectId=d.projectId||window.PennioWorkspace?.activeProjectId||"__studio_default__";blob=d.blob;sourceBlob=blob;mode="audio";showPreview();result.hidden=false;useAyan.hidden=false;useTongue.hidden=false;useFilm.hidden=false;extract.hidden=mode!=="video";setStatus((d.name||"Media")+" received from another Studio room. Choose where to use it.");showDock(true);});
+window.addEventListener("pennio:studio-media",e=>{const d=e.detail||{};if(!d.blob)return;clearTake();takeProjectId=d.projectId||window.PennioWorkspace?.activeProjectId||"__studio_default__";blob=d.blob;sourceBlob=blob;mode=d.kind==="video"?"video":"audio";showPreview();result.hidden=false;useAyan.hidden=mode!=="audio";useTongue.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=true;setStatus((d.name||"Media")+" received from another Studio room. Choose where to use it.");showDock(true);});
 useTongue.addEventListener("click",()=>{
  if(!blob||mode!=="audio")return;
  const target=document.querySelector('nav button[data-v="write"]');if(target)target.click();
@@ -123,5 +123,4 @@ useFilm.addEventListener("click",async()=>{
 window.addEventListener("pennio:workspace-media-error",event=>{setStatus("Media could not be saved: "+(event.detail&&event.detail.message||"Check available device storage."));});
 $("studioRecAgain").addEventListener("click",()=>{clearTake();setStatus("Ready for another take.");});
 window.addEventListener("beforeunload",()=>{stopTracks();if(blobUrl)URL.revokeObjectURL(blobUrl);clearInterval(ticker);});
-setMode("audio");
 })();
