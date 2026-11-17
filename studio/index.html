@@ -4533,6 +4533,7 @@ function openProfile(){
   document.getElementById("profileMailStatus").textContent=pf.kit?"Your guide email request was accepted by Kit.":pf.kitPending?"The guide email request was submitted, but delivery could not be verified.":"Your guide email has not been confirmed. You can request it again.";
   document.getElementById("profileResend").disabled=!pf.email;
   document.getElementById("profileSheet").classList.add("on");
+  document.getElementById("profileSheet").scrollIntoView({behavior:"smooth",block:"start"});
 }
 document.getElementById("avatar").onclick=openProfile;
 document.getElementById("copyProfileId").onclick=async()=>{const id=sbSess&&sbSess.user&&sbSess.user.id;if(!id)return;try{await navigator.clipboard.writeText(id);toast("Account ID copied");}catch(e){const field=document.createElement("textarea");field.value=id;document.body.append(field);field.select();document.execCommand("copy");field.remove();toast("Account ID copied");}};
