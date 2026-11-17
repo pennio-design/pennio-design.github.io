@@ -258,11 +258,27 @@ window.addEventListener("beforeunload",()=>{clearTimeout(sessionSaveTimer);saveS
 // Timeline selection: drag across a waveform to mark an exact passage.
 state.range=null;
 const selectionReadout=$("dawSelectionReadout"),clearSelection=$("dawClearSelection"),keepSelection=$("dawKeepSelection"),punchRecord=$("dawPunchRecord"),humBeat=$("dawHumBeat");
+const selectionActions=document.querySelector(".daw-selection-actions");
+let duplicateSelectionButton=$("dawDuplicateSelection");
+if(selectionActions&&!duplicateSelectionButton){
+ duplicateSelectionButton=document.createElement("button");duplicateSelectionButton.type="button";duplicateSelectionButton.className="btn";duplicateSelectionButton.id="dawDuplicateSelection";duplicateSelectionButton.textContent="Duplicate to new track";duplicateSelectionButton.disabled=true;selectionActions.insertBefore(duplicateSelectionButton,humBeat||null);
+}
+duplicateSelectionButton?.addEventListener("click",()=>{
+ const r=rangeTimes();if(!r)return;
+ try{
+  const source=r.track,from=Math.floor(r.start*source.buffer.sampleRate),to=Math.max(from+1,Math.floor(r.end*source.buffer.sampleRate)),frames=to-from,copy=context().createBuffer(source.buffer.numberOfChannels,frames,source.buffer.sampleRate);
+  for(let channel=0;channel<source.buffer.numberOfChannels;channel++)copy.copyToChannel(source.buffer.getChannelData(channel).slice(from,to),channel);
+  snapshot();
+  const track={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:(source.name||"Audio")+" · selection",buffer:copy,start:0,end:copy.duration,gain:source.gain,pan:source.pan,timeline:r.timeline,mute:false,solo:false,bypassFx:!!source.bypassFx,dsp:{...window.StudioCleanDefaults,...(source.dsp||{})}};
+  state.tracks.push(track);state.selected=track.id;clearRange();render();status("Selected passage duplicated to a new track. The source track is unchanged.");
+ }catch(error){status("Could not duplicate this passage: "+error.message);}
+});
+
 function rangeTimes(){const t=selected();if(!t||!state.range)return null;const a=Math.max(t.start,Math.min(state.range.start,state.range.end)),b=Math.min(t.end,Math.max(state.range.start,state.range.end));return b-a>=.08?{track:t,start:a,end:b,duration:b-a,timeline:(t.timeline||0)+a-t.start}:null;}
 function syncRangeUI(){
  const r=rangeTimes(),fmt=n=>{n=Math.max(0,n||0);return String(Math.floor(n/60)).padStart(2,"0")+":"+String(Math.floor(n%60)).padStart(2,"0")+"."+Math.floor(n%1*10)};
  if(selectionReadout)selectionReadout.textContent=r?fmt(r.start)+" – "+fmt(r.end)+" · "+fmt(r.duration)+" selected":"Drag across a waveform to select a timeframe.";
- [clearSelection,keepSelection,punchRecord,humBeat].forEach(b=>{if(b)b.disabled=!r;});
+ [clearSelection,keepSelection,punchRecord,humBeat,duplicateSelectionButton].forEach(b=>{if(b)b.disabled=!r;});
  document.querySelectorAll(".daw-range-select").forEach(el=>{const row=el.closest(".daw-track"),t=state.tracks.find(x=>x.id===row?.dataset.id);if(!r||!t||t.id!==r.track.id){el.classList.remove("on");return;}el.style.left=(r.start/t.buffer.duration*100)+"%";el.style.width=((r.end-r.start)/t.buffer.duration*100)+"%";el.classList.add("on");});
 }
 function clearRange(){state.range=null;syncRangeUI();queueSessionSave();}
