@@ -2482,6 +2482,9 @@ function closeExportPanel(){
 document.getElementById("expClose").onclick=closeExportPanel;
 document.addEventListener("click",e=>{if(!expPanel.hidden&&!expPanel.contains(e.target)&&!expBtn.contains(e.target))closeExportPanel();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!expPanel.hidden)closeExportPanel();});
+window.addEventListener("pennio:overlay-open",event=>{
+  if(event.detail?.source!=="export")closeExportPanel();
+});
 function savedWhatsApp(){
   try{
     const digits=String(sessionStorage.getItem("ps.whatsapp")||"").replace(/\D/g,"");
