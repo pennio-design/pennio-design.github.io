@@ -1207,6 +1207,54 @@ html[data-theme="light"] .row+.row{border-top-color:rgba(9,9,9,.12)}
 #v-ayan .row.dd .step.ghost::before{opacity:.5;outline:1px dashed #d4b18d}
 </style>
 <style id="pennio-speak-once-dock">#studioRecTongue{border-color:#8f6849;color:var(--text)}#studioRecTongue:active{background:#2a211a}</style>
+
+<style id="pennio-ayan-visual-pass-1">
+/* Àyàn instrument surface: clearer lanes, tactile steps, stable controls. */
+#v-ayan .grid{padding:14px 12px;background:linear-gradient(180deg,#121014 0%,#0e0c10 100%);border-color:rgba(255,245,235,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+#v-ayan .row{grid-template-columns:116px minmax(640px,1fr);gap:12px;min-height:54px;padding:7px 0}
+#v-ayan .row+.row{border-top:1px solid rgba(255,245,235,.055)}
+#v-ayan .name{position:sticky;left:0;z-index:2;min-height:40px;justify-content:center;padding:5px 8px 5px 5px;border-radius:8px;background:linear-gradient(90deg,#100e12 82%,rgba(16,14,18,.92))}
+#v-ayan .name b{font-size:12px;letter-spacing:-.015em}
+#v-ayan .name small{font-size:9px;letter-spacing:.015em}
+#v-ayan .steps{min-width:640px;gap:5px}
+#v-ayan .step{min-height:42px;border:1px solid rgba(255,255,255,.035);border-radius:8px;background:#1a171c;color:#151116;box-shadow:inset 0 1px 0 rgba(255,255,255,.025);transition:background .12s,border-color .12s,transform .12s,box-shadow .12s}
+#v-ayan .step.beat{background:#211d23;border-color:rgba(255,255,255,.035)}
+#v-ayan .step:focus-visible{outline:2px solid var(--text);outline-offset:2px;z-index:3}
+#v-ayan .step:active{transform:scale(.94)}
+#v-ayan .step:nth-child(4n+1){box-shadow:inset 2px 0 0 rgba(255,255,255,.08)}
+#v-ayan .step.now{outline:2px solid var(--orange);outline-offset:2px;z-index:1}
+#v-ayan .row.dd{--lane:#ff8a4c;--lane-soft:#b95b32;--lane-dim:#573323}
+#v-ayan .row.bata{--lane:#ff6f79;--lane-soft:#b94d5a;--lane-dim:#582b35}
+#v-ayan .row.agogo{--lane:#e8bd5b;--lane-soft:#a9873e;--lane-dim:#514327}
+#v-ayan .row.shek{--lane:#69c9b3;--lane-soft:#438d7e;--lane-dim:#254c46}
+#v-ayan .row.udu{--lane:#75aee8;--lane-soft:#4d79a7;--lane-dim:#293e57}
+#v-ayan .row.duru{--lane:#d68c65;--lane-soft:#966046;--lane-dim:#503426}
+#v-ayan .row.clap{--lane:#c49be8;--lane-soft:#8866aa;--lane-dim:#49365d}
+#v-ayan .row.bass{--lane:#83b8d7;--lane-soft:#587e99;--lane-dim:#2b4353}
+#v-ayan .row.keys{--lane:#d6a4c6;--lane-soft:#986f8e;--lane-dim:#503a4b}
+#v-ayan .row.gtr{--lane:#d7b17b;--lane-soft:#987c55;--lane-dim:#51432f}
+#v-ayan .row.pluck{--lane:#a6c77b;--lane-soft:#71894e;--lane-dim:#3a4829}
+#v-ayan .row.flute{--lane:#7dc7d2;--lane-soft:#548b94;--lane-dim:#2b4a50}
+#v-ayan .row.reed{--lane:#b5a2df;--lane-soft:#7e70a0;--lane-dim:#403954}
+#v-ayan .row.vox{--lane:#f08d9d;--lane-soft:#aa6270;--lane-dim:#59343d}
+#v-ayan .row .name b{color:var(--lane,var(--text))}
+#v-ayan .row .name small{color:var(--mute)}
+#v-ayan .row .step.v1{background:var(--lane,var(--orange));border-color:var(--lane,var(--orange));color:#171116}
+#v-ayan .row .step.v2{background:var(--lane-soft,var(--orange));border-color:var(--lane,var(--orange));color:#f8f1e9}
+#v-ayan .row .step.v3{background:var(--lane-dim,var(--orange-dk));border-color:var(--lane,var(--orange));color:#f8f1e9}
+#v-ayan .row .step.v4,#v-ayan .row .step.v5{background:var(--lane-soft,var(--orange));border-color:var(--lane,var(--orange));color:#f8f1e9}
+#v-ayan .row .step.now{outline-color:var(--lane,var(--orange));box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+#v-ayan .transport{grid-template-columns:58px minmax(90px,1fr) minmax(90px,1fr);gap:16px}
+#v-ayan .play{background:var(--orange);color:#111;box-shadow:0 5px 22px rgba(255,107,53,.2)}
+#v-ayan .play:hover{filter:brightness(1.08)}
+#v-ayan .ctl label{font-size:9px;letter-spacing:.14em}
+#v-ayan .presets{padding:3px 1px 8px}
+#v-ayan .chip{border-radius:10px;background:rgba(255,255,255,.018)}
+#v-ayan .chip.on{background:rgba(255,107,53,.13);border-color:rgba(255,139,87,.65);color:#fff1e8}
+@media(max-width:560px){#v-ayan .row{grid-template-columns:82px minmax(640px,1fr);gap:8px}#v-ayan .name{padding-left:3px}#v-ayan .name b{font-size:10px}#v-ayan .steps{gap:4px}#v-ayan .step{min-height:40px;border-radius:7px}#v-ayan .transport{grid-template-columns:52px 1fr 1fr;gap:10px}}
+@media(prefers-reduced-motion:reduce){#v-ayan .step{transition:none}}
+</style>
+
 </head>
 <body class="in-studio">
 <header>
