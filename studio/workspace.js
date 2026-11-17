@@ -137,8 +137,8 @@ async function refreshAssets(){
     const full=await getAsset(asset.id);if(!full)return;
     if(deletingProjects.has(full.projectId))return;
     const project=projectById(full.projectId);
-    if(project)setActive(project);
-    else if(full.projectId==="__studio_default__")setActive(null);
+    if(project)await queueProjectSwitch(project,false);
+    else if(full.projectId==="__studio_default__")await queueProjectSwitch(null,false);
     if(full.kind==="video"){
      await window.PennioWorkspace.openRoom("faajiplace");
      window.dispatchEvent(new CustomEvent("pennio:film-media",{detail:{blob:full.blob,name:full.name,assetId:full.id,projectId:full.projectId,kind:"video"}}));
@@ -325,7 +325,7 @@ async function refreshNavigation(){
 }
 window.PennioWorkspace={
  get activeProjectId(){return activeProjectId;},
- setActiveProject:setActive,
+ setActiveProject:project=>queueProjectSwitch(project||null,false),
  getProject:projectById,
  listProjects:readProjects,listSavedSessions,openProject,refreshNavigation,
  getProjectContents:async projectId=>{const [allAssets,allSessions]=await Promise.all([getAssets(),listSavedSessions()]);return getProjectContents(projectId,allAssets,allSessions);},
