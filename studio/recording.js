@@ -3,11 +3,12 @@
 const $=id=>document.getElementById(id);
 const dock=$("studioRecorder"),launch=$("studioRecLaunch"),start=$("studioRecStart"),stop=$("studioRecStop"),preview=$("studioRecPreview"),result=$("studioRecResult"),status=$("studioRecStatus"),clock=$("studioRecClock"),useAyan=$("studioRecUse"),useTongue=$("studioRecTongue"),useFilm=$("studioRecFilm"),extract=$("studioRecExtract");
 const trimPanel=$("studioRecTrim"),trimStart=$("studioRecTrimStart"),trimEnd=$("studioRecTrimEnd"),trimStartValue=$("studioRecTrimStartValue"),trimEndValue=$("studioRecTrimEndValue"),trimDuration=$("studioRecTrimDuration"),trimApply=$("studioRecTrimApply"),trimReset=$("studioRecTrimReset");
+const liveWrap=$("studioRecLive"),liveVideo=$("studioRecLiveVideo"),liveFrame=$("studioRecLiveFrame"),liveRec=$("studioRecRec"),flipButton=$("studioRecFlip");let facing="environment";
 
 if(!dock||!launch)return;
 let mode="audio",stream=null,recorder=null,chunks=[],blob=null,sourceBlob=null,blobUrl=null,started=0,ticker=null,mediaDuration=0,takeProjectId=null;
 const setStatus=s=>status.textContent=s;
-const setMode=m=>{if(recorder&&recorder.state==="recording")return;mode=m;document.querySelectorAll("[data-rec-mode]").forEach(b=>b.classList.toggle("on",b.dataset.recMode===m));$("studioRecTitle").textContent=m==="audio"?"Record a voice or sound":"Record a video take";$("studioRecHint").textContent=m==="audio"?"Capture a voice note, melody or beatbox.":"Capture a performance, scene or visual idea.";start.textContent=m==="audio"?"● Record audio":"● Record video";};
+const setMode=m=>{if(recorder&&recorder.state==="recording")return;if(stream)stopTracks();mode=m;document.querySelectorAll("[data-rec-mode]").forEach(b=>b.classList.toggle("on",b.dataset.recMode===m));$("studioRecTitle").textContent=m==="audio"?"Record a voice or sound":"Capture a scene reference";$("studioRecHint").textContent=m==="audio"?"Capture a clean voice note, melody or beatbox.":"Preview framing, then capture real light, locations and movement for your film or AI reference.";if(liveWrap)liveWrap.hidden=m!=="video";start.textContent=m==="audio"?"● Record audio":"Open camera";start.dataset.ready="false";if(liveVideo)liveVideo.srcObject=null;};
 async function prepareTakeProject(room){
  let projectId=takeProjectId||window.PennioWorkspace?.activeProjectId||"__studio_default__";
  if(projectId!=="__studio_default__"){
@@ -57,6 +58,7 @@ trimReset.addEventListener("click",()=>{if(!sourceBlob)return;blob=sourceBlob;sh
 
 function showDock(open){
  if(!open&&recorder&&recorder.state==="recording"){setStatus("Stop the recording before closing this panel.");return}
+ if(!open&&stream)stopTracks();
  dock.classList.toggle("open",open);launch.setAttribute("aria-expanded",String(open));document.body.classList.toggle("recorder-open",open);
  if(open)window.dispatchEvent(new CustomEvent("pennio:overlay-open",{detail:{source:"recorder"}}));
 }
@@ -65,32 +67,40 @@ window.addEventListener("pennio:overlay-open",event=>{
  showDock(false);
 });
 launch.addEventListener("click",()=>showDock(!dock.classList.contains("open")));
-$("studioRecClose").addEventListener("click",()=>showDock(false));
+$("studioRecClose").addEventListener("click",()=>{if(recorder&&recorder.state==="recording")return;stopTracks();showDock(false);});
 document.querySelectorAll("[data-rec-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.recMode)));
-function stopTracks(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}}
+flipButton.addEventListener("click",async()=>{if(mode!=="video"||recorder&&recorder.state==="recording")return;const wasReady=!!stream;stopTracks();if(!wasReady)return;facing=facing==="environment"?"user":"environment";try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}}});liveVideo.srcObject=stream;liveFrame.dataset.facing=facing;liveWrap.hidden=false;await liveVideo.play();flipButton.disabled=false;start.dataset.ready="true";start.textContent="● Record scene";setStatus(facing==="user"?"Front camera preview ready.":"Rear camera preview ready.");}catch(error){setStatus("Could not switch camera: "+error.message);}});
+document.querySelectorAll("[data-rec-aspect]").forEach(button=>button.addEventListener("click",()=>{liveFrame.dataset.aspect=button.dataset.recAspect;document.querySelectorAll("[data-rec-aspect]").forEach(item=>item.classList.toggle("on",item===button));}));
+function stopTracks(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}if(liveVideo)liveVideo.srcObject=null;if(liveWrap)liveWrap.hidden=true;if(flipButton)flipButton.disabled=true;start.dataset.ready="false";if(mode==="video")start.textContent="Open camera";liveRec&&(liveRec.hidden=true);}
 start.addEventListener("click",async()=>{
  clearTake();takeProjectId=window.PennioWorkspace?.activeProjectId||"__studio_default__";chunks=[];
  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){setStatus("Recording needs a supported browser and a secure HTTPS connection.");return;}
  try{
-  stream=await navigator.mediaDevices.getUserMedia(mode==="audio"?{audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}}:{audio:true,video:{facingMode:"user",width:{ideal:1920},height:{ideal:1080}}});
+  if(mode==="video"&&!stream){
+   window.PennioBeatControl?.stop?.();window.PennioDAWAudioControl?.stop?.();
+   stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}}});
+   liveVideo.srcObject=stream;liveFrame.dataset.facing=facing;liveWrap.hidden=false;await liveVideo.play();flipButton.disabled=false;start.dataset.ready="true";start.textContent="● Record scene";setStatus("Live preview ready. Check the framing, then record your scene.");return;
+  }
+  if(mode==="audio"){
+   window.PennioBeatControl?.stop?.();window.PennioDAWAudioControl?.stop?.();
+   stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+  }
   const mimeCandidates=mode==="audio"?["audio/webm;codecs=opus","audio/mp4","audio/webm"]:["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/mp4"];
   const mime=mimeCandidates.find(x=>MediaRecorder.isTypeSupported(x));
   recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);
   recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
   recorder.onerror=e=>setStatus("Recording error: "+(e.error?.message||"unknown error"));
   recorder.onstop=()=>{
-   document.body.classList.remove("recorder-active");stopTracks();blob=new Blob(chunks,{type:recorder.mimeType|| (mode==="audio"?"audio/webm":"video/webm")});
+   document.body.classList.remove("recorder-active");stopTracks();blob=new Blob(chunks,{type:recorder.mimeType||(mode==="audio"?"audio/webm":"video/webm")});
    if(!blob.size){setStatus("No recording was captured. Try again.");return;}
-   sourceBlob=blob;showPreview();result.hidden=false;
-   useAyan.hidden=mode!=="audio";useTongue.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=mode!=="video";
-   setStatus(mode==="audio"?"Take ready. Add it to Àyàn or save it to your device.":"Video take ready. Preview it, use it in Film or save it to your device.");
+   sourceBlob=blob;showPreview();result.hidden=false;useAyan.hidden=mode!=="audio";useTongue.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=mode!=="video";
+   setStatus(mode==="audio"?"Take ready. Add it to Àyàn or save it to your device.":"Scene captured. Preview it, then save it with Film as a visual reference.");
    start.disabled=false;stop.disabled=true;clearInterval(ticker);
   };
-  recorder.start(250);document.body.classList.add("recorder-active");started=Date.now();start.disabled=true;stop.disabled=false;setStatus(mode==="audio"?"Recording audio…":"Recording video…");
+  recorder.start(250);document.body.classList.add("recorder-active");if(liveRec)liveRec.hidden=false;started=Date.now();start.disabled=true;stop.disabled=false;setStatus(mode==="audio"?"Recording audio…":"Recording scene…");
   ticker=setInterval(()=>{const sec=Math.floor((Date.now()-started)/1000);clock.textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");},250);
- }catch(e){document.body.classList.remove("recorder-active");stopTracks();start.disabled=false;stop.disabled=true;setStatus("Could not start recording: "+(e.message||"Check microphone/camera permission and try again."));}
-});
-stop.addEventListener("click",()=>{if(recorder&&recorder.state==="recording"){recorder.stop();setStatus("Preparing your take…");}});
+ }catch(e){document.body.classList.remove("recorder-active");stopTracks();start.disabled=false;stop.disabled=true;setStatus("Could not start capture: "+(e.message||"Check microphone/camera permission and try again."));}
+}); stop.addEventListener("click",()=>{if(recorder&&recorder.state==="recording"){recorder.stop();setStatus("Preparing your take…");}});
 $("studioRecSave").addEventListener("click",()=>{if(!blob||!blobUrl)return;const a=document.createElement("a");a.href=blobUrl;const ext=(blob.type.includes("mp4")?"mp4":blob.type.includes("ogg")?"ogg":"webm");a.download=(mode==="audio"?"pennio-voice-take":"pennio-video-take")+"."+ext;document.body.append(a);a.click();a.remove();setStatus("Recording saved to your device.");});
 
 
