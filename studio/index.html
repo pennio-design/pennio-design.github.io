@@ -5522,7 +5522,7 @@ nav#nav[hidden]{display:none!important}
  const closeDrawers=()=>{mobileLeftOpen=false;mobileRightOpen=false;render();save()};
  const read=()=>{try{return JSON.parse(localStorage.getItem(key)||"{}")}catch(e){return {}}};
  const save=()=>{try{localStorage.setItem(key,JSON.stringify({left:leftOpen,right:rightOpen}))}catch(e){}};
- const mobile=()=>window.matchMedia("(max-width:760px)").matches;
+ const mobile=()=>window.matchMedia("(max-width:1024px)").matches;
  let state=read(),leftOpen=state.left!==false,rightOpen=state.right!==false,mobileLeftOpen=false,mobileRightOpen=false;
  function render(){
   shell.classList.toggle("left-collapsed",!leftOpen);shell.classList.toggle("right-collapsed",!rightOpen);
@@ -5562,5 +5562,30 @@ nav#nav[hidden]{display:none!important}
  window.addEventListener("pennio:workspace-project-open",updateContext);
  updateContext();render();
 })();</script>
+
+<style id="studio-landscape-tablet-layout">
+/* Landscape phones and compact tablets use drawers instead of squeezing three columns. */
+@media (min-width:761px) and (max-width:1024px){
+  .studio-shell,.studio-shell.left-collapsed,.studio-shell.right-collapsed,.studio-shell.left-collapsed.right-collapsed{display:block;padding:0 12px}
+  .studio-main{width:100%;max-width:none;min-width:0;padding:0 2px 30px}
+  body.studio-drawer-open{overflow:hidden;overscroll-behavior:none}
+  .studio-panel-backdrop{display:block;position:fixed;inset:0;z-index:79;background:transparent;touch-action:manipulation}
+  .studio-panel-backdrop[hidden]{display:none!important}
+  .studio-side{position:fixed;z-index:81;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);width:min(42vw,360px);max-height:none;margin:0;border-radius:0;background:var(--off);box-shadow:0 12px 40px rgba(0,0,0,.28);transition:transform .22s ease;overscroll-behavior:contain}
+  .studio-side-left{left:0;transform:translateX(-105%);border-radius:0 14px 14px 0}
+  .studio-side-right{right:0;transform:translateX(105%);border-radius:14px 0 0 14px}
+  .studio-shell.mobile-left-open.mobile-right-open .studio-side{width:48vw;max-width:none}
+  .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{display:block;transform:translateX(0)}
+  .studio-side-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:20px;line-height:1}
+  .studio-panel-toggles{position:relative;z-index:82}
+  .studio-panel-toggles button{width:36px;justify-content:center;padding:6px}
+  .studio-panel-toggles button span{display:none}
+  .bar{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 0;gap:8px}
+  .hright{flex-wrap:wrap;gap:6px}
+  .room-nav-wrap{overflow-x:auto}
+  nav#nav{width:100%;display:flex;flex-wrap:wrap}
+  nav#nav button{flex:0 1 auto}
+}
+</style>
 </body>
 </html>
