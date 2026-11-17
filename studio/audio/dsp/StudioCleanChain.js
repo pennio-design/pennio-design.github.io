@@ -1,6 +1,7 @@
 (function(root){
 "use strict";
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number(v)||0));
+const workletLoads=new WeakMap();
 const db=v=>Math.pow(10,v/20);
 class StudioCleanChain{
  constructor(context,initialState,options={}){
@@ -27,16 +28,17 @@ class StudioCleanChain{
   const sum=make(()=>context.createGain());source.connect(low);source.connect(high);source.connect(airBand);high.connect(band);band.connect(deComp);low.connect(sum);deComp.connect(sum);airBand.connect(sum);source=sum;
   this.deEsser=deComp;
   // Mid/side width processing. The delayed side signal cancels when L+R is summed to mono.
-  const splitter=make(()=>context.createChannelSplitter(2)),merger=make(()=>context.createChannelMerger(2));
-  const mid=make(()=>context.createGain()),sideL=make(()=>context.createGain()),sideR=make(()=>context.createGain()),sideDelay=make(()=>context.createDelay(.05)),sideBlend=make(()=>context.createGain()),leftSum=make(()=>context.createGain()),rightSum=make(()=>context.createGain());
-  source.connect(splitter);splitter.connect(mid,0);splitter.connect(mid,1);mid.gain.value=.5;
-  splitter.connect(sideL,0);splitter.connect(sideR,1);sideL.gain.value=.5;sideR.gain.value=-.5;
-  sideL.connect(sideDelay);sideR.connect(sideDelay);sideDelay.delayTime.value=.011;
-  sideDelay.connect(sideBlend);sideBlend.gain.value=1;
-  mid.connect(leftSum);sideBlend.connect(leftSum);mid.connect(rightSum);
-  const invert=make(()=>context.createGain());invert.gain.value=-1;sideBlend.connect(invert);invert.connect(rightSum);
-  leftSum.connect(merger,0,0);rightSum.connect(merger,0,1);source=merger;
-  this.widthNode=sideBlend;this.widthBase=sideBlend.gain.value;
+  if(options.mono){this.widthNode=null;}
+  else{
+   const splitter=make(()=>context.createChannelSplitter(2)),merger=make(()=>context.createChannelMerger(2));
+   const mid=make(()=>context.createGain()),sideL=make(()=>context.createGain()),sideR=make(()=>context.createGain()),sideDelay=make(()=>context.createDelay(.05)),sideBlend=make(()=>context.createGain()),leftSum=make(()=>context.createGain()),rightSum=make(()=>context.createGain());
+   source.connect(splitter);splitter.connect(mid,0);splitter.connect(mid,1);mid.gain.value=.5;
+   splitter.connect(sideL,0);splitter.connect(sideR,1);sideL.gain.value=.5;sideR.gain.value=-.5;
+   sideL.connect(sideDelay);sideR.connect(sideDelay);sideDelay.delayTime.value=.011;sideDelay.connect(sideBlend);sideBlend.gain.value=1;
+   mid.connect(leftSum);sideBlend.connect(leftSum);mid.connect(rightSum);
+   const invert=make(()=>context.createGain());invert.gain.value=-1;sideBlend.connect(invert);invert.connect(rightSum);
+   leftSum.connect(merger,0,0);rightSum.connect(merger,0,1);source=merger;this.widthNode=sideBlend;
+  }
   const glue=make(()=>context.createDynamicsCompressor());glue.threshold.value=p.compThresholdDb;glue.knee.value=6;glue.ratio.value=p.compRatio;glue.attack.value=.015;glue.release.value=.12;source.connect(glue);source=glue;
   const limiter=make(()=>context.createDynamicsCompressor());limiter.threshold.value=-1;limiter.knee.value=0;limiter.ratio.value=20;limiter.attack.value=.001;limiter.release.value=.05;source.connect(limiter);source=limiter;
   const makeup=make(()=>context.createGain());makeup.gain.value=db(p.makeupGainDb);source.connect(makeup);makeup.connect(this.wet);this.wet.connect(this.output);
@@ -45,7 +47,7 @@ class StudioCleanChain{
  }
  static async create(context,state,options={}){
   let gateNode=null;
-  try{if(context.audioWorklet&&typeof AudioWorkletNode!=="undefined"){await context.audioWorklet.addModule("/studio/audio/dsp/worklets/noiseGateProcessor.js");gateNode=new AudioWorkletNode(context,"studio-noise-gate",{numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[2],processorOptions:{thresholdDb:(root.StudioCleanPresets?.[state?.preset]||root.StudioCleanPresets?.natural)?.gateThresholdDb??-58}});}}
+  try{if(context.audioWorklet&&typeof AudioWorkletNode!=="undefined"){let loaded=workletLoads.get(context);if(!loaded){loaded=context.audioWorklet.addModule("/studio/audio/dsp/worklets/noiseGateProcessor.js");workletLoads.set(context,loaded);}await loaded;gateNode=new AudioWorkletNode(context,"studio-noise-gate",{numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[2],processorOptions:{thresholdDb:(root.StudioCleanPresets?.[state?.preset]||root.StudioCleanPresets?.natural)?.gateThresholdDb??-58}});}}
   catch(e){console.warn("Studio Clean noise gate worklet unavailable; continuing without the gate.",e);}
   return new StudioCleanChain(context,state,{...options,gateNode});
  }
@@ -54,7 +56,7 @@ class StudioCleanChain{
   const set=(param,value)=>{param.cancelScheduledValues(now);param.setTargetAtTime(value,now,Math.max(.001,ramp));};
   set(this.params.hpf.frequency,p.highpassHz);set(this.params.box.gain,p.lowMidCutDb);set(this.params.presence.gain,p.presenceBoostDb);set(this.params.air.gain,p.airShelfDb);
   set(this.deEsser.threshold,p.deEsserThresholdDb);if(this.gateNode?.port)this.gateNode.port.postMessage({thresholdDb:p.gateThresholdDb});set(this.params.glue.threshold,p.compThresholdDb);set(this.params.glue.ratio,p.compRatio);set(this.params.makeup.gain,db(p.makeupGainDb));
-  set(this.widthNode.gain,1+(p.stereoWidth*.35));
+  if(this.widthNode)set(this.widthNode.gain,1+(p.stereoWidth*.35));
   const amount=clamp(this.state.enabled?this.state.enhanceAmount:0,0,1);
   set(this.dry.gain,Math.cos(amount*Math.PI/2));set(this.wet.gain,Math.sin(amount*Math.PI/2));
  }
