@@ -30,7 +30,7 @@ async function renderMix(tracks,options={}){
  const context=new Offline(2,length,rate),sources=[];
  for(const track of tracks){if(track.mute||(options.solo&& !track.solo))continue;const source=context.createBufferSource();source.buffer=track.buffer;const chain=await root.StudioCleanChain.create(context,track.dsp||root.StudioCleanDefaults);source.connect(chain.input);chain.output.connect(context.destination);
   const level=context.createGain();level.gain.value=track.gain??1;chain.output.disconnect();chain.output.connect(level);const pan=context.createStereoPanner?context.createStereoPanner():null;if(pan){pan.pan.value=track.pan||0;level.connect(pan);pan.connect(context.destination);}else level.connect(context.destination);
-  const elapsed=Math.max(0,options.offset||0-(track.timeline||0)),offset=track.start+elapsed,remaining=track.end-offset;if(remaining>0)source.start(Math.max(0,(track.timeline||0)-(options.offset||0)),offset,remaining);sources.push({source,chain});
+  const elapsed=Math.max(0,(options.offset||0)-(track.timeline||0)),offset=track.start+elapsed,remaining=track.end-offset;if(remaining>0)source.start(Math.max(0,(track.timeline||0)-(options.offset||0)),offset,remaining);sources.push({source,chain});
  }
  const rendered=await context.startRendering();sources.forEach(x=>x.chain.dispose());
  const norm=options.normalize===false?{buffer:rendered,measuredLufs:measureIntegratedLufs(rendered),appliedGain:1,peakDbfs:null}:normalizeAndFade(rendered,options.targetLufs??-14,-1,.015);
