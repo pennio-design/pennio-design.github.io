@@ -2525,8 +2525,9 @@ async function finishLaneCapture(){
 async function toggleLaneCapture(id,button){
  if(activeLaneCapture){if(activeLaneCapture.id===id){if(activeLaneCapture.recorder.state==="recording")activeLaneCapture.recorder.stop();return;}toast("Stop the current lane recording first.");return;}
  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){toast("Voice crafting needs microphone access in a secure browser.");return;}
+ let stream=null;
  try{
-  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+  stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
   const mime=["audio/webm;codecs=opus","audio/mp4","audio/webm"].find(type=>MediaRecorder.isTypeSupported(type));
   const recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined),chunks=[];
   activeLaneCapture={id,button,stream,recorder,chunks};button.textContent="Stop";button.setAttribute("aria-pressed","true");
@@ -2534,7 +2535,7 @@ async function toggleLaneCapture(id,button){
   recorder.onerror=()=>{stream.getTracks().forEach(t=>t.stop());activeLaneCapture=null;button.disabled=false;button.textContent="Voice";button.setAttribute("aria-pressed","false");toast("Lane recording failed. Try again.");};
   recorder.onstop=finishLaneCapture;recorder.start(150);
   toast("Recording for "+(LANES.find(x=>x.id===id)?.name||"this lane")+". Stop when the phrase is complete.");
- }catch(error){toast("Microphone unavailable. Check browser permission and try again.");}
+ }catch(error){if(stream)stream.getTracks().forEach(t=>t.stop());toast("Microphone unavailable. Check browser permission and try again.");}
 }
 let soloLaneId=null;
 function render(){
@@ -2551,7 +2552,7 @@ function render(){
     nm.querySelector(".nmb").setAttribute("aria-label",(muted[l.id]?"Unmute ":"Mute ")+l.name);
     nm.querySelector(".nmb").onclick=()=>{ muted[l.id]=!muted[l.id]; render(); renderLayers(); };
     const mb=nm.querySelector(".m"), sb=nm.querySelector(".s"), hb=nm.querySelector(".h"), eye=nm.querySelector(".eye"), rec=nm.querySelector(".lane-rec");
-    rec.textContent=activeLaneCapture?.id===l.id?"Stop":"Voice";rec.setAttribute("aria-pressed",String(activeLaneCapture?.id===l.id));if(activeLaneCapture?.id===l.id)activeLaneCapture.button=rec;
+    rec.textContent=activeLaneCapture?.id===l.id?"Stop":"Voice";rec.setAttribute("aria-pressed",String(activeLaneCapture?.id===l.id));rec.disabled=l.id==="vox";rec.title=l.id==="vox"?"Use Your Voice to create Vox takes":"Record a phrase and map its attacks to this lane";if(activeLaneCapture?.id===l.id)activeLaneCapture.button=rec;
     rec.onclick=()=>toggleLaneCapture(l.id,rec);
     const volume=nm.querySelector('[data-k="vol"]'),tuning=nm.querySelector('[data-k="tune"]');
     volume.value=Math.round(gainsV[l.id]*100);nm.querySelector(".lane-vol").textContent=volume.value+"%";
