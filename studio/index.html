@@ -2501,7 +2501,7 @@ function addPennioCredit(blob){
     const n=data.length;frame[4]=(n>>>24)&255;frame[5]=(n>>>16)&255;frame[6]=(n>>>8)&255;frame[7]=n&255;
     frame.set(data,10);return frame;
   };
-  const frames=[makeFrame("TENC","PENNIO Studio"),makeFrame("TCOP","Created with PENNIO Studio - https://pennio.agency/studio/")];
+  const frames=[makeFrame("TENC","PENNIO Studio"),makeFrame("TIT1","Created with PENNIO Studio - https://pennio.agency/studio/")];
   const size=frames.reduce((sum,frame)=>sum+frame.length,0),body=new Uint8Array(size);
   let offset=0;for(const frame of frames){body.set(frame,offset);offset+=frame.length;}
   const header=new Uint8Array([73,68,51,3,0,0,(size>>>21)&127,(size>>>14)&127,(size>>>7)&127,size&127]);
