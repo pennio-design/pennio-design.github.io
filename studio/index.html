@@ -4548,7 +4548,7 @@ async function startPENNIOWorkspace(authState){
   let prof=lsGet("ps.profile")||(await kvGet("profile"));
   if(prof&&((authEmail&&String(prof.email||"").trim().toLowerCase()!==authEmail)||!String(prof.name||"").trim())) prof=null;
   if(!prof){pendingWorkspaceAuthState=authState||{};pennioProfileGateOpen=true;document.getElementById("authGate").hidden=true;document.body.classList.add("profile-required");const obEmail=document.getElementById("obEmail");document.getElementById("obName").value="";obEmail.value=authEmail;obEmail.readOnly=!!authEmail;document.getElementById("obErr").textContent="";ob.classList.add("on");requestAnimationFrame(()=>document.getElementById("obName").focus());return;}
-  pennioWorkspaceStarted=true;lsSet("ps.profile",prof);document.body.classList.remove("auth-locked","profile-required");document.getElementById("authGate").hidden=true;
+  pennioWorkspaceStarted=true;lsSet("ps.profile",prof);
   const curId=lsGet("ps.current")||(await kvGet("current"));
   let rec=curId? await tx("projects","readonly",st=>st.get(curId)) : null;
   if(!rec){ const list=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated); rec=list[0]||null; }
@@ -4556,6 +4556,8 @@ async function startPENNIOWorkspace(authState){
   if(rec){ await openProject(rec); ready=true; document.getElementById("savedNote").textContent="Restored"; }
   else { await newProject(); }
   renderWords();
+  /* Keep the auth gate in place until the authenticated workspace has finished restoring. */
+  document.getElementById("authGate").hidden=true;document.body.classList.remove("auth-locked","profile-required");
   sendProfileIfNeeded();
   const firstPlayButton=document.getElementById("firstPlay"); if(firstPlayButton) firstPlayButton.disabled=false;
   if(!lsGet("ps.heroSeen")){ document.getElementById("hero").hidden=false; lsSet("ps.heroSeen",1); }
