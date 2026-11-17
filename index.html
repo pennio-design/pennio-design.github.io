@@ -313,6 +313,13 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui,
 .project-card-visual.studio{background:#0b0b0b}
 .project-card-visual.studio img{object-fit:cover;object-position:center}
 .project-card-visual.oju img{object-position:center 48%}
+
+.project-card-visual.oju{isolation:isolate}
+.project-card-visual.oju:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,7,7,.18),transparent 38%,rgba(10,7,7,.18));pointer-events:none;z-index:1}
+.project-card-visual .oju-comb-mark{position:absolute;z-index:2;right:20px;top:18px;width:74px;height:44px;overflow:visible;opacity:.96;filter:drop-shadow(0 2px 5px rgba(0,0,0,.3))}
+.project-card-visual .oju-comb-mark path,.project-card-visual .oju-comb-mark ellipse{fill:#1b1110;stroke:#d49b41;stroke-width:1.6;stroke-linejoin:round}
+.project-card-visual .oju-comb-mark .cut{fill:none;stroke:#d49b41;stroke-width:1}
+
 .project-card-visual.ere{background:radial-gradient(ellipse at 75% 20%,#563020 0%,#251713 40%,#100d0e 100%)}
 .project-card-visual.ere:before{content:"Eré";font-size:clamp(4.8rem,10vw,8rem);font-weight:700;letter-spacing:-.09em;color:#f3e6d7}
 .project-card-visual.ere:after{content:"ÀYÀN  /  AKÉWÌ  /  ÀTẸ́WỌ́";position:absolute;bottom:24px;left:24px;font-size:.62rem;letter-spacing:.14em;color:#d9a17a}
@@ -692,7 +699,18 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 <div class="project-card-meta"><div><div class="project-card-type">Creative tool · Music</div><div class="project-card-title">PENNIO Studio</div><p class="project-card-copy">A browser-based creative studio for music, voice, poetry and visual storytelling.</p></div><span class="project-card-arrow" aria-hidden="true">↗</span></div>
 </a>
 <a class="project-card" href="/oju-gbooro/" aria-label="Explore Ojú Gbooro">
-<div class="project-card-visual oju"><img src="/oju-gbooro/ooya.jpg" alt="Traditional òòyà comb used in Yoruba hair practice" loading="lazy" decoding="async"></div>
+<div class="project-card-visual oju">
+<img src="/oju-gbooro/ooya.jpg" alt="Traditional òòyà comb used in Yoruba hair practice" loading="lazy" decoding="async">
+<svg class="oju-comb-mark" viewBox="-70 -16 78 32" role="img" aria-label="Ojú Gbooro three-tooth òòyà comb">
+<g>
+<path d="M-30 -8 L0 -6.2 L-30 -4.4 Z M-30 -1.8 L2 0 L-30 1.8 Z M-30 4.4 L0 6.2 L-30 8 Z"/>
+<path d="M-30 -8.6 L-47 -7 Q-50 -6.6 -50 -3.4 L-50 3.4 Q-50 6.6 -47 7 L-30 8.6 Z"/>
+<path class="cut" d="M-33.5 -5.6 L-33.5 5.6"/>
+<path d="M-50 -2.8 L-54 -2.4 L-54 2.4 L-50 2.8 Z"/>
+<ellipse cx="-61" cy="0" rx="7.5" ry="6.6"/>
+</g>
+</svg>
+</div>
 <div class="project-card-meta"><div><div class="project-card-type">Culture · Living archive</div><div class="project-card-title">Ojú Gbooro</div><p class="project-card-copy">A living record of Yoruba hair knowledge, tools, practitioners and techniques.</p></div><span class="project-card-arrow" aria-hidden="true">↗</span></div>
 </a>
 <a class="project-card" href="/faajiplace/" aria-label="Explore Eré">
