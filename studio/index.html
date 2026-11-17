@@ -1324,20 +1324,27 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .studio-shell.left-collapsed.right-collapsed{grid-template-columns:minmax(0,1fr)}
 .studio-shell.left-collapsed #studioLeftPanel,.studio-shell.right-collapsed #studioRightPanel{display:none}
 @media(max-width:1100px){.studio-shell{grid-template-columns:205px minmax(0,1fr) 230px;gap:8px;padding:0 8px}.studio-shell.left-collapsed{grid-template-columns:minmax(0,1fr) 230px}.studio-shell.right-collapsed{grid-template-columns:205px minmax(0,1fr)}}
+.studio-side-head{position:relative;padding-right:42px}
+.studio-side-close{display:none}
+.studio-panel-backdrop{display:none}
 @media(max-width:760px){
  .studio-shell,.studio-shell.left-collapsed,.studio-shell.right-collapsed,.studio-shell.left-collapsed.right-collapsed{display:block;padding:0 10px}
  .studio-main{padding:0 2px 28px}
- .studio-side{position:fixed;z-index:80;top:0;bottom:0;width:min( min(86vw,320px), 320px);max-height:none;margin:0;border-radius:0;background:var(--off);box-shadow:0 0 0 100vmax #0009;transition:transform .2s ease}
- .studio-side-left{left:0;transform:translateX(-110%)}
- .studio-shell.mobile-left-open.mobile-right-open .studio-side{width:44vw;max-width:320px}
- .studio-side-right{right:0;transform:translateX(110%)}
- .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{display:block}
- .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{transform:translateX(0)}
+ body.studio-drawer-open{overflow:hidden;touch-action:none}
+.studio-panel-backdrop{display:block;position:fixed;inset:0;z-index:79;background:transparent;touch-action:manipulation}
+ .studio-panel-backdrop[hidden]{display:none!important}
+ .studio-side{position:fixed;z-index:81;top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);width:min(86vw,340px);max-height:none;margin:0;border-radius:0;background:var(--off);box-shadow:0 12px 40px rgba(0,0,0,.28);transition:transform .22s ease;overscroll-behavior:contain}
+ .studio-side-left{left:0;transform:translateX(-105%);border-radius:0 14px 14px 0}
+ .studio-side-right{right:0;transform:translateX(105%);border-radius:14px 0 0 14px}
+ .studio-shell.mobile-left-open #studioLeftPanel,.studio-shell.mobile-right-open #studioRightPanel{display:block;transform:translateX(0)}
+ .studio-side-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--line2);border-radius:9px;color:var(--text);font-size:20px;line-height:1}
+ .studio-panel-toggles{position:relative;z-index:82}
  .studio-panel-toggles button{width:36px;justify-content:center;padding:6px}
  .studio-panel-toggles button span{display:none}
  .bar{gap:7px}
  .hsess{display:none}
 }
+@media(prefers-reduced-motion:reduce){.studio-side{transition:none}}
 @media(prefers-reduced-motion:reduce){.studio-side{transition:none}}
 </style></head>
 <body class="in-studio auth-locked">
@@ -1397,7 +1404,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 </aside>
 
 
-<div class="studio-shell" id="studioShell"><aside class="studio-side studio-side-left" id="studioLeftPanel" aria-label="Project navigation"><div class="studio-side-head"><span>WORKSPACE</span><b>Project</b></div><div class="studio-side-project" id="studioSideProjectName">Studio workspace</div><div class="studio-side-section"><small>DESTINATIONS</small><button type="button" data-studio-room="ayan">Beat <span>Àyàn</span></button><button type="button" data-studio-room="write">Write <span>Akéwì</span></button><button type="button" data-studio-room="faajiplace">Fàájíplace</button><button type="button" data-studio-room="beauty">Model</button><button type="button" data-studio-room="home">Projects</button></div><div class="studio-side-section"><small>IN THIS SESSION</small><button type="button" data-studio-action="openWork">Sessions</button><button type="button" data-studio-action="openHist">History</button><button type="button" data-studio-action="guideLink">Learn</button></div><p class="studio-side-note">Your work stays organised by project.</p></aside><main class="wrap studio-main"><!-- STUDIO DASHBOARD -->
+<div class="studio-shell" id="studioShell"><div class="studio-panel-backdrop" id="studioPanelBackdrop" hidden aria-hidden="true"></div><aside class="studio-side studio-side-left" id="studioLeftPanel" aria-label="Project navigation"><div class="studio-side-head"><span>WORKSPACE</span><b>Project</b><button type="button" class="studio-side-close" data-studio-panel-close aria-label="Close left panel">×</button></div><div class="studio-side-project" id="studioSideProjectName">Studio workspace</div><div class="studio-side-section"><small>DESTINATIONS</small><button type="button" data-studio-room="ayan">Beat <span>Àyàn</span></button><button type="button" data-studio-room="write">Write <span>Akéwì</span></button><button type="button" data-studio-room="faajiplace">Fàájíplace</button><button type="button" data-studio-room="beauty">Model</button><button type="button" data-studio-room="home">Projects</button></div><div class="studio-side-section"><small>IN THIS SESSION</small><button type="button" data-studio-action="openWork">Sessions</button><button type="button" data-studio-action="openHist">History</button><button type="button" data-studio-action="guideLink">Learn</button></div><p class="studio-side-note">Your work stays organised by project.</p></aside><main class="wrap studio-main"><!-- STUDIO DASHBOARD -->
 <section class="view" id="v-home">
   <div class="dash-topline"><span class="dash-kicker">PENNIO CREATIVE PLATFORM</span><span class="dash-local"><i></i> <span id="dashAccountIdentity">Authenticated workspace</span></span></div>
   <div class="dash-intro"><div><h1>Welcome back,<br><em id="dashUserName">creator.</em></h1><p>Your creative workspace is ready.</p></div><button class="dash-new" id="dashNewProject"><span>＋</span> New project</button></div>
@@ -1820,7 +1827,7 @@ A clear image or action.
 
 
 <p class="foot"><a href="/studio/guide/" style="color:inherit">How to use PENNIO Studio</a> · PENNIO Studio by PENNIO</p>
-</main><aside class="studio-side studio-side-right" id="studioRightPanel" aria-label="Contextual tools"><div class="studio-side-head"><span>INSPECTOR</span><b id="studioInspectorTitle">Workspace tools</b></div><div class="studio-inspector-context" id="studioInspectorContext">Choose a destination to see its available tools.</div><div class="studio-side-section"><small>QUICK ACTIONS</small><button type="button" data-studio-action="studioRecLaunch">Capture a take</button><button type="button" data-studio-action="openWork">Open sessions</button><button type="button" data-studio-action="openHist">Open history</button></div><div class="studio-side-section"><small>PROJECT</small><div class="studio-side-project" id="studioInspectorProject">Studio workspace</div><p class="studio-side-note">Tools and properties will follow the selected room and item.</p></div></aside></div>
+</main><aside class="studio-side studio-side-right" id="studioRightPanel" aria-label="Contextual tools"><div class="studio-side-head"><span>INSPECTOR</span><b id="studioInspectorTitle">Workspace tools</b><button type="button" class="studio-side-close" data-studio-panel-close aria-label="Close right panel">×</button></div><div class="studio-inspector-context" id="studioInspectorContext">Choose a destination to see its available tools.</div><div class="studio-side-section"><small>QUICK ACTIONS</small><button type="button" data-studio-action="studioRecLaunch">Capture a take</button><button type="button" data-studio-action="openWork">Open sessions</button><button type="button" data-studio-action="openHist">Open history</button></div><div class="studio-side-section"><small>PROJECT</small><div class="studio-side-project" id="studioInspectorProject">Studio workspace</div><p class="studio-side-note">Tools and properties will follow the selected room and item.</p></div></aside></div>
 <div class="sheet" id="onboard"><div class="panel">
   <h2>Ẹ kú àbọ̀. Welcome to PENNIO Studio.</h2>
   <p id="obIntro">No password. We email you the studio guide: confirm your email when it arrives to get it. Your name and email come to PENNIO so we can reach you. Your work saves in this browser on this device, so download a backup from Sessions now and then.</p>
@@ -5511,21 +5518,29 @@ nav#nav[hidden]{display:none!important}
  const key="pennio.studio.panels.v1";
  const left=document.getElementById("studioLeftPanel"),right=document.getElementById("studioRightPanel");
  const leftBtn=document.getElementById("leftPanelToggle"),rightBtn=document.getElementById("rightPanelToggle");
+ const backdrop=document.getElementById("studioPanelBackdrop");
+ const closeDrawers=()=>{mobileLeftOpen=false;mobileRightOpen=false;render();save()};
  const read=()=>{try{return JSON.parse(localStorage.getItem(key)||"{}")}catch(e){return {}}};
  const save=()=>{try{localStorage.setItem(key,JSON.stringify({left:leftOpen,right:rightOpen,mobileLeft:mobileLeftOpen,mobileRight:mobileRightOpen}))}catch(e){}};
  const mobile=()=>window.matchMedia("(max-width:760px)").matches;
  let state=read(),leftOpen=state.left!==false,rightOpen=state.right!==false,mobileLeftOpen=state.mobileLeft===true,mobileRightOpen=state.mobileRight===true;
  function render(){
   shell.classList.toggle("left-collapsed",!leftOpen);shell.classList.toggle("right-collapsed",!rightOpen);
-  shell.classList.toggle("mobile-left-open",mobile()&&mobileLeftOpen);shell.classList.toggle("mobile-right-open",mobile()&&mobileRightOpen);
-  const leftVisible=mobile()?mobileLeftOpen:leftOpen,rightVisible=mobile()?mobileRightOpen:rightOpen;
+  const isMobile=mobile(),anyDrawerOpen=isMobile&&(mobileLeftOpen||mobileRightOpen);
+  shell.classList.toggle("mobile-left-open",isMobile&&mobileLeftOpen);shell.classList.toggle("mobile-right-open",isMobile&&mobileRightOpen);
+  backdrop.hidden=!anyDrawerOpen;
+  document.body.classList.toggle("studio-drawer-open",anyDrawerOpen);
+  const leftVisible=isMobile?mobileLeftOpen:leftOpen,rightVisible=isMobile?mobileRightOpen:rightOpen;
   leftBtn.setAttribute("aria-expanded",String(leftVisible));rightBtn.setAttribute("aria-expanded",String(rightVisible));
   leftBtn.title=leftVisible?"Hide left panel":"Show left panel";rightBtn.title=rightVisible?"Hide right panel":"Show right panel";
   leftBtn.setAttribute("aria-label",leftBtn.title);rightBtn.setAttribute("aria-label",rightBtn.title);
  }
  leftBtn.addEventListener("click",()=>{if(mobile())mobileLeftOpen=!mobileLeftOpen;else leftOpen=!leftOpen;render();save()});
  rightBtn.addEventListener("click",()=>{if(mobile())mobileRightOpen=!mobileRightOpen;else rightOpen=!rightOpen;render();save()});
- window.addEventListener("resize",render);
+ backdrop.addEventListener("click",closeDrawers);
+ shell.addEventListener("click",event=>{if(event.target.closest("[data-studio-panel-close]"))closeDrawers()});
+ document.addEventListener("keydown",event=>{if(event.key==="Escape"&&(mobileLeftOpen||mobileRightOpen))closeDrawers()});
+ window.addEventListener("resize",()=>{if(!mobile()){mobileLeftOpen=false;mobileRightOpen=false;document.body.classList.remove("studio-drawer-open")}render()});
  shell.addEventListener("click",event=>{
   const room=event.target.closest("[data-studio-room]");
   if(room){const target=document.querySelector('#nav button[data-v="'+room.dataset.studioRoom+'"]');if(target)target.click();return}
