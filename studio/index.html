@@ -3947,7 +3947,7 @@ document.getElementById("obForm").onsubmit=async e=>{
   if(!name){ err.textContent="Add your name."; return; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ err.textContent="Add a valid email."; return; }
   const prev=lsGet("ps.profile")||{};
-  const prof={name,email,make:obMake,joined:prev.joined||Date.now(),sent:prev.sent&&prev.email===email&&prev.name===name,kit:prev.kit&&prev.email===email,kitAttemptAt:prev.email===email?prev.kitAttemptAt:0};
+  const prof={name,email,make:obMake,joined:prev.joined||Date.now(),sent:prev.sent&&prev.email===email&&prev.name===name,kit:false,kitPending:false,kitAttemptAt:0};
   lsSet("ps.profile",prof); await kvSet("profile",prof);
   const mailStatus=await sendProfileIfNeeded();
   try{ if(navigator.storage&&navigator.storage.persist) await navigator.storage.persist(); }catch(e){}
