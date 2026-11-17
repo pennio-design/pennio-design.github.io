@@ -2486,7 +2486,7 @@ function render(){
       st.className="steps voxempty"; const b=document.createElement("button"); b.className="voxrec"; b.innerHTML='<i></i>Record your voice: the studio chops it onto this row';
       b.onclick=()=>{ if(typeof reRecord==="function") reRecord(); }; st.appendChild(b);
     } else for(let i=0;i<N;i++){ const b=document.createElement("button"); b.dataset.i=i; styleCell(b,l.id,i); st.appendChild(b); }
-    row.appendChild(nm); row.appendChild(st); rowsEl.appendChild(row);
+    const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;row.appendChild(nm); row.appendChild(meta); row.appendChild(st); rowsEl.appendChild(row);
   });
   saveSoon();
 }
@@ -5496,6 +5496,14 @@ html[data-theme="light"] .og-project-head>a,html[data-theme="light"] .og-project
 @keyframes studio-progress{from{transform:translateX(-110%)}to{transform:translateX(300%)}}
 @media(max-width:980px){.daw-workbench{grid-template-columns:minmax(0,1fr)}.daw-sidebar{position:static}.daw-engineer-modes{display:flex;gap:8px;overflow-x:auto}.daw-mode-group{min-width:max-content}.daw-toolbar{grid-template-columns:repeat(3,max-content) minmax(70px,1fr)}.steps3{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:560px){.view{padding:16px 12px}.daw-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.daw-toolbar>*{min-width:0}.daw-toolbar .daw-clock{grid-column:1}.daw-status{grid-column:1/-1}.daw-track-details{grid-template-columns:repeat(2,minmax(0,1fr))}.dr-footer{display:grid;grid-template-columns:1fr}.cr-lead h1{font-size:clamp(30px,9vw,42px)}}
+
+/* Beat lane detail column: sound role and harmonic context stay visible per row. */
+#rows .row{grid-template-columns:minmax(86px,104px) minmax(125px,190px) minmax(0,1fr);gap:10px;align-items:center}
+#rows .row-context{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;min-width:0;padding:5px 8px;border-left:1px solid var(--line)}
+#rows .row-context span{display:grid;gap:3px;min-width:0}
+#rows .row-context small{font-size:9px;letter-spacing:.08em;color:var(--mute)}
+#rows .row-context b{font-size:10px;font-weight:550;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:760px){#rows .row{grid-template-columns:78px minmax(92px,120px) minmax(0,1fr);gap:5px}#rows .row-context{grid-template-columns:1fr;gap:2px;padding:4px 5px}#rows .row-context span:last-child{display:none}#rows .row-context b{font-size:9px}}
 </style>
 <script id="ojug-project-carousel-bind">
 (()=>{document.querySelectorAll("[data-ojug-carousel]").forEach(root=>{
