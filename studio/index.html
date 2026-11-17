@@ -5452,6 +5452,13 @@ nav#nav[hidden]{display:none!important}
 #dawRoom[data-mode="overlay"] #dawMerge,#dawRoom[data-mode="overlay"] #dawExport,#dawRoom[data-mode="overlay"] #dawSendStudio,
 #dawRoom[data-mode="edit"] #dawMerge,#dawRoom[data-mode="edit"] #dawExport,#dawRoom[data-mode="edit"] #dawSendStudio,
 #dawRoom[data-mode="mix"] #dawMerge,#dawRoom[data-mode="mix"] #dawExport,#dawRoom[data-mode="mix"] #dawSendStudio{display:none!important}
+/* Restore modal behaviour for sessions, history, profile and learning panels. */
+.sheet{position:fixed;inset:0;z-index:60;width:auto;margin:0;padding:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center;overflow-y:auto}
+.sheet.on{display:flex}
+.sheet .panel{width:100%;max-width:560px;max-height:86vh;overflow:auto;padding:20px 16px 28px;border:1px solid var(--line2);border-radius:22px 22px 0 0;background:var(--off);color:var(--text);box-shadow:0 18px 70px #0008}
+@media(min-width:700px){.sheet{align-items:center}.sheet .panel{border-radius:22px}}
+
+
 
 
 </style>
