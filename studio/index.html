@@ -87,72 +87,6 @@
 @media(max-width:520px){#v-home{padding-top:20px}.dash-intro{align-items:flex-start;flex-direction:column;margin:30px 0 22px}.dash-intro h1{font-size:48px}.dash-new{width:100%;justify-content:center}.dash-rooms{grid-template-columns:1fr 1fr;gap:8px}.dash-room{min-height:215px;padding:13px}.dash-room>b{font-size:16px}.dash-room-desc{font-size:10px}.dash-room-foot{font-size:9px}.dash-panel{padding:15px}.dash-footer{align-items:flex-start;flex-wrap:wrap}.dash-local{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.dash-wave i{animation:none}.dash-room{transition:none}}
 
-/* Studio navigation: rooms are visible, utilities stay grouped. */
-.bar{height:58px;gap:16px}
-.logo{flex:none}
-.hsess{max-width:340px}
-.hright{gap:7px}
-.room-nav-wrap{padding-top:0;padding-bottom:10px}
-.room-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:0;border:0;border-radius:0;background:transparent}
-.room-nav-group{display:flex;align-items:center;gap:4px;min-width:0;overflow-x:auto;scrollbar-width:none}
-.room-nav-group::-webkit-scrollbar{display:none}
-.room-nav button{flex:none;min-height:36px;padding:7px 13px;border-radius:8px;color:var(--mute);font-size:13px;font-weight:500;white-space:nowrap}
-.room-nav button small{margin-left:5px;color:inherit;opacity:.68;font-size:11px}
-.room-nav button.on{background:var(--surface-2);color:var(--text)}
-.room-nav .room-nav-projects{margin-left:auto;border:1px solid var(--line);background:transparent}
-.room-nav .room-nav-projects.on{background:var(--text);color:var(--black);border-color:var(--text)}
-nav#nav{position:static;display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
-nav#nav[hidden]{display:none!important}
-@media(max-width:760px){
- .bar{height:auto;min-height:56px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px;gap:8px}
- .logo{font-size:14px}
- .logo span{display:none}
- .hsess{order:3;flex-basis:100%;max-width:none}
- .hsess input{font-size:14px}
- .hright{gap:5px}
- .theme-toggle{min-width:38px;padding:0 8px}
- .theme-toggle span{display:none}
- .studio-rec-launch{font-size:12px;padding:7px 9px}
- .room-nav-wrap{padding-bottom:8px}
- .room-nav{gap:8px}
- .room-nav-group{flex:1}
- .room-nav button{padding:7px 10px;font-size:12px}
- .room-nav button small{display:none}
- .room-nav .room-nav-projects{margin-left:0}
-}
-
-/* Àyàn mode switch: compact controls with one focused work area. */
-.daw-workbench{grid-template-columns:minmax(0,1fr);gap:10px}
-.daw-sidebar{position:static;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:8px 0;border:0;border-radius:0;background:transparent}
-.daw-sidebar-title{padding:0 6px}
-.daw-sidebar-title small{font-size:9px}
-.daw-sidebar-title b{font-size:13px}
-.daw-engineer-modes{display:flex;align-items:center;gap:3px;min-width:0;overflow-x:auto;scrollbar-width:none;padding:4px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}
-.daw-engineer-modes::-webkit-scrollbar{display:none}
-.daw-engineer-modes button{display:flex;align-items:center;justify-content:center;flex:none;width:auto;min-width:62px;min-height:34px;padding:7px 11px;border:0;border-radius:8px;background:transparent;text-align:center;white-space:nowrap}
-.daw-engineer-modes button span{font-size:12px;font-weight:600}
-.daw-engineer-modes button em{display:none}
-.daw-engineer-modes button.on{background:var(--orange);color:#090909}
-.daw-mode-help{grid-column:1/-1;margin:0 6px;padding:0;border:0;font-size:11px;color:var(--mute)}
-.daw-main{grid-template-columns:minmax(0,1fr);gap:10px}
-.daw-main>#dawToolbar,.daw-main>#dawTracks,.daw-main>#dawSelectionPanel,.daw-main>#dawPlanPanel,.daw-main>#dawBottom{grid-column:1;grid-row:auto}
-#dawRoom[data-mode="beat"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="beat"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="beat"] .daw-main>#dawBottom,
-#dawRoom[data-mode="record"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="record"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="record"] .daw-main>#dawBottom,
-#dawRoom[data-mode="overlay"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="overlay"] .daw-main>#dawBottom,
-#dawRoom[data-mode="edit"] .daw-main>#dawPlanPanel,
-#dawRoom[data-mode="mix"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="mix"] .daw-main>#dawPlanPanel,
-#dawRoom[data-mode="merge"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="merge"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="merge"] .daw-main>#dawBottom,
-#dawRoom[data-mode="plan"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="plan"] .daw-main>#dawBottom{display:none!important}
-@media(max-width:880px){.daw-workbench{grid-template-columns:minmax(0,1fr)}.daw-sidebar{grid-template-columns:1fr}.daw-engineer-modes{display:flex;grid-template-columns:none}}
-@media(max-width:620px){.daw-sidebar{padding:5px 0}.daw-sidebar-title{display:none}.daw-engineer-modes{gap:2px}.daw-engineer-modes button{min-width:58px;padding:7px 9px}.daw-main{grid-template-columns:minmax(0,1fr)}}
-
-/* Keep mode-specific actions out of the way until they are needed. */
-#dawRoom[data-mode="beat"] #dawMerge,#dawRoom[data-mode="beat"] #dawExport,#dawRoom[data-mode="beat"] #dawSendStudio,
-#dawRoom[data-mode="record"] #dawMerge,#dawRoom[data-mode="record"] #dawExport,#dawRoom[data-mode="record"] #dawSendStudio,
-#dawRoom[data-mode="overlay"] #dawMerge,#dawRoom[data-mode="overlay"] #dawExport,#dawRoom[data-mode="overlay"] #dawSendStudio,
-#dawRoom[data-mode="edit"] #dawMerge,#dawRoom[data-mode="edit"] #dawExport,#dawRoom[data-mode="edit"] #dawSendStudio,
-#dawRoom[data-mode="mix"] #dawMerge,#dawRoom[data-mode="mix"] #dawExport,#dawRoom[data-mode="mix"] #dawSendStudio{display:none!important}
-
 </style>
 <style>
 :root{
@@ -5453,6 +5387,73 @@ html[data-theme="light"] .daw-engineer-modes button.on{background:#b94317;color:
 html[data-theme="light"] .daw-engineer-modes button.on em{color:#fff}
 @media(max-width:880px){.daw-workbench{grid-template-columns:1fr}.daw-sidebar{position:static}.daw-engineer-modes{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.daw-mode-group{align-content:start;border:1px solid var(--line);border-radius:11px;padding:6px}.daw-sidebar-title{padding-bottom:9px}.daw-mode-help{margin:10px 7px 3px}.daw-main{grid-template-columns:minmax(0,1fr) minmax(220px,.72fr)}}
 @media(max-width:620px){.ms{display:flex}.row .name{gap:5px}.daw-engineer-modes{grid-template-columns:repeat(2,minmax(0,1fr))}.daw-main{grid-template-columns:1fr}.daw-main>#dawToolbar,.daw-main>#dawTracks,.daw-main>#dawSelectionPanel,.daw-main>#dawPlanPanel,.daw-main>#dawBottom{grid-column:1;grid-row:auto}.daw-main>#dawTracks{grid-row:auto}.daw-track{grid-template-columns:minmax(112px,145px) minmax(170px,1fr)}.daw-sidebar{padding:11px}.daw-toolbar{align-items:stretch}.daw-toolbar .daw-status{flex-basis:100%}}
+/* Studio navigation: rooms are visible, utilities stay grouped. */
+.bar{height:58px;gap:16px}
+.logo{flex:none}
+.hsess{max-width:340px}
+.hright{gap:7px}
+.room-nav-wrap{padding-top:0;padding-bottom:10px}
+.room-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:0;border:0;border-radius:0;background:transparent}
+.room-nav-group{display:flex;align-items:center;gap:4px;min-width:0;overflow-x:auto;scrollbar-width:none}
+.room-nav-group::-webkit-scrollbar{display:none}
+.room-nav button{flex:none;min-height:36px;padding:7px 13px;border-radius:8px;color:var(--mute);font-size:13px;font-weight:500;white-space:nowrap}
+.room-nav button small{margin-left:5px;color:inherit;opacity:.68;font-size:11px}
+.room-nav button.on{background:var(--surface-2);color:var(--text)}
+.room-nav .room-nav-projects{margin-left:auto;border:1px solid var(--line);background:transparent}
+.room-nav .room-nav-projects.on{background:var(--text);color:var(--black);border-color:var(--text)}
+nav#nav{position:static;display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+nav#nav[hidden]{display:none!important}
+@media(max-width:760px){
+ .bar{height:auto;min-height:56px;flex-wrap:wrap;padding-top:8px;padding-bottom:8px;gap:8px}
+ .logo{font-size:14px}
+ .logo span{display:none}
+ .hsess{order:3;flex-basis:100%;max-width:none}
+ .hsess input{font-size:14px}
+ .hright{gap:5px}
+ .theme-toggle{min-width:38px;padding:0 8px}
+ .theme-toggle span{display:none}
+ .studio-rec-launch{font-size:12px;padding:7px 9px}
+ .room-nav-wrap{padding-bottom:8px}
+ .room-nav{gap:8px}
+ .room-nav-group{flex:1}
+ .room-nav button{padding:7px 10px;font-size:12px}
+ .room-nav button small{display:none}
+ .room-nav .room-nav-projects{margin-left:0}
+}
+
+/* Àyàn mode switch: compact controls with one focused work area. */
+.daw-workbench{grid-template-columns:minmax(0,1fr);gap:10px}
+.daw-sidebar{position:static;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:8px 0;border:0;border-radius:0;background:transparent}
+.daw-sidebar-title{padding:0 6px}
+.daw-sidebar-title small{font-size:9px}
+.daw-sidebar-title b{font-size:13px}
+.daw-engineer-modes{display:flex;align-items:center;gap:3px;min-width:0;overflow-x:auto;scrollbar-width:none;padding:4px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}
+.daw-engineer-modes::-webkit-scrollbar{display:none}
+.daw-engineer-modes button{display:flex;align-items:center;justify-content:center;flex:none;width:auto;min-width:62px;min-height:34px;padding:7px 11px;border:0;border-radius:8px;background:transparent;text-align:center;white-space:nowrap}
+.daw-engineer-modes button span{font-size:12px;font-weight:600}
+.daw-engineer-modes button em{display:none}
+.daw-engineer-modes button.on{background:var(--orange);color:#090909}
+.daw-mode-help{grid-column:1/-1;margin:0 6px;padding:0;border:0;font-size:11px;color:var(--mute)}
+.daw-main{grid-template-columns:minmax(0,1fr);gap:10px}
+.daw-main>#dawToolbar,.daw-main>#dawTracks,.daw-main>#dawSelectionPanel,.daw-main>#dawPlanPanel,.daw-main>#dawBottom{grid-column:1;grid-row:auto}
+#dawRoom[data-mode="beat"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="beat"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="beat"] .daw-main>#dawBottom,
+#dawRoom[data-mode="record"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="record"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="record"] .daw-main>#dawBottom,
+#dawRoom[data-mode="overlay"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="overlay"] .daw-main>#dawBottom,
+#dawRoom[data-mode="edit"] .daw-main>#dawPlanPanel,
+#dawRoom[data-mode="mix"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="mix"] .daw-main>#dawPlanPanel,
+#dawRoom[data-mode="merge"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="merge"] .daw-main>#dawPlanPanel,#dawRoom[data-mode="merge"] .daw-main>#dawBottom,
+#dawRoom[data-mode="plan"] .daw-main>#dawSelectionPanel,#dawRoom[data-mode="plan"] .daw-main>#dawBottom{display:none!important}
+@media(max-width:880px){.daw-workbench{grid-template-columns:minmax(0,1fr)}.daw-sidebar{grid-template-columns:1fr}.daw-engineer-modes{display:flex;grid-template-columns:none}}
+@media(max-width:620px){.daw-sidebar{padding:5px 0}.daw-sidebar-title{display:none}.daw-engineer-modes{gap:2px}.daw-engineer-modes button{min-width:58px;padding:7px 9px}.daw-main{grid-template-columns:minmax(0,1fr)}}
+
+/* Keep mode-specific actions out of the way until they are needed. */
+#dawRoom[data-mode="beat"] #dawMerge,#dawRoom[data-mode="beat"] #dawExport,#dawRoom[data-mode="beat"] #dawSendStudio,
+#dawRoom[data-mode="record"] #dawMerge,#dawRoom[data-mode="record"] #dawExport,#dawRoom[data-mode="record"] #dawSendStudio,
+#dawRoom[data-mode="overlay"] #dawMerge,#dawRoom[data-mode="overlay"] #dawExport,#dawRoom[data-mode="overlay"] #dawSendStudio,
+#dawRoom[data-mode="edit"] #dawMerge,#dawRoom[data-mode="edit"] #dawExport,#dawRoom[data-mode="edit"] #dawSendStudio,
+#dawRoom[data-mode="mix"] #dawMerge,#dawRoom[data-mode="mix"] #dawExport,#dawRoom[data-mode="mix"] #dawSendStudio{display:none!important}
+
+
 </style>
 </body>
 </html>
