@@ -1590,9 +1590,9 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 
   <div class="card">
     <h3>Takes and remix</h3>
-    <p>Re-create beat gives you a fresh variation across the sounds. Clear beat removes the current pattern; Undo restores it. Switch takes A–F to compare arrangements. Each tap writes a new variation: drum hits move, the dùndún line shifts, and your vocal chops are reordered. Downbeats stay put so the groove holds. Undo reverses the latest change; Redo brings it back.</p>
+    <p>Create a measured variation from the available groove patterns. Downbeats stay anchored where possible. Undo and Redo let you compare changes. Switch takes A–F to keep separate arrangements.</p>
     <div class="remixbar">
-      <button class="btn primary" id="remix">Re-create beat</button>
+      <button class="btn primary" id="remix">Create beat variation</button>
       <button class="btn ic" id="rxUndo" disabled aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Undo</span></button>
       <button class="btn ic" id="rxRedo" disabled aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span>Redo</span></button>
       <span class="vmeta" id="ver" style="align-self:center;margin:0"></span>
@@ -3125,31 +3125,34 @@ let version=1;
 const verEl=document.getElementById("ver");
 document.getElementById("remix").onclick=()=>{
   pushHist();
-  const beat=N===12?3:4;
-  LANES.forEach(l=>{
-    const a=pattern[l.id];
-    for(let i=0;i<N;i++){
-      if(i%beat===0 && a[i]) continue;
-      const r=Math.random(), dens=l.id==="dd"?.22:l.id==="vox"?.3:.16;
-      if(r<dens){ a[i]= a[i]? 0 : 1+Math.floor(Math.random()*l.states); }
-      else if(a[i] && l.states>1 && r<dens+.12){ a[i]=1+Math.floor(Math.random()*l.states); }
-    }
-  });
-  for(let i=15;i>0;i--){ if(Math.random()<.5){ const j=Math.floor(Math.random()*(i+1)); [chopOrder[i],chopOrder[j]]=[chopOrder[j],chopOrder[i]]; } }
-  version++; verEl.textContent="Version "+version; markPresets(-1); render();
-  if(!playing) start();
+  LANES.forEach(l=>{pattern[l.id]=newLanePattern(l.id);});
+  banks[bank]=pattern;
+  version++; verEl.textContent="Variation "+version; markPresets(-1); render(); renderLayers(); saveSoon();
+  toast("Beat variation created. Undo restores the previous arrangement.");
 };
 
 /* ---------- layers: on/off, volume and tune for every sound ---------- */
 const layersEl=document.getElementById("layers");
 function newLanePattern(id){
-  const lane=LANES.find(l=>l.id===id); if(!lane) return new Array(16).fill(0);
-  const options=PRESETS.filter(p=>p.p&&p.p[id]&&p.p[id].some(Boolean));
-  if(options.length) return options[Math.floor(Math.random()*options.length)].p[id].slice();
-  const a=new Array(16).fill(0), wind=id==="flute"||id==="reed";
-  const hits=wind?[0,4,8,12]:[0,3,7,8,11,15];
-  hits.forEach((step,i)=>{if(Math.random()<(wind?.78:.68))a[step]=1+Math.floor(Math.random()*lane.states);});
-  return a;
+  const lane=LANES.find(l=>l.id===id);if(!lane)return new Array(N).fill(0);
+  const current=(pattern[id]||new Array(N).fill(0)).slice(0,N);
+  const options=PRESETS.map((preset,index)=>({preset,index,steps:preset.p&&preset.p[id]}))
+    .filter(item=>Array.isArray(item.steps)&&item.steps.length===N&&item.steps.some(Boolean))
+    .map(item=>({...item,distance:item.steps.reduce((sum,value,index)=>sum+(value!==current[index]?1:0),0)}))
+    .filter(item=>item.distance>0)
+    .sort((a,b)=>a.distance-b.distance||a.index-b.index);
+  if(options.length){
+    const bestDistance=options[0].distance,tied=options.filter(item=>item.distance===bestDistance);
+    const selected=tied[(Math.max(0,version)%tied.length)].steps.slice();
+    if(current[0])selected[0]=current[0];
+    return selected;
+  }
+  const next=current.slice(),beat=N===12?3:4;
+  const candidates=Array.from({length:N},(_,i)=>i).filter(i=>i%beat!==0);
+  if(!candidates.length)return next;
+  const step=candidates[(Math.max(0,version)+LANES.findIndex(item=>item.id===id))%candidates.length];
+  next[step]=next[step]?0:1+(Math.max(0,version)%lane.states);
+  return next;
 }
 function clearLane(id){
   if(!pattern[id])return;
@@ -3157,7 +3160,7 @@ function clearLane(id){
 }
 function recreateLane(id){
   if(!pattern[id])return;
-  pushHist();pattern[id]=newLanePattern(id);banks[bank]=pattern;render();renderLayers();markPresets(-1);saveSoon();toast("New lane take made. Undo brings the last one back.");
+  pushHist();pattern[id]=newLanePattern(id);banks[bank]=pattern;render();renderLayers();markPresets(-1);saveSoon();toast("Lane variation created. Undo restores the previous pattern.");
 }
 const LAYER_DEFS=[
   ...LANES.filter(l=>l.id!=="vox").map(l=>({id:l.id,name:l.name,sub:l.sub,kind:"drum"})),
@@ -3192,7 +3195,7 @@ function renderLayers(){
       const la=document.createElement("div");la.className="la";
       la.innerHTML='<button class="btn">Re-create lane</button><button class="btn">Clear lane</button>';
       const [fresh,clear]=la.querySelectorAll("button");
-      fresh.onclick=()=>recreateLane(d.id);
+      fresh.title="Create a measured variation from the available groove patterns. Undo restores the previous lane.";fresh.textContent="Create variation";fresh.onclick=()=>recreateLane(d.id);
       clear.onclick=()=>clearLane(d.id);
       el.appendChild(la);
     }
