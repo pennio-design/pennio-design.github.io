@@ -64,7 +64,17 @@ function buildUI(){
  if($("pennioWorkspaceDock"))return;
  const style=document.createElement("style");
  style.textContent=`
- #pennioWorkspaceDock{position:static;width:min(100% - 32px,1200px);max-width:1200px;margin:12px auto;color:var(--text,#f5f3ef);font:inherit}
+ #pennioWorkspaceDock{position:fixed;z-index:90;top:76px;bottom:14px;width:min(360px,calc(100vw - 24px));max-width:calc(100vw - 24px);margin:0;color:var(--text,#f5f3ef);font:inherit;transition:left .22s ease,right .22s ease}
+ #pennioWorkspaceDock[data-side="right"]{right:12px;left:auto}
+ #pennioWorkspaceDock[data-side="left"]{left:12px;right:auto}
+ #pennioWorkspaceDock .ws-shell{height:100%;display:flex;flex-direction:column}
+ #pennioWorkspaceDock .ws-body{flex:1;min-height:0;max-height:none}
+ body.workspace-open:after{content:"";position:fixed;inset:64px 0 0;background:rgba(0,0,0,.28);z-index:80}
+ body.workspace-open{overflow:hidden}
+ #studioPanelPosition{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:38px;height:38px;padding:0 9px;border:1px solid var(--line2);border-radius:10px;background:transparent;color:var(--text);font:500 11px Inter,system-ui,sans-serif;cursor:pointer}
+ #studioPanelPosition:hover{border-color:var(--orange)}
+ #studioPanelPosition svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+ @media(max-width:560px){#pennioWorkspaceDock{top:70px;bottom:10px;width:min(340px,calc(100vw - 20px))}#pennioWorkspaceDock[data-side="right"]{right:10px}#pennioWorkspaceDock[data-side="left"]{left:10px}#studioPanelPosition{min-width:36px;height:36px;padding:0 7px}}
  #pennioWorkspaceDock .ws-shell{background:var(--panel,#171717);border:1px solid var(--line,rgba(255,255,255,.16));border-radius:16px;box-shadow:0 12px 48px #0005;overflow:hidden}
  #pennioWorkspaceDock .ws-head{display:flex;align-items:center;gap:9px;padding:11px 13px}
  #pennioWorkspaceDock .ws-mark{width:8px;height:8px;border-radius:50%;background:#ff6a00;flex:none}
@@ -101,7 +111,9 @@ function buildUI(){
  #pennioWorkspaceDock .ws-toggle{cursor:pointer;touch-action:manipulation}
  #pennioWorkspaceDock .ws-minimize{border:1px solid var(--line,rgba(255,255,255,.16));background:transparent;border-radius:9px;width:32px;height:32px;font-size:17px;cursor:pointer}
  #pennioWorkspaceDock .ws-restore{display:none;border:0;background:transparent;color:inherit;font-size:12px;font-weight:600;padding:5px 7px;cursor:pointer}
- #pennioWorkspaceDock.is-minimized{width:max-content;max-width:calc(100vw - 32px);margin-left:auto}
+ #pennioWorkspaceDock.is-minimized{width:max-content;max-width:calc(100vw - 32px);margin-left:auto;top:auto;bottom:14px}
+ #pennioWorkspaceDock[data-side="left"].is-minimized{left:12px;right:auto}
+ #pennioWorkspaceDock[data-side="right"].is-minimized{right:12px;left:auto}
  #pennioWorkspaceDock.is-minimized .ws-shell{border-radius:999px}
  #pennioWorkspaceDock.is-minimized .ws-head{gap:10px;padding:7px 9px;min-height:0}
  #pennioWorkspaceDock.is-minimized .ws-head-copy,#pennioWorkspaceDock.is-minimized .ws-minimize,#pennioWorkspaceDock.is-minimized .ws-toggle{display:none}
@@ -111,10 +123,19 @@ function buildUI(){
  `;
  document.head.append(style);
  const dock=document.createElement("aside");dock.id="pennioWorkspaceDock";dock.innerHTML='<div class="ws-shell"><div class="ws-head"><i class="ws-mark"></i><div class="ws-head-copy"><small>Shared workspace</small><b id="workspaceProjectName">Studio workspace</b></div><button type="button" class="ws-toggle" id="workspaceToggle" aria-expanded="false">Media · 0</button><button type="button" class="ws-minimize" id="workspaceMinimize" aria-label="Minimize workspace" title="Minimize">−</button><button type="button" class="ws-restore" id="workspaceRestore" aria-label="Restore workspace">Workspace ↗</button></div><div class="ws-body" id="workspaceBody" hidden><label for="workspaceProjectSelect" style="display:block;font-size:10px;opacity:.65;margin:0 0 5px">ACTIVE PROJECT</label><select class="ws-project" id="workspaceProjectSelect"><option value="">Studio workspace · all media</option></select><div class="ws-storage" id="workspaceStorage" aria-live="polite"><div class="ws-storage-line"><b id="workspaceStorageLabel">Checking device storage…</b><span id="workspaceStorageValue"></span></div><div class="ws-storage-meter"><i id="workspaceStorageFill"></i></div><button type="button" id="workspaceProtectStorage">Protect local work</button><small id="workspaceStorageNote">Studio data stays in this browser. Download backups regularly.</small></div><div class="ws-assets" id="workspaceAssets"><div class="ws-empty">Record or import media in any room. It will appear here for this project.</div></div></div></div>';
+ const headerLogo=document.querySelector("header .bar .logo");
+ const positionButton=document.createElement("button");
+ positionButton.type="button";positionButton.id="studioPanelPosition";positionButton.setAttribute("aria-label","Move workspace panel to left side");positionButton.title="Move workspace panel to left side";
+ positionButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16M7 9h4M7 13h4"/></svg><span>Move</span>';
+ if(headerLogo)headerLogo.before(positionButton);
  const recorder=document.getElementById("studioRecorder");
  if(recorder)recorder.after(dock);else{const header=document.querySelector("header");if(header)header.after(dock);else document.body.prepend(dock);}
  
  const dockStateKey="ps.studio.workspace.layout.v1",body=$("workspaceBody"),toggle=$("workspaceToggle");
+ const savedLayout=readDockState();dock.dataset.side=savedLayout.side==="left"?"left":"right";
+ function syncPositionControl(){const left=dock.dataset.side==="left";positionButton.setAttribute("aria-label",left?"Move workspace panel to right side":"Move workspace panel to left side");positionButton.title=left?"Move workspace panel to right side":"Move workspace panel to left side";positionButton.innerHTML=left?'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M13 9h4M13 13h4"/></svg><span>Move</span>':'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16M7 9h4M7 13h4"/></svg><span>Move</span>';}
+ positionButton.addEventListener("click",()=>{dock.dataset.side=dock.dataset.side==="right"?"left":"right";saveDockState({side:dock.dataset.side});syncPositionControl();});
+ syncPositionControl();
  const readDockState=()=>{try{return JSON.parse(localStorage.getItem(dockStateKey)||"{}")}catch(e){return {}}};
  const saveDockState=patch=>{try{localStorage.setItem(dockStateKey,JSON.stringify({...readDockState(),...patch}))}catch(e){}};
  function syncDockOverlay(){document.body.classList.toggle("workspace-open",!dock.classList.contains("is-minimized")&&!body.hidden)}
