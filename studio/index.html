@@ -1365,7 +1365,24 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .lane-actions button{font-size:10px;padding:6px 8px;border:1px solid var(--line2);border-radius:7px}
 .lane-actions button.danger{color:#e99a85}
 @media(max-width:560px){.row{grid-template-columns:122px minmax(420px,1fr)}.name{padding-left:0}.ms button{min-height:28px}.lane-more{max-width:122px}}
-</style></head>
+</style><style id="pennio-ayan-fluid-beat-grid">
+/* Keep track names and controls readable while the step grid uses the remaining width. */
+#v-ayan .row{width:100%;min-width:0;grid-template-columns:minmax(104px,160px) minmax(0,1fr)!important;gap:8px}
+#v-ayan .name{min-width:0;align-items:flex-start;padding:4px 5px}
+#v-ayan .name .nmb{min-width:0;width:100%;max-width:100%}
+#v-ayan .name .nmb b{white-space:normal;overflow-wrap:anywhere}
+#v-ayan .name .ms{display:flex;min-width:0;gap:3px;flex-wrap:wrap}
+#v-ayan .name .ms button{min-width:22px;min-height:22px;padding:0 4px}
+#v-ayan .steps{width:100%;min-width:0;grid-template-columns:repeat(16,minmax(0,1fr));gap:clamp(1px,.35vw,4px);padding-right:0}
+#v-ayan .step{width:100%;min-width:0;min-height:0;height:auto;aspect-ratio:1/1;padding:0;border-radius:clamp(2px,.35vw,6px);font-size:clamp(7px,.7vw,10px)}
+@media(max-width:560px){
+ #v-ayan .row{grid-template-columns:minmax(96px,112px) minmax(0,1fr)!important;gap:5px}
+ #v-ayan .name{padding:3px 2px}
+ #v-ayan .name .ms button{min-width:20px;min-height:20px}
+ #v-ayan .steps{gap:2px}
+}
+</style>
+</head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
   <div class="auth-gate-top"><a class="auth-gate-brand" href="https://pennio.agency/" aria-label="PENNIO home"><span class="auth-gate-mark" aria-hidden="true"><svg viewBox="0 0 81.67 102.67" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></span><span>PENNIO <i>STUDIO</i></span></a><span class="auth-gate-label">CREATIVE WORKSPACE</span></div>
@@ -2579,7 +2596,7 @@ function render(){
     eye.onclick=()=>{soloLaneId=soloLaneId===l.id?null:l.id;render();}; eye.classList.toggle("on",soloLaneId===l.id);
     mb.onclick=()=>{ muted[l.id]=!muted[l.id]; syncLaneBusGains(); render(); renderLayers(); };
     sb.onclick=()=>{ soloed.has(l.id)? soloed.delete(l.id) : soloed.add(l.id); syncLaneBusGains(); render(); renderLayers(); };
-    const st=document.createElement("div"); st.className="steps"; st.style.gridTemplateColumns="repeat("+N+",minmax(28px,1fr))";
+    const st=document.createElement("div"); st.className="steps"; st.style.gridTemplateColumns="repeat("+N+",minmax(0,1fr))";
     if(l.id==="vox" && !rawBuf){
       st.className="steps voxempty"; const b=document.createElement("button"); b.className="voxrec"; b.innerHTML='<i></i>Record your voice: the studio chops it onto this row';
       b.onclick=()=>{ if(typeof reRecord==="function") reRecord(); }; st.appendChild(b);
