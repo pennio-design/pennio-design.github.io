@@ -3142,7 +3142,7 @@ function extractMelodicNotes(frames){
  finish();return notes;
 }
 function detectBeatboxOnsets(frames,peakE,duration){
- const hits=[],threshold=Math.max(.006,peakE*.16);let last=-1;
+ const hits=[],threshold=Math.max(.0015,peakE*.12);let last=-1;
  for(let i=2;i<frames.length-2;i++){
   const e=frames[i].e,prev=frames[i-1].e;
   const local=e>=frames[i-2].e&&e>frames[i+1].e&&e>=frames[i+2].e;
@@ -3173,7 +3173,7 @@ async function translateVoiceIntoLane(laneId,vocalMode="hum"){
   const hits=detectBeatboxOnsets(frames,peakE,rawBuf.duration);
   if(!hits.length)throw new Error("No clear beatbox attacks were detected. Try sharper syllables such as 't', 'k' and 'p', with a little silence between hits.");
   hits.forEach(hit=>{const step=Math.round(hit.t/stepSeconds);if(step>=0&&step<N){line[step]=hit.strength>.66?1:hit.strength>.36?2:3;eventCount++;}});
-  LAY.drum=true;drumBuf=null;
+  if(laneId==="dd")LAY.drum=true;else if(Object.prototype.hasOwnProperty.call(LAY,laneId))LAY[laneId]=true;drumBuf=null;
   details=hits.slice(0,32).map((hit,i)=>({label:String(i+1),tone:hit.strength>.66?"H":hit.strength>.36?"M":"L",value:Math.round(hit.t*1000)+" ms"}));
  }else{
   const notes=extractMelodicNotes(frames);
