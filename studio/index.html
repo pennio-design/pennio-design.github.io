@@ -1297,6 +1297,30 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .auth-gate-bottom a{color:#aaa49c;text-decoration:none}
 @media(max-width:760px){.auth-gate{padding:20px 20px 16px}.auth-gate-main{grid-template-columns:1fr;gap:30px;padding:48px 0}.auth-gate-copy h1{font-size:clamp(48px,13vw,68px)}.auth-gate-rooms{margin-top:28px}.auth-gate-card{max-width:520px}.auth-gate-bottom{font-size:8px;letter-spacing:.08em}}
 </style>
+<style id="pennio-ayan-fluid-beat-grid">
+/* Compact track identity and responsive step sizing. */
+#v-ayan .row{width:100%;min-width:0;grid-template-columns:minmax(104px,160px) minmax(0,1fr)!important;gap:8px}
+#v-ayan .name{min-width:0;align-items:flex-start;padding:4px 5px}
+#v-ayan .name .nmb{min-width:0;width:100%;max-width:100%}
+#v-ayan .name .nmb b{white-space:normal;overflow-wrap:anywhere}
+#v-ayan .name .ms{display:flex;min-width:0;gap:3px;flex-wrap:wrap}
+#v-ayan .name .ms button{min-width:22px;min-height:22px;padding:0 4px}
+#v-ayan .row-context{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 6px;min-width:0;margin-top:3px}
+#v-ayan .row-context span{display:grid;min-width:0;gap:1px}
+#v-ayan .row-context small{font-size:8px;letter-spacing:.06em;color:var(--mute)}
+#v-ayan .row-context b{font-size:9px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-ayan .steps{width:100%;min-width:0;grid-template-columns:repeat(16,minmax(0,1fr));gap:clamp(1px,.35vw,4px);padding-right:0}
+#v-ayan .step{width:100%;min-width:0;min-height:0;height:auto;aspect-ratio:1/1;padding:0;border-radius:clamp(2px,.35vw,6px);font-size:clamp(7px,.7vw,10px)}
+@media(max-width:560px){
+ #v-ayan .row{grid-template-columns:minmax(96px,112px) minmax(0,1fr)!important;gap:5px}
+ #v-ayan .name{padding:3px 2px}
+ #v-ayan .name .ms button{min-width:20px;min-height:20px}
+ #v-ayan .row-context{gap:2px 4px}
+ #v-ayan .row-context small{font-size:7px}
+ #v-ayan .row-context b{font-size:8px}
+ #v-ayan .steps{gap:2px}
+}
+</style>
 </head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
@@ -2482,12 +2506,12 @@ function render(){
     eye.onclick=()=>{soloLaneId=soloLaneId===l.id?null:l.id;render();}; eye.classList.toggle("on",soloLaneId===l.id);
     mb.onclick=()=>{ muted[l.id]=!muted[l.id]; syncLaneBusGains(); render(); renderLayers(); };
     sb.onclick=()=>{ soloed.has(l.id)? soloed.delete(l.id) : soloed.add(l.id); syncLaneBusGains(); render(); renderLayers(); };
-    const st=document.createElement("div"); st.className="steps"; st.style.gridTemplateColumns="repeat("+N+",minmax(28px,1fr))";
+    const st=document.createElement("div"); st.className="steps"; st.style.gridTemplateColumns="repeat("+N+",minmax(0,1fr))";
     if(l.id==="vox" && !rawBuf){
       st.className="steps voxempty"; const b=document.createElement("button"); b.className="voxrec"; b.innerHTML='<i></i>Record your voice: the studio chops it onto this row';
       b.onclick=()=>{ if(typeof reRecord==="function") reRecord(); }; st.appendChild(b);
     } else for(let i=0;i<N;i++){ const b=document.createElement("button"); b.dataset.i=i; styleCell(b,l.id,i); st.appendChild(b); }
-    const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;row.appendChild(nm); row.appendChild(meta); row.appendChild(st); rowsEl.appendChild(row);
+    const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;nm.appendChild(meta); row.appendChild(nm); row.appendChild(st); rowsEl.appendChild(row);
   });
   saveSoon();
 }
