@@ -102,8 +102,11 @@ async function saveSessionNow(projectOverride){
  const projectId=projectOverride||sessionProjectId();
  if(!window.PennioWorkspace?.saveSession||sessionRestoring)return false;
  const tracks=[],audio=[];
+ taskProgress("Saving DAW audio and session…",null);
  const savedOffset=state.playing&&state.ctx?Math.min(duration(),state.offset+state.ctx.currentTime-state.startTime):(state.offset||0);
- for(const t of state.tracks){
+ for(let index=0;index<state.tracks.length;index++){
+  const t=state.tracks[index];
+  taskProgress("Preparing audio stem "+(index+1)+" of "+state.tracks.length+"…",state.tracks.length?index/state.tracks.length*70:70);
   const key=projectId+":"+t.id;
   let cached=sessionBlobCache.get(key),changed=!cached||cached.buffer!==t.buffer;
   if(changed){cached={buffer:t.buffer,blob:trackWavBlob(t.buffer),persisted:false};sessionBlobCache.set(key,cached);}
@@ -112,18 +115,21 @@ async function saveSessionNow(projectOverride){
  }
  await window.PennioWorkspace.saveSession(projectId,{version:1,tracks,selected:state.selected,effects:{...state.effects},offset:savedOffset,range:state.range?{...state.range}:null,plan:state.plan||"",timelineView:state.timelineView,tempo:state.tempo,barSnap:state.barSnap,audio});
  for(const t of state.tracks){const cached=sessionBlobCache.get(projectId+":"+t.id);if(cached)cached.persisted=true;}
+ taskProgress("DAW session and audio stems saved.",false);
  return true;
 }
 async function loadSessionFor(projectId){
  if(!window.PennioWorkspace?.loadSession)return;
  sessionProjectOverride=projectId||SESSION_DEFAULT;
- sessionRestoring=true;clearTimeout(sessionSaveTimer);const host=document.getElementById("dawRoom");host?.classList.add("session-loading");status("Restoring project session…");stop();
+ sessionRestoring=true;clearTimeout(sessionSaveTimer);const host=document.getElementById("dawRoom");host?.classList.add("session-loading");taskProgress("Restoring project session…",null);stop();
  try{
   const rec=await window.PennioWorkspace.loadSession(projectId||SESSION_DEFAULT);
   state.tracks=[];state.selected=null;state.effects={eq:false,compressor:false,reverb:false,echo:false};state.offset=0;state.range=null;state.plan="";state.timelineView=rec?.timelineView==="bars"?"bars":"waves";state.tempo=Math.max(40,Math.min(240,Number(rec?.tempo)||120));state.barSnap=rec?.barSnap!==false;$("dawPlan").value="";sessionBlobCache.clear();
   if(rec&&Array.isArray(rec.tracks)){
    const stored=new Map((rec.audio||[]).map(x=>[x.id,x.blob]));
-   for(const meta of rec.tracks){
+   for(let index=0;index<rec.tracks.length;index++){
+    const meta=rec.tracks[index];
+    taskProgress("Restoring audio stem "+(index+1)+" of "+rec.tracks.length+"…",rec.tracks.length?(index/rec.tracks.length)*90:null);
     const blob=stored.get(meta.audioKey);if(!blob)continue;
     try{
      const C=window.AudioContext||window.webkitAudioContext;if(!C)throw Error("Web Audio is unavailable.");if(!state.ctx)state.ctx=new C();const buffer=await state.ctx.decodeAudioData(await blob.arrayBuffer());
@@ -139,7 +145,7 @@ async function loadSessionFor(projectId){
   document.querySelectorAll("[data-fx]").forEach(button=>button.classList.toggle("primary",!!state.effects[button.dataset.fx]));
   render();$("dawClock").textContent=fmt(state.offset);status(rec?"Project session restored.":"A new DAW session is ready for this project.");
  }catch(e){status("Could not restore this project session: "+e.message);}
- finally{sessionRestoring=false;document.getElementById("dawRoom")?.classList.remove("session-loading");}
+ finally{sessionRestoring=false;document.getElementById("dawRoom")?.classList.remove("session-loading");taskProgress("",false);}
 }
 async function runInProjectSession(targetProjectId,task){
  const current=sessionProjectId(),target=targetProjectId||current;
@@ -281,7 +287,39 @@ function chain(source,t,ctx,destination){if(ctx===state.ctx&&state.outputGain)de
 async function play(){if(!state.tracks.length){status("Import or record audio first.");return;}if(state.playStarting){stop();return;}if(state.playing){state.offset=Math.min(duration(),state.offset+context().currentTime-state.startTime);stop();return;}try{window.PennioBeatControl?.stop?.();$("tp")?.classList.add("daw-session-focused");const generation=++state.playGeneration;state.playStarting=true;const ctx=context(),when=ctx.currentTime+.06,playOffset=state.offset;setOutputLevel(1);state.sources=[];state.dspChains=[];for(const t of state.tracks){const src=ctx.createBufferSource();src.buffer=t.buffer;let input=src;if(window.StudioCleanChain){const dsp=await window.StudioCleanChain.create(ctx,t.dsp||window.StudioCleanDefaults,{mono:t.buffer.numberOfChannels===1});if(generation!==state.playGeneration){dsp.dispose();return;}src.connect(dsp.input);input=dsp.output;src.__pennioDsp=dsp;dsp.trackId=t.id;state.dspChains.push(dsp);}const laneGain=chain(input,t,ctx,ctx.destination);src.__pennioTrack=t;src.__pennioTrackGain=laneGain;const elapsed=Math.max(0,playOffset-(t.timeline||0)),sourceOffset=t.start+elapsed,remain=t.end-sourceOffset;if(remain<=0)continue;const scheduled=when+Math.max(0,(t.timeline||0)-playOffset);src.start(scheduled,sourceOffset,remain);state.sources.push(src);}state.playStarting=false;state.playing=true;state.startTime=ctx.currentTime;const base=playOffset;$("dawPlay").textContent="Ⅱ Pause";state.timer=setInterval(()=>{const now=base+ctx.currentTime-state.startTime;$("dawClock").textContent=fmt(now);paintPlayhead(now);if(now>=duration()){state.offset=0;stop();}},80);paintPlayhead(playOffset);}catch(e){stop();status(e.message);}}
 window.PennioDAWAudioControl={stop:()=>{if(state.playing)state.offset=Math.min(duration(),state.offset+context().currentTime-state.startTime);if(state.playing||state.playStarting)stop();},isPlaying:()=>state.playing||state.playStarting};
 function wavBlob(buffer){const channels=2,length=buffer.length,rate=buffer.sampleRate,bytes=length*channels*2,ab=new ArrayBuffer(44+bytes),v=new DataView(ab);const str=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i));};str(0,"RIFF");v.setUint32(4,36+bytes,true);str(8,"WAVE");str(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,channels,true);v.setUint32(24,rate,true);v.setUint32(28,rate*channels*2,true);v.setUint16(32,channels*2,true);v.setUint16(34,16,true);str(36,"data");v.setUint32(40,bytes,true);const left=buffer.getChannelData(0),right=buffer.numberOfChannels>1?buffer.getChannelData(1):left;let p=44;for(let i=0;i<length;i++){for(const x of [left[i],right[i]]){const s=Math.max(-1,Math.min(1,x));v.setInt16(p,s<0?s*32768:s*32767,true);p+=2;}}return new Blob([ab],{type:"audio/wav"});}
-async function exportMix(sendToStudio=false,mergeToTrack=false){if(!state.tracks.length)return;const exportProjectId=sessionProjectId();stop();status("Rendering your mix…");try{const rate=44100,secs=Math.max(.1,duration()),off=new OfflineAudioContext(2,Math.ceil(secs*rate),rate),solo=state.tracks.some(t=>t.solo);for(const t of state.tracks){if(t.mute||(solo&&!t.solo))continue;const src=off.createBufferSource();src.buffer=t.buffer;let node=src;if(window.StudioCleanChain){const dsp=await window.StudioCleanChain.create(off,t.dsp||window.StudioCleanDefaults,{mono:t.buffer.numberOfChannels===1});src.connect(dsp.input);node=dsp.output;}const gain=off.createGain();gain.gain.value=t.gain;node.connect(gain);node=gain;if(state.effects.eq&&!t.bypassFx){const f=off.createBiquadFilter();f.type="highpass";f.frequency.value=75;node.connect(f);node=f;}if(state.effects.compressor&&!t.bypassFx){const c=off.createDynamicsCompressor();c.threshold.value=-20;c.ratio.value=3;node.connect(c);node=c;}if(state.effects.echo&&!t.bypassFx){const delay=off.createDelay(1),feedback=off.createGain();delay.delayTime.value=.22;feedback.gain.value=.18;node.connect(delay);delay.connect(feedback);feedback.connect(delay);node.connect(delay);const dry=off.createGain();dry.gain.value=.82;node.connect(dry);const wet=off.createGain();wet.gain.value=.28;delay.connect(wet);const sum=off.createGain();dry.connect(sum);wet.connect(sum);node=sum;}if(state.effects.reverb&&!t.bypassFx){const early=off.createDelay(.5),tail=off.createDelay(.5),wet=off.createGain();early.delayTime.value=.037;tail.delayTime.value=.071;wet.gain.value=.16;node.connect(early);early.connect(tail);tail.connect(wet);const dry=off.createGain();dry.gain.value=.88;node.connect(dry);const sum=off.createGain();dry.connect(sum);wet.connect(sum);node=sum;}const pan=off.createStereoPanner();pan.pan.value=t.pan;node.connect(pan);pan.connect(off.destination);src.start(t.timeline||0,t.start,t.end-t.start);}let rendered=await off.startRendering();const normalize=state.tracks.some(t=>!t.mute&&(!solo||t.solo)&&t.dsp?.enabled&&t.dsp?.normalizeLufs!==false);if(window.StudioCleanOffline){if(normalize){const result=window.StudioCleanOffline.normalizeAndFade(rendered,-14,-1,.015);rendered=result.buffer;status("Studio Clean export · "+(Number.isFinite(result.measuredLufs)?result.measuredLufs.toFixed(1)+" LUFS before normalization":"silent mix")+" · estimated peak "+(Number.isFinite(result.peakDbfs)?result.peakDbfs.toFixed(1)+" dBFS":"n/a"));}else window.StudioCleanOffline.applyBoundaryFades(rendered,.015);}if(mergeToTrack){snapshot();state.tracks.forEach(t=>{t.mute=true;t.solo=false;});const merged={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:"Merged mix",buffer:rendered,start:0,end:rendered.duration,gain:1,pan:0,timeline:0,mute:false,solo:false,bypassFx:true};state.tracks.push(merged);state.selected=merged.id;state.offset=0;render();queueSessionSave();status("Merged mix added as one track. Original layers are muted and still available.");return;}const blob=wavBlob(rendered);if(sendToStudio){window.dispatchEvent(new CustomEvent("pennio:studio-media",{detail:{blob,name:"Àyàn DAW mix",kind:"audio",projectId:exportProjectId}}));status("Stereo WAV sent to the Studio recorder. Choose Film or Àyàn from the shared panel.");}else{const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ayan-mix.wav";a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);status("Mix exported · stereo WAV");}}catch(e){status("Export failed: "+e.message);}}
+async function exportMix(sendToStudio=false,mergeToTrack=false){
+ if(!state.tracks.length)return;
+ const exportProjectId=sessionProjectId();stop();
+ taskProgress("Preparing mix export…",null);
+ try{
+  const rate=44100,secs=Math.max(.1,duration()),off=new OfflineAudioContext(2,Math.ceil(secs*rate),rate),solo=state.tracks.some(t=>t.solo);
+  const activeTracks=state.tracks.filter(t=>!t.mute&&(!solo||t.solo));
+  for(let index=0;index<activeTracks.length;index++){
+   const t=activeTracks[index];
+   taskProgress("Preparing mix · track "+(index+1)+" of "+activeTracks.length,(index/Math.max(1,activeTracks.length))*35);
+   const src=off.createBufferSource();src.buffer=t.buffer;let node=src;
+   if(window.StudioCleanChain){const dsp=await window.StudioCleanChain.create(off,t.dsp||window.StudioCleanDefaults,{mono:t.buffer.numberOfChannels===1});src.connect(dsp.input);node=dsp.output;}
+   const gain=off.createGain();gain.gain.value=t.gain;node.connect(gain);node=gain;
+   if(state.effects.eq&&!t.bypassFx){const f=off.createBiquadFilter();f.type="highpass";f.frequency.value=75;node.connect(f);node=f;}
+   if(state.effects.compressor&&!t.bypassFx){const c=off.createDynamicsCompressor();c.threshold.value=-20;c.ratio.value=3;node.connect(c);node=c;}
+   if(state.effects.echo&&!t.bypassFx){const delay=off.createDelay(1),feedback=off.createGain();delay.delayTime.value=.22;feedback.gain.value=.18;node.connect(delay);delay.connect(feedback);feedback.connect(delay);node.connect(delay);const dry=off.createGain();dry.gain.value=.82;node.connect(dry);const wet=off.createGain();wet.gain.value=.28;delay.connect(wet);const sum=off.createGain();dry.connect(sum);wet.connect(sum);node=sum;}
+   if(state.effects.reverb&&!t.bypassFx){const early=off.createDelay(.5),tail=off.createDelay(.5),wet=off.createGain();early.delayTime.value=.037;tail.delayTime.value=.071;wet.gain.value=.16;node.connect(early);early.connect(tail);tail.connect(wet);const dry=off.createGain();dry.gain.value=.88;node.connect(dry);const sum=off.createGain();dry.connect(sum);wet.connect(sum);node=sum;}
+   const pan=off.createStereoPanner();pan.pan.value=t.pan;node.connect(pan);pan.connect(off.destination);src.start(t.timeline||0,t.start,t.end-t.start);
+  }
+  taskProgress("Rendering audio mix…",null);
+  let rendered=await off.startRendering();
+  const normalize=activeTracks.some(t=>t.dsp?.enabled&&t.dsp?.normalizeLufs!==false);
+  if(window.StudioCleanOffline){
+   if(normalize){taskProgress("Normalizing and finishing mix…",null);const result=window.StudioCleanOffline.normalizeAndFade(rendered,-14,-1,.015);rendered=result.buffer;status("Studio Clean export · "+(Number.isFinite(result.measuredLufs)?result.measuredLufs.toFixed(1)+" LUFS before normalization":"silent mix")+" · estimated peak "+(Number.isFinite(result.peakDbfs)?result.peakDbfs.toFixed(1)+" dBFS":"n/a"));}
+   else window.StudioCleanOffline.applyBoundaryFades(rendered,.015);
+  }
+  if(mergeToTrack){snapshot();state.tracks.forEach(t=>{t.mute=true;t.solo=false;});const merged={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:"Merged mix",buffer:rendered,start:0,end:rendered.duration,gain:1,pan:0,timeline:0,mute:false,solo:false,bypassFx:true};state.tracks.push(merged);state.selected=merged.id;state.offset=0;render();queueSessionSave();taskProgress("Merged mix added as one track. Original layers remain available.",false);return;}
+  taskProgress("Encoding WAV export…",null);
+  const blob=wavBlob(rendered);
+  if(sendToStudio){window.dispatchEvent(new CustomEvent("pennio:studio-media",{detail:{blob,name:"Àyàn DAW mix",kind:"audio",projectId:exportProjectId}}));taskProgress("Stereo WAV sent to the Studio recorder.",false);}
+  else{const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="ayan-mix.wav";a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);taskProgress("Mix exported · stereo WAV",false);}
+ }catch(e){taskProgress("Export failed: "+e.message,false);}
+}
 $("dawImport").addEventListener("change",e=>{importFiles(e.target.files);e.target.value="";});
 window.addEventListener("pennio:recorded-audio",e=>{const detail=e.detail||{},blob=detail.blob;if(!blob)return;const target=detail.projectId||sessionProjectId();queueSessionOperation(target,async projectId=>{const buffer=await context().decodeAudioData(await blob.arrayBuffer());addBuffer(buffer,detail.name||"Studio recording");status("Recording added as a new DAW track.");$("dawRoom").scrollIntoView({behavior:"smooth",block:"start"});}).catch(err=>status("Could not add recording to Àyàn: "+err.message));});
 const modeCopy={beat:"Build and arrange your beat. Your patterns and tracks stay in the same project.",record:"Record a voice or instrument. Keep the beat playing while you capture a take.",overlay:"Add a new take over an existing passage. Select a section to compare or re-record it.",edit:"Select, trim, keep or remove a passage. Original takes remain available until you change them.",mix:"Balance track levels and shape the sound with EQ, compression, reverb and echo.",plan:"Keep session direction, recording order and mix notes with this project.",merge:"Export a stereo WAV, merge tracks or send the mix back to the Beat workspace."};
