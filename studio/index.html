@@ -1472,13 +1472,33 @@ html[data-theme="light"] .theme-toggle .theme-icon-moon{display:block}
 @media(max-width:760px){.room-nav-wrap{padding:0 12px 8px}.room-nav{justify-content:flex-start;overflow:hidden}.room-nav-projects{margin-left:auto}.room-nav button{padding:8px 10px;font-size:11px}}
 </style>
 
+
+<style id="pennio-project-art-and-video-showcase">
+.dash-project-mark.has-artwork{overflow:hidden;background:#171717}
+.dash-project-mark.has-artwork img{width:100%;height:100%;display:block;object-fit:cover}
+.dash-artwork-field{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:12px;margin-top:8px}
+.dash-artwork-preview{width:76px;height:76px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--mute);font-size:11px;text-align:center}
+.dash-artwork-preview img{width:100%;height:100%;object-fit:cover}
+.dash-artwork-actions{display:grid;gap:8px;min-width:0}
+.dash-artwork-actions input{min-width:0;max-width:100%;padding:8px;font-size:11px}
+.dash-artwork-actions button{justify-self:start;padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:11px}
+.dash-video-showcase{margin-top:18px}
+.dash-video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin-top:14px}
+.dash-video-card{min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:13px;background:var(--surface)}
+.dash-video-card video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#080808}
+.dash-video-copy{display:grid;gap:6px;padding:12px}
+.dash-video-copy b{font-size:13px}
+.dash-video-copy p,.dash-video-empty{font-size:11px;line-height:1.55;color:var(--mute)}
+.dash-video-copy button{justify-self:start;margin-top:4px;padding:8px 11px;border:1px solid var(--line2);border-radius:8px;font-size:11px}
+.dash-video-empty{padding:18px;border:1px dashed var(--line2);border-radius:11px}
+</style>
 </head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
   <div class="auth-gate-top"><a class="auth-gate-brand" href="https://pennio.agency/" aria-label="PENNIO home"><span class="auth-gate-mark" aria-hidden="true"><svg viewBox="0 0 81.67 102.67" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></span><span>PENNIO <i>STUDIO</i></span></a><span class="auth-gate-label">CREATIVE WORKSPACE</span></div>
   <div class="auth-gate-main">
     <div class="auth-gate-copy"><span class="auth-gate-eyebrow">A CREATIVE PLATFORM BY PENNIO</span><h1>Make something<br><em>worth keeping.</em></h1><p>Sound, language, image and story. One workspace for ideas that deserve a form.</p>
-      <div class="auth-gate-rooms"><div><b>01</b><span><strong>Àyàn</strong><small>Music and sound</small></span></div><div><b>02</b><span><strong>Ewì</strong><small>Writing and poetry</small></span></div><div><b>03</b><span><strong>Eré</strong><small>Film and image</small></span></div><div><b>04</b><span><strong>Beauty Room</strong><small>Camera and portraiture</small></span></div></div>
+      <div class="auth-gate-rooms"><div><b>01</b><span><strong>Àyàn</strong><small>Music and sound</small></span></div><div><b>02</b><span><strong>Akéwì</strong><small>Writing and poetry</small></span></div><div><b>03</b><span><strong>Eré</strong><small>Film and image</small></span></div><div><b>04</b><span><strong>Beauty Room</strong><small>Camera and portraiture</small></span></div></div>
     </div>
     <section class="auth-gate-card" aria-labelledby="authGateTitle"><span class="auth-gate-eyebrow">YOUR PENNIO ACCOUNT</span><h2 id="authGateTitle">Enter your workspace.</h2><p>Sign in with your email. We’ll send you a secure one-time code.</p>
       <label for="gateEmail">Email address</label><input id="gateEmail" type="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
@@ -1553,7 +1573,7 @@ html[data-theme="light"] .theme-toggle .theme-icon-moon{display:block}
       <span class="dash-room-index">01 / SOUND</span><span class="dash-room-icon room-icon-sound" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 20h7l7-7v22l-7-7H8z"/><path d="M29 18c3 3 3 9 0 12M34 13c6 6 6 16 0 22"/><path d="M8 39h32" opacity=".35"/></svg></span><b>Àyàn</b><span class="dash-room-desc">Record, arrange, produce. Let the talking drum answer your voice.</span><span class="dash-room-foot"><span>Open music studio</span><span>↗</span></span>
     </button>
     <button class="dash-room" data-room="write" data-search="write poetry screenplay lyrics akewi">
-      <span class="dash-room-index">02 / LANGUAGE</span><span class="dash-room-icon room-icon-write" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M11 36 23 9h3l12 27M16 26h19"/><path d="M9 41h30M31 9l8 8" opacity=".5"/></svg></span><b>Ewì</b><span class="dash-room-desc">Write poetry, lyrics, scenes and stories with Yoruba tone support.</span><span class="dash-room-foot"><span>Open writing room</span><span>↗</span></span>
+      <span class="dash-room-index">02 / LANGUAGE</span><span class="dash-room-icon room-icon-write" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M11 36 23 9h3l12 27M16 26h19"/><path d="M9 41h30M31 9l8 8" opacity=".5"/></svg></span><b>Akéwì</b><span class="dash-room-desc">Write poetry, lyrics, scenes and stories with Yoruba tone support.</span><span class="dash-room-foot"><span>Open writing room</span><span>↗</span></span>
     </button>
     <button class="dash-room" data-room="faajiplace" data-search="film video filmmaking faajiplace">
       <span class="dash-room-index">03 / IMAGE</span><span class="dash-room-icon room-icon-film" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="24" rx="3"/><path d="m20 18 11 6-11 6z"/><path d="M13 8v4m8-4v4m8-4v4m8-4v4M13 36v4m8-4v4m8-4v4m8-4v4" opacity=".55"/></svg></span><b>Eré</b><span class="dash-room-desc">Shape scenes, plan shots and build a film from an idea.</span><span class="dash-room-foot"><span>Open film room</span><span>↗</span></span>
@@ -1575,6 +1595,11 @@ html[data-theme="light"] .theme-toggle .theme-icon-moon{display:block}
       <div class="dash-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </section>
   </div>
+
+  <section class="dash-panel dash-video-showcase" aria-labelledby="dashVideoShowcaseTitle">
+    <div class="dash-section-head"><div><span class="dash-overline">VIDEO PROJECTS</span><h2 id="dashVideoShowcaseTitle">Film showcase</h2></div><span class="dash-count">Your saved video work</span></div>
+    <div id="dashVideoShowcase" class="dash-video-grid"><div class="dash-video-empty">Saved video projects will appear here.</div></div>
+  </section>
   <div class="dash-footer"><span>PENNIO STUDIO</span><span>Made for ideas that deserve a form.</span><a href="/faajiplace/" class="next-pennio">Next from PENNIO · Eré ↗</a><button id="dashHelp">How Studio works ↗</button></div>
 </section>
 
@@ -1757,8 +1782,8 @@ html[data-theme="light"] .theme-toggle .theme-icon-moon{display:block}
 <!-- WRITE -->
 <section class="view" id="v-write">
   <div class="cr-lead">
-    <div class="cr-kicker">Ewì room · lyrics & screenplay</div>
-    <h1>A place where Ewì meets Àyàn.</h1>
+    <div class="cr-kicker">Akéwì room · lyrics & screenplay</div>
+    <h1>A place where Akéwì meets Àyàn.</h1>
     <p class="sub">Shape a scene or a song, then carry a line into Àyàn and find its rhythm with your voice. Send scene headings to Eré for picture cues. Drafts stay on this device until you export them.</p>
   </div>
   <div class="jump" role="navigation" aria-label="In this tab"><a href="#draftRoom">Draft room</a><a href="#wtext">Tone marks</a><a href="#hkCard">Songwriting</a><a href="#tgCard">Tone game</a><a href="#ogbCard">Translate</a></div>
@@ -5428,7 +5453,7 @@ document.getElementById("sylIn").oninput=sylRender;
  const read=()=>{try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}};
  const write=list=>{try{localStorage.setItem(KEY,JSON.stringify(list));return true}catch(e){return false}};
  const rooms=$("dashRooms"),search=$("dashSearch"),projects=$("dashProjects");
- const roomNames={ayan:"Àyàn",write:"Ewì",faajiplace:"Eré",beauty:"Ojuloge"};
+ const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Eré",beauty:"Ojuloge"};
  let showAllProjects=false;
  function go(room){const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();try{history.replaceState(null,"",room==="home"?"/studio/":"#"+room)}catch(e){}window.scrollTo({top:0,behavior:"smooth"});}
  rooms.addEventListener("click",e=>{const card=e.target.closest("[data-room]");if(card&&roomNames[card.dataset.room])go(card.dataset.room);});
@@ -5438,31 +5463,72 @@ document.getElementById("sylIn").oninput=sylRender;
  const style=document.createElement("style");
  style.textContent='.dash-modal-backdrop{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.dash-modal{width:min(100%,460px);background:var(--panel,#151515);color:var(--text,#fff);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;padding:24px;box-shadow:0 24px 80px #0008}.dash-modal h2{margin:0 0 8px;font-size:24px}.dash-modal p{margin:0 0 20px;color:var(--muted,#aaa);font-size:14px}.dash-modal label{display:block;margin:14px 0 7px;font-size:12px;color:var(--muted,#aaa)}.dash-modal input,.dash-modal select{width:100%;min-height:46px;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:9px;background:var(--surface,#202020);color:inherit;padding:0 12px;font:inherit}.dash-modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}.dash-modal-actions button{min-height:42px;padding:0 15px;border-radius:9px;border:1px solid var(--line,rgba(255,255,255,.2));background:transparent;color:inherit}.dash-modal-actions button.primary{background:var(--accent,#ff6a00);border-color:var(--accent,#ff6a00);color:#fff}.dash-project-actions button{cursor:pointer}';
  document.head.append(style);
- const backdrop=document.createElement("div");backdrop.className="dash-modal-backdrop";backdrop.hidden=true;backdrop.innerHTML='<form class="dash-modal" role="dialog" aria-modal="true" aria-labelledby="dashModalTitle"><h2 id="dashModalTitle">New project</h2><p id="dashModalCopy">Give the work a name and choose where it begins.</p><label for="dashProjectName">Project name</label><input id="dashProjectName" maxlength="70" required placeholder="A name worth returning to"><label for="dashProjectRoom">Starting room</label><select id="dashProjectRoom"><option value="ayan">Àyàn · Music</option><option value="write">Ewì · Writing</option><option value="faajiplace">Eré · Film</option><option value="beauty">Ojuloge</option></select><div class="dash-modal-actions"><button type="button" id="dashModalCancel">Cancel</button><button class="primary" type="submit">Save project</button></div></form>';
+ const backdrop=document.createElement("div");backdrop.className="dash-modal-backdrop";backdrop.hidden=true;backdrop.innerHTML='<form class="dash-modal" role="dialog" aria-modal="true" aria-labelledby="dashModalTitle"><h2 id="dashModalTitle">New project</h2><p id="dashModalCopy">Give the work a name and choose where it begins.</p><label for="dashProjectName">Project name</label><input id="dashProjectName" maxlength="70" required placeholder="A name worth returning to"><label for="dashProjectRoom">Starting room</label><select id="dashProjectRoom"><option value="ayan">Àyàn · Music</option><option value="write">Akéwì · Writing</option><option value="faajiplace">Fàájíplace · Film</option><option value="beauty">Model</option></select><label for="dashProjectArtwork">Project artwork</label><div class="dash-artwork-field"><div class="dash-artwork-preview" id="dashProjectArtworkPreview">Project image</div><div class="dash-artwork-actions"><input id="dashProjectArtwork" type="file" accept="image/png,image/jpeg,image/webp"><button type="button" id="dashProjectArtworkRemove">Remove artwork</button></div></div><div class="dash-modal-actions"><button type="button" id="dashModalCancel">Cancel</button><button class="primary" type="submit">Save project</button></div></form>';
  document.body.append(backdrop);
- const form=backdrop.querySelector("form"),nameInput=$("dashProjectName"),roomInput=$("dashProjectRoom");
- let editingId=null;
- function closeModal(){backdrop.hidden=true;editingId=null;}
- function openModal(item){editingId=item?.id||null;$("dashModalTitle").textContent=item?"Edit project":"New project";$("dashModalCopy").textContent=item?"Update the project name or move it to another room.":"Give the work a name and choose where it begins.";nameInput.value=item?.name||"";roomInput.value=item?.room||"ayan";backdrop.hidden=false;nameInput.focus();}
+ const form=backdrop.querySelector("form"),nameInput=$("dashProjectName"),roomInput=$("dashProjectRoom"),artworkInput=$("dashProjectArtwork"),artworkPreview=$("dashProjectArtworkPreview");
+ let editingId=null,selectedArtworkBlob=null,removeArtwork=false,artworkPreviewUrl=null,projectRenderVersion=0,videoRenderVersion=0,videoPreviewUrls=[];
+ function clearArtworkPreview(){if(artworkPreviewUrl)URL.revokeObjectURL(artworkPreviewUrl);artworkPreviewUrl=null;artworkPreview.replaceChildren();artworkPreview.textContent="Project image";}
+ function showArtworkPreview(blob){clearArtworkPreview();artworkPreview.replaceChildren();artworkPreviewUrl=URL.createObjectURL(blob);const image=document.createElement("img");image.src=artworkPreviewUrl;image.alt="Project artwork preview";artworkPreview.append(image);}
+ async function compressProjectArtwork(file){
+  if(!file||!["image/png","image/jpeg","image/webp"].includes(file.type))throw Error("Choose a PNG, JPEG or WebP image.");
+  if(file.size>8*1024*1024)throw Error("Choose an image smaller than 8 MB.");
+  const bitmap=await createImageBitmap(file),scale=Math.min(1,640/Math.max(bitmap.width,bitmap.height)),canvas=document.createElement("canvas");
+  canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+  const context=canvas.getContext("2d");if(!context)throw Error("Image editing is unavailable in this browser.");
+  context.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close?.();
+  return await new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(Error("Could not prepare project artwork.")),"image/jpeg",.82));
+ }
+ async function closeModal(){backdrop.hidden=true;editingId=null;selectedArtworkBlob=null;removeArtwork=false;}
+ async function openModal(item){
+  editingId=item?.id||null;selectedArtworkBlob=null;removeArtwork=false;artworkInput.value="";clearArtworkPreview();
+  $("dashModalTitle").textContent=item?"Edit project":"New project";$("dashModalCopy").textContent=item?"Update the project details and artwork.":"Give the work a name, starting room and visual identity.";
+  nameInput.value=item?.name||"";roomInput.value=item?.room||"ayan";backdrop.hidden=false;nameInput.focus();
+  if(item?.artworkAssetId&&window.PennioWorkspace?.getAsset){try{const asset=await window.PennioWorkspace.getAsset(item.artworkAssetId);if(asset?.blob)showArtworkPreview(asset.blob);}catch(error){console.warn("Project artwork preview:",error);}}
+ }
+ artworkInput.addEventListener("change",async()=>{
+  const file=artworkInput.files&&artworkInput.files[0];if(!file)return;
+  try{selectedArtworkBlob=await compressProjectArtwork(file);removeArtwork=false;showArtworkPreview(selectedArtworkBlob);}
+  catch(error){selectedArtworkBlob=null;artworkInput.value="";alert(error.message);}
+ });
+ $("dashProjectArtworkRemove").addEventListener("click",()=>{selectedArtworkBlob=null;removeArtwork=true;artworkInput.value="";clearArtworkPreview();});
+ 
  $("dashModalCancel").addEventListener("click",closeModal);
  backdrop.addEventListener("click",e=>{if(e.target===backdrop)closeModal();});
  document.addEventListener("keydown",e=>{if(!backdrop.hidden&&e.key==="Escape")closeModal();});
- form.addEventListener("submit",e=>{
+ form.addEventListener("submit",async e=>{
   e.preventDefault();const name=nameInput.value.trim();if(!name)return;
-  const list=read();let item;
-  if(editingId){item=list.find(x=>x.id===editingId);if(!item)return;item.name=name;item.room=roomInput.value;item.updated=Date.now();}
-  else{item={id:"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name,room:roomInput.value,created:Date.now(),updated:Date.now()};list.unshift(item);}
-  if(!write(list)){alert("This browser could not save the project. Check available storage.");return;}
-  const isNew=!editingId;closeModal();renderProjects();
-  window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project:item}}));
-  if(isNew){go(item.room);if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;}
+  const submit=form.querySelector('button[type="submit"]');submit.disabled=true;submit.textContent="Saving…";
+  try{
+   const list=read();let item;
+   if(editingId){item=list.find(x=>x.id===editingId);if(!item)throw Error("This project is no longer available.");item.name=name;item.room=roomInput.value;item.updated=Date.now();}
+   else{item={id:"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name,room:roomInput.value,created:Date.now(),updated:Date.now()};list.unshift(item);}
+   if(selectedArtworkBlob){
+    if(!window.PennioWorkspace?.addAsset)throw Error("Project media storage is still starting. Try again in a moment.");
+    const asset=await window.PennioWorkspace.addAsset({blob:selectedArtworkBlob,name:name+" artwork",kind:"image",projectId:item.id});
+    if(!asset?.id)throw Error("Project artwork could not be saved.");
+    item.artworkAssetId=asset.id;
+   }else if(removeArtwork){delete item.artworkAssetId;}
+   item.updated=Date.now();
+   if(!write(list))throw Error("This browser could not save the project details. Check available storage.");
+   const isNew=!editingId;closeModal();renderProjects();renderVideoShowcase();
+   window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project:item}}));
+   if(isNew){go(item.room);if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;}
+  }catch(error){alert("Project could not be saved: "+error.message);}
+  finally{submit.disabled=false;submit.textContent="Save project";}
  });
- function renderProjects(){
-  const list=read().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0));projects.replaceChildren();
+ async function renderProjects(){
+  const version=++projectRenderVersion,list=read().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0));
+  const workspace=window.PennioWorkspace,assets=workspace?.listAssets?await workspace.listAssets().catch(()=>[]):[];
+  if(version!==projectRenderVersion)return;
+  const artworkById=new Map(assets.filter(a=>a.kind==="image").map(a=>[a.id,a]));
+  projects.replaceChildren();
   if(!list.length){const empty=document.createElement("div");empty.className="dash-empty";empty.innerHTML='<span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button>';projects.append(empty);$("dashFirstProject").onclick=()=>openModal();return;}
   (showAllProjects?list:list.slice(0,5)).forEach(item=>{
    const row=document.createElement("article");row.className="dash-project";
-   const mark=document.createElement("span");mark.className="dash-project-mark";mark.textContent="✳";
+   const mark=document.createElement("span");mark.className="dash-project-mark";
+   const art=item.artworkAssetId&&artworkById.get(item.artworkAssetId);
+   if(art?.blob){mark.classList.add("has-artwork");const image=document.createElement("img");image.src=URL.createObjectURL(art.blob);image.alt="";mark.append(image);}
+   else mark.textContent="✳";
    const copy=document.createElement("div");copy.className="dash-project-copy";
    const title=document.createElement("b");title.textContent=item.name;
    const meta=document.createElement("small");meta.textContent=(roomNames[item.room]||"Studio project")+" · "+new Date(item.updated||item.created||Date.now()).toLocaleDateString();
@@ -5488,6 +5554,25 @@ document.getElementById("sylIn").oninput=sylRender;
    };
    actions.append(open,edit,remove);row.append(mark,copy,actions);projects.append(row);
   });
+  renderVideoShowcase();
+ }
+ async function renderVideoShowcase(){
+  const host=$("dashVideoShowcase"),workspace=window.PennioWorkspace;if(!host||!workspace?.listAssets)return;
+  const version=++videoRenderVersion,assets=await workspace.listAssets().catch(()=>[]),projectsList=read();if(version!==videoRenderVersion)return;
+  videoPreviewUrls.forEach(url=>URL.revokeObjectURL(url));videoPreviewUrls=[];host.replaceChildren();
+  const videos=assets.filter(a=>a.kind==="video"&&a.blob&&a.projectId&&a.projectId!=="__studio_default__").sort((a,b)=>(b.created||0)-(a.created||0));
+  const latest=new Map();videos.forEach(asset=>{if(!latest.has(asset.projectId))latest.set(asset.projectId,asset);});
+  const entries=projectsList.filter(project=>latest.has(project.id));
+  if(!entries.length){const empty=document.createElement("div");empty.className="dash-video-empty";empty.textContent="Your saved Fàájíplace video projects will appear here. Add a video to a project to build this showcase.";const open=document.createElement("button");open.type="button";open.textContent="Open Fàájíplace";open.onclick=()=>go("faajiplace");empty.append(open);host.append(empty);return;}
+  entries.forEach(project=>{
+   const asset=latest.get(project.id),card=document.createElement("article");card.className="dash-video-card";
+   const video=document.createElement("video");video.controls=true;video.playsInline=true;video.preload="metadata";const url=URL.createObjectURL(asset.blob);videoPreviewUrls.push(url);video.src=url;
+   const copy=document.createElement("div");copy.className="dash-video-copy";const title=document.createElement("b");title.textContent=project.name;
+   let logline="";try{const story=JSON.parse(localStorage.getItem("ps.film.room."+project.id)||"null");logline=story?.logline||story?.scriptNotes||"";}catch(error){}
+   const note=document.createElement("p");note.textContent=logline||"Video project · "+new Date(asset.created||Date.now()).toLocaleDateString();
+   const open=document.createElement("button");open.type="button";open.textContent="Open video project";open.onclick=async()=>{try{await workspace.openProject?.(project.id);go("faajiplace");}catch(error){alert("Could not open this video project: "+error.message);}};
+   copy.append(title,note,open);card.append(video,copy);host.append(card);
+  });
  }
  $("dashNewProject").onclick=()=>openModal();
  $("dashViewAll").onclick=()=>{showAllProjects=!showAllProjects;$("dashViewAll").innerHTML=showAllProjects?"Show less <span>↑</span>":"View all <span>↗</span>";renderProjects();};
@@ -5495,6 +5580,9 @@ document.getElementById("sylIn").oninput=sylRender;
  $("dashHelp").onclick=()=>{go("ayan");const guide=$("guideLink");if(guide)guide.click();};
  renderProjects();filterRooms();
  window.PennioDashboardProjectsRefresh=renderProjects;
+ window.addEventListener("pennio:workspace-ready",()=>{renderProjects();renderVideoShowcase();});
+ window.addEventListener("pennio:workspace-media-saved",renderVideoShowcase);
+ window.addEventListener("pennio:workspace-project-open",()=>{renderProjects();renderVideoShowcase();});
 })();;
 
 </script>
