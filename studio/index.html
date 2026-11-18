@@ -2206,7 +2206,10 @@ const luluDefs=[
  {id:"dd",name:"Dùndún",sub:"talking drum",states:3},
  {id:"bata",name:"Bàtá",sub:"drum",states:2},
  {id:"agogo",name:"Agogo",sub:"double bell",states:2},
- {id:"shek",name:"Ṣẹ̀kẹ̀rẹ̀",sub:"gourd shaker",states:2}
+ {id:"shek",name:"Ṣẹ̀kẹ̀rẹ̀",sub:"gourd shaker",states:2},
+ {id:"udu",name:"Udu",sub:"clay pot bass",states:2},
+ {id:"duru",name:"Dùrù",sub:"low / open drum",states:2},
+ {id:"clap",name:"Àtẹ́wọ́",sub:"hand clap",states:1}
 ];
 let luluPattern={},luluSteps=16,luluStep=-1,luluTimer=null,luluPlaying=false;
 const luluKey=()=> "ps.lulu."+(currentId||"default");
@@ -2241,7 +2244,7 @@ function luluTick(){
 document.getElementById("luluToggle").addEventListener("click",()=>{
  const panel=document.getElementById("luluTool"),open=panel.hidden;panel.hidden=!open;document.getElementById("luluToggle").setAttribute("aria-expanded",String(open));if(open)luluLoad();else luluStop();
 });
-document.getElementById("luluPlay").addEventListener("click",()=>{if(luluPlaying){luluStop();return;}ensureAudio();luluPlaying=true;document.getElementById("luluPlay").textContent="Ⅱ";luluStep=-1;luluTick();});
+document.getElementById("luluPlay").addEventListener("click",()=>{if(luluPlaying){luluStop();return;}if(playing)stop();ensureAudio();luluPlaying=true;document.getElementById("luluPlay").textContent="Ⅱ";luluStep=-1;luluTick();});
 document.getElementById("luluStop").addEventListener("click",luluStop);
 document.getElementById("luluLength").addEventListener("change",e=>{luluSteps=Number(e.target.value)===12?12:16;luluDefs.forEach(d=>{luluPattern[d.id]=Array.from({length:luluSteps},(_,i)=>luluPattern[d.id]?.[i]||0);});luluSave();luluRender();});
 document.getElementById("luluClear").addEventListener("click",()=>{luluPattern=luluBlank();luluSave();luluRender();document.getElementById("luluStatus").textContent="Percussion pattern cleared.";});
@@ -2643,7 +2646,7 @@ function schedule(){
 }
 function stopTracks(){ fullSrcs.forEach(s=>{ try{s.stop();}catch(e){} }); fullSrcs=[]; }
 function stopTracksAt(t){ fullSrcs.forEach(s=>{ try{s.stop(t);}catch(e){} }); fullSrcs=[]; }
-function start(t0,bar,pre){ ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clearInterval(timer); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
+function start(t0,bar,pre){ if(typeof luluStop==="function")luluStop(); ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clearInterval(timer); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
 function stop(pause=false){ playing=false; isPaused=!!pause; clearInterval(timer); seekFrom=-1; preRoll=0; stopTracks(); setTransportOutput(0); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
 let pausedAtBar=0,isPaused=false;
 document.getElementById("beatPause")?.addEventListener("click",()=>{
