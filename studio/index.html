@@ -4093,7 +4093,7 @@ document.getElementById("settingsClearHistory").onclick=async()=>{
 };
 document.getElementById("settingsRefresh").onclick=async()=>{
   const button=document.getElementById("settingsRefresh");button.disabled=true;button.textContent="Saving…";
-  try{await saveNow();await new Promise(resolve=>setTimeout(resolve,280));window.location.reload();}
+  try{if(window.PennioDAWSession?.flush)await window.PennioDAWSession.flush();if(window.PennioWorkspace?.flushMediaWrites)await window.PennioWorkspace.flushMediaWrites();await saveNow();button.textContent="Saved audio stems, DSP settings and beat state. Refreshing…";await new Promise(resolve=>setTimeout(resolve,280));window.location.reload();}
   catch(e){button.disabled=false;button.textContent="Save & refresh";toast("Could not save before refreshing.");}
 };
 histEl.onclick=e=>{ if(e.target===histEl) histEl.classList.remove("on"); };
@@ -4489,8 +4489,11 @@ async function cloudDeleteProject(id){
 /* two-way sync: newest copy of each project wins; recordings travel with their project */
 async function cloudSyncAll(opts){
   if(!sbSess||!sbSess.user||sbSyncing) return;
-  sbSyncing=true; setCloudStat("Syncing…");
+  sbSyncing=true; setCloudStat("Saving local audio stems, DSP settings and beat state…");
   try{
+    if(window.PennioDAWSession?.flush)await window.PennioDAWSession.flush();
+    if(window.PennioWorkspace?.flushMediaWrites)await window.PennioWorkspace.flushMediaWrites();
+    setCloudStat("Local DAW session saved. Syncing supported cloud project data…");
     const r=await sbFetch("/rest/v1/projects?select=*"); if(!r.ok) throw new Error("list "+r.status+" "+(await r.text().catch(()=> "")));
     const remote=await r.json(), local=(await allProjects())||[], lmap=new Map(local.map(x=>[x.id,x])), sigs=lsGet("ps.cloudAudio")||{};
     let reopen=null;
