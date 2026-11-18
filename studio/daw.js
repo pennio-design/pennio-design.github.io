@@ -16,7 +16,7 @@ if(!document.getElementById("dawTimelineStyle")){const style=document.createElem
 .daw-track-wave.daw-waves-view{background-image:none}
 .daw-playback-progress{flex:1 1 100%;height:4px;overflow:hidden;border-radius:999px;background:var(--line2,#343434)}
 .daw-playback-progress[hidden]{display:none!important}
-.daw-playback-progress i{display:block;width:0;height:100%;border-radius:inherit;background:var(--orange,#ff6b35);transition:width .08s linear}
+.daw-playback-progress i{display:block;width:0;height:100%;border-radius:inherit;background:var(--orange,#ff6b35);transition:width .08s linear}\n.daw-task-progress{display:block;flex:1 1 100%;width:100%;height:5px;max-height:5px;accent-color:var(--orange,#ff6b35);border:0;border-radius:99px;background:var(--line2,#343434);overflow:hidden}\n.daw-task-progress[data-indeterminate="true"]{width:100%;animation:daw-task-pulse 1.1s ease-in-out infinite}\n@keyframes daw-task-pulse{0%,100%{opacity:.4}50%{opacity:1}}
 .daw-timeline-controls button:focus-visible,.daw-timeline-controls input:focus-visible{outline:2px solid var(--orange,#ff6b35);outline-offset:2px}
 @media(max-width:560px){.daw-timeline-controls{gap:7px}.daw-timeline-hint{width:100%;margin:0}}
 `;document.head.append(style);}
@@ -32,8 +32,17 @@ if(!document.getElementById("dawTransportDockStyle")){
  `;
  document.head.append(style);
 }
-const state={tracks:[],selected:null,ctx:null,sources:[],dspChains:[],playGeneration:0,playStarting:false,playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[],recordingDone:null,resolveRecordingDone:null,recordingKind:null,projectSwitching:false,lastSessionOperation:null,outputGain:null,plan:"",externalIsolation:null,timelineView:"waves",tempo:120,barSnap:true};
+const state={tracks:[],selected:null,ctx:null,sources:[],dspChains:[],playGeneration:0,playStarting:false,playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],recordTimer:0,recordStartedAt:0,effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[],recordingDone:null,resolveRecordingDone:null,recordingKind:null,projectSwitching:false,lastSessionOperation:null,outputGain:null,plan:"",externalIsolation:null,timelineView:"waves",tempo:120,barSnap:true};
 const status=(s)=>{const el=$("dawStatus");if(el)el.textContent=s;};
+function taskProgress(message,value){
+ status(message);
+ const host=$("dawToolbar");if(!host)return;
+ let bar=$("dawTaskProgress");
+ if(value===false){bar?.remove();return;}
+ if(!bar){bar=document.createElement("progress");bar.id="dawTaskProgress";bar.className="daw-task-progress";bar.max=100;host.append(bar);}
+ if(Number.isFinite(value)){bar.removeAttribute("data-indeterminate");bar.value=Math.max(0,Math.min(100,value));}
+ else{bar.setAttribute("data-indeterminate","true");bar.removeAttribute("value");}
+}
 function trackAudible(t){
  const isolation=window.PennioLaneIsolation?.active;
  if(isolation)return isolation.source==="daw"&&isolation.id===t.id&&!!isolation.states?.[t.id];
@@ -237,24 +246,35 @@ async function importFiles(files){
  if(!selectedFiles.length)return;
  const target=sessionProjectId();
  return queueSessionOperation(target,async projectId=>{
+  let imported=0;
   for(let index=0;index<selectedFiles.length;index++){
-   const file=selectedFiles[index];
+   const file=selectedFiles[index],extension=(file.name.match(/\\.([^.]+)$/)||[])[1]?.toLowerCase()||"";
+   const supported=/^(wav|mp3|m4a|mp4|aac|ogg|oga|opus|flac|aif|aiff|webm)$/i.test(extension);
    try{
-    status("Importing "+file.name+" ("+(index+1)+"/"+selectedFiles.length+")…");
-    if(file.type&&!file.type.startsWith("audio/")&&!/\.(wav|mp3|m4a|aac|ogg|oga|flac|aif|aiff|webm)$/i.test(file.name))throw Error("Choose an audio file such as WAV, MP3, M4A or OGG.");
+    taskProgress("Importing "+file.name+" · file "+(index+1)+" of "+selectedFiles.length,(index/selectedFiles.length)*100);
+    if(!supported&&(!file.type||!file.type.startsWith("audio/")))throw Error("Unsupported audio file. Supported formats include WAV, MP3, AAC, M4A, OGG, OPUS, FLAC and AIFF.");
     const ctx=context();
+    taskProgress("Reading "+file.name+"…",((index+.2)/selectedFiles.length)*100);
     const bytes=await file.arrayBuffer();
-    status("Decoding "+file.name+"…");
-    const buf=await ctx.decodeAudioData(bytes.slice(0));
-    addBuffer(buf,file.name.replace(/\.[^.]+$/,""));
-    status(file.name+" imported · "+fmt(buf.duration));
+    if(!bytes.byteLength)throw Error("The selected file is empty.");
+    taskProgress("Decoding "+file.name+"…",((index+.45)/selectedFiles.length)*100);
+    let buf;
+    try{buf=await ctx.decodeAudioData(bytes.slice(0));}
+    catch(decodeError){
+     const format=extension==="opus"||extension==="ogg"||extension==="oga"?"OPUS/OGG":extension==="aac"||extension==="m4a"||extension==="mp4"?"AAC":extension.toUpperCase();
+     throw Error(format+" decoding is unavailable in this browser, or the file is damaged. Try a current Chromium-based browser and confirm the file plays there.");
+    }
+    if(!buf||!buf.length||!buf.numberOfChannels)throw Error("The decoder returned an empty audio track.");
+    addBuffer(buf,file.name.replace(/\\.[^.]+$/,""));imported++;
+    taskProgress("Imported "+file.name+" · "+fmt(buf.duration),((index+.8)/selectedFiles.length)*100);
     if(window.PennioWorkspace?.addAsset){
      try{await window.PennioWorkspace.addAsset({blob:file,name:file.name,kind:"audio",projectId});}
      catch(e){status("Track imported. Shared media copy failed: "+e.message);}
     }
    }catch(e){status("Could not import "+file.name+": "+(e.message||"Unsupported or damaged audio file."));}
   }
- }).catch(error=>status("Audio import failed: "+error.message));
+  taskProgress(imported+" of "+selectedFiles.length+" audio files imported.",false);
+ }).catch(error=>{taskProgress("Audio import failed: "+error.message,false);});
 }
 function stop(){state.playGeneration++;state.playStarting=false;$("tp")?.classList.remove("daw-session-focused");state.sources.forEach(s=>{try{s.stop();}catch(e){}});state.sources=[];state.dspChains.forEach(c=>c.dispose());state.dspChains=[];setOutputLevel(0);state.playing=false;clearInterval(state.timer);$("dawPlay").textContent="▶ Play";$("dawClock").textContent=fmt(state.offset);paintPlayhead(state.offset);queueSessionSave();}
 function chain(source,t,ctx,destination){if(ctx===state.ctx&&state.outputGain)destination=state.outputGain;let node=source,last=source;if(state.effects.eq&&!t.bypassFx){const hp=ctx.createBiquadFilter();hp.type="highpass";hp.frequency.value=75;last.connect(hp);last=hp;const eq=ctx.createBiquadFilter();eq.type="peaking";eq.frequency.value=2800;eq.Q.value=.8;eq.gain.value=1.5;last.connect(eq);last=eq;}if(state.effects.compressor&&!t.bypassFx){const c=ctx.createDynamicsCompressor();c.threshold.value=-20;c.ratio.value=3;c.attack.value=.008;c.release.value=.18;last.connect(c);last=c;}if(state.effects.echo&&!t.bypassFx){const d=ctx.createDelay(1);d.delayTime.value=.22;const fb=ctx.createGain();fb.gain.value=.18;last.connect(d);d.connect(fb);fb.connect(d);last=d;}if(state.effects.reverb&&!t.bypassFx){const d=ctx.createDelay(.5);d.delayTime.value=.045;const g=ctx.createGain();g.gain.value=.12;last.connect(d);d.connect(g);last.connect(g);last=g;}const gain=ctx.createGain();gain.gain.value=ctx===state.ctx?(trackAudible(t)?t.gain:0):(t.mute?0:t.gain);last.connect(gain);const pan=ctx.createStereoPanner?ctx.createStereoPanner():null;if(pan){pan.pan.value=t.pan;gain.connect(pan);pan.connect(destination);}else gain.connect(destination);return gain;}
@@ -318,29 +338,51 @@ $("dawDelete").onclick=()=>{const t=selected();if(!t)return;snapshot();if(state.
 $("dawNormalize").onclick=()=>{const t=selected();if(!t)return;snapshot();const copy=context().createBuffer(t.buffer.numberOfChannels,t.buffer.length,t.buffer.sampleRate);let peak=0;for(let c=0;c<t.buffer.numberOfChannels;c++){const src=t.buffer.getChannelData(c),dst=copy.getChannelData(c);for(let i=0;i<src.length;i++){dst[i]=src[i];peak=Math.max(peak,Math.abs(src[i]));}}if(peak>0){const factor=.95/peak;for(let c=0;c<copy.numberOfChannels;c++){const d=copy.getChannelData(c);for(let i=0;i<d.length;i++)d[i]*=factor;}}t.buffer=copy;t.end=Math.min(t.end,copy.duration);render();status("Selected track normalized to -0.45 dBFS.");};
 document.querySelectorAll("[data-fx]").forEach(b=>b.onclick=()=>{const k=b.dataset.fx;state.effects[k]=!state.effects[k];b.classList.toggle("primary",state.effects[k]);status(k+" "+(state.effects[k]?"on":"off")+" for playback and mix.");queueSessionSave();});
 $("dawMic").onclick=async()=>{
- if(state.recorder&&state.recorder.state==="recording"){state.recorder.stop();$("dawMic").textContent="Record voice";return;}
+ if(state.recorder&&state.recorder.state==="recording"){state.recorder.stop();$("dawMic").textContent="Finishing take…";taskProgress("Finishing microphone recording…",null);return;}
  if(state.recordingDone){status("Finishing the previous take…");return;}
  if(state.projectSwitching){status("Wait for the project session to finish switching.");return;}
+ if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status("Microphone recording requires HTTPS, microphone permission and a browser with MediaRecorder support.");return;}
  const recordProjectId=sessionProjectId();
  try{
+  taskProgress("Requesting microphone access…",null);
   const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
-  if(state.projectSwitching||sessionProjectId()!==recordProjectId){stream.getTracks().forEach(t=>t.stop());status("Recording cancelled because the project changed.");return;}
+  if(state.projectSwitching||sessionProjectId()!==recordProjectId){stream.getTracks().forEach(t=>t.stop());taskProgress("Recording cancelled because the project changed.",false);return;}
+  if(!stream.getAudioTracks().length){stream.getTracks().forEach(t=>t.stop());throw Error("The selected input did not provide an audio track. Check microphone selection and permissions.");}
   state.recordStream=stream;state.recordChunks=[];
-  const mime=MediaRecorder.isTypeSupported("audio/webm;codecs=opus")?"audio/webm;codecs=opus":"";
-  state.recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});state.recorderKind="mic";beginRecordingTask("mic");
-  state.recorder.ondataavailable=e=>{if(e.data.size)state.recordChunks.push(e.data);};
-  state.recorder.onstop=async()=>{
+  const mimeCandidates=["audio/webm;codecs=opus","audio/ogg;codecs=opus","audio/mp4;codecs=mp4a.40.2","audio/webm","audio/mp4","audio/ogg"];
+  const mime=mimeCandidates.find(type=>MediaRecorder.isTypeSupported(type));
+  const recorder=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);
+  state.recorder=recorder;state.recorderKind="mic";beginRecordingTask("mic");
+  recorder.ondataavailable=e=>{if(e.data?.size)state.recordChunks.push(e.data);};
+  recorder.onerror=e=>{status("Microphone recording error: "+(e.error?.message||"The browser stopped capturing audio."));};
+  recorder.onstop=async()=>{
+   clearInterval(state.recordTimer);state.recordTimer=0;
    try{
     stream.getTracks().forEach(t=>t.stop());state.recordStream=null;$("dawMic").textContent="Record voice";
-    const blob=new Blob(state.recordChunks,{type:state.recorder.mimeType||"audio/webm"});state.recorder=null;state.recorderKind=null;
-    if(!blob.size){status("No voice take was captured.");return;}
-    if(window.PennioWorkspace?.addAsset)window.PennioWorkspace.addAsset({blob,name:"Voice take",kind:"audio",projectId:recordProjectId}).catch(e=>status("Voice take recorded, but could not be added to shared media: "+e.message));
-    await queueSessionOperation(recordProjectId,async()=>{const buf=await context().decodeAudioData(await blob.arrayBuffer());addBuffer(buf,"Voice take");status("Voice take recorded.");});
-   }catch(error){status("Recording could not be added to its project: "+error.message);}
-   finally{finishRecordingTask();}
+    const blob=new Blob(state.recordChunks,{type:recorder.mimeType||state.recordChunks[0]?.type||"audio/webm"});
+    state.recorder=null;state.recorderKind=null;
+    if(!blob.size)throw Error("The microphone produced no audio data. Check browser permission, input device and microphone access.");
+    taskProgress("Decoding recorded voice…",null);
+    await queueSessionOperation(recordProjectId,async()=>{
+     const buf=await context().decodeAudioData(await blob.arrayBuffer());
+     if(!buf||!buf.length)throw Error("The recorded audio could not be decoded.");
+     addBuffer(buf,"Voice take");
+     if(window.PennioWorkspace?.addAsset){try{await window.PennioWorkspace.addAsset({blob,name:"Voice take",kind:"audio",projectId:recordProjectId});}catch(assetError){status("Voice take added to the DAW, but shared media storage failed: "+assetError.message);}}
+     status("Voice take captured · "+fmt(buf.duration)+" · added as an editable track.");
+    });
+   }catch(error){status("Recording could not be added: "+error.message);}
+   finally{taskProgress("",false);finishRecordingTask();}
   };
-  state.recorder.start();$("dawMic").textContent="■ Stop recording";status("Recording from microphone…");
- }catch(e){if(state.recordStream){state.recordStream.getTracks().forEach(t=>t.stop());state.recordStream=null;}if(state.recordingKind==="mic")finishRecordingTask();status("Microphone unavailable: "+e.message);}
+  recorder.start(250);state.recordStartedAt=Date.now();clearInterval(state.recordTimer);
+  state.recordTimer=setInterval(()=>{const elapsed=(Date.now()-state.recordStartedAt)/1000;taskProgress("Recording microphone · "+fmt(elapsed),null);},250);
+  $("dawMic").textContent="■ Stop recording";taskProgress("Recording microphone · 00:00.0",null);
+ }catch(e){
+  clearInterval(state.recordTimer);state.recordTimer=0;
+  if(state.recordStream){state.recordStream.getTracks().forEach(t=>t.stop());state.recordStream=null;}
+  state.recorder=null;state.recorderKind=null;
+  if(state.recordingKind==="mic")finishRecordingTask();
+  taskProgress("Microphone unavailable: "+e.message,false);
+ }
 };
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden"){clearTimeout(sessionSaveTimer);saveSessionNow().catch(()=>{});}});
 window.addEventListener("pagehide",()=>{clearTimeout(sessionSaveTimer);saveSessionNow().catch(()=>{});});
