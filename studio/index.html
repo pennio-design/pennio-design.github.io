@@ -1882,7 +1882,7 @@ A clear image or action.
       <button class="btn" id="settingsClearHistory">Clear history</button>
     </div>
     <div class="set-action">
-      <div><b>Refresh Studio</b><small>Save the current beat, then reload this page.</small></div>
+      <div><b>Refresh Studio</b><small>Save beat state, DAW audio stems and DSP settings before reloading.</small></div>
       <button class="btn primary" id="settingsRefresh">Save & refresh</button>
     </div>
   </div>
@@ -1927,6 +1927,7 @@ A clear image or action.
     <div id="cloudIn" hidden>
       <p><b id="cloudWho"></b><br><span id="cloudStat"></span></p>
       <div class="crow"><button class="btn" id="sbSync">Sync now</button><button class="btn" id="sbOut">Sign out</button></div>
+      <p class="note">Sync saves the current DAW audio stems, DSP settings and beat state locally first. It then syncs the project data supported by cloud storage.</p>
       <button class="linkbtn" id="sbWipe">Delete my cloud copy</button>
     </div>
     <p class="note" id="cloudNote">Stored with Supabase in Stockholm, Sweden. Only you can open your projects and recordings. To have your cloud copy removed, use Delete my cloud copy or email contact@pennio.agency.</p>
