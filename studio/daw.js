@@ -43,6 +43,7 @@ function taskProgress(message,value){
  if(Number.isFinite(value)){bar.removeAttribute("data-indeterminate");bar.value=Math.max(0,Math.min(100,value));}
  else{bar.setAttribute("data-indeterminate","true");bar.removeAttribute("value");}
 }
+const yieldToUI=()=>new Promise(resolve=>requestAnimationFrame(resolve));
 function trackAudible(t){
  const isolation=window.PennioLaneIsolation?.active;
  if(isolation)return isolation.source==="daw"&&isolation.id===t.id&&!!isolation.states?.[t.id];
@@ -107,6 +108,7 @@ async function saveSessionNow(projectOverride){
  for(let index=0;index<state.tracks.length;index++){
   const t=state.tracks[index];
   taskProgress("Preparing audio stem "+(index+1)+" of "+state.tracks.length+"…",state.tracks.length?index/state.tracks.length*70:70);
+  await yieldToUI();
   const key=projectId+":"+t.id;
   let cached=sessionBlobCache.get(key),changed=!cached||cached.buffer!==t.buffer;
   if(changed){cached={buffer:t.buffer,blob:trackWavBlob(t.buffer),persisted:false};sessionBlobCache.set(key,cached);}
@@ -297,6 +299,7 @@ async function exportMix(sendToStudio=false,mergeToTrack=false){
   for(let index=0;index<activeTracks.length;index++){
    const t=activeTracks[index];
    taskProgress("Preparing mix · track "+(index+1)+" of "+activeTracks.length,(index/Math.max(1,activeTracks.length))*35);
+   await yieldToUI();
    const src=off.createBufferSource();src.buffer=t.buffer;let node=src;
    if(window.StudioCleanChain){const dsp=await window.StudioCleanChain.create(off,t.dsp||window.StudioCleanDefaults,{mono:t.buffer.numberOfChannels===1});src.connect(dsp.input);node=dsp.output;}
    const gain=off.createGain();gain.gain.value=t.gain;node.connect(gain);node=gain;
@@ -306,11 +309,11 @@ async function exportMix(sendToStudio=false,mergeToTrack=false){
    if(state.effects.reverb&&!t.bypassFx){const early=off.createDelay(.5),tail=off.createDelay(.5),wet=off.createGain();early.delayTime.value=.037;tail.delayTime.value=.071;wet.gain.value=.16;node.connect(early);early.connect(tail);tail.connect(wet);const dry=off.createGain();dry.gain.value=.88;node.connect(dry);const sum=off.createGain();dry.connect(sum);wet.connect(sum);node=sum;}
    const pan=off.createStereoPanner();pan.pan.value=t.pan;node.connect(pan);pan.connect(off.destination);src.start(t.timeline||0,t.start,t.end-t.start);
   }
-  taskProgress("Rendering audio mix…",null);
+  taskProgress("Rendering audio mix…",null);await yieldToUI();
   let rendered=await off.startRendering();
   const normalize=activeTracks.some(t=>t.dsp?.enabled&&t.dsp?.normalizeLufs!==false);
   if(window.StudioCleanOffline){
-   if(normalize){taskProgress("Normalizing and finishing mix…",null);const result=window.StudioCleanOffline.normalizeAndFade(rendered,-14,-1,.015);rendered=result.buffer;status("Studio Clean export · "+(Number.isFinite(result.measuredLufs)?result.measuredLufs.toFixed(1)+" LUFS before normalization":"silent mix")+" · estimated peak "+(Number.isFinite(result.peakDbfs)?result.peakDbfs.toFixed(1)+" dBFS":"n/a"));}
+   if(normalize){taskProgress("Normalizing and finishing mix…",null);await yieldToUI();const result=window.StudioCleanOffline.normalizeAndFade(rendered,-14,-1,.015);rendered=result.buffer;status("Studio Clean export · "+(Number.isFinite(result.measuredLufs)?result.measuredLufs.toFixed(1)+" LUFS before normalization":"silent mix")+" · estimated peak "+(Number.isFinite(result.peakDbfs)?result.peakDbfs.toFixed(1)+" dBFS":"n/a"));}
    else window.StudioCleanOffline.applyBoundaryFades(rendered,.015);
   }
   if(mergeToTrack){snapshot();state.tracks.forEach(t=>{t.mute=true;t.solo=false;});const merged={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:"Merged mix",buffer:rendered,start:0,end:rendered.duration,gain:1,pan:0,timeline:0,mute:false,solo:false,bypassFx:true};state.tracks.push(merged);state.selected=merged.id;state.offset=0;render();queueSessionSave();taskProgress("Merged mix added as one track. Original layers remain available.",false);return;}
