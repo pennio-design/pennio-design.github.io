@@ -146,8 +146,7 @@ function buildUI(){
  if(workspaceMenuButton)workspaceMenuButton.addEventListener("click",()=>{openDock();document.getElementById("nav")?.setAttribute("hidden","");document.getElementById("moreBtn")?.setAttribute("aria-expanded","false");});
  toggle.addEventListener("click",()=>{
   if(document.body.classList.contains("recorder-active")){window.toast?.("Stop recording before opening the workspace.");return}
-  if(dock.hidden){openDock();return}
-  closeDock();
+  $("workspaceAssets").scrollIntoView({block:"nearest",behavior:"smooth"});
  });
  window.addEventListener("pennio:overlay-open",event=>{
   if(event.detail?.source!=="workspace"&&!dock.hidden)closeDock();
