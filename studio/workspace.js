@@ -2,9 +2,9 @@
 "use strict";
 const PROJECTS_KEY="ps.studio.projects.v1",ACTIVE_KEY="ps.studio.activeProject.v1";
 const $=id=>document.getElementById(id);
-let activeProjectId=null,dbPromise=null,assets=[],roomSwitchPromise=Promise.resolve();
+let activeProjectId=null,dbPromise=null,assets=[],roomSwitchPromise=Promise.resolve(),roomRequestQueue=Promise.resolve(),roomRestoreQueue=Promise.resolve(),projectSwitchQueue=Promise.resolve(),roomSwitchGeneration=0;
 const deletingProjects=new Set(),pendingAssetWrites=new Map();
-const roomNames={ayan:"Àyàn",write:"Ewì",faajiplace:"Eré",beauty:"Ojuloge"};
+const roomNames={ayan:"Àyàn",write:"Akéwì",faajiplace:"Fàájíplace",beauty:"Model / Beauty"};
 function readProjects(){try{const v=JSON.parse(localStorage.getItem(PROJECTS_KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
 function openDB(){
  if(dbPromise)return dbPromise;
@@ -64,17 +64,7 @@ function buildUI(){
  if($("pennioWorkspaceDock"))return;
  const style=document.createElement("style");
  style.textContent=`
- #pennioWorkspaceDock{position:fixed;z-index:90;top:76px;bottom:auto;width:min(360px,calc(100vw - 24px));max-width:calc(100vw - 24px);max-height:min(78vh,680px);margin:0;color:var(--text,#f5f3ef);font:inherit;transition:left .22s ease,right .22s ease}
- #pennioWorkspaceDock[data-side="right"]{right:12px;left:auto}
- #pennioWorkspaceDock[data-side="left"]{left:12px;right:auto}
- #pennioWorkspaceDock .ws-shell{height:100%;display:flex;flex-direction:column}
- #pennioWorkspaceDock .ws-body{flex:1;min-height:0;max-height:none}
- body.workspace-open:after{content:"";position:fixed;inset:64px 0 0;background:rgba(0,0,0,.28);z-index:80}
- body.workspace-open{overflow:hidden}
- #studioPanelPosition{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:38px;height:38px;padding:0 9px;border:1px solid var(--line2);border-radius:10px;background:transparent;color:var(--text);font:500 11px Inter,system-ui,sans-serif;cursor:pointer}
- #studioPanelPosition:hover{border-color:var(--orange)}
- #studioPanelPosition svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
- @media(max-width:560px){#pennioWorkspaceDock{top:auto;bottom:72px;width:min(340px,calc(100vw - 24px));max-height:72vh}#pennioWorkspaceDock[data-side="right"]{right:10px}#pennioWorkspaceDock[data-side="left"]{left:10px}#studioPanelPosition{min-width:36px;height:36px;padding:0 7px}}
+ #pennioWorkspaceDock{position:static;width:100%;max-width:none;margin:10px 0 0;color:var(--text,#f5f3ef);font:inherit;min-width:0}
  #pennioWorkspaceDock .ws-shell{background:var(--panel,#171717);border:1px solid var(--line,rgba(255,255,255,.16));border-radius:16px;box-shadow:0 12px 48px #0005;overflow:hidden}
  #pennioWorkspaceDock .ws-head{display:flex;align-items:center;gap:9px;padding:11px 13px}
  #pennioWorkspaceDock .ws-mark{width:8px;height:8px;border-radius:50%;background:#ff6a00;flex:none}
@@ -83,11 +73,11 @@ function buildUI(){
  #pennioWorkspaceDock .ws-head-copy b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
  #pennioWorkspaceDock button,#pennioWorkspaceDock select{font:inherit;color:inherit}
  #pennioWorkspaceDock .ws-toggle{border:1px solid var(--line,rgba(255,255,255,.16));background:transparent;border-radius:9px;padding:7px 9px;font-size:11px}
- #pennioWorkspaceDock .ws-body{border-top:1px solid var(--line,rgba(255,255,255,.12));padding:11px 13px;max-height:45vh;overflow:auto}
+ #pennioWorkspaceDock .ws-body{border-top:1px solid var(--line,rgba(255,255,255,.12));padding:10px 9px;max-height:34vh;overflow:auto}
  #pennioWorkspaceDock .ws-project{width:100%;border:1px solid var(--line,rgba(255,255,255,.15));border-radius:9px;background:transparent;padding:9px;margin:0 0 10px;font-size:12px}
  #pennioWorkspaceDock .ws-assets{display:grid;gap:7px}
- #pennioWorkspaceDock .ws-asset{display:flex;align-items:center;gap:9px;padding:9px;border-radius:10px;background:var(--surface,#222);min-width:0}
- #pennioWorkspaceDock .ws-asset-main{min-width:0;flex:1}
+ #pennioWorkspaceDock .ws-asset{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:8px;border-radius:10px;background:var(--surface,#222);min-width:0}
+ #pennioWorkspaceDock .ws-asset-main{min-width:0;flex:1 1 100%}
  #pennioWorkspaceDock .ws-asset-main b{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
  #pennioWorkspaceDock .ws-asset-main small{display:block;font-size:10px;opacity:.6;margin-top:2px}
  #pennioWorkspaceDock .ws-asset button{border:1px solid var(--line,rgba(255,255,255,.15));background:transparent;border-radius:8px;padding:6px 8px;font-size:10px;white-space:nowrap}
@@ -109,50 +99,24 @@ function buildUI(){
  #pennioWorkspaceDock .ws-head-copy{cursor:default}
  #pennioWorkspaceDock .ws-mark{touch-action:auto}
  #pennioWorkspaceDock .ws-toggle{cursor:pointer;touch-action:manipulation}
- #pennioWorkspaceDock .ws-minimize{border:1px solid var(--line,rgba(255,255,255,.16));background:transparent;border-radius:9px;width:32px;height:32px;font-size:17px;cursor:pointer}
- #pennioWorkspaceDock .ws-restore{display:none;border:0;background:transparent;color:inherit;font-size:12px;font-weight:600;padding:5px 7px;cursor:pointer}
- #pennioWorkspaceDock.is-minimized{display:none}
- #pennioWorkspaceDock[data-side="left"].is-minimized{left:12px;right:auto}
- #pennioWorkspaceDock[data-side="right"].is-minimized{right:12px;left:auto}
- #pennioWorkspaceDock.is-minimized .ws-shell{border-radius:999px}
- #pennioWorkspaceDock.is-minimized .ws-head{gap:10px;padding:7px 9px;min-height:0}
- #pennioWorkspaceDock.is-minimized .ws-head-copy,#pennioWorkspaceDock.is-minimized .ws-minimize,#pennioWorkspaceDock.is-minimized .ws-toggle{display:none}
- #pennioWorkspaceDock.is-minimized .ws-restore{display:block}
- #pennioWorkspaceDock.is-minimized .ws-body{display:none}
- @media(max-width:560px){#pennioWorkspaceDock .ws-body{max-height:calc(72vh - 72px)}}
+ @media(max-width:560px){#pennioWorkspaceDock{width:100%;margin:10px 0}}
  `;
  document.head.append(style);
- const dock=document.createElement("aside");dock.id="pennioWorkspaceDock";dock.hidden=true;dock.innerHTML='<div class="ws-shell"><div class="ws-head"><i class="ws-mark"></i><div class="ws-head-copy"><small>Shared workspace</small><b id="workspaceProjectName">Studio workspace</b></div><button type="button" class="ws-toggle" id="workspaceToggle" aria-expanded="false">Media · 0</button><button type="button" class="ws-minimize" id="workspaceMinimize" aria-label="Close workspace panel" title="Close">×</button></div><div class="ws-body" id="workspaceBody" hidden><label for="workspaceProjectSelect" style="display:block;font-size:10px;opacity:.65;margin:0 0 5px">ACTIVE PROJECT</label><select class="ws-project" id="workspaceProjectSelect"><option value="">Studio workspace · all media</option></select><div class="ws-storage" id="workspaceStorage" aria-live="polite"><div class="ws-storage-line"><b id="workspaceStorageLabel">Checking device storage…</b><span id="workspaceStorageValue"></span></div><div class="ws-storage-meter"><i id="workspaceStorageFill"></i></div><button type="button" id="workspaceProtectStorage">Protect local work</button><small id="workspaceStorageNote">Studio data stays in this browser. Download backups regularly.</small></div><div class="ws-assets" id="workspaceAssets"><div class="ws-empty">Record or import media in any room. It will appear here for this project.</div></div></div></div>';
- const headerLogo=document.querySelector("header .bar .logo");
- const positionButton=document.createElement("button");
- positionButton.type="button";positionButton.id="studioPanelPosition";positionButton.setAttribute("aria-label","Move workspace panel to left side");positionButton.title="Move workspace panel to left side";
- positionButton.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16M7 9h4M7 13h4"/></svg><span>Move</span>';
- if(headerLogo)headerLogo.before(positionButton);
- const recorder=document.getElementById("studioRecorder");
- if(recorder)recorder.after(dock);else{const header=document.querySelector("header");if(header)header.after(dock);else document.body.prepend(dock);}
- 
- const dockStateKey="ps.studio.workspace.layout.v1",body=$("workspaceBody"),toggle=$("workspaceToggle");
- const readDockState=()=>{try{return JSON.parse(localStorage.getItem(dockStateKey)||"{}")}catch(e){return {}}};
- const saveDockState=patch=>{try{localStorage.setItem(dockStateKey,JSON.stringify({...readDockState(),...patch}))}catch(e){}};
- const savedLayout=readDockState();dock.dataset.side=savedLayout.side==="left"?"left":"right";
- function syncPositionControl(){const left=dock.dataset.side==="left";positionButton.setAttribute("aria-label",left?"Move workspace panel to right side":"Move workspace panel to left side");positionButton.title=left?"Move workspace panel to right side":"Move workspace panel to left side";positionButton.innerHTML=left?'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M13 9h4M13 13h4"/></svg><span>Move</span>':'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16M7 9h4M7 13h4"/></svg><span>Move</span>';}
- positionButton.addEventListener("click",()=>{dock.dataset.side=dock.dataset.side==="right"?"left":"right";saveDockState({side:dock.dataset.side});syncPositionControl();});
- syncPositionControl();
- function syncDockOverlay(){document.body.classList.toggle("workspace-open",!dock.hidden)}
- function closeDock(){dock.hidden=true;body.hidden=true;toggle.setAttribute("aria-expanded","false");syncDockOverlay();saveDockState({minimized:true})}
- function openDock(){dock.hidden=false;body.hidden=false;toggle.setAttribute("aria-expanded","true");syncDockOverlay();refreshAssets();refreshStorageHealth();saveDockState({minimized:false});}
- $("workspaceMinimize").addEventListener("click",closeDock);
- const workspaceMenuButton=document.getElementById("openWorkspacePanel");
- if(workspaceMenuButton)workspaceMenuButton.addEventListener("click",()=>{openDock();document.getElementById("nav")?.setAttribute("hidden","");document.getElementById("moreBtn")?.setAttribute("aria-expanded","false");});
+ const dock=document.createElement("aside");dock.id="pennioWorkspaceDock";dock.innerHTML='<div class="ws-shell"><div class="ws-head"><i class="ws-mark"></i><div class="ws-head-copy"><small>PROJECT MEDIA</small><b id="workspaceProjectName">Studio workspace</b></div><button type="button" class="ws-toggle" id="workspaceToggle" aria-expanded="false">Media · 0</button></div><div class="ws-body" id="workspaceBody" hidden><label for="workspaceProjectSelect" style="display:block;font-size:10px;opacity:.65;margin:0 0 5px">ACTIVE PROJECT</label><select class="ws-project" id="workspaceProjectSelect"><option value="">Studio workspace · all media</option></select><div class="ws-storage" id="workspaceStorage" aria-live="polite"><div class="ws-storage-line"><b id="workspaceStorageLabel">Checking device storage…</b><span id="workspaceStorageValue"></span></div><div class="ws-storage-meter"><i id="workspaceStorageFill"></i></div><button type="button" id="workspaceProtectStorage">Protect local work</button><small id="workspaceStorageNote">Studio data stays in this browser. Download backups regularly.</small></div><div class="ws-assets" id="workspaceAssets"><div class="ws-empty">Record or import media in any room. It will appear here for this project.</div></div></div></div>';
+ const leftPanel=document.getElementById("studioLeftPanel");
+ const projectCard=leftPanel?.querySelector(".studio-nav-actions");
+ if(projectCard)projectCard.after(dock);
+ else{const recorder=document.getElementById("studioRecorder");if(recorder)recorder.after(dock);else{const header=document.querySelector("header");if(header)header.after(dock);else document.body.prepend(dock);}}
+ const body=$("workspaceBody"),toggle=$("workspaceToggle");
  toggle.addEventListener("click",()=>{
-  if(document.body.classList.contains("recorder-active")){window.toast?.("Stop recording before opening the workspace.");return}
-  $("workspaceAssets").scrollIntoView({block:"nearest",behavior:"smooth"});
+  if(document.body.classList.contains("recorder-active")){window.toast?.("Stop recording before opening project media.");return}
+  const open=body.hidden;body.hidden=!open;toggle.setAttribute("aria-expanded",String(open));
+  if(open){refreshNavigation();window.dispatchEvent(new CustomEvent("pennio:overlay-open",{detail:{source:"workspace"}}));}
  });
  window.addEventListener("pennio:overlay-open",event=>{
-  if(event.detail?.source!=="workspace"&&!dock.hidden)closeDock();
+  if(event.detail?.source!=="workspace"&&!body.hidden){body.hidden=true;toggle.setAttribute("aria-expanded","false");}
  });
- dock.hidden=true;body.hidden=true;toggle.setAttribute("aria-expanded","false");syncDockOverlay();
- $("workspaceProjectSelect").addEventListener("change",e=>{const p=projectById(e.target.value);setActive(p);});
+ $("workspaceProjectSelect").addEventListener("change",e=>{const p=projectById(e.target.value);queueProjectSwitch(p,false).catch(error=>{refreshProjectSelect();window.toast?.("Could not switch project: "+error.message);});});
  $("workspaceProtectStorage").addEventListener("click",async()=>{const button=$("workspaceProtectStorage");button.disabled=true;button.textContent="Checking…";try{if(!navigator.storage?.persist)throw Error("This browser cannot protect local site storage.");const granted=await navigator.storage.persist();button.textContent=granted?"Storage protection enabled":"Protection not granted";$("workspaceStorageNote").textContent=granted?"The browser has agreed to protect this site’s local data from routine storage cleanup. Backups are still required.":"Your browser declined persistent storage. Keep a current backup outside this device."; }catch(error){button.textContent="Protection unavailable";$("workspaceStorageNote").textContent=error.message+" Keep a current backup outside this device.";}finally{button.disabled=false;refreshStorageHealth();}});
 }
 async function refreshAssets(){
@@ -173,8 +137,8 @@ async function refreshAssets(){
     const full=await getAsset(asset.id);if(!full)return;
     if(deletingProjects.has(full.projectId))return;
     const project=projectById(full.projectId);
-    if(project)setActive(project);
-    else if(full.projectId==="__studio_default__")setActive(null);
+    if(project)await queueProjectSwitch(project,false);
+    else if(full.projectId==="__studio_default__")await queueProjectSwitch(null,false);
     if(full.kind==="video"){
      await window.PennioWorkspace.openRoom("faajiplace");
      window.dispatchEvent(new CustomEvent("pennio:film-media",{detail:{blob:full.blob,name:full.name,assetId:full.id,projectId:full.projectId,kind:"video"}}));
@@ -211,7 +175,7 @@ async function saveSession(projectId,session){
    audio.forEach(item=>{if(item.force||!existing.has(item.id))audioStore.put({id:item.id,projectId,blob:item.blob});});
   };
   req.onerror=()=>{try{tx.abort();}catch(e){}};
-  tx.oncomplete=()=>resolve(true);
+  tx.oncomplete=()=>{window.dispatchEvent(new CustomEvent("pennio:workspace-session-saved",{detail:{projectId}}));resolve(true);};
   tx.onerror=()=>reject(tx.error||Error("Could not save this session."));
   tx.onabort=()=>reject(tx.error||Error("Session save was interrupted."));
  });
@@ -287,10 +251,84 @@ async function importProjectData(data){
   tx.onabort=()=>reject(tx.error||Error("Studio project import was interrupted."));
  });
 }
+
+async function listSavedSessions(){const d=await openDB();return new Promise((resolve,reject)=>{const tx=d.transaction("sessions","readonly"),req=tx.objectStore("sessions").getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});}
+async function queueProjectSwitch(project,openRoomAfter){
+ const nextId=project?.id||null;
+ if(project&&deletingProjects.has(nextId))throw Error("This project is being deleted.");
+ const operation=projectSwitchQueue.catch(()=>{}).then(async()=>{
+  if(nextId!==activeProjectId){
+   await flushMediaWrites();
+   if(window.PennioDAWSession?.flush)await window.PennioDAWSession.flush();
+   setActive(project||null);
+  }
+  if(openRoomAfter&&project){
+   const room=roomNames[project.room]?project.room:"ayan";
+   await window.PennioWorkspace.openRoom(room);
+  }
+  return true;
+ });
+ projectSwitchQueue=operation;
+ return operation;
+}
+async function openProject(id){
+ const project=projectById(id);if(!project)return false;
+ await queueProjectSwitch(project,true);return true;
+}
+function readProjectRoomValue(base,projectId){
+ try{const raw=localStorage.getItem(base+"."+projectId);if(!raw)return null;return JSON.parse(raw);}catch(e){return null;}
+}
+function getProjectContents(projectId,allAssets,allSessions){
+ const projectAssets=(allAssets||[]).filter(item=>item.projectId===projectId);
+ const session=(allSessions||[]).find(item=>item.projectId===projectId)||null;
+ const draft=readProjectRoomValue("ps.write.draft",projectId);
+ const story=readProjectRoomValue("ps.film.room",projectId);
+ const writeText=draft&&typeof draft.text==="string"?draft.text.trim():"";
+ const hasWriting=!!(writeText||(draft&&Array.isArray(draft.entries)&&draft.entries.length));
+ const storyCues=story&&Array.isArray(story.cues)?story.cues.length:0;
+ const hasStory=!!(story&&(story.title&&story.title!=="Untitled film"||story.logline||story.scriptNotes||story.shotPlan||storyCues));
+ return {
+  projectId,assets:projectAssets,session,writing:hasWriting?draft:null,story:hasStory?story:null,
+  counts:{audio:projectAssets.filter(item=>item.kind!=="video").length,video:projectAssets.filter(item=>item.kind==="video").length,
+   beatSession:session?1:0,writing:hasWriting?1:0,story:hasStory?1:0}
+ };
+}
+async function refreshNavigation(){
+ const projects=readProjects().slice().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0)),host=$("studioNavProjects"),recent=$("studioNavRecent"),count=$("studioNavProjectCount"),search=$("studioNavSearch");
+ if(!host||!recent)return;
+ const query=(search?.value||"").trim().toLowerCase();
+ const [sessions,allAssets]=await Promise.all([listSavedSessions().catch(()=>[]),getAssets().catch(()=>[])]);
+ const byProject=new Map(sessions.map(s=>[s.projectId,s]));
+ const contents=new Map(projects.map(p=>[p.id,getProjectContents(p.id,allAssets,sessions)]));
+ const matches=projects.filter(p=>!query||(p.name||"").toLowerCase().includes(query)||(byProject.get(p.id)?.name||"").toLowerCase().includes(query));
+ count.textContent=String(projects.length);host.replaceChildren();
+ if(!matches.length){const empty=document.createElement("p");empty.className="studio-nav-empty";empty.textContent=query?"No matching projects.":"Create a project to start organising your work.";host.append(empty);}
+ matches.forEach(p=>{
+  const b=document.createElement("button");b.type="button";b.className="studio-nav-item";b.dataset.studioProject=p.id;
+  if(p.id===activeProjectId)b.setAttribute("aria-current","page");
+  const mark=document.createElement("i");mark.className="studio-nav-mark";
+  const copy=document.createElement("span");copy.className="studio-nav-copy";
+  const name=document.createElement("b");name.textContent=p.name||"Untitled project";
+  const meta=document.createElement("small"),c=contents.get(p.id).counts,parts=[];
+  if(c.beatSession)parts.push("Beat session");
+  if(c.writing)parts.push("Writing");
+  if(c.story)parts.push("Story");
+  if(c.audio)parts.push(c.audio+" audio");
+  if(c.video)parts.push(c.video+" video");
+  meta.textContent=(roomNames[p.room]||"Project")+(parts.length?" · "+parts.join(" · "):" · No saved material yet");
+  copy.append(name,meta);b.append(mark,copy);host.append(b);
+ });
+ const recentItems=sessions.slice().sort((a,b)=>(b.updated||0)-(a.updated||0)).filter(s=>projects.some(p=>p.id===s.projectId)&&(!query||(s.name||"").toLowerCase().includes(query)||(projects.find(p=>p.id===s.projectId)?.name||"").toLowerCase().includes(query))).slice(0,12);
+ recent.replaceChildren();
+ if(!recentItems.length){const empty=document.createElement("p");empty.className="studio-nav-empty";empty.textContent=query?"No saved sessions match.":"Your saved work will appear here as you create it.";recent.append(empty);}
+ recentItems.forEach(s=>{const p=projects.find(x=>x.id===s.projectId);if(!p)return;const b=document.createElement("button");b.type="button";b.className="studio-nav-item";b.dataset.studioProject=p.id;if(p.id===activeProjectId)b.setAttribute("aria-current","page");const mark=document.createElement("i");mark.className="studio-nav-mark";const copy=document.createElement("span");copy.className="studio-nav-copy";const name=document.createElement("b");name.textContent=s.name||p.name||"Untitled session";const meta=document.createElement("small");meta.textContent="Beat session · "+new Date(s.updated||p.updated||Date.now()).toLocaleDateString();copy.append(name,meta);b.append(mark,copy);recent.append(b);});
+}
 window.PennioWorkspace={
  get activeProjectId(){return activeProjectId;},
- setActiveProject:setActive,
+ setActiveProject:project=>queueProjectSwitch(project||null,false),
  getProject:projectById,
+ listProjects:readProjects,listSavedSessions,openProject,refreshNavigation,
+ getProjectContents:async projectId=>{const [allAssets,allSessions]=await Promise.all([getAssets(),listSavedSessions()]);return getProjectContents(projectId,allAssets,allSessions);},
  listAssets:()=>getAssets(),
  getAsset,
  addAsset:storeAsset,
@@ -298,25 +336,41 @@ window.PennioWorkspace={
  refreshProjects:refreshProjectSelect,
  flushMediaWrites,
  beginProjectDeletion,cancelProjectDeletion,finishProjectDeletion,
- openRoom:async room=>{const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();else window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room}}));await roomSwitchPromise;},
+ openRoom:async room=>{
+  const target=String(room||"");
+  const operation=roomRequestQueue.catch(()=>{}).then(async()=>{
+   const button=document.querySelector('nav button[data-v="'+target+'"]');
+   if(button)button.click();else window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:target}}));
+   await roomSwitchPromise;
+   return true;
+  });
+  roomRequestQueue=operation;
+  return operation;
+ },
  refresh:refreshAssets
 };
 window.addEventListener("pennio:workspace-project-open",e=>{
  const p=e.detail&&e.detail.project,previous=activeProjectId;
  if(e.detail&&!Object.prototype.hasOwnProperty.call(e.detail,"previousProjectId"))e.detail.previousProjectId=previous;
  setActive(p||null,true);refreshProjectSelect();
- if(document.getElementById("dawRoom")?.getClientRects().length)roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(p||{id:"__studio_default__",name:"Studio workspace",room:"ayan"})).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
- if(document.getElementById("filmDesk")?.getClientRects().length)roomSwitchPromise=Promise.resolve(window.PennioFilmWorkspace?.restore(p||null)).catch(err=>{console.warn("Film project restore:",err);throw err;});
+ if(document.getElementById("dawRoom")?.getClientRects().length)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:"ayan"}}));
+ else if(document.getElementById("filmDesk")?.getClientRects().length)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:"faajiplace"}}));
 });
 document.addEventListener("click",e=>{
  const button=e.target.closest('nav button[data-v]');
  if(button)window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:button.dataset.v}}));
 });
 window.addEventListener("pennio:workspace-room-open",e=>{
- roomSwitchPromise=Promise.resolve();
+ const generation=++roomSwitchGeneration,room=e.detail?.room;
  const project=activeProjectId?projectById(activeProjectId):null;
- if(e.detail?.room==="ayan")roomSwitchPromise=Promise.resolve(window.PennioAyanWorkspace?.open(project||{id:"__studio_default__",name:"Studio workspace",room:"ayan"})).catch(err=>{console.warn("Àyàn project restore:",err);throw err;});
- if(e.detail?.room==="faajiplace"||e.detail?.room==="film")roomSwitchPromise=Promise.resolve(window.PennioFilmWorkspace?.restore(project)).catch(err=>{console.warn("Film project restore:",err);throw err;});
+ const operation=roomRestoreQueue.catch(()=>{}).then(async()=>{
+  if(generation!==roomSwitchGeneration)return false;
+  if(room==="ayan")await window.PennioAyanWorkspace?.open(project||{id:"__studio_default__",name:"Studio workspace",room:"ayan"});
+  else if(room==="faajiplace"||room==="film")await window.PennioFilmWorkspace?.restore(project);
+  return generation===roomSwitchGeneration;
+ });
+ roomRestoreQueue=operation;
+ roomSwitchPromise=operation.catch(err=>{console.warn("Studio room restore:",err);throw err;});
 });
 function reportMediaError(error){const raw=error&&error.message||"Browser storage is unavailable.",message=error&&error.name==="QuotaExceededError"?"Device storage is full. Download a Studio backup and free space before recording more media.":raw;console.warn("Studio media save:",error);window.dispatchEvent(new CustomEvent("pennio:workspace-media-error",{detail:{message}}));refreshStorageHealth();}
 window.addEventListener("pennio:recorded-audio",e=>{if(e.detail&&e.detail.workspaceReplay)return;storeAsset({...e.detail,kind:"audio"}).catch(reportMediaError);});
@@ -325,7 +379,7 @@ window.addEventListener("pennio:workspace-media-save",e=>{storeAsset(e.detail||{
 window.addEventListener("pennio:film-media",e=>{const d=e.detail||{};if(!d.blob||d.assetId)return;const kind=d.kind||(d.blob.type.startsWith("audio/")?"audio":"video");storeAsset({...d,kind}).then(asset=>window.dispatchEvent(new CustomEvent("pennio:film-media-saved",{detail:{id:asset.id,name:asset.name,kind:asset.kind,projectId:asset.projectId}}))).catch(reportMediaError);});
 buildUI();
 const saved=(()=>{try{return localStorage.getItem(ACTIVE_KEY)}catch(e){return null}})();
-setActive(projectById(saved)||null);refreshProjectSelect();refreshAssets();refreshStorageHealth();window.addEventListener("storage",refreshStorageHealth);
+setActive(projectById(saved)||null);refreshProjectSelect();refreshAssets();refreshStorageHealth();refreshNavigation();window.addEventListener("storage",()=>{refreshStorageHealth();refreshNavigation();});window.addEventListener("pennio:workspace-project-open",refreshNavigation);window.addEventListener("pennio:workspace-media-saved",refreshNavigation);window.addEventListener("pennio:workspace-session-saved",refreshNavigation);
 if(activeProjectId&&["#ayan","#faajiplace","#film"].includes(location.hash))window.dispatchEvent(new CustomEvent("pennio:workspace-room-open",{detail:{room:location.hash.slice(1)}}));
 window.dispatchEvent(new CustomEvent("pennio:workspace-ready",{detail:{projectId:activeProjectId}}));
 })();
