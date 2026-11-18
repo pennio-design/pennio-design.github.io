@@ -5946,7 +5946,7 @@ html[data-theme="light"] .dash-room-feature .dash-room-icon{background:#FCE8D9;b
   const project=event.target.closest("[data-studio-project]");
   if(project){window.PennioWorkspace?.openProject?.(project.dataset.studioProject).catch(error=>window.toast?.("Could not open this project: "+error.message));if(mobile()){visible=false;save();render();}return;}
   const action=event.target.closest("[data-studio-action]");
-  if(action){const target=document.getElementById(action.dataset.studioAction);if(target)target.click();}
+  if(action){const key=action.dataset.studioAction,target=document.getElementById(key);if(key==="openProfile")document.getElementById("avatar")?.click();else if(key==="openSettings")document.getElementById("siteSettingsBtn")?.click();else if(target)target.click();if(mobile()&&["openProfile","openSettings"].includes(key)){visible=false;save();render();}}
  });
  const labels={ayan:["Beat · Àyàn","Production tools and session controls for the active beat."],write:["Write · Akéwì","Songwriting, lyric development and recording prompts."],faajiplace:["Fàájíplace","Story development, scenes and film references."],beauty:["Model","Visual references and model tools."],home:["Projects","Your projects and their saved creative work."]};
  function updateContext(){
