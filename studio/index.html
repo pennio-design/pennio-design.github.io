@@ -4109,14 +4109,14 @@ function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){}
 function stateNow(){ banks[bank]=pattern; return {bank, banks, shown:[...shownRows], pattern, chopOrder, bpm:+bpmEl.value, sw:+swEl.value, n:N, muted, gains:gainsV, tune:tuneV, lay:LAY, nudge:vocalNudge, ddBase, uduBase, vocalOffset, useEnhanced, vstyle, harm:H}; }
 function saveSoon(withAudio){
   if(!ready||restoring) return;
-  clearTimeout(saveT); saveT=setTimeout(saveNow,500);
+  clearTimeout(saveT); saveT=setTimeout(()=>saveNow().catch(error=>{savedOk=false;const status=document.getElementById("localStatus");if(status)status.textContent="Save failed";const note=document.getElementById("savedNote");if(note)note.textContent="Save failed · "+error.message;console.error("PENNIO Studio auto-save failed:",error);}),500);
 }
 let savedAt=0, savedOk=true;
 function paintSaved(){ const n=document.getElementById("savedNote"); if(!n||!savedAt) return; const s=Math.round((Date.now()-savedAt)/1000);
   n.textContent=(savedOk? (sbSess?"Saved, syncing ":"Saved ") : "Saved (beat only) ")+(s<5?"just now": s<60? s+"s ago" : Math.round(s/60)+" min ago"); }
 setInterval(paintSaved,10000);
 async function saveNow(){
-  if(!currentId) return; const sn=document.getElementById("savedNote"); if(sn) sn.textContent="Saving…";
+  if(!currentId) throw new Error("There is no active Beat session to save."); const sn=document.getElementById("savedNote"); if(sn) sn.textContent="Saving…";
   const rec={id:currentId, name:document.getElementById("pname").value.trim()||"Untitled beat", updated:Date.now(), state:JSON.parse(JSON.stringify(stateNow())), audio:currentAudio};
   const old=await tx("projects","readonly",st=>st.get(currentId)); rec.created=(old&&old.created)||Date.now();
   if(curMeta.kind) rec.kind=curMeta.kind; if(curMeta.group) rec.group=curMeta.group;
