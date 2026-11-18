@@ -3135,12 +3135,13 @@ async function translateVoiceIntoLane(laneId){
   sy.forEach((s,i)=>{if(cursor>=N)return;line[cursor++]=s.tone==="H"?1:s.tone==="M"?2:3;const next=sy[i+1];if(next&&next.t-s.end>.22)cursor++;});
   LAY.drum=true;
  }else{
+  drumBuf=null;LAY.drum=false;
   const frequencies=sy.map(s=>s.f).filter(Number.isFinite),low=Math.min(...frequencies),high=Math.max(...frequencies);
   sy.forEach((s,i)=>{if(cursor>=N)return;const ratio=high>low?(s.f-low)/(high-low):.5;line[cursor++]=1+Math.min(lane.states-1,Math.max(0,Math.round(ratio*(lane.states-1))));const next=sy[i+1];if(next&&next.t-s.end>.22)cursor++;});
   if(Object.prototype.hasOwnProperty.call(LAY,laneId))LAY[laneId]=true;
  }
  pushHist();pattern[laneId]=line;shownRows.add(laneId);render();renderLayers();markPresets(-1);saveSoon(true);
- tonesEl.innerHTML=sy.slice(0,32).map((s,i)=>'<span class="syl '+s.tone+'">'+(i+1)+' · '+s.tone+' · '+Math.round(s.f)+' Hz</span>').join("");
+ tonesEl.hidden=false;tonesEl.innerHTML=sy.slice(0,32).map((s,i)=>'<span class="syl '+s.tone+'">'+(i+1)+' · '+s.tone+' · '+Math.round(s.f)+' Hz</span>').join("");
  sayNote.textContent=sy.length+" syllables mapped to "+lane.name+". The pattern is saved with this session.";
  hearDrum.disabled=!drumBuf; 
 }
