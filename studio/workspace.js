@@ -109,6 +109,7 @@ function buildUI(){
  #pennioWorkspaceDock .ws-head-copy{cursor:default}
  #pennioWorkspaceDock .ws-mark{touch-action:auto}
  #pennioWorkspaceDock .ws-toggle{cursor:pointer;touch-action:manipulation}
+ #pennioWorkspaceDock .ws-move{border:1px solid var(--line,rgba(255,255,255,.16));background:transparent;border-radius:9px;padding:6px 9px;font-size:10px;cursor:pointer} #pennioWorkspaceDock[data-side="left"] .ws-shell{border-radius:0 16px 16px 0} #pennioWorkspaceDock[data-side="right"] .ws-shell{border-radius:16px 0 0 16px}
  #pennioWorkspaceDock .ws-minimize{border:1px solid var(--line,rgba(255,255,255,.16));background:transparent;border-radius:9px;width:32px;height:32px;font-size:17px;cursor:pointer}
  #pennioWorkspaceDock .ws-restore{display:none;border:0;background:transparent;color:inherit;font-size:12px;font-weight:600;padding:5px 7px;cursor:pointer}
  #pennioWorkspaceDock.is-minimized{display:none}
@@ -140,7 +141,7 @@ function buildUI(){
   $("workspaceMoveSide").addEventListener("click",()=>{dock.dataset.side=dock.dataset.side==="right"?"left":"right";saveDockState({side:dock.dataset.side});$("workspaceMoveSide").textContent=dock.dataset.side==="right"?"Move to left":"Move to right";});
  syncPositionControl();
  function syncDockOverlay(){document.body.classList.toggle("workspace-open",!dock.hidden)}
- function closeDock(){dock.hidden=true;body.hidden=true;toggle.setAttribute("aria-expanded","false");$("workspaceMoveSide").textContent=dock.dataset.side==="right"?"Move to left":"Move to right";syncDockOverlay();syncPositionControl();syncPositionControl();saveDockState({minimized:true})}
+ function closeDock(){dock.hidden=true;body.hidden=true;toggle.setAttribute("aria-expanded","false");syncDockOverlay();syncPositionControl();saveDockState({minimized:true})}
  function openDock(){dock.hidden=false;body.hidden=false;toggle.setAttribute("aria-expanded","true");syncDockOverlay();syncPositionControl();refreshAssets();refreshStorageHealth();saveDockState({minimized:false});}
  $("workspaceMinimize").addEventListener("click",closeDock);
  const workspaceMenuButton=document.getElementById("openWorkspacePanel");
