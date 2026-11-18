@@ -5501,7 +5501,7 @@ document.getElementById("sylIn").oninput=sylRender;
   editingId=item?.id||null;selectedArtworkBlob=null;removeArtwork=false;artworkInput.value="";clearArtworkPreview();
   $("dashModalTitle").textContent=item?"Edit project":"New project";$("dashModalCopy").textContent=item?"Update the project details and artwork.":"Give the work a name, starting room and visual identity.";
   nameInput.value=item?.name||"";roomInput.value=item?.room||"ayan";backdrop.hidden=false;nameInput.focus();
-  if(item?.artworkAssetId&&window.PennioWorkspace?.getAsset){try{const asset=await window.PennioWorkspace.getAsset(item.artworkAssetId);if(asset?.blob)showArtworkPreview(asset.blob);}catch(error){console.warn("Project artwork preview:",error);}}
+  if(item?.artworkAssetId&&window.PennioWorkspace?.getAsset){try{const asset=await window.PennioWorkspace.getAsset(item.artworkAssetId);if(asset?.blob&&!selectedArtworkBlob&&!removeArtwork)showArtworkPreview(asset.blob);}catch(error){console.warn("Project artwork preview:",error);}}
  }
  artworkInput.addEventListener("change",async()=>{
   const file=artworkInput.files&&artworkInput.files[0];if(!file)return;
