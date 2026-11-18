@@ -20,6 +20,18 @@ if(!document.getElementById("dawTimelineStyle")){const style=document.createElem
 .daw-timeline-controls button:focus-visible,.daw-timeline-controls input:focus-visible{outline:2px solid var(--orange,#ff6b35);outline-offset:2px}
 @media(max-width:560px){.daw-timeline-controls{gap:7px}.daw-timeline-hint{width:100%;margin:0}}
 `;document.head.append(style);}
+if(!document.getElementById("dawTransportDockStyle")){
+ const style=document.createElement("style");style.id="dawTransportDockStyle";
+ style.textContent=`
+ @media(max-width:768px){
+  body.daw-room-visible .transport:not(.open){justify-content:flex-start;align-items:center;gap:10px;padding:7px 12px calc(7px + env(safe-area-inset-bottom));min-height:54px}
+  body.daw-room-visible .transport:not(.open)>:not(.play):not(#studioRecLaunch){display:none!important}
+  body.daw-room-visible .transport:not(.open) .play.ilu,body.daw-room-visible .transport:not(.open) .play.ilu svg{width:38px;height:38px}
+  body.daw-room-visible .transport:not(.open)::after{content:"Àyàn DAW active";margin-left:auto;font-size:11px;font-weight:650;letter-spacing:.04em;color:var(--mute,#999)}
+ }
+ `;
+ document.head.append(style);
+}
 const state={tracks:[],selected:null,ctx:null,sources:[],dspChains:[],playGeneration:0,playStarting:false,playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[],recordingDone:null,resolveRecordingDone:null,recordingKind:null,projectSwitching:false,lastSessionOperation:null,outputGain:null,plan:"",externalIsolation:null,timelineView:"waves",tempo:120,barSnap:true};
 const status=(s)=>{const el=$("dawStatus");if(el)el.textContent=s;};
 function trackAudible(t){
@@ -252,6 +264,14 @@ window.addEventListener("pennio:recorded-audio",e=>{const detail=e.detail||{},bl
 const modeCopy={beat:"Build and arrange your beat. Your patterns and tracks stay in the same project.",record:"Record a voice or instrument. Keep the beat playing while you capture a take.",overlay:"Add a new take over an existing passage. Select a section to compare or re-record it.",edit:"Select, trim, keep or remove a passage. Original takes remain available until you change them.",mix:"Balance track levels and shape the sound with EQ, compression, reverb and echo.",plan:"Keep session direction, recording order and mix notes with this project.",merge:"Export a stereo WAV, merge tracks or send the mix back to the Beat workspace."};
 const modeTargets={beat:$("dawTracks"),record:$("dawHead"),overlay:$("dawSelectionPanel"),edit:$("dawSelectionPanel"),mix:$("dawBottom"),plan:$("dawPlanPanel"),merge:$("dawToolbar")};
 const dawRoot=$("dawRoom");if(dawRoot)dawRoot.dataset.mode="beat";
+const dawDockTarget=$("dawRoom");
+if(dawDockTarget&&"IntersectionObserver" in window){
+ const dawDockObserver=new IntersectionObserver(entries=>{
+  const entry=entries[0];
+  document.body.classList.toggle("daw-room-visible",!!entry&&entry.isIntersecting);
+ },{threshold:.08});
+ dawDockObserver.observe(dawDockTarget);
+}
 function selectEngineerMode(mode){
  const root=$("dawRoom"),plan=$("dawPlanPanel");
  if(!modeCopy[mode])return;
