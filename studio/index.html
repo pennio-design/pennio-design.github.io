@@ -5980,8 +5980,6 @@ html[data-theme="light"] .dash-room-feature .dash-room-icon{background:#FCE8D9;b
   if(room){const target=document.querySelector('#nav button[data-v="'+room.dataset.studioRoom+'"]');if(target)target.click();if(mobile()){visible=false;save();render();}return;}
   const project=event.target.closest("[data-studio-project]");
   if(project){window.PennioWorkspace?.openProject?.(project.dataset.studioProject).catch(error=>window.toast?.("Could not open this project: "+error.message));if(mobile()){visible=false;save();render();}return;}
-  const room=event.target.closest("[data-studio-room]");
-  if(room){const target=document.querySelector('#nav button[data-v="'+room.dataset.studioRoom+'"]');if(target)target.click();if(mobile()){visible=false;save();render();}return;}
   const action=event.target.closest("[data-studio-action]");
   if(action){const key=action.dataset.studioAction,target=document.getElementById(key);if(key==="openProfile")document.getElementById("avatar")?.click();else if(key==="openSettings")document.getElementById("siteSettingsBtn")?.click();else if(target)target.click();if(mobile()&&["openProfile","openSettings"].includes(key)){visible=false;save();render();}}
  });
