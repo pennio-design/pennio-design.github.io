@@ -6,9 +6,18 @@ const trimPanel=$("studioRecTrim"),trimStart=$("studioRecTrimStart"),trimEnd=$("
 const liveWrap=$("studioRecLive"),liveVideo=$("studioRecLiveVideo"),liveFrame=$("studioRecLiveFrame"),liveRec=$("studioRecRec"),flipButton=$("studioRecFlip");let facing="environment";
 
 if(!dock||!launch)return;
-let mode="audio",stream=null,recorder=null,chunks=[],blob=null,sourceBlob=null,blobUrl=null,started=0,ticker=null,mediaDuration=0,takeProjectId=null;
+let mode="audio",stream=null,recorder=null,chunks=[],blob=null,sourceBlob=null,blobUrl=null,started=0,ticker=null,mediaDuration=0,takeProjectId=null,targetLaneId=null,targetLaneName="";
 const setStatus=s=>status.textContent=s;
 const setMode=m=>{if(recorder&&recorder.state==="recording")return;if(stream)stopTracks();mode=m;document.querySelectorAll("[data-rec-mode]").forEach(b=>b.classList.toggle("on",b.dataset.recMode===m));$("studioRecTitle").textContent=m==="audio"?"Record a voice or sound":"Capture a scene reference";$("studioRecHint").textContent=m==="audio"?"Capture a clean voice note, melody or beatbox.":"Preview framing, then capture real light, locations and movement for your film or AI reference.";if(liveWrap)liveWrap.hidden=m!=="video";start.textContent=m==="audio"?"● Record audio":"Open camera";start.dataset.ready="false";if(liveVideo)liveVideo.srcObject=null;};
+window.addEventListener("pennio:track-record-request",event=>{
+ const detail=event.detail||{};if(!detail.laneId)return;
+ targetLaneId=detail.laneId;targetLaneName=detail.laneName||detail.laneId;
+ if(mode!=="audio")setMode("audio");
+ useAyan.textContent="Add to "+targetLaneName;
+ useAyan.hidden=false;
+ setStatus("Recording target: "+targetLaneName+". Record, stop, then add the take to this track.");
+ showDock(true);
+});
 async function prepareTakeProject(room){
  let projectId=takeProjectId||window.PennioWorkspace?.activeProjectId||"__studio_default__";
  if(projectId!=="__studio_default__"){
@@ -118,8 +127,9 @@ useAyan.addEventListener("click",async()=>{
  if(!blob||mode!=="audio")return;
  try{
   const projectId=await prepareTakeProject("ayan");
-  window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob,name:"Studio audio take",projectId}}));
-  setStatus("Sent to Àyàn. The take is now available in this project’s DAW and media library.");
+  window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob,name:"Studio audio take",projectId,targetLaneId}}));
+  setStatus(targetLaneId?"Sent to "+targetLaneName+". The voice is being translated into that track.":"Sent to Àyàn. The take is now available in this project’s DAW and media library.");
+  targetLaneId=null;targetLaneName="";useAyan.textContent="Add to Àyàn";
  }catch(error){setStatus("Could not open Àyàn: "+error.message);}
 });
 useFilm.addEventListener("click",async()=>{
