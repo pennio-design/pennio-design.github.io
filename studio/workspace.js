@@ -130,16 +130,18 @@ async function refreshAssets(){
    const row=document.createElement("div");row.className="ws-asset";
    const copy=document.createElement("div");copy.className="ws-asset-main";
    const name=document.createElement("b");name.textContent=asset.name;
-   const meta=document.createElement("small");meta.textContent=(asset.kind==="video"?"Video":"Audio")+" · "+new Date(asset.created).toLocaleString();
+   const meta=document.createElement("small");meta.textContent=(asset.kind==="video"?"Video":asset.kind==="image"?"Image":"Audio")+" · "+new Date(asset.created).toLocaleString();
    copy.append(name,meta);
-   const action=document.createElement("button");action.type="button";action.textContent=asset.kind==="video"?"Film":"Àyàn";
+   const action=document.createElement("button");action.type="button";action.textContent=asset.kind==="video"?"Film":asset.kind==="image"?"Preview":"Àyàn";
    action.addEventListener("click",async()=>{
     const full=await getAsset(asset.id);if(!full)return;
     if(deletingProjects.has(full.projectId))return;
     const project=projectById(full.projectId);
     if(project)await queueProjectSwitch(project,false);
     else if(full.projectId==="__studio_default__")await queueProjectSwitch(null,false);
-    if(full.kind==="video"){
+    if(full.kind==="image"){
+     const url=URL.createObjectURL(full.blob),a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);
+    }else if(full.kind==="video"){
      await window.PennioWorkspace.openRoom("faajiplace");
      window.dispatchEvent(new CustomEvent("pennio:film-media",{detail:{blob:full.blob,name:full.name,assetId:full.id,projectId:full.projectId,kind:"video"}}));
     }else{
@@ -148,7 +150,7 @@ async function refreshAssets(){
     }
    });
    const save=document.createElement("button");save.type="button";save.textContent="Save";
-   save.addEventListener("click",async()=>{const full=await getAsset(asset.id);if(!full)return;const url=URL.createObjectURL(full.blob),a=document.createElement("a");a.href=url;a.download=asset.name.replace(/[^a-z0-9-_]+/gi,"-")+"."+(full.kind==="video"?"webm":"wav");a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);});
+   save.addEventListener("click",async()=>{const full=await getAsset(asset.id);if(!full)return;const url=URL.createObjectURL(full.blob),a=document.createElement("a");a.href=url;a.download=asset.name.replace(/[^a-z0-9-_]+/gi,"-")+"."+(full.kind==="video"?"webm":full.kind==="image"?(full.type==="image/png"?"png":"jpg"):"wav");a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);});
    row.append(copy,action,save);host.append(row);
   });
  }catch(e){const host=$("workspaceAssets");if(host){host.textContent="Local media storage is unavailable in this browser.";}}
