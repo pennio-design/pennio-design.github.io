@@ -6,12 +6,15 @@ const trimPanel=$("studioRecTrim"),trimStart=$("studioRecTrimStart"),trimEnd=$("
 const liveWrap=$("studioRecLive"),liveVideo=$("studioRecLiveVideo"),liveFrame=$("studioRecLiveFrame"),liveRec=$("studioRecRec"),flipButton=$("studioRecFlip");let facing="environment";
 
 if(!dock||!launch)return;
-let mode="audio",stream=null,recorder=null,chunks=[],blob=null,sourceBlob=null,blobUrl=null,started=0,ticker=null,mediaDuration=0,takeProjectId=null,targetLaneId=null,targetLaneName="";
+let mode="audio",stream=null,recorder=null,chunks=[],blob=null,sourceBlob=null,blobUrl=null,started=0,ticker=null,mediaDuration=0,takeProjectId=null,targetLaneId=null,targetLaneName="",vocalMode="hum";
 const setStatus=s=>status.textContent=s;
 const setMode=m=>{if(recorder&&recorder.state==="recording")return;if(stream)stopTracks();mode=m;document.querySelectorAll("[data-rec-mode]").forEach(b=>b.classList.toggle("on",b.dataset.recMode===m));$("studioRecTitle").textContent=m==="audio"?"Record a voice or sound":"Capture a scene reference";$("studioRecHint").textContent=m==="audio"?"Capture a clean voice note, melody or beatbox.":"Preview framing, then capture real light, locations and movement for your film or AI reference.";if(liveWrap)liveWrap.hidden=m!=="video";start.textContent=m==="audio"?"● Record audio":"Open camera";start.dataset.ready="false";if(liveVideo)liveVideo.srcObject=null;};
 window.addEventListener("pennio:track-record-request",event=>{
  const detail=event.detail||{};if(!detail.laneId)return;
  targetLaneId=detail.laneId;targetLaneName=detail.laneName||detail.laneId;
+ vocalMode=targetLaneId==="dd"?"beatbox":"hum";
+ document.getElementById("studioVocalModes").hidden=false;
+ document.querySelectorAll("[data-vocal-mode]").forEach(button=>button.classList.toggle("on",button.dataset.vocalMode===vocalMode));
  if(mode!=="audio")setMode("audio");
  useAyan.textContent="Add to "+targetLaneName;
  useAyan.hidden=false;
@@ -28,7 +31,7 @@ async function prepareTakeProject(room){
  if(window.PennioWorkspace?.openRoom)await window.PennioWorkspace.openRoom(room);
  return projectId;
 }
-function clearTake(){if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null;}takeProjectId=null;targetLaneId=null;targetLaneName="";useAyan.textContent="Add to Àyàn";blob=null;sourceBlob=null;mediaDuration=0;preview.innerHTML="";preview.hidden=true;result.hidden=true;trimPanel.hidden=true;trimReset.disabled=true;clock.textContent="00:00";extract.hidden=true;useAyan.hidden=false;useTongue.hidden=false;useFilm.hidden=false;}
+function clearTake(){if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null;}takeProjectId=null;targetLaneId=null;targetLaneName="";document.getElementById("studioVocalModes").hidden=true;useAyan.textContent="Add to Àyàn";blob=null;sourceBlob=null;mediaDuration=0;preview.innerHTML="";preview.hidden=true;result.hidden=true;trimPanel.hidden=true;trimReset.disabled=true;clock.textContent="00:00";extract.hidden=true;useAyan.hidden=false;useTongue.hidden=false;useFilm.hidden=false;}
 function fmtTime(value){const s=Math.max(0,Math.floor(value||0));return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");}
 function configureTrim(media){
  trimPanel.hidden=true;
@@ -78,6 +81,14 @@ window.addEventListener("pennio:overlay-open",event=>{
 launch.addEventListener("click",()=>showDock(!dock.classList.contains("open")));
 $("studioRecClose").addEventListener("click",()=>{if(recorder&&recorder.state==="recording")return;stopTracks();showDock(false);});
 document.querySelectorAll("[data-rec-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.recMode)));
+document.querySelectorAll("[data-vocal-mode]").forEach(button=>button.addEventListener("click",()=>{
+ if(recorder&&recorder.state==="recording")return;
+ vocalMode=button.dataset.vocalMode;
+ document.querySelectorAll("[data-vocal-mode]").forEach(item=>item.classList.toggle("on",item===button));
+ const descriptions={beatbox:"Capture vocal percussion. Ìlù will map the attacks and rhythm into this lane.",hum:"Capture a sustained hum. Ìlù will follow the pitch contour into this lane.",tune:"Sing a melody. Ìlù will quantise the notes to the selected key and scale."};
+ setStatus(descriptions[vocalMode]||"Voice mode selected.");
+}));
+
 flipButton.addEventListener("click",async()=>{if(mode!=="video"||recorder&&recorder.state==="recording")return;const wasReady=!!stream;stopTracks();if(!wasReady)return;facing=facing==="environment"?"user":"environment";try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}}});liveVideo.srcObject=stream;liveFrame.dataset.facing=facing;liveWrap.hidden=false;await liveVideo.play();flipButton.disabled=false;start.dataset.ready="true";start.textContent="● Record scene";setStatus(facing==="user"?"Front camera preview ready.":"Rear camera preview ready.");}catch(error){setStatus("Could not switch camera: "+error.message);}});
 document.querySelectorAll("[data-rec-aspect]").forEach(button=>button.addEventListener("click",()=>{liveFrame.dataset.aspect=button.dataset.recAspect;document.querySelectorAll("[data-rec-aspect]").forEach(item=>item.classList.toggle("on",item===button));}));
 function stopTracks(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}if(liveVideo)liveVideo.srcObject=null;if(liveWrap)liveWrap.hidden=true;if(flipButton)flipButton.disabled=true;start.dataset.ready="false";if(mode==="video")start.textContent="Open camera";liveRec&&(liveRec.hidden=true);}
@@ -127,7 +138,7 @@ useAyan.addEventListener("click",async()=>{
  if(!blob||mode!=="audio")return;
  try{
   const projectId=await prepareTakeProject("ayan");
-  window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob,name:"Studio audio take",projectId,targetLaneId}}));
+  window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob,name:"Studio audio take",projectId,targetLaneId,vocalMode}}));
   setStatus(targetLaneId?"Sent to "+targetLaneName+". The voice is being translated into that track.":"Sent to Àyàn. The take is now available in this project’s DAW and media library.");
   targetLaneId=null;targetLaneName="";useAyan.textContent="Add to Àyàn";
  }catch(error){setStatus("Could not open Àyàn: "+error.message);}
