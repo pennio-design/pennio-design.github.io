@@ -2238,7 +2238,7 @@ function luluTick(){
  luluStep=(luluStep+1)%luluSteps;const t=ac.currentTime+.025;
  luluDefs.forEach(def=>{const value=luluPattern[def.id]?.[luluStep]||0;if(value)trigger(def.id,ac,master,t,value,luluStep);});
  luluPaint(luluStep);
- const base=60/(Number(bpmEl.value)||104)/4,swing=luluStep%2===1?base*(Number(swEl.value)||0)/100*.5:0;
+ const base=60/(Number(bpmEl.value)||104)/(luluSteps===12?3:4),swing=luluSteps===16&&luluStep%2===1?base*(Number(swEl.value)||0)/100*.5:0;
  luluTimer=setTimeout(luluTick,Math.max(20,(base+swing)*1000));
 }
 document.getElementById("luluToggle").addEventListener("click",()=>{
