@@ -35,7 +35,7 @@ if(!document.getElementById("dawTransportDockStyle")){
 const state={tracks:[],selected:null,ctx:null,sources:[],dspChains:[],playGeneration:0,playStarting:false,playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],recordTimer:0,recordStartedAt:0,effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[],recordingDone:null,resolveRecordingDone:null,recordingKind:null,projectSwitching:false,lastSessionOperation:null,outputGain:null,plan:"",externalIsolation:null,timelineView:"waves",tempo:120,barSnap:true};
 const status=(s)=>{const el=$("dawStatus");if(el)el.textContent=s;};
 function taskProgress(message,value){
- status(message);
+ if(message)status(message);
  const host=$("dawToolbar");if(!host)return;
  let bar=$("dawTaskProgress");
  if(value===false){bar?.remove();return;}
