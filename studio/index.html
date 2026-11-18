@@ -1492,6 +1492,8 @@ html[data-theme="light"] .theme-toggle .theme-icon-moon{display:block}
 .dash-video-copy button{justify-self:start;margin-top:4px;padding:8px 11px;border:1px solid var(--line2);border-radius:8px;font-size:11px}
 .dash-video-empty{padding:18px;border:1px dashed var(--line2);border-radius:11px}
 </style>
+
+<style id="pennio-manual-save-style">.manual-save{flex:none;min-height:32px;padding:6px 10px;font-size:11px;white-space:nowrap}.manual-save:disabled{opacity:.6;cursor:wait}@media(max-width:420px){.manual-save{min-height:30px;padding:5px 8px;font-size:10px}}</style>
 </head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
@@ -1517,7 +1519,7 @@ html[data-theme="light"] .theme-toggle .theme-icon-moon{display:block}
       </button>
     </div>
     <div class="logo"><svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81.67 102.67" role="img" aria-label="PENNIO"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg>PENNIO Studio <span>· PENNIO</span></div>
-    <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span><span class="local-status" id="localStatus"><i></i>Saved on device</span></div>
+    <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span><span class="local-status" id="localStatus"><i></i>Saved on device</span><button type="button" class="btn manual-save" id="manualSave" title="Save current Studio work">Save</button></div>
     <div class="hright">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme" title="Switch to light theme" aria-pressed="false">
         <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l-1.42-1.42m11.3-11.3-1.42-1.42"/></svg>
@@ -4089,6 +4091,22 @@ async function saveNow(){
   lsSet("ps.last",{id:currentId,name:rec.name,state:rec.state}); lsSet("ps.current",currentId);
   savedAt=Date.now(); savedOk=ok; paintSaved();
 }
+document.getElementById("manualSave")?.addEventListener("click",async()=>{
+ const button=document.getElementById("manualSave"),status=document.getElementById("localStatus");
+ button.disabled=true;button.textContent="Saving…";
+ try{
+  if(typeof saveNow==="function")await saveNow();
+  await window.PennioDAWSession?.flush?.();
+  await window.PennioWorkspace?.flushMediaWrites?.();
+  if(status)status.innerHTML="<i></i>Saved on this device";
+  button.textContent="Saved";
+  setTimeout(()=>{if(button.textContent==="Saved")button.textContent="Save";},1600);
+ }catch(error){
+  if(status)status.textContent="Save failed";
+  button.textContent="Retry";
+  window.toast?.("Could not save all Studio work: "+error.message);
+ }finally{button.disabled=false;}
+});
 async function openProject(rec,keepSitting){
   restoring=true; curMeta={kind:rec.kind||"", group:rec.group||""};
   stopTracks();
@@ -5466,7 +5484,7 @@ document.getElementById("sylIn").oninput=sylRender;
  const backdrop=document.createElement("div");backdrop.className="dash-modal-backdrop";backdrop.hidden=true;backdrop.innerHTML='<form class="dash-modal" role="dialog" aria-modal="true" aria-labelledby="dashModalTitle"><h2 id="dashModalTitle">New project</h2><p id="dashModalCopy">Give the work a name and choose where it begins.</p><label for="dashProjectName">Project name</label><input id="dashProjectName" maxlength="70" required placeholder="A name worth returning to"><label for="dashProjectRoom">Starting room</label><select id="dashProjectRoom"><option value="ayan">Àyàn · Music</option><option value="write">Akéwì · Writing</option><option value="faajiplace">Fàájíplace · Film</option><option value="beauty">Model</option></select><label for="dashProjectArtwork">Project artwork</label><div class="dash-artwork-field"><div class="dash-artwork-preview" id="dashProjectArtworkPreview">Project image</div><div class="dash-artwork-actions"><input id="dashProjectArtwork" type="file" accept="image/png,image/jpeg,image/webp"><button type="button" id="dashProjectArtworkRemove">Remove artwork</button></div></div><div class="dash-modal-actions"><button type="button" id="dashModalCancel">Cancel</button><button class="primary" type="submit">Save project</button></div></form>';
  document.body.append(backdrop);
  const form=backdrop.querySelector("form"),nameInput=$("dashProjectName"),roomInput=$("dashProjectRoom"),artworkInput=$("dashProjectArtwork"),artworkPreview=$("dashProjectArtworkPreview");
- let editingId=null,selectedArtworkBlob=null,removeArtwork=false,artworkPreviewUrl=null,projectRenderVersion=0,videoRenderVersion=0,videoPreviewUrls=[];
+ let editingId=null,selectedArtworkBlob=null,removeArtwork=false,artworkPreviewUrl=null,projectRenderVersion=0,videoRenderVersion=0,videoPreviewUrls=[],projectArtworkUrls=[];
  function clearArtworkPreview(){if(artworkPreviewUrl)URL.revokeObjectURL(artworkPreviewUrl);artworkPreviewUrl=null;artworkPreview.replaceChildren();artworkPreview.textContent="Project image";}
  function showArtworkPreview(blob){clearArtworkPreview();artworkPreview.replaceChildren();artworkPreviewUrl=URL.createObjectURL(blob);const image=document.createElement("img");image.src=artworkPreviewUrl;image.alt="Project artwork preview";artworkPreview.append(image);}
  async function compressProjectArtwork(file){
@@ -5478,7 +5496,7 @@ document.getElementById("sylIn").oninput=sylRender;
   context.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close?.();
   return await new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(Error("Could not prepare project artwork.")),"image/jpeg",.82));
  }
- async function closeModal(){backdrop.hidden=true;editingId=null;selectedArtworkBlob=null;removeArtwork=false;}
+ async function closeModal(){backdrop.hidden=true;editingId=null;selectedArtworkBlob=null;removeArtwork=false;clearArtworkPreview();}
  async function openModal(item){
   editingId=item?.id||null;selectedArtworkBlob=null;removeArtwork=false;artworkInput.value="";clearArtworkPreview();
   $("dashModalTitle").textContent=item?"Edit project":"New project";$("dashModalCopy").textContent=item?"Update the project details and artwork.":"Give the work a name, starting room and visual identity.";
@@ -5521,13 +5539,14 @@ document.getElementById("sylIn").oninput=sylRender;
   const workspace=window.PennioWorkspace,assets=workspace?.listAssets?await workspace.listAssets().catch(()=>[]):[];
   if(version!==projectRenderVersion)return;
   const artworkById=new Map(assets.filter(a=>a.kind==="image").map(a=>[a.id,a]));
+  projectArtworkUrls.forEach(url=>URL.revokeObjectURL(url));projectArtworkUrls=[];
   projects.replaceChildren();
-  if(!list.length){const empty=document.createElement("div");empty.className="dash-empty";empty.innerHTML='<span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button>';projects.append(empty);$("dashFirstProject").onclick=()=>openModal();return;}
+  if(!list.length){const empty=document.createElement("div");empty.className="dash-empty";empty.innerHTML='<span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button>';projects.append(empty);$("dashFirstProject").onclick=()=>openModal();renderVideoShowcase();return;}
   (showAllProjects?list:list.slice(0,5)).forEach(item=>{
    const row=document.createElement("article");row.className="dash-project";
    const mark=document.createElement("span");mark.className="dash-project-mark";
    const art=item.artworkAssetId&&artworkById.get(item.artworkAssetId);
-   if(art?.blob){mark.classList.add("has-artwork");const image=document.createElement("img");image.src=URL.createObjectURL(art.blob);image.alt="";mark.append(image);}
+   if(art?.blob){mark.classList.add("has-artwork");const image=document.createElement("img"),url=URL.createObjectURL(art.blob);projectArtworkUrls.push(url);image.src=url;image.alt="";mark.append(image);}
    else mark.textContent="✳";
    const copy=document.createElement("div");copy.className="dash-project-copy";
    const title=document.createElement("b");title.textContent=item.name;
