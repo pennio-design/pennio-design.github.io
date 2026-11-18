@@ -1327,6 +1327,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
           <button data-v="ayan" class="on">Ìlù <small>Àyàn</small></button>
           <button data-v="write">Ewì <small>Writing and poetry</small></button>
           <button data-v="home">Projects <small>My work</small></button>
+          <button type="button" id="openWorkspacePanel">Workspace <small>Projects, media and storage</small></button>
         </nav></div>
       <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
     </div>
@@ -4740,10 +4741,10 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
   menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="home"?"Projects":v==="ayan"?"Ìlù":v==="write"?"Ewì":v==="beauty"?"Ojuloge":"Eré";
-  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  document.querySelectorAll("nav button[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"",b.dataset.v==="home"?"/studio/":"#"+b.dataset.v);}catch(e){} });
+document.querySelectorAll("nav button[data-v]").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"",b.dataset.v==="home"?"/studio/":"#"+b.dataset.v);}catch(e){} });
 const hs=x=>{x=x.replace("#",""); return x==="film"?"faajiplace":x;};
 const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan"||h==="home") show(h); else show("ayan");
 window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write"||x==="beauty") show(x);});
