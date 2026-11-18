@@ -1,7 +1,7 @@
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
-if(!document.getElementById("dawSessionStyle")){const style=document.createElement("style");style.id="dawSessionStyle";style.textContent="#dawRoom.session-loading{opacity:.72;pointer-events:none;}";document.head.append(style);}if(!document.getElementById("dawTrackDetailStyle")){const style=document.createElement("style");style.id="dawTrackDetailStyle";style.textContent="\n.daw-track{display:grid;grid-template-columns:minmax(0,1fr);gap:0;min-width:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:0 0 12px}\n.daw-track-head{display:grid;grid-template-columns:minmax(130px,1.1fr) auto minmax(220px,1.4fr);align-items:center;gap:12px;padding:12px;background:var(--surface)}\n.daw-track-details{display:grid;grid-template-columns:repeat(6,minmax(95px,1fr));gap:8px;padding:10px 12px;background:var(--surface-2,var(--surface));border-top:1px solid var(--line)}\n.daw-track-field{display:grid;gap:5px;min-width:0}\n.daw-track-field span{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}\n.daw-track-field input,.daw-track-field select{width:100%;min-width:0;height:34px;padding:0 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--text);font:inherit;font-size:12px}\n.daw-track-wave{min-width:0}\n.daw-play-progress{display:grid;gap:5px;min-width:112px;text-align:left}\n.daw-play-progress i{display:block;width:100%;height:3px;border-radius:9px;background:linear-gradient(90deg,var(--orange) var(--play-progress,0%),var(--line) var(--play-progress,0%));}\n.daw-play-progress b{font-size:11px;font-weight:600}\n.daw-busy-progress{height:3px;width:100%;overflow:hidden;background:var(--line);border-radius:9px}\n.daw-busy-progress i{display:block;width:36%;height:100%;background:var(--orange);animation:daw-busy-slide 1.1s ease-in-out infinite}\n@keyframes daw-busy-slide{from{transform:translateX(-110%)}to{transform:translateX(290%)}}\n.daw-toolbar.is-busy #dawPlay{min-width:140px;opacity:.85}\n@media(max-width:900px){.daw-track-head{grid-template-columns:minmax(0,1fr) auto}.daw-track-faders{grid-column:1/-1}.daw-track-details{grid-template-columns:repeat(3,minmax(0,1fr))}}\n@media(max-width:520px){.daw-track-head{grid-template-columns:minmax(0,1fr)}.daw-track-controls{justify-content:flex-start}.daw-track-details{grid-template-columns:repeat(2,minmax(0,1fr))}}\n";document.head.append(style);}
+if(!document.getElementById("dawSessionStyle")){const style=document.createElement("style");style.id="dawSessionStyle";style.textContent="#dawRoom.session-loading{opacity:.72;pointer-events:none;}\n.daw-magic-progress{display:grid;gap:5px;min-width:116px;text-align:left;font-size:11px}\n.daw-magic-progress>i{display:block;height:3px;overflow:hidden;border-radius:8px;background:var(--line)}\n.daw-magic-progress>i>span{display:block;height:100%;background:var(--orange);transition:width .12s linear}\n";document.head.append(style);}if(!document.getElementById("dawTrackDetailStyle")){const style=document.createElement("style");style.id="dawTrackDetailStyle";style.textContent="\n.daw-track{display:grid;grid-template-columns:minmax(0,1fr);gap:0;min-width:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:0 0 12px}\n.daw-track-head{display:grid;grid-template-columns:minmax(130px,1.1fr) auto minmax(220px,1.4fr);align-items:center;gap:12px;padding:12px;background:var(--surface)}\n.daw-track-details{display:grid;grid-template-columns:repeat(6,minmax(95px,1fr));gap:8px;padding:10px 12px;background:var(--surface-2,var(--surface));border-top:1px solid var(--line)}\n.daw-track-field{display:grid;gap:5px;min-width:0}\n.daw-track-field span{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}\n.daw-track-field input,.daw-track-field select{width:100%;min-width:0;height:34px;padding:0 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--text);font:inherit;font-size:12px}\n.daw-track-wave{min-width:0}\n.daw-play-progress{display:grid;gap:5px;min-width:112px;text-align:left}\n.daw-play-progress i{display:block;width:100%;height:3px;border-radius:9px;background:linear-gradient(90deg,var(--orange) var(--play-progress,0%),var(--line) var(--play-progress,0%));}\n.daw-play-progress b{font-size:11px;font-weight:600}\n.daw-busy-progress{height:3px;width:100%;overflow:hidden;background:var(--line);border-radius:9px}\n.daw-busy-progress i{display:block;width:36%;height:100%;background:var(--orange);animation:daw-busy-slide 1.1s ease-in-out infinite}\n@keyframes daw-busy-slide{from{transform:translateX(-110%)}to{transform:translateX(290%)}}\n.daw-toolbar.is-busy #dawPlay{min-width:140px;opacity:.85}\n@media(max-width:900px){.daw-track-head{grid-template-columns:minmax(0,1fr) auto}.daw-track-faders{grid-column:1/-1}.daw-track-details{grid-template-columns:repeat(3,minmax(0,1fr))}}\n@media(max-width:520px){.daw-track-head{grid-template-columns:minmax(0,1fr)}.daw-track-controls{justify-content:flex-start}.daw-track-details{grid-template-columns:repeat(2,minmax(0,1fr))}}\n";document.head.append(style);}
 const state={tracks:[],selected:null,ctx:null,sources:[],playing:false,startTime:0,offset:0,timer:0,recorder:null,recordStream:null,recordChunks:[],effects:{eq:false,compressor:false,reverb:false,echo:false},undo:[],recordingDone:null,resolveRecordingDone:null,recordingKind:null,projectSwitching:false,busy:false,busyLabel:"",lastSessionOperation:null,outputGain:null,plan:"",externalIsolation:null};
 const status=(s)=>{const el=$("dawStatus");if(el)el.textContent=s;};
 function setBusy(active,label="Working…"){
@@ -185,16 +185,48 @@ function selectEngineerMode(mode){
 document.querySelectorAll("[data-engineer-mode]").forEach(button=>button.addEventListener("click",()=>selectEngineerMode(button.dataset.engineerMode)));
 $("dawPlan").addEventListener("input",()=>{state.plan=$("dawPlan").value;queueSessionSave();});$("dawPlay").onclick=play;
 const magicAdjustButton=$("dawMagicAdjust");
-magicAdjustButton?.addEventListener("click",()=>{
+magicAdjustButton?.addEventListener("click",async()=>{
  if(!state.tracks.length){status("Add at least one track before balancing the room.");return;}
  if(state.playing||state.busy){status("Wait until playback or processing finishes before using Magic Wand.");return;}
- const measurements=state.tracks.map(t=>{let sum=0,peak=0;const data=t.buffer.getChannelData(0),from=Math.floor(t.start*t.buffer.sampleRate),to=Math.min(data.length,Math.ceil(t.end*t.buffer.sampleRate));for(let i=from;i<to;i++){const v=data[i];sum+=v*v;peak=Math.max(peak,Math.abs(v));}const rms=Math.sqrt(sum/Math.max(1,to-from));return {track:t,rms,peak};}).filter(x=>x.rms>0);
- if(!measurements.length){status("There is no usable audio to balance.");return;}
- const target=Math.pow(10,-20/20),average=measurements.reduce((sum,x)=>sum+x.rms,0)/measurements.length;
- snapshot();
- measurements.forEach(({track,rms,peak})=>{const desired=target/Math.max(rms,.0001),ceiling=peak>0?.92/peak:1;track.gain=Math.max(.05,Math.min(1.5,desired,ceiling));});
- syncTrackGains();render();queueSessionSave();
- status("Magic Wand balanced "+measurements.length+" track levels. Timing, pan and source audio were preserved. Undo restores the previous mix.");
+ const original=magicAdjustButton.innerHTML;
+ const tracks=state.tracks.slice(),totalSamples=tracks.reduce((sum,t)=>sum+Math.max(0,Math.min(t.buffer.length,Math.ceil(t.end*t.buffer.sampleRate))-Math.max(0,Math.floor(t.start*t.buffer.sampleRate))),0);
+ if(!totalSamples){status("There is no usable audio to balance.");return;}
+ const measurements=[];let completed=0;
+ const paint=(label,percent)=>{
+  const p=Math.max(0,Math.min(100,Math.round(percent)));
+  magicAdjustButton.innerHTML='<span class="daw-magic-progress"><b>'+label+' · '+p+'%</b><i><span style="width:'+p+'%"></span></i></span>';
+  status("Magic Wand · "+label+" · "+p+"% complete. Keep this room open while track levels are analysed.");
+ };
+ const yieldToUI=()=>new Promise(resolve=>requestAnimationFrame(()=>resolve()));
+ magicAdjustButton.disabled=true;setBusy(true,"Magic Wand is balancing your tracks");
+ try{
+  for(let ti=0;ti<tracks.length;ti++){
+   const track=tracks[ti],data=track.buffer.getChannelData(0);
+   const from=Math.max(0,Math.floor(track.start*track.buffer.sampleRate)),to=Math.min(data.length,Math.ceil(track.end*track.buffer.sampleRate));
+   let sum=0,peak=0;
+   for(let i=from;i<to;i+=250000){
+    const end=Math.min(to,i+250000);
+    for(let j=i;j<end;j++){const v=data[j];sum+=v*v;peak=Math.max(peak,Math.abs(v));}
+    completed+=end-i;
+    paint("Analysing track "+(ti+1)+" of "+tracks.length,completed/totalSamples*85);
+    await yieldToUI();
+   }
+   const rms=Math.sqrt(sum/Math.max(1,to-from));
+   if(rms>0)measurements.push({track,rms,peak});
+  }
+  if(!measurements.length){status("Magic Wand finished, but no usable audio level was found. Check that the tracks contain sound.");return;}
+  paint("Balancing track levels",92);await yieldToUI();
+  const target=Math.pow(10,-20/20);
+  snapshot();
+  measurements.forEach(({track,rms,peak})=>{const desired=target/Math.max(rms,.0001),ceiling=peak>0?.92/peak:1;track.gain=Math.max(.05,Math.min(1.5,desired,ceiling));});
+  syncTrackGains();render();queueSessionSave();
+  paint("Complete",100);
+  status("Magic Wand balanced "+measurements.length+" track levels. Timing, pan and source audio were preserved. Undo restores the previous mix.");
+ }catch(error){
+  status("Magic Wand could not finish: "+(error?.message||"Unknown audio processing error")+". Your original track audio is unchanged.");
+ }finally{
+  magicAdjustButton.disabled=false;magicAdjustButton.innerHTML=original;setBusy(false);
+ }
 });
 $("dawStop").onclick=()=>{state.offset=0;stop();queueSessionSave();};$("dawMerge").onclick=()=>exportMix(false,true);$("dawExport").onclick=()=>exportMix(false);$("dawSendStudio").onclick=()=>exportMix(true);
 $("dawUndo").onclick=()=>{const s=state.undo.pop();if(!s)return;state.tracks=s.tracks;state.selected=s.selected;$("dawUndo").disabled=!state.undo.length;render();status("Last track change undone.");queueSessionSave();};
