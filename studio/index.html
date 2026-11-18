@@ -1507,7 +1507,13 @@ html[data-theme="light"] .theme-toggle .theme-icon-moon{display:block}
 .studio-side-engine-actions button{padding:7px 10px;border:1px solid var(--line2);border-radius:8px;background:var(--surface);color:var(--text);font-size:11px}
 @media(max-width:560px){#v-ayan .row{min-height:42px}#v-ayan .name .ms .track-record{width:20px;height:20px;min-width:20px}}
 </style>
-</head>
+<style id="pennio-vocal-mode-picker">
+.studio-vocal-modes{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 0}
+.studio-vocal-modes[hidden]{display:none}
+.studio-vocal-modes span{font-size:10px;color:var(--mute);margin-right:3px}
+.studio-vocal-modes button{border:1px solid var(--line2);border-radius:999px;background:var(--surface);color:var(--text);font-size:11px;padding:6px 10px}
+.studio-vocal-modes button.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+</style></head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
   <div class="auth-gate-top"><a class="auth-gate-brand" href="https://pennio.agency/" aria-label="PENNIO home"><span class="auth-gate-mark" aria-hidden="true"><svg viewBox="0 0 81.67 102.67" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></span><span>PENNIO <i>STUDIO</i></span></a><span class="auth-gate-label">CREATIVE WORKSPACE</span></div>
@@ -1557,7 +1563,7 @@ html[data-theme="light"] .theme-toggle .theme-icon-moon{display:block}
 </header>
 <aside class="studio-rec" id="studioRecorder" aria-label="Studio recorder">
   <div class="studio-rec-top"><div><span class="studio-rec-kicker">PENNIO capture</span><b id="studioRecTitle">Record a new idea</b><small id="studioRecHint">Capture audio or video from any room.</small></div><button type="button" class="studio-rec-close" id="studioRecClose" aria-label="Close recorder">×</button></div>
-  <div class="studio-rec-controls"><div class="studio-rec-modes" role="group" aria-label="Recording type"><button type="button" class="on" data-rec-mode="audio">Voice / audio</button><button type="button" data-rec-mode="video">Video</button></div><button type="button" class="btn primary" id="studioRecStart">● Record</button><button type="button" class="btn" id="studioRecStop" disabled>Stop</button><span class="studio-rec-clock" id="studioRecClock">00:00</span></div>
+  <div class="studio-rec-controls"><div class="studio-rec-modes" role="group" aria-label="Recording type"><button type="button" class="on" data-rec-mode="audio">Voice / audio</button><button type="button" data-rec-mode="video">Video</button></div></div><div class="studio-vocal-modes" id="studioVocalModes" hidden role="group" aria-label="Voice performance type"><span>Translate as</span><button type="button" data-vocal-mode="beatbox">Beatbox</button><button type="button" data-vocal-mode="hum" class="on">Hum</button><button type="button" data-vocal-mode="tune">Tune</button></div><div class="studio-rec-controls"><button type="button" class="btn primary" id="studioRecStart">● Record</button><button type="button" class="btn" id="studioRecStop" disabled>Stop</button><span class="studio-rec-clock" id="studioRecClock">00:00</span></div>
   <div class="studio-rec-live" id="studioRecLive" hidden><div class="studio-rec-live-frame" id="studioRecLiveFrame" data-aspect="landscape"><video id="studioRecLiveVideo" autoplay playsinline muted></video><div class="studio-rec-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="studio-rec-live-label" id="studioRecLiveLabel">CAMERA PREVIEW</span><span class="studio-rec-rec" id="studioRecRec" hidden>REC</span></div><div class="studio-rec-camera-tools"><button type="button" class="btn" id="studioRecFlip" disabled>Flip camera</button><span>Framing guide</span><button type="button" class="btn on" data-rec-aspect="landscape">16:9</button><button type="button" class="btn" data-rec-aspect="portrait">9:16</button><button type="button" class="btn" data-rec-aspect="square">1:1</button></div></div><div class="studio-rec-preview" id="studioRecPreview" hidden></div>
   <div class="studio-rec-trim" id="studioRecTrim" hidden style="padding:12px;margin:10px 0;border:1px solid var(--line,rgba(255,255,255,.16));border-radius:12px">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px"><b>Trim take</b><small id="studioRecTrimDuration">00:00</small></div>
