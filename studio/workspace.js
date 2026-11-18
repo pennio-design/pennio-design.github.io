@@ -132,12 +132,12 @@ function buildUI(){
  if(recorder)recorder.after(dock);else{const header=document.querySelector("header");if(header)header.after(dock);else document.body.prepend(dock);}
  
  const dockStateKey="ps.studio.workspace.layout.v1",body=$("workspaceBody"),toggle=$("workspaceToggle");
+ const readDockState=()=>{try{return JSON.parse(localStorage.getItem(dockStateKey)||"{}")}catch(e){return {}}};
+ const saveDockState=patch=>{try{localStorage.setItem(dockStateKey,JSON.stringify({...readDockState(),...patch}))}catch(e){}};
  const savedLayout=readDockState();dock.dataset.side=savedLayout.side==="left"?"left":"right";
  function syncPositionControl(){const left=dock.dataset.side==="left";positionButton.setAttribute("aria-label",left?"Move workspace panel to right side":"Move workspace panel to left side");positionButton.title=left?"Move workspace panel to right side":"Move workspace panel to left side";positionButton.innerHTML=left?'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M13 9h4M13 13h4"/></svg><span>Move</span>':'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16M7 9h4M7 13h4"/></svg><span>Move</span>';}
  positionButton.addEventListener("click",()=>{dock.dataset.side=dock.dataset.side==="right"?"left":"right";saveDockState({side:dock.dataset.side});syncPositionControl();});
  syncPositionControl();
- const readDockState=()=>{try{return JSON.parse(localStorage.getItem(dockStateKey)||"{}")}catch(e){return {}}};
- const saveDockState=patch=>{try{localStorage.setItem(dockStateKey,JSON.stringify({...readDockState(),...patch}))}catch(e){}};
  function syncDockOverlay(){document.body.classList.toggle("workspace-open",!dock.hidden)}
  function closeDock(){dock.hidden=true;body.hidden=true;toggle.setAttribute("aria-expanded","false");syncDockOverlay();saveDockState({minimized:true})}
  function openDock(){dock.hidden=false;body.hidden=false;toggle.setAttribute("aria-expanded","true");syncDockOverlay();refreshAssets();refreshStorageHealth();saveDockState({minimized:false});}
