@@ -4113,17 +4113,21 @@ async function saveNow(){
   rec.sittings=((old&&old.sittings)||[]).filter(x=>x.start!==sitting.start); if(sitting.start){ sitting.end=Date.now(); rec.sittings.push({...sitting}); rec.sittings=rec.sittings.slice(-100); }
   edits++; maybeAutoCheckpoint();
   const ok=await tx("projects","readwrite",st=>st.put(rec));
-  if(ok) cloudQueue(rec.id);
+  if(!ok)throw new Error("The session could not be written to this device. Check browser storage and available space.");
+  cloudQueue(rec.id);
   lsSet("ps.last",{id:currentId,name:rec.name,state:rec.state}); lsSet("ps.current",currentId);
-  savedAt=Date.now(); savedOk=ok; paintSaved();
+  savedAt=Date.now(); savedOk=true; paintSaved();
+  return rec;
 }
 document.getElementById("manualSave")?.addEventListener("click",async()=>{
  const button=document.getElementById("manualSave"),status=document.getElementById("localStatus");
  button.disabled=true;button.textContent="Saving…";
  try{
-  if(typeof saveNow==="function")await saveNow();
-  await window.PennioDAWSession?.flush?.();
-  await window.PennioWorkspace?.flushMediaWrites?.();
+  if(typeof saveNow!=="function")throw new Error("The Beat session is not ready to save.");
+  await saveNow();
+  const dawSaved=await window.PennioDAWSession?.flush?.();
+  if(dawSaved===false)throw new Error("The DAW session did not confirm its save.");
+  if(window.PennioWorkspace?.flushMediaWrites)await window.PennioWorkspace.flushMediaWrites();
   if(status)status.innerHTML="<i></i>Saved on this device";
   button.textContent="Saved";
   setTimeout(()=>{if(button.textContent==="Saved")button.textContent="Save";},1600);
