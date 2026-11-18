@@ -4774,6 +4774,7 @@ function openProfile(){
   document.getElementById("profileAccountId").textContent=accountId||"No authenticated account ID available";
   document.getElementById("copyProfileId").disabled=!accountId;
   document.getElementById("profileCloudNote").textContent=accountId?"Signed in with Supabase. This stable account ID identifies your cloud-owned work.":"No authenticated account is available in this session.";
+  pendingProfileAvatar=undefined;
   const pf=lsGet("ps.profile")||{};
   document.getElementById("profileEditName").value=pf.name||"";
   document.getElementById("profileEditBio").value=pf.bio||"";
