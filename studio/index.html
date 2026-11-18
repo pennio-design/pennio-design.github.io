@@ -2372,7 +2372,7 @@ function schedule(){
 }
 function stopTracks(){ fullSrcs.forEach(s=>{ try{s.stop();}catch(e){} }); fullSrcs=[]; }
 function stopTracksAt(t){ fullSrcs.forEach(s=>{ try{s.stop(t);}catch(e){} }); fullSrcs=[]; }
-function start(t0,bar,pre){ ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clearInterval(timer); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
+function start(t0,bar,pre){ window.PennioDAWAudioControl?.stop?.(); ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clearInterval(timer); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
 function stop(){ playing=false; clearInterval(timer); seekFrom=-1; preRoll=0; stopTracks(); setTransportOutput(0); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
 /* ---------- one sound at a time, shown in the Now playing bar ---------- */
 let npKind=null, prevSrc=null, drumPrev=null, npSrc=null, npT0=0, npDur=0, npRaf=0;
