@@ -11,7 +11,7 @@ if(!document.getElementById("dawTimelineStyle")){const style=document.createElem
 .daw-tempo-control input{width:58px;padding:6px;border:1px solid var(--line2,#343434);border-radius:6px;background:var(--black,#090909);color:var(--text,#fff);font:inherit}
 .daw-snap-control input{accent-color:var(--orange,#ff6b35)}
 .daw-timeline-hint{margin-left:auto;color:var(--mute,#999)}
-.daw-track-wave.daw-bars-view{background-image:linear-gradient(to right,transparent calc(100% - 1px),rgba(255,255,255,.12) 100%),linear-gradient(to right,transparent calc(100% - 1px),rgba(255,255,255,.055) 100%);background-size:var(--daw-bar-width,240px) 100%,var(--daw-beat-width,60px) 100%;background-repeat:repeat-x}
+:root{--daw-grid-strong:rgba(255,255,255,.12);--daw-grid-soft:rgba(255,255,255,.055)}html[data-theme="light"]{--daw-grid-strong:rgba(30,25,20,.16);--daw-grid-soft:rgba(30,25,20,.07)}.daw-track-wave.daw-bars-view{background-image:linear-gradient(to right,transparent calc(100% - 1px),var(--daw-grid-strong) 100%),linear-gradient(to right,transparent calc(100% - 1px),var(--daw-grid-soft) 100%);background-size:var(--daw-bar-width,240px) 100%,var(--daw-beat-width,60px) 100%;background-repeat:repeat-x}
 .daw-track-wave.daw-bars-view canvas{position:relative;z-index:1}
 .daw-track-wave.daw-waves-view{background-image:none}
 .daw-playback-progress{flex:1 1 100%;height:4px;overflow:hidden;border-radius:999px;background:var(--line2,#343434)}
