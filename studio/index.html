@@ -4007,7 +4007,7 @@ document.getElementById("settingsClearHistory").onclick=async()=>{
 };
 document.getElementById("settingsRefresh").onclick=async()=>{
   const button=document.getElementById("settingsRefresh");button.disabled=true;button.textContent="Saving…";
-  try{await saveNow();await new Promise(resolve=>setTimeout(resolve,280));window.location.reload();}
+  try{await saveNow();if(window.PennioDAWSession?.flush){const flushed=await window.PennioDAWSession.flush();if(flushed===false)throw Error("The DAW session is still restoring.");}if(window.PennioWorkspace?.flushMediaWrites)await window.PennioWorkspace.flushMediaWrites();window.location.reload();}
   catch(e){button.disabled=false;button.textContent="Save & refresh";toast("Could not save before refreshing.");}
 };
 histEl.onclick=e=>{ if(e.target===histEl) histEl.classList.remove("on"); };
