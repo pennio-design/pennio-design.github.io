@@ -37,6 +37,39 @@ Core creative experiences must remain distinct:
 
 Room transitions must preserve the active project and must not silently replace another room's session. Shared uploads and project media should be reachable from the workspace without erasing room-specific organisation.
 
+## 3a. One-screen layout and build order (agreed 20 November 2026)
+
+This section overrides any earlier layout wording in this document. It comes from a recorded walkthrough of the live Studio on a phone and a review of PRs #18 to #57.
+
+### What went wrong
+- Panels are stacked down the page: beat grid, Your voice, record settings, waveform, DAW, Work modes, Takes and remix, Layers. The user scrolls to see what they are doing.
+- Controls are duplicated: Play and Stop in three places, Record in three, Export in two; Takes and remix and Layers each render twice; Merged mix tracks stack on each other.
+- The side panel toggle does not respond. Send to Beat once showed "Could not finish... Cannot read properties".
+- Layout was patched one PR at a time with no browser test, so later PRs undid earlier ones (navigation #41, #42, #43, #53; sidebar #27, #46, #48, #54; beat grid #49, #50, #51).
+
+### The layout
+Design for a phone first. The layout adapts to the screen by itself, with no settings to choose. Keep it simple.
+
+1. **One transport, fixed at the top.** Play, stop, record, BPM, key, loop, position, Export. No other Play, Record or Export anywhere on the page.
+2. **One main area that fills the rest of the screen.** It shows one of four views, chosen from tabs: **Pattern** (the Àyàn step grid), **Playlist** (patterns and voice clips placed in time), **Mixer** (one strip per sound: level, pan, mute, solo, EQ, compressor, reverb, echo, Magic Wand), **Voice** (record, takes, trim, Hum to beat).
+3. **Phone portrait:** tabs sit at the bottom, one view at a time.
+4. **Phone landscape and wider:** the main view takes the centre; a side panel for the selected item (trim, normalize, takes) opens beside it instead of below.
+5. **The page itself does not scroll.** Long lists scroll inside their own view.
+6. **Record settings** (count-in, click, beat in count-in, delay fix) live in one small popup opened from the Record button.
+7. **Each control exists once.** Before a PR merges, a search of the rendered page must find one Play, one Record, one Export.
+
+Keep: Magic Wand (it balances levels well), the Àyàn grooves, Your voice processing styles, project saving.
+
+### Build order
+Each step is one PR, tested in a real browser on a phone in portrait and landscape and on a laptop, with screenshots in the PR, before it merges.
+
+1. Layout shell, the single transport, removal of every duplicate, a working side panel.
+2. Mixer view.
+3. Playlist view with clips.
+4. Piano roll, later.
+
+PR #54 stays open until step 1 lands; only its profile and Save parts are then carried over.
+
 ## 4. Àyàn and Ìlù music workflow
 
 ### 4.1 Beat creation
