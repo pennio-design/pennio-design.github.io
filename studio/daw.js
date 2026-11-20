@@ -278,7 +278,7 @@ async function captureSelection(kind){
     if(kind==="hum"){
      window.dispatchEvent(new CustomEvent("pennio:recorded-audio",{detail:{blob:take,name:"Hum over selection",projectId:captureProjectId}}));
      if(state.lastSessionOperation)await state.lastSessionOperation;
-     status("Hum sent to Àyàn and Ìlù. Select “Translate my voice to drum” to create the talking-drum line.");
+     status("Hum sent to Àyàn and Ìlù. Press “Voice to drum” in Pattern to create the talking-drum line.");
     }else{
      const buffer=await ctx.decodeAudioData(await take.arrayBuffer());
      await queueSessionOperation(captureProjectId,async()=>{snapshot();const track={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:"Re-recorded passage",buffer,start:0,end:buffer.duration,gain:1,pan:0,timeline:r.timeline,mute:false,solo:false};state.tracks.push(track);state.selected=track.id;render();status("New take placed at the selected timeline position. Original track preserved.");});
