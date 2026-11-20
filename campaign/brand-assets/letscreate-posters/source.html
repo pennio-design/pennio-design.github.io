@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Let’s Create posters</title>
+<style>
+@font-face{font-family:'Inter';font-weight:400;src:url('../../../fonts/inter-400.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;src:url('../../../fonts/inter-500.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:700;src:url('../../../fonts/inter-700.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:800;src:url('../../../fonts/inter-800.woff2') format('woff2')}
+:root{--ink:#14110f;--ink-2:#4a3f36;--orange:#F26522;--m:84px}
+*{box-sizing:border-box;margin:0}
+body{background:#222;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+/* One system, three posters: 1024 x 1536 (2:3). Margin 84. Text block top, art fills the middle, footer on a hairline. */
+.poster{position:relative;width:1024px;height:1536px;overflow:hidden;background:var(--bg);color:var(--ink);display:flex;flex-direction:column;padding:var(--m) var(--m) 64px}
+.poster::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 70% at 85% 105%,rgba(242,101,34,.10),transparent 60%);pointer-events:none}
+.copy{position:relative;z-index:2;display:grid;gap:30px}
+.eyebrow{font-size:19px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--orange)}
+h1{font-weight:800;letter-spacing:-.048em;line-height:.93;font-size:var(--h)}
+h1 i{font-style:normal;color:var(--orange)}
+.sub{font-size:31px;line-height:1.38;font-weight:400;color:var(--ink-2);max-width:15em;letter-spacing:-.012em}
+.art{position:relative;z-index:1;flex:1;min-height:0;margin:34px calc(var(--m) * -1) 0}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--pos,50% 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14%,#000 92%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 14%,#000 92%,transparent 100%)}
+.foot{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding-top:8px}
+.brand{display:flex;align-items:center;gap:14px;font-weight:800;font-size:28px;letter-spacing:-.02em}
+.brand svg{width:26px;height:auto;fill:var(--ink)}
+.url{font-size:25px;font-weight:500;letter-spacing:-.01em;color:var(--ink-2)}
+/* per-poster */
+.p1{--bg:#FBE7CC;--h:112px;--pos:50% 78%}
+.p2{--bg:#FAEEDC;--h:196px;--pos:50% 62%}
+.p3{--bg:#F9E7CF;--h:196px;--pos:50% 100%}
+</style></head><body>
+<section class="poster p1" id="p1"><div class="copy"><span class="eyebrow">Let’s Create</span><h1>A new home<br>for creatives<i>.</i></h1><p class="sub">Something is taking shape. Watch this space.</p></div><div class="art"><img src="art-key.jpg" alt=""></div><div class="foot"><span class="brand"><svg viewBox="0 0 81.67 102.67"><path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg>PENNIO</span><span class="url">pennio.agency/letscreate</span></div></section>
+<section class="poster p2" id="p2"><div class="copy"><span class="eyebrow">A learning group for African creatives</span><h1>Let’s<br>create<i>.</i></h1><p class="sub">A practical space to grow your creative work.</p></div><div class="art"><img src="art-laptop.jpg" alt=""></div><div class="foot"><span class="brand"><svg viewBox="0 0 81.67 102.67"><path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg>PENNIO</span><span class="url">pennio.agency/letscreate</span></div></section>
+<section class="poster p3" id="p3"><div class="copy"><span class="eyebrow">A learning group for African creatives</span><h1>Let’s<br>create<i>.</i></h1><p class="sub">A practical space to grow your creative work.</p></div><div class="art"><img src="art-person.jpg" alt=""></div><div class="foot"><span class="brand"><svg viewBox="0 0 81.67 102.67"><path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg>PENNIO</span><span class="url">pennio.agency/letscreate</span></div></section>
+</body></html>
