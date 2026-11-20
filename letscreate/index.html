@@ -160,6 +160,11 @@
       width: min(calc(100% - 2rem), 980px); margin-inline: auto; text-align: center; display: grid; gap: var(--space-5); position: relative; z-index: 1;
     }
     h1, h2, h3 { letter-spacing: -.05em; line-height: .98; }
+    .art { margin: 0; overflow: hidden; border-radius: 20px; border: 1px solid var(--color-border); background: #f6e7d3; }
+    .art img { display: block; width: 100%; height: auto; }
+    .hero-art { width: min(100%, 880px); margin-inline: auto; margin-top: var(--space-3, 1rem); }
+    .art-wide { width: min(100%, 820px); margin: 0 auto 2.5rem; }
+    .art-key { width: min(68%, 300px); margin: 0 auto 2rem; }
     h1 { font-size: clamp(3rem, 5.8vw, 6.2rem); max-width: 14ch; margin-inline: auto; }
     h2 { font-size: var(--text-2xl); max-width: 12ch; }
     h3 { font-size: var(--text-lg); line-height: 1.08; }
@@ -335,6 +340,7 @@
           <a class="btn btn-primary" href="#challenge">Join the 7-day challenge</a>
           <button class="btn btn-secondary" data-modal-open="cohort">See how the 10 weeks go</button>
         </div>
+        <figure class="art hero-art"><img src="/letscreate/art-person.webp" width="1024" height="665" fetchpriority="high" decoding="async" alt="A young man in a black T-shirt and white trainers sits on an orange block and writes in a notebook, a laptop and a cup of pencils beside him on a giant curled sheet of paper with a light bulb drawn on it."></figure>
       </div>
     </section>
 
@@ -517,6 +523,7 @@
           <h2>Rough drafts welcome</h2>
           <p>What people share here: rough drafts, half-finished ideas and early layouts, before anyone calls them final.</p>
         </div>
+        <figure class="art art-wide"><img src="/letscreate/art-laptop.webp" width="1024" height="710" loading="lazy" decoding="async" alt="A dark laptop floats in front of a tall orange and yellow panel."></figure>
         <div class="share-grid">
           <div class="share-item">Rough logo sketches<br>with spacing and grid notes</div>
           <div class="share-item">A line of copy<br>"You have the talent. What you are missing is someone to show you how the work gets done."</div>
@@ -528,6 +535,7 @@
 
     <section class="section qualify-wrap" id="apply">
       <div class="container">
+        <figure class="art art-key"><img src="/letscreate/art-key.webp" width="724" height="870" loading="lazy" decoding="async" alt="A large orange key floats above an open orange doorway set into a cream wall."></figure>
         <div class="section-header apply-header-center">
           <span class="eyebrow">Apply</span>
           <h2>Apply if you are ready to show your work, even unfinished.</h2>
