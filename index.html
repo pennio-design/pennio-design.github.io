@@ -319,14 +319,27 @@ body { background: var(--bg); color: var(--fg); font-family: 'Inter', system-ui,
 .project-card-visual .oju-mark{position:absolute;z-index:2;right:18px;top:16px;width:auto;height:56px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
 .project-card-visual .oju-mark .h{fill:#F3ECE2}.project-card-visual .oju-mark .k{fill:#120d14}.project-card-visual .oju-mark .e{fill:#F26522}
 
-.project-card-visual.ere{background:radial-gradient(ellipse at 75% 20%,#563020 0%,#251713 40%,#100d0e 100%)}
-.project-card-visual.ere:before{content:"Ilé Eré";font-size:clamp(3.4rem,7vw,5.6rem);font-weight:700;letter-spacing:-.06em;white-space:nowrap;color:#f3e6d7}
-.project-card-visual.ere:after{content:"ÀYÀN  /  AKÉWÌ  /  ÀTẸ́WỌ́";position:absolute;bottom:24px;left:24px;font-size:.62rem;letter-spacing:.14em;color:#d9a17a}
-.project-card-visual.create{background:linear-gradient(145deg,#f2e9d9,#d8c5a6);color:#151515}
-.project-card-visual.create:before{content:"LET’S\A CREATE";white-space:pre;font-size:clamp(3rem,7vw,5.4rem);line-height:.83;font-weight:800;letter-spacing:-.09em;text-align:center}
-.project-card-visual.ogbifo{background:#101010}
-.project-card-visual.ogbifo:before{content:"OGBIFỌ";font-size:clamp(2.7rem,6vw,4.8rem);font-weight:700;letter-spacing:.08em;color:#d49b41}
-.project-card-visual.ogbifo:after{content:"LANGUAGE · MEMORY · CULTURE";position:absolute;bottom:25px;font-size:.6rem;letter-spacing:.16em;color:#e9dfcf}
+.project-card-visual{height:300px}
+.project-card-visual:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background:linear-gradient(180deg,rgba(8,6,5,0) 45%,rgba(8,6,5,.55));}
+.project-card:hover .project-card-visual img{transform:scale(1.045)}
+.pc-over{position:absolute;z-index:2;left:22px;right:22px;bottom:20px;display:flex;flex-direction:column;gap:8px;color:#f6eee4;text-align:left}
+.pc-kick{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:#f0b18a}
+.pc-film{font-size:clamp(2.4rem,4.6vw,3.6rem);font-weight:700;letter-spacing:.06em;line-height:1.02;padding-top:.1em;background:linear-gradient(180deg,#f8ecdd 35%,#d39566);-webkit-background-clip:text;background-clip:text;color:transparent}
+.project-card-visual.film img{object-position:center 22%}
+.project-card-visual.ere{background:#100c09}
+.project-card-visual.ere .ere-strip{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);opacity:.42;filter:saturate(.75)}
+.project-card-visual.ere .ere-strip img{height:100%;object-position:center 15%}
+.project-card-visual.ere:before{content:"Ilé Eré";position:relative;z-index:2;font-size:clamp(3.2rem,6.4vw,5.2rem);font-weight:700;letter-spacing:-.05em;white-space:nowrap;color:#f6eadb;text-shadow:0 6px 40px rgba(0,0,0,.6)}
+.project-card-visual.ere:after{background:radial-gradient(ellipse at 50% 50%,rgba(16,12,9,.25),rgba(16,12,9,.85))}
+.project-card-visual.create{background:#efe5d4}
+.project-card-visual.create img{object-position:center 60%}
+.project-card-visual.create:after{background:linear-gradient(180deg,rgba(239,229,212,0) 40%,rgba(239,229,212,.5))}
+.pc-over.light{top:22px;bottom:auto}
+.pc-create{font-size:clamp(2.2rem,4.2vw,3.2rem);font-weight:800;letter-spacing:-.07em;line-height:.84;color:#151515}
+.project-card-visual.ogbifo{background:#e8701f}
+.project-card-visual.ogbifo img{object-position:center 28%}
+.pc-ogb{display:flex;align-items:center;gap:12px;font-size:clamp(1.8rem,3.2vw,2.4rem);font-weight:700;font-style:italic;letter-spacing:-.02em}
+.pc-ogb img{width:44px;height:44px;object-fit:contain;transform:none!important}
 .project-card-meta{padding:18px 20px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:14px;min-height:126px}
 .project-card-type{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey-3);margin-bottom:8px}
 .project-card-title{font-size:1.18rem;font-weight:650;letter-spacing:-.025em;margin-bottom:6px}
@@ -704,16 +717,20 @@ Your logo, your flyers, your labels, your shop front and your posts were made by
 </div>
 <div class="project-card-meta"><div><div class="project-card-type">Culture · Living archive</div><div class="project-card-title">Ojú Gbooro</div><p class="project-card-copy">A living record of Yoruba hair knowledge, tools, practitioners and techniques.</p></div><span class="project-card-arrow" aria-hidden="true">↗</span></div>
 </a>
+<a class="project-card" href="/faajiplace/#ere-ogun" aria-label="Meet the characters of Eré Ogun">
+<div class="project-card-visual film"><img src="/faajiplace/ere-ogun/key-art.webp" alt="Four characters of Eré Ogun: Ogunpémi, Abo Lógun, Ìyálógun and Abíógun" loading="lazy" decoding="async"><span class="pc-over"><span class="pc-kick">A Fàájì Place story world</span><span class="pc-film">ERÉ OGUN</span></span></div>
+<div class="project-card-meta"><div><div class="project-card-type">Film · In development</div><div class="project-card-title">Eré Ogun</div><p class="project-card-copy">The war that love started, and the betrayal history kept. Four characters, one staff that profits from every war.</p></div><span class="project-card-arrow" aria-hidden="true">↗</span></div>
+</a>
 <a class="project-card" href="/faajiplace/" aria-label="Explore Ilé Eré">
-<div class="project-card-visual ere" role="img" aria-label="Ilé Eré creative platform"></div>
+<div class="project-card-visual ere" role="img" aria-label="Ilé Eré creative platform"><span class="ere-strip" aria-hidden="true"><img src="/faajiplace/ere-ogun/abo-logun.webp" alt=""><img src="/faajiplace/ere-ogun/iyalogun.webp" alt=""><img src="/faajiplace/ere-ogun/ogunpemi.webp" alt=""></span></div>
 <div class="project-card-meta"><div><div class="project-card-type">Creative platform</div><div class="project-card-title">Ilé Eré</div><p class="project-card-copy">A space for music, poetry and performance, built around distinct creative practices.</p></div><span class="project-card-arrow" aria-hidden="true">↗</span></div>
 </a>
 <a class="project-card" href="/letscreate/" aria-label="Explore Let's Create">
-<div class="project-card-visual create" role="img" aria-label="Let's Create by PENNIO"></div>
+<div class="project-card-visual create"><img src="/letscreate/art-person.webp" alt="A person at a laptop on an orange block, a lightbulb sketched above" loading="lazy" decoding="async"><span class="pc-over light"><span class="pc-create">LET’S<br>CREATE</span></span></div>
 <div class="project-card-meta"><div><div class="project-card-type">Learning · Community</div><div class="project-card-title">Let’s Create</div><p class="project-card-copy">A practical learning space for people developing their creative work.</p></div><span class="project-card-arrow" aria-hidden="true">↗</span></div>
 </a>
 <div class="project-card" role="button" tabindex="0" aria-haspopup="dialog" aria-label="View Ogbifọ project details" onclick="openProofModal('ogbifo')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProofModal('ogbifo');}">
-<div class="project-card-visual ogbifo" role="img" aria-label="Ogbifọ language preservation project"></div>
+<div class="project-card-visual ogbifo"><img src="/projects/ogbifo-portrait.webp" alt="A woman with long braids against an orange ground" loading="lazy" decoding="async"><span class="pc-over"><span class="pc-ogb"><img src="/projects/ogbifo-eye.png" alt="" width="44" height="44">Ogbifọ</span></span></div>
 <div class="project-card-meta"><div><div class="project-card-type">Language · Cultural memory</div><div class="project-card-title">Ogbifọ</div><p class="project-card-copy">A language preservation project focused on African languages and cultural memory.</p></div><span class="project-card-arrow" aria-hidden="true">↗</span></div>
 </div>
 </div>
