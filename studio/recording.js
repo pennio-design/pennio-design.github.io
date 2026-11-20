@@ -128,8 +128,8 @@ useFilm.addEventListener("click",async()=>{
  try{
   const projectId=await prepareTakeProject("faajiplace");
   window.dispatchEvent(new CustomEvent("pennio:film-media",{detail:{blob,name:kind==="video"?"Studio video take":"Studio audio take",kind,projectId}}));
-  setStatus("Sent to Fàájì Place. The media is being saved with this project.");
- }catch(error){setStatus("Could not open Fàájì Place: "+error.message);}
+  setStatus("Sent to Ilé Eré. The media is being saved with this project.");
+ }catch(error){setStatus("Could not open Ilé Eré: "+error.message);}
 });
 window.addEventListener("pennio:workspace-media-error",event=>{setStatus("Media could not be saved: "+(event.detail&&event.detail.message||"Check available device storage."));});
 $("studioRecAgain").addEventListener("click",()=>{clearTake();setStatus("Ready for another take.");});

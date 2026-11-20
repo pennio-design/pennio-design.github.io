@@ -1,7 +1,7 @@
 /**
  * Pennio entries.
  *
- * One path for every public entry form (Ojú Gbooro casting, Fàájì Place stories,
+ * One path for every public entry form (Ojú Gbooro casting, Ilé Eré stories,
  * and any track added later). Each entry gets the same professional handling:
  *
  *  1. A reference, e.g. FAA-1115-K7Q2: track code, month and day, four random
@@ -65,7 +65,7 @@
     },
     faajiplace: {
       code: "FAA",
-      label: "Fàájì Place story",
+      label: "Ilé Eré story",
       page: "pennio.agency/faajiplace/send",
       subject: function (f) { return f.title + ", " + f.name; },
       ack: function (f, ref) {
@@ -78,7 +78,7 @@
           "",
           "I read every story myself, from the first line to the last. Within " + REPLY_DAYS + " days I will write back to say whether I want to talk with you about it. You will hear from me either way.",
           "",
-          "The story stays yours. Sending it gives Fàájì Place no rights to it. I will not share it, post it or make anything from it without your written agreement.",
+          "The story stays yours. Sending it gives Ilé Eré no rights to it. I will not share it, post it or make anything from it without your written agreement.",
           "",
           "If you want to add to it or take it back, write to " + CONTACT + " and quote the reference.",
           "",
