@@ -1328,6 +1328,9 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
           <button data-v="write">Ewì <small>Writing and poetry</small></button>
           <button data-v="home">Projects <small>My work</small></button>
           <button type="button" id="openWorkspacePanel">Workspace <small>Projects, media and storage</small></button>
+          <button type="button" id="openWork">Sessions <small>Saved beats and sessions</small></button>
+          <button type="button" id="openHist">History <small>Restore an earlier moment</small></button>
+          <button type="button" id="guideLink">Learn <small>How Studio works</small></button>
         </nav></div>
       <button class="avatar" id="avatar" aria-label="Your sessions and details">P</button>
     </div>
@@ -1393,11 +1396,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 
 <!-- MUSIC -->
 <section class="view on" id="v-ayan">
-  <div class="stabs" role="tablist" aria-label="Session">
-    <button id="openWork" role="tab">Sessions</button>
-    <button id="openHist" role="tab">History</button>
-    <button id="guideLink" role="tab">Learn</button>
-  </div>
+  <div class="shell-notices" id="shellNotices">
   <div class="fr-context" id="filmCueContext" hidden>
     <div class="fr-context-copy"><small>Scoring a film cue</small><b id="filmCueName"></b><span id="filmCueTime"></span></div>
     <button class="btn" id="filmCueBack">Back to Film</button>
@@ -1421,76 +1420,38 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
   <div class="hero" id="hero" hidden><button class="hero-x" id="heroX" aria-label="Hide this">×</button><button class="btn primary hero-go" id="heroGo">Show me around · 1 min</button>
   <h1>Bring your voice. Leave with a record.</h1>
   <p class="sub">Àyàn is the studio. Add a voice note or any sound, enhance it in one tap, chop it onto the grid with Yoruba percussion under it, let the talking drum answer in your own intonation, then remix until it feels right.</p></div>
-
-  <div class="first-play" id="firstPlayCard"><div><span>YOUR FIRST GROOVE</span><b>Tap to hear a Yoruba groove.</b><small>A percussion starter is ready. Add your own voice when you are ready.</small></div><button type="button" id="firstPlay" disabled>Hear the groove <span>↗</span></button></div>
-  <div class="transport" id="tp">
-    <button class="play ilu" id="play" aria-label="Play (Space)"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><radialGradient id="iluSkinGradient" cx="42%" cy="38%" r="70%"><stop offset="0" stop-color="#3a3229"/><stop offset=".75" stop-color="#211d19"/><stop offset="1" stop-color="#18161a"/></radialGradient></defs><path class="ilu-lace" d="M57.80 32.00L62.60 32.00M57.41 36.48L62.14 37.31M56.24 40.82L60.75 42.47M54.34 44.90L58.50 47.30M51.76 48.58L55.44 51.67M48.58 51.76L51.67 55.44M44.90 54.34L47.30 58.50M40.82 56.24L42.47 60.75M36.48 57.41L37.31 62.14M32.00 57.80L32.00 62.60M27.52 57.41L26.69 62.14M23.18 56.24L21.53 60.75M19.10 54.34L16.70 58.50M15.42 51.76L12.33 55.44M12.24 48.58L8.56 51.67M9.66 44.90L5.50 47.30M7.76 40.82L3.25 42.47M6.59 36.48L1.86 37.31M6.20 32.00L1.40 32.00M6.59 27.52L1.86 26.69M7.76 23.18L3.25 21.53M9.66 19.10L5.50 16.70M12.24 15.42L8.56 12.33M15.42 12.24L12.33 8.56M19.10 9.66L16.70 5.50M23.18 7.76L21.53 3.25M27.52 6.59L26.69 1.86M32.00 6.20L32.00 1.40M36.48 6.59L37.31 1.86M40.82 7.76L42.47 3.25M44.90 9.66L47.30 5.50M48.58 12.24L51.67 8.56M51.76 15.42L55.44 12.33M54.34 19.10L58.50 16.70M56.24 23.18L60.75 21.53M57.41 27.52L62.14 26.69"/><circle class="ilu-hoop" cx="32" cy="32" r="24.4"/><circle class="ilu-lap" cx="32" cy="32" r="22.3"/><g class="ilu-skin" id="iluSkin"><circle cx="32" cy="32" r="21.4" fill="url(#iluSkinGradient)"/><circle class="ilu-ring" cx="32" cy="32" r="14"/><circle class="ilu-ring" cx="32" cy="32" r="7.5"/></g><circle class="ilu-rip" id="iluRip" cx="32" cy="32" r="21"/><g class="ilu-glyph" id="playIcon"><path d="M28 24.5l11 7.5-11 7.5z"/></g></svg></button>
-    <div class="pos" id="pos" aria-hidden="true"><span class="pos-t"><b id="posBar">Bar 1</b><em id="posCh"></em></span><span class="pos-d" id="posDots"><i></i><i></i><i></i><i></i></span></div>
-    <button class="tpval" id="tpVal" aria-expanded="false" aria-label="Tempo, swing and more"><span class="tpv-n"><b id="tpBpm">104</b><span>BPM</span></span><span class="pos-d" id="posDotsM"><i></i><i></i><i></i><i></i></span></button>
-    <div class="ctl x"><label>Tempo <b id="bpmV">104</b></label><input type="range" id="bpm" min="60" max="160" value="104" aria-label="Tempo"></div>
-    <div class="ctl x"><label>Swing <b id="swV">12%</b></label><input type="range" id="swing" min="0" max="60" value="12" aria-label="Swing"></div>
-    <div class="seg x" id="len" aria-label="Steps per bar"><button data-n="12">12</button><button data-n="16" class="on">16</button></div>
-    <div class="seg" id="bank" aria-label="Take versions"><button data-b="A" title="Take A" class="on">A</button><button data-b="B" title="Take B">B</button><button data-b="C" title="Take C">C</button><button data-b="D" title="Take D">D</button><button data-b="E" title="Take E">E</button><button data-b="F" title="Take F">F</button></div>
-    <div class="tgroup x"><button class="btn ic" id="undo" disabled aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Undo</span></button><button class="btn ic" id="redo" disabled aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span>Redo</span></button></div>
-    <button class="btn ghost x" id="clear">Clear</button>
-    <button class="btn ic tpmore" id="tpMore" aria-label="More controls" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></svg></button>
-    <span class="spacer"></span>
-    <button class="btn primary" id="export" aria-expanded="false" aria-controls="expPanel">Export</button>
+  </div>
+  <div class="studio-tp" id="tp" role="toolbar" aria-label="Transport">
+        <button class="play ilu" id="play" aria-label="Play (Space)"><svg viewBox="0 0 64 64" aria-hidden="true"><defs><radialGradient id="iluSkinGradient" cx="42%" cy="38%" r="70%"><stop offset="0" stop-color="#3a3229"/><stop offset=".75" stop-color="#211d19"/><stop offset="1" stop-color="#18161a"/></radialGradient></defs><path class="ilu-lace" d="M57.80 32.00L62.60 32.00M57.41 36.48L62.14 37.31M56.24 40.82L60.75 42.47M54.34 44.90L58.50 47.30M51.76 48.58L55.44 51.67M48.58 51.76L51.67 55.44M44.90 54.34L47.30 58.50M40.82 56.24L42.47 60.75M36.48 57.41L37.31 62.14M32.00 57.80L32.00 62.60M27.52 57.41L26.69 62.14M23.18 56.24L21.53 60.75M19.10 54.34L16.70 58.50M15.42 51.76L12.33 55.44M12.24 48.58L8.56 51.67M9.66 44.90L5.50 47.30M7.76 40.82L3.25 42.47M6.59 36.48L1.86 37.31M6.20 32.00L1.40 32.00M6.59 27.52L1.86 26.69M7.76 23.18L3.25 21.53M9.66 19.10L5.50 16.70M12.24 15.42L8.56 12.33M15.42 12.24L12.33 8.56M19.10 9.66L16.70 5.50M23.18 7.76L21.53 3.25M27.52 6.59L26.69 1.86M32.00 6.20L32.00 1.40M36.48 6.59L37.31 1.86M40.82 7.76L42.47 3.25M44.90 9.66L47.30 5.50M48.58 12.24L51.67 8.56M51.76 15.42L55.44 12.33M54.34 19.10L58.50 16.70M56.24 23.18L60.75 21.53M57.41 27.52L62.14 26.69"/><circle class="ilu-hoop" cx="32" cy="32" r="24.4"/><circle class="ilu-lap" cx="32" cy="32" r="22.3"/><g class="ilu-skin" id="iluSkin"><circle cx="32" cy="32" r="21.4" fill="url(#iluSkinGradient)"/><circle class="ilu-ring" cx="32" cy="32" r="14"/><circle class="ilu-ring" cx="32" cy="32" r="7.5"/></g><circle class="ilu-rip" id="iluRip" cx="32" cy="32" r="21"/><g class="ilu-glyph" id="playIcon"><path d="M28 24.5l11 7.5-11 7.5z"/></g></svg></button>
+    <button class="btn ic tp-stop" id="tpStop" type="button" aria-label="Stop" title="Stop and return to the start"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11" rx="1.6"/></svg></button>
+    <div class="rec-group">
+      <button class="btn tp-rec" id="vrec" type="button" aria-label="Record" title="Record" style="display:none"><span class="rl-dot" aria-hidden="true">●</span><span class="rl-word">Record</span></button>
+      <button class="btn ic tp-reccfg" id="recCfg" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="recPop" aria-label="Record settings" title="Record settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+    </div>
+        <button class="tpval" id="tpVal" aria-expanded="false" aria-label="Tempo, swing and more"><span class="tpv-n"><b id="tpBpm">104</b><span>BPM</span></span><span class="pos-d" id="posDotsM"><i></i><i></i><i></i><i></i></span></button>
+    <label class="tp-key" for="hKey"><span>Key</span><select id="hKey" aria-label="Key"></select></label>
+    <button class="btn nv-loop" id="nvLoop" type="button" aria-label="Loop a section">Loop</button>
+    <span class="tp-spacer" aria-hidden="true"></span>
+        <div class="pos" id="pos" aria-hidden="true"><span class="pos-t"><b id="posBar">Bar 1</b><em id="posCh"></em></span><span class="pos-d" id="posDots"><i></i><i></i><i></i><i></i></span></div>
+    <button class="btn ic tp-panel" id="panelToggle" type="button" aria-expanded="false" aria-controls="sidePanel" aria-label="Side panel" title="Side panel: selected clip and media"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+        <button class="btn primary" id="export" aria-expanded="false" aria-controls="expPanel">Export</button>
     <div class="navrow" id="pbNav" hidden>
       <button class="btn ic" id="nvStart" aria-label="Back to the start" title="Back to the start"><svg viewBox="0 0 24 24"><path d="M6 5v14"/><path d="M19 5 9 12l10 7z"/></svg></button>
       <button class="btn ic" id="nvBack" aria-label="Back one bar" title="Back one bar (Left arrow)"><svg viewBox="0 0 24 24"><path d="M11 6 5 12l6 6"/><path d="M19 6l-6 6 6 6"/></svg></button>
       <input type="range" id="nvSeek" min="0" max="1" step="any" value="0" aria-label="Position in your song">
       <button class="btn ic" id="nvFwd" aria-label="Forward one bar" title="Forward one bar (Right arrow)"><svg viewBox="0 0 24 24"><path d="m13 6 6 6-6 6"/><path d="M5 6l6 6-6 6"/></svg></button>
-      <button class="btn nv-loop" id="nvLoop" aria-label="Loop a section">Loop</button>
       <span class="nv-t" id="nvT" aria-live="off">Bar 1 of 1 · 0:00 / 0:00</span>
     </div>
-  </div>
 
-  <div class="exp" id="expPanel" hidden>
-    <div class="exp-row exp-head">
-      <div class="seg" id="expFmt"><button data-f="mp3" class="on">MP3</button><button data-f="wav">WAV</button></div>
-      <span class="exp-note" id="expNote">Small file, right for WhatsApp and Instagram.</span><button class="btn exp-dismiss" id="expClose" type="button" aria-label="Close export panel">Close ×</button>
+    <div class="tp-pop" id="tpPop" role="dialog" aria-label="Tempo, swing and steps" hidden>
+      <div class="tp-pop-head"><b>Tempo and feel</b><button class="btn ic pop-x" type="button" data-pop-close aria-label="Close">×</button></div>
+          <div class="ctl x"><label>Tempo <b id="bpmV">104</b></label><input type="range" id="bpm" min="60" max="160" value="104" aria-label="Tempo"></div>
+          <div class="ctl x"><label>Swing <b id="swV">12%</b></label><input type="range" id="swing" min="0" max="60" value="12" aria-label="Swing"></div>
+      <div class="tp-pop-row"><span>Steps per bar</span>    <div class="seg x" id="len" aria-label="Steps per bar"><button data-n="12">12</button><button data-n="16" class="on">16</button></div></div>
     </div>
-    <div class="exp-row"><span class="exp-lab">Length</span><div class="seg" id="expLen"><button data-l="0" class="on">Auto</button><button data-l="4">4 bars</button><button data-l="8">8</button><button data-l="16">16</button></div></div>
-    <div class="sw-row"><button class="sw" id="swDrum" role="switch" aria-checked="false"><i></i></button><span><b>Include the talking-drum answer</b> the dùndún version of your voice, made in Ìlù below</span></div>
-    <div class="sw-row"><button class="sw on" id="swLoud" role="switch" aria-checked="true"><i></i></button><span><b>Match loudness</b> sets your track to the level streaming apps play at, so it is not quieter than other songs</span></div>
-    <div class="exp-row">
-      <button class="btn primary" id="expGo">Download</button>
-      <button class="btn" id="expShare">Share to WhatsApp</button>
-      <button class="btn" id="expLink">Copy groove link</button>
-    </div>
-    <p class="exp-meta" id="expMeta"></p>
-  </div>
-  <div class="presets" id="presets"></div>
-  <div class="harm" id="harm">
-    <label class="hsel">Key <select id="hKey" aria-label="Key"></select></label>
-    <div class="seg" id="hScale"><button data-k="minor" class="on">Minor</button><button data-k="major">Major</button></div>
-    <label class="hsel">Chords <select id="hProg" aria-label="Chord progression"></select></label>
-    <div class="strip" id="hStrip" aria-label="Chords, one per bar"></div>
-  </div>
-  <div class="grid"><div id="rows"></div>
-    <div class="addrows" id="addRows"></div>
-    <div class="legend"><span><i class="lg hit"></i>Hit · tap to hear this lane</span><span><i class="lg gh"></i>Ghost: hold or right-click</span><span><i class="lg ph"></i>Playhead</span><span class="kbd">Space play · Ctrl Z undo · tap a name to mute</span></div>
-  </div>
 
-  <div class="card" id="voiceCard">
-    <h3>Your voice</h3>
-    <p>Record on your phone's voice recorder, or pick any audio file: a hum, a chant, a guitar line, a market sound. The studio cleans it up and cuts it into pieces you can play on the grid.</p>
-    <div class="voice-top">
-      <button class="btn primary" id="vrec" style="display:none">● Record</button>
-      <label class="btn primary file" id="vfileLbl">Add recording<input type="file" id="vfile" accept="audio/*"></label>
-      <div class="seg" id="ab"><button data-k="raw">Before</button><button data-k="pro" class="on">Enhanced</button></div>
-      <div class="vstyle" id="vstyle" aria-label="Voice style"><span>Voice style</span><button data-s="natural">Natural</button><button data-s="studio" class="on">Studio</button><button data-s="radio">Radio</button><button data-s="afro">Afro vocal</button><button data-s="hall">Hall</button></div>
-      <button class="btn" id="vprev" disabled>Preview</button>
-      <button class="btn" id="vdel" disabled hidden>Delete recording</button>
-      <button class="btn primary" id="vbeat" disabled>Make a beat from my voice</button>
-      <button class="btn" id="vtap" disabled>Tap along</button>
-    </div>
-    <div class="take" id="take" hidden>
-      <div class="tk"><b>Your recording</b> <span id="takeLen"></span><small>Not happy with it? Record again to replace it, or delete it. The beat stays.</small></div>
-      <button class="btn" id="takeRe">Re-record</button>
-      <button class="btn" id="takeDel">Delete</button>
-    </div>
+    <div class="tp-pop" id="recPop" role="dialog" aria-label="Record settings" hidden>
+      <div class="tp-pop-head"><b>Record settings</b><button class="btn ic pop-x" type="button" data-pop-close aria-label="Close">×</button></div>
     <div class="recopts" id="recOpts" hidden>
       <div class="sw-row"><button class="sw on" id="swOver" role="switch" aria-checked="true"><i></i></button><span><b>Record over the beat</b> the groove plays while you sing</span></div>
       <div class="sw-row"><button class="sw on" id="swCount" role="switch" aria-checked="true"><i></i></button><span><b>Count-in</b> one bar of 4, 3, 2, 1 before the beat</span></div>
@@ -1503,67 +1464,139 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       </div>
       <p class="hint">Wear headphones when you record over the beat, or the microphone records the drums too. Measure your delay once, with headphones off and the volume up.</p>
     </div>
-    <canvas id="wave" width="900" height="192"></canvas>
-    <div class="vmeta" id="vmeta">No recording yet. The Vox lane stays silent until you add one.</div>
-  </div>
-
-  <section class="daw" id="dawRoom" aria-label="Àyàn multitrack audio workstation">
-  <div class="daw-head" id="dawHead"><div><h3>PENNIO DAW</h3><p>Record, arrange, shape and mix your sound.</p></div><div class="daw-actions"><button class="btn" id="dawMagicAdjust" type="button" title="Balance track levels while preserving timing and pan">✧ Magic Wand</button><label class="btn primary file">Import audio<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawMic">Record voice</button></div></div>
-  <div class="daw-workbench"><aside class="daw-sidebar" aria-label="Engineer workflow">
-  <div class="daw-sidebar-title"><small>PENNIO DAW</small><b>Work modes</b></div>
-  <nav class="daw-engineer-modes" aria-label="Engineer modes">
-    <div class="daw-mode-group"><small>CAPTURE</small><button type="button" class="on" data-engineer-mode="record" aria-pressed="true"><span>Record</span><em>Voice & overdubs</em></button></div>
-    <div class="daw-mode-group"><small>SESSION</small><button type="button" data-engineer-mode="play" aria-pressed="false"><span>Play</span><em>Listen & review</em></button><button type="button" data-engineer-mode="edit" aria-pressed="false"><span>Edit</span><em>Trim & punch in</em></button></div>
-    <div class="daw-mode-group"><small>SHAPE</small><button type="button" data-engineer-mode="mix" aria-pressed="false"><span>Mix</span><em>Levels & effects</em></button></div>
-    <div class="daw-mode-group"><small>FINISH</small><button type="button" data-engineer-mode="plan" aria-pressed="false"><span>Plan</span><em>Session brief</em></button><button type="button" data-engineer-mode="merge" aria-pressed="false"><span>Merge</span><em>Bounce & export</em></button></div>
-  </nav><p class="daw-mode-help" id="dawModeHelp" aria-live="polite">Record with the beat, or import audio to start a session.</p>
-</aside><div class="daw-main">
-  <div class="daw-toolbar" id="dawToolbar"><button class="btn primary" id="dawPlay" aria-label="Play arrangement">▶ Play</button><button class="btn" id="dawStop">Stop</button><button class="btn" id="dawUndo" disabled>Undo</button><button class="btn" id="dawMerge" disabled>Merge to track</button><button class="btn" id="dawExport" disabled>Export mix WAV</button><button class="btn" id="dawSendStudio" disabled>Send mix to Studio</button><span class="daw-clock" id="dawClock">00:00.0</span><span class="daw-status" id="dawStatus" aria-live="polite">Import audio or record a take to begin.</span></div>
-  <div class="daw-plan" id="dawPlanPanel" hidden><label for="dawPlan">Session plan</label><textarea id="dawPlan" maxlength="4000" placeholder="Capture the goal, record order, edit notes or mix intent for this session."></textarea><small>Saved with this project on this device.</small></div><div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your tracks will appear here. Add vocals, instruments, field recordings or stems.</div></div>
-  <div class="daw-selection" id="dawSelectionPanel">
-  <div class="daw-selection-head"><div><b>Selected passage</b><small id="dawSelectionReadout">Drag across a waveform to select a timeframe.</small></div><button class="btn" id="dawClearSelection" disabled>Clear</button></div>
-  <div class="daw-selection-actions">
-    <button class="btn" id="dawPlaySelection" disabled>▶ Play selection</button>
-    <button class="btn" id="dawKeepSelection" disabled>Keep selection</button>
-    <button class="btn" id="dawPunchRecord" disabled>● Re-record selection</button>
-    <button class="btn primary" id="dawHumBeat" disabled>Hum to beat</button>
-  </div>
-  <p class="daw-selection-note">Re-record adds a new aligned take, preserving the original. Hum to beat sends your recording to Ìlù. Headphones are recommended when recording over playback.</p>
-</div>
-<div class="daw-bottom" id="dawBottom"><div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button><button class="btn" id="dawNormalize">Normalize selected</button><button class="btn" id="dawDelete">Delete selected</button></div>
-    <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
-    <div class="daw-status">Audio is processed in your browser. Imported tracks are not uploaded. Export creates a stereo WAV mix.</div>
-  </div>
-  </div>
-</div>
-</section>
-
-  <div class="card">
-    <h3>Takes and remix</h3>
-    <p>Re-create beat gives you a fresh variation across the sounds. Clear beat removes the current pattern; Undo restores it. Switch takes A–F to compare arrangements. Each tap writes a new variation: drum hits move, the dùndún line shifts, and your vocal chops are reordered. Downbeats stay put so the groove holds. Undo reverses the latest change; Redo brings it back.</p>
-    <div class="remixbar">
-      <button class="btn primary" id="remix">Re-create beat</button>
-      <button class="btn ic" id="rxUndo" disabled aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Undo</span></button>
-      <button class="btn ic" id="rxRedo" disabled aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span>Redo</span></button>
-      <span class="vmeta" id="ver" style="align-self:center;margin:0"></span>
     </div>
-  </div>
 
+  <div class="exp" id="expPanel" hidden>
+    <div class="exp-row exp-head">
+      <div class="seg" id="expSrc" aria-label="What to export"><button type="button" data-s="beat" class="on">Beat and voice</button><button type="button" data-s="tracks">Playlist clips</button></div>
+      <button class="btn exp-dismiss" id="expClose" type="button" aria-label="Close export panel">Close ×</button>
+    </div>
+    <div class="exp-row exp-beat-only"><div class="seg" id="expFmt"><button data-f="mp3" class="on">MP3</button><button data-f="wav">WAV</button></div><span class="exp-note" id="expNote">Small file, right for WhatsApp and Instagram.</span></div>
+    <div class="exp-tracks" id="expTracks" hidden><p>One stereo WAV of the Playlist clips you can hear, with the Mixer effects applied.</p><button class="btn primary" id="expTracksGo" type="button">Download WAV</button></div>
+    <div class="exp-row exp-beat-only"><span class="exp-lab">Length</span><div class="seg" id="expLen"><button data-l="0" class="on">Auto</button><button data-l="4">4 bars</button><button data-l="8">8</button><button data-l="16">16</button></div></div>
+    <div class="sw-row exp-beat-only"><button class="sw" id="swDrum" role="switch" aria-checked="false"><i></i></button><span><b>Include the talking-drum answer</b> the dùndún version of your voice, made in Ìlù below</span></div>
+    <div class="sw-row exp-beat-only"><button class="sw on" id="swLoud" role="switch" aria-checked="true"><i></i></button><span><b>Match loudness</b> sets your track to the level streaming apps play at, so it is not quieter than other songs</span></div>
+    <div class="exp-row exp-beat-only">
+      <button class="btn primary" id="expGo">Download</button>
+      <button class="btn" id="expShare">Share to WhatsApp</button>
+      <button class="btn" id="expLink">Copy groove link</button>
+    </div>
+    <p class="exp-meta exp-beat-only" id="expMeta"></p>
+  </div>
+  </div>
+  <div class="shell-status" id="shellStatus"><span class="daw-status" id="dawStatus" role="status" aria-live="polite">Pick a groove, press Play, then add your voice.</span></div>
+
+  <div class="shell-body" id="shellBody">
+    <div class="shell-tabs" id="shellTabs" role="tablist" aria-label="Studio views">
+      <button type="button" role="tab" id="tab-pattern" data-view="pattern" aria-selected="true" aria-controls="sv-pattern"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="4" height="4" rx="1"/><rect x="10" y="4" width="4" height="4" rx="1"/><rect x="17" y="4" width="4" height="4" rx="1"/><rect x="3" y="10" width="4" height="4" rx="1"/><rect x="10" y="10" width="4" height="4" rx="1"/><rect x="3" y="16" width="4" height="4" rx="1"/><rect x="17" y="16" width="4" height="4" rx="1"/></svg><span>Pattern</span></button>
+      <button type="button" role="tab" id="tab-playlist" data-view="playlist" aria-selected="false" aria-controls="sv-playlist" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h9M3 12h14M3 18h7"/><rect x="14" y="4" width="7" height="4" rx="1"/><rect x="11" y="16" width="10" height="4" rx="1"/></svg><span>Playlist</span></button>
+      <button type="button" role="tab" id="tab-mixer" data-view="mixer" aria-selected="false" aria-controls="sv-mixer" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v16M12 4v16M18 4v16"/><circle cx="6" cy="14" r="2" fill="var(--surface-1)"/><circle cx="12" cy="8" r="2" fill="var(--surface-1)"/><circle cx="18" cy="16" r="2" fill="var(--surface-1)"/></svg><span>Mixer</span></button>
+      <button type="button" role="tab" id="tab-voice" data-view="voice" aria-selected="false" aria-controls="sv-voice" tabindex="-1"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span>Voice</span></button>
+    </div>
+
+    <div class="shell-main" id="shellMain">
+      <section class="shell-view on" id="sv-pattern" role="tabpanel" aria-labelledby="tab-pattern">
+          <div class="presets" id="presets"></div>
+        <div class="pv-top" id="pvTop">
+        <div class="pv-tools" id="pvTools">
+              <div class="seg" id="bank" aria-label="Take versions"><button data-b="A" title="Take A" class="on">A</button><button data-b="B" title="Take B">B</button><button data-b="C" title="Take C">C</button><button data-b="D" title="Take D">D</button><button data-b="E" title="Take E">E</button><button data-b="F" title="Take F">F</button></div>
+          <button class="btn primary" id="remix" type="button">Re-create beat</button>
+          <span class="vmeta" id="ver"></span>
+              <div class="tgroup x"><button class="btn ic" id="undo" disabled aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Undo</span></button><button class="btn ic" id="redo" disabled aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span>Redo</span></button></div>
+              <button class="btn ghost x" id="clear">Clear</button>
+          <div class="harm" id="harm">
+            <div class="seg" id="hScale"><button data-k="minor" class="on">Minor</button><button data-k="major">Major</button></div>
+            <label class="hsel">Chords <select id="hProg" aria-label="Chord progression"></select></label>
+            <div class="strip" id="hStrip" aria-label="Chords, one per bar"></div>
+          </div>
+        </div>
+        <div class="pv-drum" id="pvDrum"><button class="btn primary" id="toDrum" disabled title="Turn the pitch movement of your voice into a dùndún line">Voice to drum</button><button class="btn" id="hearDrum" disabled>Hear drum</button><div class="tones" id="tones"></div><div class="note" id="sayNote">Add a recording first.</div></div>
+        </div>
+        <div class="grid"><div id="rows"></div>
+    <div class="addrows" id="addRows"></div>
+    <div class="legend"><span><i class="lg hit"></i>Hit · tap to hear this lane</span><span><i class="lg gh"></i>Ghost: hold or right-click</span><span><i class="lg ph"></i>Playhead</span><span class="kbd">Space play · Ctrl Z undo · tap a name to mute</span></div>
+  </div>
+      </section>
+
+      <section class="shell-view" id="sv-playlist" role="tabpanel" aria-labelledby="tab-playlist" aria-label="Playlist" hidden>
+        <div id="dawRoom">
+          <div class="pl-bar" id="dawToolbar"><label class="btn primary file">Import audio clip<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawUndo" disabled>Undo edit</button><span class="daw-clock" id="dawClock">00:00.0</span></div>
+          <div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your clips will appear here. Record a take, or import audio, stems or field recordings.</div></div>
+        </div>
+      </section>
+
+      <section class="shell-view" id="sv-mixer" role="tabpanel" aria-labelledby="tab-mixer" hidden>
+        <div class="mx-block">
+          <h3>Recorded clips</h3>
+          <div class="mx-bar"><button class="btn" id="dawMagicAdjust" type="button" title="Balance track levels while preserving timing and pan">✧ Magic Wand</button><button class="btn" id="dawMerge" type="button" disabled title="Bounce every clip to one stereo track">Bounce to one track</button></div>
+          <div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button></div>
+        </div>
   <div class="card">
     <h3>Layers</h3>
     <p>Every sound in your track. Switch a layer on or off, set its volume, and tune it up or down in semitones.</p>
     <p class="layer-isolation-status" id="laneIsolationStatus" hidden></p><div class="layers" id="layers"></div>
   </div>
+      </section>
 
-  <div class="card">
-    <div class="ilu-head"><svg class="ilu-big" id="iluBig" viewBox="0 0 64 64" aria-hidden="true"><use href="#iluFace"/><circle class="ilu-rip" cx="32" cy="32" r="21"/></svg><h3>Ìlù: the drum speaks your voice</h3></div>
-    <p>Speak or sing into your recorder and add it above. The studio follows the rise and fall of your voice and plays it on the dùndún, the way a drummer carries speech. Each syllable also lands on the dùndún row as high, mid or low, relative to your own voice.</p>
-    <div class="speak">
-      <button class="btn primary" id="toDrum" disabled>Translate my voice to drum</button>
-      <button class="btn" id="hearDrum" disabled>Hear the drum alone</button>
+      <section class="shell-view" id="sv-voice" role="tabpanel" aria-labelledby="tab-voice" hidden>
+  <div class="card" id="voiceCard">
+    <h3>Your voice</h3>
+    <p>Press Record in the top bar, or pick any audio file: a hum, a chant, a guitar line, a market sound. The studio cleans it up and cuts it into pieces you can play on the grid.</p>
+    <div class="voice-top">
+      <label class="btn primary file" id="vfileLbl">Add voice file<input type="file" id="vfile" accept="audio/*"></label>
+      <div class="seg" id="ab"><button data-k="raw">Before</button><button data-k="pro" class="on">Enhanced</button></div>
+      <div class="vstyle" id="vstyle" aria-label="Voice style"><span>Voice style</span><button data-s="natural">Natural</button><button data-s="studio" class="on">Studio</button><button data-s="radio">Radio</button><button data-s="afro">Afro vocal</button><button data-s="hall">Hall</button></div>
+      <button class="btn" id="vprev" disabled>Preview</button>
+      <button class="btn" id="vdel" disabled hidden>Delete recording</button>
+      <button class="btn primary" id="vbeat" disabled>Make a beat from my voice</button>
+      <button class="btn" id="vtap" disabled>Tap along</button>
+      <button class="btn" id="dawHumBeat" type="button" disabled title="Select a passage on a Playlist clip first, then hum along to it">Hum to beat</button>
     </div>
-    <div class="tones" id="tones"></div>
-    <div class="note" id="sayNote">Add a recording first.</div>
+    <div class="take" id="take" hidden>
+      <div class="tk"><b>Your recording</b> <span id="takeLen"></span><small>Not happy with it? Press Record again to replace it, or delete it. The beat stays.</small></div>
+      <button class="btn" id="takeDel">Delete</button>
+    </div>
+    <canvas id="wave" width="900" height="192"></canvas>
+    <div class="vmeta" id="vmeta">No recording yet. The Vox lane stays silent until you add one.</div>
+  </div>
+</section>
+    </div>
+
+    <aside class="shell-side" id="sidePanel" data-side="right" aria-label="Side panel" hidden>
+      <div class="side-head">
+        <div class="side-tabs" role="tablist" aria-label="Side panel sections">
+          <button type="button" role="tab" id="stab-selected" data-pane="selected" aria-selected="true" aria-controls="sp-selected">Clip</button>
+          <button type="button" role="tab" id="stab-info" data-pane="info" aria-selected="false" aria-controls="sp-info" tabindex="-1">Info</button>
+          <button type="button" role="tab" id="stab-passage" data-pane="passage" aria-selected="false" aria-controls="sp-passage" tabindex="-1">Passage</button>
+          <button type="button" role="tab" id="stab-notes" data-pane="notes" aria-selected="false" aria-controls="sp-notes" tabindex="-1">Notes</button>
+          <button type="button" role="tab" id="stab-media" data-pane="media" aria-selected="false" aria-controls="sp-media" tabindex="-1">Media</button>
+        </div>
+        <span class="side-move" id="sideMoveHost"></span>
+        <button class="btn ic" type="button" id="sideClose" aria-label="Close side panel">×</button>
+      </div>
+      <div class="side-pane on" id="sp-selected" role="tabpanel" aria-labelledby="stab-selected">
+        <div class="side-sel"><small>SELECTED CLIP</small><b id="selName">Nothing selected</b></div>
+        <div class="side-grid" id="selFaders"></div>
+        <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
+        <div class="side-actions"><button class="btn" id="dawNormalize" type="button">Normalize</button><button class="btn" id="dawDelete" type="button">Delete clip</button></div>
+      </div>
+      <div class="side-pane" id="sp-info" role="tabpanel" aria-labelledby="stab-info" hidden><div id="selDetails"><p class="side-empty">Select a clip in the Playlist to describe it.</p></div></div>
+      <div class="side-pane" id="sp-passage" role="tabpanel" aria-labelledby="stab-passage" hidden>
+        <div class="daw-selection" id="dawSelectionPanel">
+          <div class="daw-selection-head"><div><b>Selected passage</b><small id="dawSelectionReadout">Drag across a clip in the Playlist to select a passage.</small></div><button class="btn" id="dawClearSelection" disabled>Clear</button></div>
+          <div class="daw-selection-actions">
+            <button class="btn" id="dawPlaySelection" disabled>Hear passage</button>
+            <button class="btn" id="dawKeepSelection" disabled>Keep passage</button>
+            <button class="btn" id="dawPunchRecord" disabled>Punch in</button>
+          </div>
+          <p class="daw-selection-note">Punch in adds a new aligned take and keeps the original. Use headphones when it plays over the beat.</p>
+        </div>
+      </div>
+      <div class="side-pane" id="sp-notes" role="tabpanel" aria-labelledby="stab-notes" hidden>
+        <div class="daw-plan" id="dawPlanPanel"><label for="dawPlan">Session notes</label><textarea id="dawPlan" maxlength="4000" placeholder="Goal, take order, edit notes or mix intent for this session."></textarea><small>Saved with this project on this device.</small></div>
+      </div>
+      <div class="side-pane" id="sp-media" role="tabpanel" aria-labelledby="stab-media" hidden><div id="sideMediaHost"></div></div>
+    </aside>
   </div>
 </section>
 
@@ -1930,7 +1963,6 @@ A clear image or action.
 <div class="np" id="np" hidden role="status" aria-live="polite">
   <svg class="np-face" viewBox="0 0 64 64" aria-hidden="true"><use href="#iluFace"/><circle class="ilu-rip" cx="32" cy="32" r="21"/></svg>
   <div class="np-t"><small>Now playing <span id="npTime"></span></small><b id="npL"></b></div><div class="np-pr" aria-hidden="true"><i id="npBar"></i></div>
-  <button class="btn" id="npStop">Stop</button>
 </div>
 <div class="toast" id="toast"></div>
 <div class="tour" id="tour" hidden><div class="tour-ring" id="tourRing"></div>
@@ -2360,12 +2392,11 @@ function npUpdate(){
 }
 function stopPreviews(){
   if(prevSrc){ const s=prevSrc; prevSrc=null; try{ s.onended=null; s.stop(); }catch(e){} vprev.textContent="Preview"; }
-  if(drumPrev){ const s=drumPrev; drumPrev=null; try{ s.onended=null; s.stop(); }catch(e){} hearDrum.textContent="Hear the drum alone"; }
+  if(drumPrev){ const s=drumPrev; drumPrev=null; try{ s.onended=null; s.stop(); }catch(e){} hearDrum.textContent="Hear drum"; }
   setTransportOutput(0);
 }
 function stopAll(){ stopPreviews(); if(playing) stop(); else setTransportOutput(0); npUpdate(); }
 window.PennioBeatControl={stop:stopAll,isPlaying:()=>playing};
-document.getElementById("npStop").onclick=stopAll;
 function setIcon(){ npUpdate();
   document.getElementById("playIcon").innerHTML = playing ? '<path d="M26.5 25h4v14h-4zM33.5 25h4v14h-4z"/>' : '<path d="M28 24.5l11 7.5-11 7.5z"/>';
   const pb=document.getElementById("play"); pb.classList.toggle("on",playing); pb.setAttribute("aria-label",playing?"Stop (Space)":"Play (Space)"); posPaint(-1); }
@@ -2484,8 +2515,8 @@ function render(){
     sb.onclick=()=>{ soloed.has(l.id)? soloed.delete(l.id) : soloed.add(l.id); syncLaneBusGains(); render(); renderLayers(); };
     const st=document.createElement("div"); st.className="steps"; st.style.gridTemplateColumns="repeat("+N+",minmax(28px,1fr))";
     if(l.id==="vox" && !rawBuf){
-      st.className="steps voxempty"; const b=document.createElement("button"); b.className="voxrec"; b.innerHTML='<i></i>Record your voice: the studio chops it onto this row';
-      b.onclick=()=>{ if(typeof reRecord==="function") reRecord(); }; st.appendChild(b);
+      st.className="steps voxempty"; const b=document.createElement("button"); b.className="voxrec"; b.innerHTML='<i></i>Add your voice: tap the red dot at the top. The studio chops it onto this row.';
+      b.onclick=()=>{ if(vrec.style.display!=="none"){ vrec.focus(); vrec.animate([{transform:"scale(1)"},{transform:"scale(1.18)"},{transform:"scale(1)"}],{duration:420}); } else window.PennioShell?.showView("voice"); }; st.appendChild(b);
     } else for(let i=0;i<N;i++){ const b=document.createElement("button"); b.dataset.i=i; styleCell(b,l.id,i); st.appendChild(b); }
     const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;row.appendChild(nm); row.appendChild(meta); row.appendChild(st); rowsEl.appendChild(row);
   });
@@ -2891,7 +2922,7 @@ window.addEventListener("pennio:recorded-audio",async e=>{
     stopAll();
     pushHist();
     await loadVoice(await detail.blob.arrayBuffer(),name,false);
-    sayNote.textContent="Your Studio recording is ready. Press “Translate my voice to drum” to turn its pitch movement into a dùndún line.";
+    sayNote.textContent="Your Studio recording is ready. Press “Voice to drum” in Pattern to turn its pitch movement into a dùndún line.";
     toast("Voice loaded into Àyàn. Ìlù is ready.");
     nudgeAfterRecording();
   }catch(err){
@@ -3103,10 +3134,10 @@ toDrum.onclick=async()=>{
       if(!playing) start();
     }
   }catch(e){ sayNote.textContent="Something went wrong reading the pitch. Try a shorter recording."; }
-  toDrum.disabled=false; toDrum.textContent="Translate my voice to drum";
+  toDrum.disabled=false; toDrum.textContent="Voice to drum";
 };
 hearDrum.onclick=()=>{ ensureAudio(); if(drumPrev){ stopPreviews(); npUpdate(); return; }
-  stopAll(); setTransportOutput(.85); drumPrev=playFull(ac,busses.dd,ac.currentTime+.02,drumBuf); if(!drumPrev) return; ddWatch(); hearDrum.textContent="Stop"; drumPrev.onended=()=>{drumPrev=null; hearDrum.textContent="Hear the drum alone"; npUpdate();}; npUpdate(); };
+  stopAll(); setTransportOutput(.85); drumPrev=playFull(ac,busses.dd,ac.currentTime+.02,drumBuf); if(!drumPrev) return; ddWatch(); hearDrum.textContent="Stop"; drumPrev.onended=()=>{drumPrev=null; hearDrum.textContent="Hear drum"; npUpdate();}; npUpdate(); };
 
 /* ---------- remix ---------- */
 let version=1;
@@ -3171,21 +3202,20 @@ function renderLayers(){
       '<div class="ls"><div><label>Volume <b>'+Math.round(gainsV[d.id]*100)+'</b></label><input type="range" min="0" max="150" value="'+Math.round(gainsV[d.id]*100)+'" data-k="vol" aria-label="'+d.name+' volume"></div>'+second+'</div>';
     if(d.kind==="full" && avail){
       const la=document.createElement("div"); la.className="la";
-      la.innerHTML='<button class="btn">Re-record</button><button class="btn">Delete</button>';
-      const [re,del]=la.querySelectorAll("button");
-      re.onclick=reRecord;
-      del.onclick=()=>{ if(armDelete(del,"Delete")) deleteRecording(); };
+      la.innerHTML='<button class="btn" aria-label="Delete recording" title="Delete recording">✕</button>';
+      const [del]=la.querySelectorAll("button");
+      del.onclick=()=>{ if(armDelete(del,"✕")) deleteRecording(); };
       el.appendChild(la);
     } else if(d.kind==="drum"){
       const la=document.createElement("div");la.className="la";
-      la.innerHTML='<button class="btn">Re-create lane</button><button class="btn">Clear lane</button>';
+      la.innerHTML='<button class="btn" aria-label="Re-create lane" title="Re-create lane">↻</button><button class="btn" aria-label="Clear lane" title="Clear lane">✕</button>';
       const [fresh,clear]=la.querySelectorAll("button");
       fresh.onclick=()=>recreateLane(d.id);
       clear.onclick=()=>clearLane(d.id);
       el.appendChild(la);
     }
     el.querySelector("b").textContent=d.name;
-    el.querySelector(".layer-sub").textContent=avail?d.sub:(d.kind==="drumv"?"Use Ìlù below to make it first":"Add or record your voice first");
+    el.querySelector(".layer-sub").textContent=avail?d.sub:(d.kind==="drumv"?"Use Voice to drum in Pattern to make it first":"Add or record your voice first");
     const solo=el.querySelector(".layer-solo");solo.onclick=()=>{soloed.has(d.id)?soloed.delete(d.id):soloed.add(d.id);syncLaneBusGains();render();renderLayers();};
     bindHold(el.querySelector(".layer-hold"),d.id);
     el.querySelector(".sw").onclick=()=>{
@@ -3210,10 +3240,7 @@ function renderLayers(){
     layersEl.appendChild(el);
   });
   const items=[...layersEl.children];
-  if(items.length>6){ const avail=LAYER_DEFS.map(layerAvail);
-    items.forEach((el,i)=>{ if(!layersAll && i>=6 && !(i>=items.length-3 && avail[i])) el.hidden=true; });
-    const hid=items.filter(x=>x.hidden).length;
-    if(hid||layersAll){ const m=document.createElement("button"); m.className="btn more"; m.textContent= layersAll? "Show fewer layers" : "Show all "+items.length+" layers"; m.onclick=()=>{ layersAll=!layersAll; renderLayers(); }; layersEl.appendChild(m); } }
+  /* every layer is a strip in the Mixer now, so nothing is collapsed behind a "Show all" button */
   if(typeof updateTake==="function") updateTake();
 }
 renderLayers();
@@ -3593,7 +3620,8 @@ document.getElementById("wdrum").onclick=()=>{
 };
 
 /* ---------- record from the microphone (works on pennio's own site) ---------- */
-const vrec=document.getElementById("vrec"); let mrec=null, mchunks=[], mstream=null, mtimer=null, mstart=0;
+const vrec=document.getElementById("vrec"); function setRecLabel(on,sec){ vrec.innerHTML=on?'<span class="rl-dot" aria-hidden="true">■</span><span class="rl-time">'+sec+'s</span>':'<span class="rl-dot" aria-hidden="true">●</span><span class="rl-word">Record</span>'; vrec.setAttribute("aria-label",on?"Stop recording":"Record"); vrec.classList.toggle("is-rec",!!on); }
+let mrec=null, mchunks=[], mstream=null, mtimer=null, mstart=0;
 const recOpts=document.getElementById("recOpts"), latEl=document.getElementById("lat"), latV=document.getElementById("latV"), countEl=document.getElementById("countin");
 if(!inClaude && navigator.mediaDevices && window.MediaRecorder){ vrec.style.display=""; recOpts.hidden=false; }
 const savedRecSet=lsGet("ps.recSet")||{}; const recSet=Object.assign({over:true,count:true,click:true,beat:false},savedRecSet); if(!savedRecSet.countInBeatDefaultV2){ recSet.beat=false; recSet.countInBeatDefaultV2=true; lsSet("ps.recSet",recSet); } function bindSwitch(id,key){ const b=document.getElementById(id); const paint=()=>{ b.classList.toggle("on",recSet[key]); b.setAttribute("aria-checked",recSet[key]); }; paint(); b.onclick=()=>{ recSet[key]=!recSet[key]; lsSet("ps.recSet",recSet); paint(); }; }
@@ -3645,12 +3673,15 @@ vrec.onclick=async()=>{
       toast("Recording clean voice. Turn on Record over the beat when you want the groove during the take.");
     }
     mrec.onstop=async()=>{
-      clearInterval(mtimer); hideCount(); mstream.getTracks().forEach(t=>t.stop()); vrec.textContent="● Record"; recClick=false;
+      clearInterval(mtimer); hideCount(); mstream.getTracks().forEach(t=>t.stop()); setRecLabel(false); recClick=false;
       const over=recBeatStart!=null; if(playing) stop();
       const blob=new Blob(mchunks,{type:mrec.mimeType||"audio/webm"});
       try{
         pushHist();
-        await loadVoice(await blob.arrayBuffer(),"Recording "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}),false);
+        const takeName="Recording "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+        await loadVoice(await blob.arrayBuffer(),takeName,false);
+        /* the Playlist keeps every take as its own clip, so the one Record button feeds both the voice engine and the arrangement */
+        window.dispatchEvent(new CustomEvent("pennio:voice-take",{detail:{blob,name:takeName}}));
         if(over){
           vocalOffset=Math.max(0, recBeatStart + (latMs!=null?latMs:+latEl.value)/1000);
           LAY.full=true; LAY.vox=false; renderLayers(); saveSoon();
@@ -3661,8 +3692,8 @@ vrec.onclick=async()=>{
     };
     mstart=Date.now();
     npUpdate();
-    mtimer=setInterval(()=>{ const s=Math.floor((Date.now()-mstart)/1000); vrec.textContent="■ Stop · "+s+"s"; if(s>=60) mrec.stop(); },250);
-  }catch(e){ vrec.style.display="none"; recOpts.hidden=true; toast("Microphone is not available here. Use Add recording."); }
+    mtimer=setInterval(()=>{ const s=Math.floor((Date.now()-mstart)/1000); setRecLabel(true,s); if(s>=60) mrec.stop(); },250);
+  }catch(e){ vrec.style.display="none"; recOpts.hidden=true; toast("Microphone is not available here. Use Add voice file."); }
 };
 /* measure the round trip: play clicks through the speaker, hear them on the mic */
 document.getElementById("latTest").onclick=async()=>{
@@ -3700,11 +3731,6 @@ function armDelete(btn,label){
   if(!btn.dataset.arm){ btn.dataset.arm="1"; btn.textContent="Tap again to delete"; setTimeout(()=>{ if(btn.dataset.arm){ delete btn.dataset.arm; btn.textContent=label; } },3000); return false; }
   delete btn.dataset.arm; btn.textContent=label; return true;
 }
-function reRecord(){
-  const card=document.getElementById("voiceCard"); card.scrollIntoView({behavior:"smooth",block:"start"});
-  if(vrec.style.display!=="none"){ setTimeout(()=>vrec.click(),350); }
-  else { document.getElementById("vfile").click(); }
-}
 vdel.onclick=()=>{ if(armDelete(vdel,"Delete recording")) deleteRecording(); };
 async function deleteRecording(){
   stopAll(); await checkpoint("Before deleting the recording");
@@ -3725,7 +3751,7 @@ function updateTake(){
 }
 const takeDel=document.getElementById("takeDel");
 takeDel.onclick=()=>{ if(armDelete(takeDel,"Delete")) deleteRecording(); };
-document.getElementById("takeRe").onclick=reRecord;
+/* Re-record is gone: the one Record button in the transport replaces the take. */
 updateTake();
 
 /* ---------- make a beat from the recording ---------- */
@@ -3824,7 +3850,8 @@ function beatFromVoice(fit){
   p.gtr=new Array(16).fill(0); [[2,2],[6,3],[10,2],[14,4]].forEach(([i,v])=>{ if(!hist16[i]) p.gtr[i]=v; });
   p.flute=new Array(16).fill(0); p.pluck=new Array(16).fill(0); quiet.filter(i=>i>=12).slice(0,2).forEach((i,k)=>p.pluck[i]=k?3:5);
   renderHarm();
-  LANES.forEach(l=>{ if(l.id!=="vox") pattern[l.id]=p[l.id]; });
+  /* Every lane needs an array. p has no entry for the lanes added later (duru, reed); leaving them undefined made the scheduler throw "Cannot read properties of undefined (reading '0')" on start(). */
+  LANES.forEach(l=>{ if(l.id!=="vox") pattern[l.id]=p[l.id]||new Array(16).fill(0); });
   bpmEl.value=bpm; bpmEl.oninput(); swEl.value=rnd([0,8,14]); swEl.oninput();
   LAY.full=true; LAY.vox=false; vocalNudge=0; restartTracks(); renderLayers(); setN(16); markPresets(-1);
   document.getElementById("vmeta").textContent="Heard about "+bpm+" BPM. Your voice centres around "+noteName(f0)+", so the udu, dùndún, bass and keys are tuned to it, in "+KEYN[H.key]+" minor. The dùndún answers with your own tones where you rest. Tap again for another take, or Undo to go back.";
@@ -4599,7 +4626,7 @@ async function sendProfileIfNeeded(force=false){
 const mobile=()=>innerWidth<=768;
 const TOURS=[
   {id:"beat",n:"Build your first beat",d:"Groove · lanes · takes · share",steps:[
-    {sel:"#presets .chip:nth-child(4)",t:"Choose a groove. Prompt: make a four-bar pattern that could carry one line you want people to remember.",tap:true},
+    {sel:"#presetSel",t:"Choose a groove. Prompt: make a four-bar pattern that could carry one line you want people to remember.",tap:true},
     {sel:'#rows .row[data-l="clap"] .step[data-i="6"]',t:"Add a handclap on this step. Tap again to change the hit; hold for a softer ghost hit.",tap:true},
     {sel:"#play",t:"Play the groove. Listen for space between the hits, then add only what the phrase needs.",tap:true},
     {sel:()=>mobile()?"#tpVal":"#bpm",t:()=>mobile()?"Open tempo and swing. Try 100 BPM, then 112 BPM and compare.":"Set Tempo and Swing. Try 100 BPM, then 112 BPM and compare.",tap:()=>mobile()},
@@ -4613,7 +4640,7 @@ const TOURS=[
     {sel:"#vstyle",t:"Choose the sound after you capture the performance. Natural keeps it plain; Studio, Radio, Afro vocal and Hall shape the voice."},
     {sel:"#vbeat",t:"Make a beat from my voice can find tempo and place beat one at your entrance.",tap:true},
     {sel:"#vtap",t:"If the tempo feels off, tap along to the voice and let the groove follow your timing.",tap:true},
-    {sel:'[data-engineer-mode="record"]',t:"For a multi-track take, open Record mode in the DAW. Your beat can keep playing while you overdub.",cta:{label:"Open DAW Record mode",target:'[data-engineer-mode="record"]',finish:true}}
+    {sel:"#tab-playlist",t:"Every take also lands in the Playlist as its own clip. Open it to trim, select a passage or bounce a mix.",cta:{label:"Open the Playlist",target:"#tab-playlist",finish:true}}
   ]},
   {id:"melody",n:"Melody and chords",d:"Key · harmony · melodic lanes",steps:[
     {sel:"#hKey",t:"Choose a key. Prompt: pick a key that sits comfortably in the voice you recorded."},
@@ -4633,13 +4660,12 @@ const TOURS=[
     {sel:"#tgCard",t:"Use the tone game to practise hearing high, mid and low tones."}
   ]},
   {id:"engineer",n:"Engineer a track",d:"Record · play · mix · edit · plan · merge",view:"ayan",steps:[
-    {sel:"#dawHead",t:"The PENNIO DAW is the engineering workspace. Import audio or keep the Beat playing while you record an overdub."},
-    {sel:'[data-engineer-mode="record"]',t:"Record mode keeps the accompaniment available. Use headphones for the cleanest vocal take.",tap:true},
-    {sel:'[data-engineer-mode="mix"]',t:"Mix mode takes you to level and effects controls. Change one control at a time and compare." ,tap:true},
-    {sel:'[data-engineer-mode="edit"]',t:"Edit mode brings up selection, trim, punch-in and hum-to-beat tools.",tap:true},
-    {sel:'[data-engineer-mode="plan"]',t:"Plan mode keeps a session brief with this project. Prompt: what should be recorded first, and what should the final mix feel like?",tap:true},
-    {sel:"#dawPlan",t:"Write the record order or mix notes here. Your plan saves with the project."},
-    {sel:'[data-engineer-mode="merge"]',t:"Merge creates a stereo mix track and mutes the original layers without deleting them.",tap:true},
+    {sel:"#tab-playlist",t:"The Playlist holds your recorded clips. Every take you record becomes a clip here.",tap:true},
+    {sel:"#dawImport",t:"Import audio, stems or field recordings as more clips. Drag across a clip to select a passage."},
+    {sel:"#tab-mixer",t:"The Mixer balances levels and shapes the sound. Change one control at a time and compare.",tap:true},
+    {sel:"#dawMagicAdjust",t:"Magic Wand balances the clip levels while keeping timing and pan. Undo restores the previous mix."},
+    {sel:"#panelToggle",t:"The side panel holds trim, normalize and passage tools for the selected clip, plus your session notes and media.",tap:true},
+    {sel:"#dawPlan",t:"Write the record order or mix notes here. Your notes save with the project."},
     {sel:"#dawMerge",t:"When you are ready, merge a working copy. Undo restores the original track state.",cta:{label:"Merge a working copy",target:"#dawMerge",finish:true}}
   ]},
   {id:"film",n:"Plan and capture a Film reference",d:"Script · shot plan · live camera · scene cue",view:"faajiplace",steps:[
@@ -4667,6 +4693,12 @@ function tourPlace(){
 }
 function tourShow(){
   const st=tour.t.steps[tour.i]; const el0=(()=>{ const q=val(st.sel); return q? document.querySelector(q):null; })();
+  if(el0&&el0.closest("#nav")&&document.getElementById("nav").hidden) document.getElementById("moreBtn").click();
+  /* bring the target into view: switch to its tab, open its popover or the side panel */
+  if(el0&&window.PennioShell&&document.body.classList.contains("studio-shell")){ const vw=el0.closest(".shell-view"), pop=el0.closest(".tp-pop"), side=el0.closest("#sidePanel");
+    if(vw&&vw.hidden) PennioShell.showView(vw.id.slice(3));
+    if(pop&&pop.hidden) document.getElementById(pop.id==="recPop"?"recCfg":"tpVal").click();
+    const sp=el0.closest(".side-pane"); if(side&&(side.hidden||(sp&&sp.hidden))) PennioShell.openPanel(sp?sp.id.slice(3):"selected"); }
   if(mobile() && el0 && el0.closest("#tp")) tpOpen(!!el0.closest(".x"));
   const el=tourTarget(); if(el && !el.closest("#tp") && !el.closest("header")) el.scrollIntoView({block:"center",behavior:"smooth"});
   document.getElementById("tourStep").textContent=tour.t.n+" · "+(tour.i+1)+" of "+tour.t.steps.length;
@@ -4729,13 +4761,12 @@ document.getElementById("profileSessions").onclick=()=>{document.getElementById(
 document.getElementById("profileSettings").onclick=()=>{document.getElementById("profileSheet").classList.remove("on");document.getElementById("settingsSheet").classList.add("on");};
 document.getElementById("heroX").onclick=()=>{ document.getElementById("hero").hidden=true; };
 const tpEl=document.getElementById("tp");
-function tpOpen(o){ tpEl.classList.toggle("open",o); document.getElementById("tpVal").setAttribute("aria-expanded",String(o)); document.getElementById("tpMore").setAttribute("aria-expanded",String(o)); }
+function tpOpen(o){ tpEl.classList.toggle("open",o); document.getElementById("tpVal").setAttribute("aria-expanded",String(o)); }
 document.getElementById("tpVal").onclick=()=>tpOpen(!tpEl.classList.contains("open"));
-document.getElementById("tpMore").onclick=()=>tpOpen(!tpEl.classList.contains("open"));
 addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.contains("on")) return; if(document.querySelector(".sheet.on")) return;
   const t=e.target, tag=(t.tagName||"").toLowerCase(), typing=tag==="input"||tag==="textarea"||tag==="select"||t.isContentEditable;
   if(typing) return;
-  if(e.code==="Space" && tag!=="button"){ e.preventDefault(); playing? stop() : start(); return; }
+  if(e.code==="Space" && tag!=="button"){ e.preventDefault(); document.getElementById("play").click(); return; }
   const k=(e.key||"").toLowerCase();
   if((e.ctrlKey||e.metaKey) && k==="z"){ e.preventDefault(); (e.shiftKey? redoBtn : undoBtn).click(); }
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
@@ -5532,5 +5563,579 @@ html[data-theme="light"] .dash-room-feature .dash-room-icon{background:#FCE8D9;b
 .dash-room-icon{transition:transform .18s ease}
 @media(prefers-reduced-motion:reduce){.dash-room-icon,.dash-room:hover .dash-room-icon{transition:none;transform:none}}
 </style>
+<style id="studio-shell">
+/* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
+   Active only while the Àyàn room is open and the visitor is signed in (body.studio-shell).
+   Phone portrait: transport on top, one view at a time, tabs at the bottom, side panel as a bottom sheet.
+   Landscape and wide: tabs become a left rail and the side panel opens beside the view.
+   The page never scrolls; each view scrolls inside itself. Last in the file on purpose: it overrides the older layout patches. */
+html.studio-shell,body.studio-shell{height:100dvh;max-height:100dvh;overflow:hidden;overscroll-behavior:none;padding:0}
+body.studio-shell{display:flex;flex-direction:column;min-height:0}
+
+/* ---- header: one slim row ---- */
+body.studio-shell>header{position:relative;top:auto;flex:none;z-index:70}
+body.studio-shell>header .wrap{max-width:none;padding:0 8px}
+body.studio-shell>header .bar{height:auto;min-height:48px;padding:4px 0;gap:8px;flex-wrap:nowrap}
+body.studio-shell>header .bar>.logo{order:0}body.studio-shell>header .bar>.hsess{order:1}body.studio-shell>header .bar>.hright{order:2}
+body.studio-shell .logo{font-size:0;gap:0;flex:none}
+body.studio-shell .logo .logo-mark{width:26px;height:auto}
+body.studio-shell .hsess{flex:1 1 0;min-width:0}
+body.studio-shell .hsess input{max-width:100%;min-width:0;font-size:15px}
+body.studio-shell .hsess .saved{display:none}
+body.studio-shell .local-status{font-size:0;gap:0}
+body.studio-shell .hright{flex:none;flex-wrap:nowrap;gap:4px;margin-left:0;max-width:none}
+body.studio-shell .more{width:auto;order:0;flex-wrap:nowrap}
+body.studio-shell .theme-toggle{min-width:44px;width:44px;min-height:44px;padding:0}
+body.studio-shell .theme-toggle span{display:none}
+body.studio-shell #siteSettingsBtn,body.studio-shell .avatar,body.studio-shell .morebtn{min-height:44px}
+body.studio-shell #siteSettingsBtn,body.studio-shell .avatar{min-width:44px}
+/* the room menu is a dropdown over the shell, not a row in the page */
+body.studio-shell nav#nav{position:absolute;top:100%;right:8px;left:auto;z-index:90;display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:2px;width:min(300px,calc(100vw - 16px));max-width:none;max-height:calc(100dvh - 64px);overflow:auto;padding:6px;border-radius:12px;background:var(--surface-1);border:1px solid var(--border);box-shadow:0 18px 50px rgba(0,0,0,.45);order:0}
+body.studio-shell nav#nav[hidden]{display:none!important}
+body.studio-shell nav#nav button{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:44px;padding:0 12px;border-radius:8px;text-align:left;white-space:nowrap;flex:none;color:var(--tp)}
+body.studio-shell nav#nav button small{color:var(--ts);font-size:11px}
+body.studio-shell nav#nav button.on{background:var(--surface-2)}
+/* the shared recorder dock belongs to the other rooms; here the one Record button lives in the transport */
+body.studio-shell #studioRecLaunch,body.studio-shell #studioRecorder{display:none!important}
+body.studio-shell.workspace-open:after{display:none}
+body.studio-shell.workspace-open{overflow:hidden}
+
+/* ---- main column ---- */
+body.studio-shell>main.wrap{flex:1 1 auto;min-height:0;width:100%;max-width:none;margin:0;padding:0;display:flex;flex-direction:column;overflow:hidden}
+body.studio-shell>main.wrap>:not(.view){display:none!important}
+body.studio-shell>main.wrap>.view{display:none}
+body.studio-shell>main.wrap>#v-ayan.on{display:flex;flex-direction:column;flex:1 1 auto;min-height:0;padding:0;margin:0;max-width:none;width:100%}
+body.studio-shell .shell-notices{flex:none;max-height:32dvh;overflow:auto;padding:0 8px;overscroll-behavior:contain}
+body.studio-shell .shell-notices>*{margin-top:8px}
+body.studio-shell .shell-notices>[hidden]{display:none!important}
+
+/* ---- the one transport ---- */
+.studio-tp{position:relative;z-index:60;flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:6px 8px;background:var(--surface-1);border-bottom:1px solid var(--border);margin:0}
+.studio-tp .play.ilu{width:44px;height:44px;flex:none}
+.studio-tp .play.ilu svg{width:44px;height:44px}
+.studio-tp .btn{min-height:44px;border-radius:8px}
+.studio-tp .btn.ic{width:44px;min-width:44px;padding:0;font-size:0}
+.studio-tp .btn.ic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.studio-tp .tp-stop svg{fill:currentColor}
+.studio-tp .rec-group{display:flex;flex:none}
+.studio-tp .tp-rec{min-width:44px;padding:0 10px;gap:6px;border-radius:8px 0 0 8px;color:var(--tp)}
+.studio-tp .tp-rec .rl-dot{color:var(--danger);font-size:15px;line-height:1}
+.studio-tp .tp-rec.is-rec{background:var(--danger);border-color:var(--danger);color:#fff}
+.studio-tp .tp-rec.is-rec .rl-dot{color:#fff}
+.studio-tp .tp-reccfg{width:30px;min-width:30px;border-left:0;border-radius:0 8px 8px 0}
+.studio-tp .tp-reccfg[aria-expanded="true"],.studio-tp .tp-panel[aria-expanded="true"]{background:var(--surface-2);border-color:var(--tp)}
+.studio-tp #vrec[style*="none"]+.tp-reccfg{display:none}
+.studio-tp .tpval{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:52px;min-height:44px;padding:0 8px;border:1px solid var(--border);border-radius:8px;gap:0;flex:none}
+.studio-tp .tpval .tpv-n{display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.studio-tp .tpval .tpv-n b{font-size:16px;font-weight:600}
+.studio-tp .tpval .tpv-n span{font-size:9px;letter-spacing:.08em;color:var(--ts)}
+.studio-tp .tpval .pos-d{display:none}
+.studio-tp .tpval[aria-expanded="true"]{background:var(--surface-2);border-color:var(--tp)}
+.studio-tp .tp-key{display:flex;flex-direction:column;gap:0;flex:none;min-height:44px;justify-content:center}
+.studio-tp .tp-key span{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ts);line-height:1;padding-left:4px}
+.studio-tp .tp-key select{min-height:32px;height:32px;min-width:56px;padding:0 6px;border-radius:8px;font-size:14px;font-weight:600;background:var(--surface-2);border:1px solid var(--border);color:var(--tp);text-transform:none;letter-spacing:0}
+.studio-tp .nv-loop{min-width:44px;max-width:104px;padding:0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.studio-tp .nv-loop.on{background:var(--surface-2);border-color:var(--orange);color:var(--tp)}
+.studio-tp .tp-spacer{flex:1 1 0;min-width:0}
+.studio-tp .pos{display:flex;align-items:center;gap:8px;flex:none;font-size:12px;color:var(--ts);padding:0 4px}
+.studio-tp .pos .pos-t{display:flex;flex-direction:column;line-height:1.15}
+.studio-tp .pos .pos-t b{color:var(--tp);font-weight:600;font-size:13px}
+.studio-tp .pos .pos-t em{font-style:normal;font-size:11px;color:var(--ts)}
+.studio-tp .tp-panel{margin-left:auto}
+.studio-tp #export{min-width:72px;padding:0 14px}
+.studio-tp .navrow{flex:0 0 100%;order:20;display:flex;align-items:center;gap:6px;padding:0;border:0;margin:0}
+.studio-tp .navrow[hidden]{display:none}
+.studio-tp .navrow .btn.ic{width:40px;min-width:40px;min-height:40px}
+.studio-tp .navrow input[type=range]{flex:1;min-width:0;min-height:40px;margin:0}
+.studio-tp .navrow .nv-t{flex:none;font-size:11px;color:var(--ts);text-align:right;white-space:nowrap}
+.studio-tp .tp-spacer+.pos{order:0}
+@media (max-width:560px){
+  .studio-tp .tp-rec .rl-word{display:none}
+  .studio-tp .navrow .nv-t{display:none}
+  .studio-tp .navrow #nvStart,.studio-tp .navrow #nvBack,.studio-tp .navrow #nvFwd{width:36px;min-width:36px}
+}
+@media (min-width:900px){.studio-tp .navrow{flex:1 1 280px;order:0}}
+
+/* ---- popovers hanging off the transport ---- */
+.studio-tp .tp-pop,.studio-tp>#expPanel{position:absolute;top:calc(100% + 6px);bottom:auto;left:8px;right:8px;z-index:80;display:grid;gap:10px;margin:0;padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface-1);box-shadow:0 18px 50px rgba(0,0,0,.45);max-height:calc(100dvh - 150px);overflow:auto}
+.studio-tp .tp-pop[hidden],.studio-tp>#expPanel[hidden]{display:none}
+@media (min-width:700px){.studio-tp .tp-pop,.studio-tp>#expPanel{left:auto;right:8px;width:380px}.studio-tp #recPop,.studio-tp #tpPop{left:8px;right:auto}}
+.tp-pop-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tp-pop-head b{font-size:14px}
+.tp-pop .pop-x{font-size:22px!important;width:40px;min-height:40px}
+.tp-pop-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:var(--ts)}
+.tp-pop .ctl{display:grid!important;gap:6px;order:0!important}
+.tp-pop .ctl label{display:flex;justify-content:space-between;font-size:13px}
+.tp-pop .ctl input[type=range]{width:100%;min-height:36px}
+.studio-tp>#expPanel .exp-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.studio-tp>#expPanel[data-src="tracks"] .exp-beat-only{display:none!important}
+.studio-tp>#expPanel .exp-tracks{display:grid;gap:10px}
+.studio-tp>#expPanel .exp-tracks[hidden]{display:none}
+.studio-tp>#expPanel .exp-tracks p{font-size:13px;color:var(--ts);line-height:1.5;margin:0}
+
+/* ---- status line ---- */
+.shell-status{flex:none;padding:3px 12px;min-height:24px;display:flex;align-items:center;border-bottom:1px solid var(--border);background:var(--bg-base)}
+.shell-status .daw-status{display:block;min-width:0;width:100%;font-size:12px;color:var(--ts);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+body.studio-shell .np{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(66px + env(safe-area-inset-bottom));z-index:55;width:min(420px,calc(100% - 16px));padding:6px 14px;pointer-events:none}
+
+/* ---- body: views + tabs + side panel ---- */
+.shell-body{flex:1 1 auto;min-height:0;position:relative;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"main" "tabs"}
+.shell-main{grid-area:main;min-width:0;min-height:0;position:relative;overflow:hidden}
+.shell-view{position:absolute;inset:0;overflow:auto;padding:10px 10px 20px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.shell-view[hidden]{display:none!important}
+.shell-tabs{grid-area:tabs;display:flex;background:var(--surface-1);border-top:1px solid var(--border);padding-bottom:env(safe-area-inset-bottom);z-index:20}
+.shell-tabs button{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:54px;min-width:44px;color:var(--ts);font-size:11px;font-weight:500;border-radius:0;box-shadow:inset 0 2px 0 transparent}
+.shell-tabs button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.shell-tabs button[aria-selected="true"]{color:var(--tp);box-shadow:inset 0 2px 0 var(--orange)}
+.shell-tabs button[aria-selected="true"] svg{stroke:var(--orange)}
+.shell-tabs button:focus-visible,.shell-side button:focus-visible,.studio-tp button:focus-visible,.studio-tp select:focus-visible{outline:2px solid var(--orange);outline-offset:-2px}
+
+.shell-side{grid-area:main;align-self:end;z-index:30;display:flex;flex-direction:column;max-height:78%;background:var(--surface-1);border-top:1px solid var(--border);border-radius:14px 14px 0 0;box-shadow:0 -14px 40px rgba(0,0,0,.4);min-height:0}
+.shell-side[hidden]{display:none}
+.side-head{flex:none;display:flex;align-items:center;gap:6px;padding:6px 8px;border-bottom:1px solid var(--border)}
+.side-tabs{display:flex;gap:4px;flex:1;min-width:0}
+.side-tabs button{min-height:40px;padding:0 14px;border-radius:8px;color:var(--ts);font-size:13px;font-weight:500}
+.side-tabs button[aria-selected="true"]{background:var(--surface-2);color:var(--tp)}
+.side-head .btn.ic{width:40px;min-width:40px;min-height:40px;font-size:22px;padding:0}
+.side-move #studioPanelPosition{height:40px;min-width:40px}
+.side-pane{flex:1 1 auto;min-height:0;overflow:auto;padding:12px;display:none;overscroll-behavior:contain}
+.side-pane.on{display:block}
+.side-sel{display:grid;gap:2px;margin-bottom:12px}
+.side-sel small{font-size:10px;letter-spacing:.1em;color:var(--ts)}
+.side-sel b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side-actions{display:flex;gap:8px;margin:12px 0}
+.side-actions .btn{flex:1;min-height:44px}
+.side-pane .daw-trim{display:grid;gap:10px}
+.side-pane .daw-trim label{display:grid;gap:4px;font-size:12px;color:var(--ts)}
+.side-pane .daw-trim input{width:100%;min-height:32px}
+.side-pane .daw-selection{display:block;margin:0;padding:12px;border:1px solid var(--border);border-radius:12px;background:transparent}
+.side-pane .daw-selection-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.side-pane .daw-selection-head small{display:block;color:var(--ts);font-size:12px;margin-top:3px;line-height:1.4}
+.side-pane .daw-selection-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:10px}
+.side-pane .daw-selection-actions .btn,.side-pane .daw-selection-head .btn{min-height:44px}
+.side-pane .daw-selection-note{font-size:12px;color:var(--ts);line-height:1.5;margin:10px 0 0}
+.side-pane .daw-plan{display:grid!important;gap:6px;margin-top:14px}
+.side-pane .daw-plan[hidden]{display:grid!important}
+.side-pane .daw-plan textarea{width:100%;min-height:96px;border-radius:8px;border:1px solid var(--border);background:var(--surface-2);color:var(--tp);padding:10px;font:inherit;font-size:13px}
+.side-pane .daw-plan small{color:var(--ts);font-size:11px}
+/* the workspace dock (projects, storage, media) lives in the Media tab */
+#sidePanel #pennioWorkspaceDock{position:static!important;inset:auto!important;display:block!important;width:auto!important;max-width:none!important;max-height:none!important;margin:0!important;transition:none}
+#sidePanel #pennioWorkspaceDock[hidden]{display:block!important}
+#sidePanel #pennioWorkspaceDock .ws-shell{box-shadow:none;border:0;background:transparent;border-radius:0}
+#sidePanel #pennioWorkspaceDock .ws-body,#sidePanel #pennioWorkspaceDock .ws-body[hidden]{display:block!important;max-height:none!important;border-top:0;padding:0}
+#sidePanel #pennioWorkspaceDock .ws-minimize,#sidePanel #pennioWorkspaceDock .ws-toggle{display:none}
+#sidePanel #pennioWorkspaceDock .ws-head{padding:0 0 10px}
+
+/* wide and landscape: tabs become a rail, the side panel sits beside the view */
+@media (orientation:landscape),(min-width:900px){
+  .shell-body{grid-template-columns:68px minmax(0,1fr) auto;grid-template-rows:minmax(0,1fr);grid-template-areas:"tabs main side"}
+  .shell-body[data-side="left"]{grid-template-columns:68px auto minmax(0,1fr);grid-template-areas:"tabs side main"}
+  .shell-tabs{flex-direction:column;justify-content:flex-start;gap:2px;padding:6px 4px;border-top:0;border-right:1px solid var(--border);overflow-y:auto}
+  .shell-tabs button{flex:none;min-height:56px;width:100%;border-radius:10px;box-shadow:none}
+  .shell-tabs button[aria-selected="true"]{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--orange)}
+  .shell-side{grid-area:side;align-self:stretch;width:min(320px,36vw);max-height:none;border-top:0;border-left:1px solid var(--border);border-radius:0;box-shadow:none}
+  .shell-body[data-side="left"] .shell-side{border-left:0;border-right:1px solid var(--border)}
+  body.studio-shell .np{bottom:12px}
+}
+/* short landscape phones: shave chrome so the view keeps most of the height */
+@media (orientation:landscape) and (max-height:520px){
+  body.studio-shell>header .bar{min-height:44px;padding:2px 0}
+  .studio-tp{padding:4px 8px}
+  .shell-status{min-height:20px;padding:1px 12px}
+  .shell-tabs button{min-height:48px;font-size:10px}
+  .shell-tabs button svg{width:20px;height:20px}
+}
+
+/* ---- sheets (Sessions, History, Learn, Settings, profile) are modal overlays here: the page does not scroll, so in-flow sheets would be unreachable ---- */
+body.studio-shell .sheet.on{position:fixed!important;inset:0!important;z-index:120!important;display:flex!important;align-items:flex-start;justify-content:center;width:auto!important;margin:0!important;padding:12px;background:rgba(0,0,0,.55)!important;overflow:auto;overscroll-behavior:contain}
+body.studio-shell .sheet.on .panel{width:min(100%,720px)!important;max-height:calc(100dvh - 24px)!important;overflow:auto!important;margin:0 auto}
+body.studio-shell .dash-modal-backdrop:not([hidden]){position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);padding:12px;margin:0;overflow:auto}
+/* ---- view content ---- */
+.shell-view .presets{flex-wrap:nowrap;margin:0 0 8px;padding-bottom:2px}
+.pv-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:2px 0 8px;margin:0 0 4px}
+@media (orientation:landscape) and (max-height:520px){.pv-tools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.pv-tools::-webkit-scrollbar{display:none}}
+.pv-tools>*{flex:none}
+.pv-tools .btn{min-height:40px}
+.pv-tools .harm{display:flex;align-items:center;gap:8px;margin:0;padding:0;border:0;flex-wrap:nowrap}
+.pv-tools .vmeta{margin:0;font-size:12px;color:var(--ts);max-width:12ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#sv-pattern .strip{margin:0 0 8px;overflow-x:auto;flex-wrap:nowrap}
+#sv-pattern .grid{margin:0}
+.shell-view .card{margin-top:14px;padding:14px 0 6px}
+.shell-view>.card:first-child{margin-top:0}
+.mx-block{display:grid;gap:10px}
+.mx-block h3{font-size:15px;margin:0}
+.mx-bar,.shell-view .daw-effects{display:flex;flex-wrap:wrap;gap:8px}
+.mx-bar .btn,.shell-view .daw-effects .btn{min-height:44px}
+.pl-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.pl-bar .btn{min-height:44px}
+.pl-bar .daw-clock{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--ts);font-size:13px}
+#sv-playlist .daw-track:not(.is-selected) .daw-track-details{display:none}
+#sv-playlist .daw-tracks{min-width:0}
+#sv-voice .voice-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#sv-voice .voice-top .btn,#sv-voice .voice-top .file{min-height:44px}
+#sv-voice canvas#wave{width:100%;height:auto;max-height:120px}
+
+/* ---- Pattern: the beat maker fits the screen. Lanes share the height, the 16 (or 12) steps share the width. Nothing scrolls. ---- */
+#sv-pattern{--namew:64px;display:flex;flex-direction:column;gap:6px;overflow:hidden;padding:6px 8px 8px}
+#sv-pattern .presets{display:none}
+#sv-pattern .pv-top{flex:none;display:flex;flex-direction:column;gap:6px}
+#sv-pattern .pv-tools,#sv-pattern .pv-drum{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0;padding:0;overflow:visible}
+#sv-pattern .pv-tools .btn,#sv-pattern .pv-drum .btn,#sv-pattern .pv-tools select{min-height:36px;height:36px;padding:0 10px;font-size:12px;border-radius:8px}
+#sv-pattern .pv-tools select{min-width:0;max-width:150px;background:var(--surface-2);border:1px solid var(--border);color:var(--tp)}
+#presetSel{font-weight:600;max-width:140px}
+#sv-pattern .pv-tools .btn.ic{width:36px;min-width:36px;padding:0}
+#sv-pattern .seg{padding:2px}
+#sv-pattern .seg button{min-height:30px;min-width:28px;padding:0 8px;font-size:12px}
+#sv-pattern .pv-tools .vmeta{display:none}
+#sv-pattern .harm{display:flex;flex:1 1 auto;min-width:0;flex-wrap:wrap;align-items:center;gap:6px;margin:0;padding:0;border:0}
+#sv-pattern .hsel{font-size:10px;gap:4px}
+#sv-pattern .strip{display:flex;flex:0 1 auto;gap:4px;width:auto;margin:0;overflow:hidden}
+#sv-pattern .strip>*{min-height:32px;height:32px;padding:0 8px;font-size:12px;border-radius:6px}
+#sv-pattern .pv-drum .tones{margin:0;min-height:0;gap:4px;flex:0 1 auto}
+#sv-pattern .pv-drum .note{flex:1 1 120px;min-width:0;margin:0;min-height:0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sv-pattern .grid{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:3px;margin:0;padding:4px;overflow:hidden;border-radius:10px}
+#sv-pattern #rows{flex:1 1 0;min-height:0;min-width:0;width:100%;display:flex;flex-direction:column;align-items:stretch;gap:2px}
+#sv-pattern .row{flex:1 1 0;width:100%!important;max-width:none!important;min-height:12px;grid-template-rows:minmax(0,1fr)!important;display:grid!important;grid-template-columns:var(--namew) minmax(0,1fr)!important;gap:6px!important;align-items:stretch;padding:0!important;min-width:0;overflow:hidden}
+#sv-pattern .row-context{display:none!important}
+#sv-pattern .row .name{min-width:0;min-height:0;height:auto;display:flex;align-items:center;gap:3px;overflow:hidden;padding:0}
+#sv-pattern .row .nmb{flex:1 1 auto;min-width:0;min-height:0;height:100%;padding:0 2px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+#sv-pattern .row .nmb b{font-size:11px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sv-pattern .row .nmb small,#sv-pattern .row .nmb .ilu-row,#sv-pattern .row .ms{display:none}
+#sv-pattern .steps{display:grid!important;grid-template-columns:none!important;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)!important;gap:clamp(1px,.5vw,4px)!important;min-width:0!important;min-height:0!important;width:100%;height:auto;padding:0!important}
+#sv-pattern .step{width:auto!important;min-width:0!important;height:auto!important;min-height:0!important;aspect-ratio:auto!important;padding:0;border-radius:clamp(2px,.5vw,6px)}
+#sv-pattern .steps.voxempty{display:flex!important}
+#sv-pattern .steps.voxempty .voxrec{flex:1;height:100%;min-width:0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sv-pattern .addrows{flex:none;display:flex;flex-wrap:wrap;gap:6px;margin:0}
+#sv-pattern .addrows .addrow{min-height:30px;padding:0 10px;font-size:12px}
+#sv-pattern .legend{display:none}
+@media (min-width:560px){
+  #sv-pattern{--namew:92px}
+  #sv-pattern .row .ms{display:flex;flex:none;gap:2px}
+  #sv-pattern .row .ms button{width:20px;height:20px;min-width:0;min-height:0;padding:0;font-size:10px}
+  #sv-pattern .row .nmb small{display:block;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+@media (min-width:900px) and (min-height:640px){
+  #sv-pattern{--namew:150px}
+  #sv-pattern .row{grid-template-columns:var(--namew) 190px minmax(0,1fr)!important}
+  #sv-pattern .row-context{display:flex!important;align-items:center;gap:14px;min-width:0;overflow:hidden}
+  #sv-pattern .row .ms button{width:24px;height:24px}
+}
+@media (max-height:520px){
+  #sv-pattern{gap:4px;padding:4px 8px 6px}
+  #sv-pattern .pv-top{flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px 6px}
+  #sv-pattern .pv-tools,#sv-pattern .pv-drum,#sv-pattern .harm{display:contents}
+  #sv-pattern .strip{display:none}
+  #sv-pattern .row{min-height:8px}
+  #sv-pattern .steps.voxempty .voxrec{font-size:8px;line-height:1;padding:0}
+  #sv-pattern .row .nmb b{font-size:9px}
+  #sv-pattern .pv-tools .btn,#sv-pattern .pv-drum .btn,#sv-pattern .pv-tools select{min-height:30px;height:30px}
+  #sv-pattern .seg button{min-height:26px}
+  #sv-pattern .strip>*{min-height:26px;height:26px}
+  #sv-pattern .pv-drum .tones,#sv-pattern .pv-drum .note,#sv-pattern .row .nmb small{display:none!important}
+  #sv-pattern{--namew:124px}
+  #sv-pattern .row .ms{display:flex!important;flex:none;gap:2px;height:100%;align-items:stretch}
+  #sv-pattern .row .ms button{height:100%;max-height:20px;width:auto;aspect-ratio:1;min-width:0;min-height:0;padding:0;font-size:7px;line-height:1;align-self:center}
+  #sv-pattern .addrows .addrow{min-height:24px}
+}
+/* Voice view fits too */
+#sv-voice{display:flex;flex-direction:column;gap:8px;overflow:hidden;padding:8px 10px}
+#sv-voice #voiceCard{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px;margin:0;padding:0;border:0}
+#sv-voice #voiceCard>h3{flex:none;margin:0;font-size:15px}
+#sv-voice #voiceCard>p{flex:none;margin:0;font-size:12px;line-height:1.4}
+#sv-voice .voice-top{flex:none;gap:6px}
+#sv-voice .voice-top .btn,#sv-voice .voice-top .file{min-height:40px;font-size:12px;padding:0 10px}
+#sv-voice .vstyle{flex:none}
+#sv-voice .take{flex:none}
+#sv-voice canvas#wave{flex:1 1 0;min-height:36px;width:100%;height:auto;max-height:none}
+#sv-voice .vmeta{flex:none;margin:0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-height:520px){#sv-voice #voiceCard>p{display:none}}
+
+/* ---- Mixer: channel strips that share the screen (one row in landscape, wrapping in portrait). Nothing scrolls. ---- */
+#sv-mixer{display:flex;flex-direction:column;gap:8px;overflow:hidden;padding:8px 10px}
+#sv-mixer .mx-block{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+#sv-mixer .mx-block h3,#sv-mixer>.card>p{display:none}
+#sv-mixer .mx-bar,#sv-mixer .daw-effects{display:contents}
+#sv-mixer .mx-bar .btn,#sv-mixer .daw-effects .btn{min-height:36px;height:36px;padding:0 10px;font-size:12px;border-radius:8px}
+#sv-mixer>.card{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:4px;margin:0;padding:0;border:0}
+#sv-mixer>.card>h3{flex:none;margin:0;font-size:12px;color:var(--ts);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+#sv-mixer .layer-isolation-status{flex:none;margin:0}
+#layers{flex:1 1 0;min-height:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(34px,1fr));grid-auto-rows:minmax(0,1fr);gap:3px}
+#layers .layer{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;min-height:0;margin:0;padding:4px 2px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface-1)}
+#layers .layer .lh{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%;margin:0}
+#layers .layer .lh>div:first-child{width:100%;min-width:0;text-align:center}
+#layers .layer .lh b{display:block;font-size:9px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#layers .layer .lh small{display:none!important}
+#layers .layer .lh-tools{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:3px;max-width:100%}
+#layers .layer .lh-tools>button:not(.sw){width:18px;height:18px;min-width:0;min-height:0;padding:0;font-size:9px;border-radius:5px}
+#layers .layer .sw{transform:scale(.7);margin:-4px}
+#layers .layer .ls{flex:1 1 0;min-height:0;width:100%;display:flex;gap:2px;justify-content:center;margin:0}
+#layers .layer .ls>div{flex:1 1 0;min-width:0;min-height:0;display:flex;flex-direction:column-reverse;align-items:center;gap:2px}
+#layers .layer .ls label{display:block;font-size:0;line-height:1;margin:0}
+#layers .layer .ls label b{font-size:9px;color:var(--ts)}
+#layers .layer .ls input[type=range]{flex:1 1 0;min-height:28px;width:16px;height:auto;margin:0;padding:0;background:none;-webkit-appearance:auto;appearance:auto;writing-mode:vertical-lr;direction:rtl;accent-color:var(--orange)}
+#layers .layer .la{display:flex;gap:2px;flex:none;margin:0}
+#layers .layer .la .btn{width:18px;height:18px;min-width:0;min-height:0;padding:0;font-size:11px;border-radius:5px}
+#layers .layer .la .btn[data-arm]{background:var(--danger);border-color:var(--danger);color:#fff}
+
+@media (max-height:520px){#sv-mixer>.card>h3{display:none}}
+
+/* ---- Playlist: clips share the height; level/pan/position are in the side panel for the selected clip ---- */
+#sv-playlist{display:flex;flex-direction:column;overflow:hidden;gap:6px;padding:8px 10px}
+#sv-playlist #dawRoom{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:6px;max-width:none;margin:0;border:0;background:none;padding:0}
+#sv-playlist .pl-bar{flex:none;margin:0}
+#sv-playlist .pl-bar .btn{min-height:36px;height:36px;padding:0 12px;font-size:12px}
+#sv-playlist #dawTracks{flex:1 1 0;min-height:0;display:flex!important;flex-direction:column;gap:4px;background:none;overflow:hidden}
+#sv-playlist .daw-empty{flex:1;display:grid;place-items:center;background:none;padding:8px}
+#sv-playlist .daw-track{flex:1 1 0;min-height:28px;max-height:110px;margin:0;display:grid;grid-template-columns:minmax(96px,150px) minmax(0,1fr);grid-template-rows:minmax(0,1fr);border-radius:8px}
+#sv-playlist .daw-track-head{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:3px 6px;min-width:0;min-height:0;overflow:hidden}
+#sv-playlist .daw-track-name{min-width:0;width:100%;height:24px;font-size:12px;padding:0 4px}
+#sv-playlist .daw-track-controls{display:flex;gap:3px;flex-wrap:nowrap}
+#sv-playlist .daw-track-controls button{width:24px;height:22px;min-width:0;min-height:0;padding:0;font-size:10px}
+#sv-playlist .daw-track-wave{min-width:0;min-height:0;position:relative}
+#sv-playlist .daw-track-wave canvas{position:absolute;inset:0;width:100%;height:100%}
+@media (max-height:420px){#sv-playlist .daw-track-head{flex-direction:row;align-items:center}#sv-playlist .daw-track-name{height:20px}#sv-playlist .daw-track{grid-template-columns:minmax(130px,190px) minmax(0,1fr)}}
+
+/* ---- side panel: short tabs, so every pane fits ---- */
+.side-tabs{overflow:hidden}
+.side-tabs button{flex:1 1 0;min-width:0;padding:0 4px;font-size:12px}
+.side-pane{padding:8px 10px}
+.side-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin:0 0 8px}
+.side-grid label,.side-pane .daw-trim label{display:grid;gap:2px;font-size:11px;color:var(--ts)}
+.side-grid input,.side-pane .daw-trim input{width:100%;min-height:28px;margin:0}
+.side-pane .daw-trim{grid-template-columns:1fr 1fr;gap:6px 10px}
+.side-actions{margin:8px 0 0}
+.side-actions .btn{min-height:40px}
+.side-sel{margin-bottom:6px}
+.side-empty{font-size:12px;color:var(--ts);margin:0}
+#selDetails .daw-track-details{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;padding:0;border:0;background:none}
+#selDetails .daw-track-field{display:grid;gap:2px;min-width:0}
+#selDetails .daw-track-field span{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ts)}
+#selDetails .daw-track-field input,#selDetails .daw-track-field select{width:100%;min-width:0;height:30px;font-size:12px}
+#sp-notes.on{display:flex;flex-direction:column}
+#sp-notes .daw-plan{flex:1 1 auto;min-height:150px;display:flex!important;flex-direction:column}
+#sp-notes .daw-plan textarea{flex:1 1 0;min-height:48px}
+#sp-passage .daw-selection{padding:8px;border:0}
+#sp-passage .daw-selection-actions{grid-template-columns:repeat(3,1fr)}
+@media (max-height:520px){
+  .side-head{padding:4px 6px}
+  #sp-selected.on{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;align-content:start}
+  #sp-selected .side-sel{grid-column:1/-1;margin:0}
+  #sp-selected .side-grid,#sp-selected .daw-trim,#sp-selected .side-actions{display:contents}
+  #sp-selected .side-actions .btn{min-height:30px;height:30px;margin-top:0}
+  .side-grid input,.side-pane .daw-trim input{min-height:18px;height:18px}
+  .side-grid label,.side-pane .daw-trim label{gap:0;font-size:10px}
+  .side-pane{padding:6px 10px}
+  #sp-notes .daw-plan{flex:1 1 0;min-height:0}
+  #sp-notes .daw-plan small{display:none}
+  #sp-notes .daw-plan{gap:3px}
+  .side-head{padding:2px 6px}
+  .side-tabs button,.side-head .btn.ic,.side-move #studioPanelPosition{min-height:32px;height:32px}
+  .side-head .btn.ic{width:32px;min-width:32px}
+  #sp-passage .daw-selection{padding:2px}
+  #sp-passage .daw-selection-head{gap:6px}
+  #sp-passage .daw-selection-head small{margin-top:0}
+  #sp-passage .daw-selection-actions{gap:4px;margin-top:4px}
+  #sp-passage .daw-selection-actions .btn,#sp-passage .daw-selection-head .btn{min-height:30px;height:30px;padding:0 8px;font-size:12px}
+  #sp-notes .daw-plan textarea{min-height:30px}
+  .side-sel{display:flex;gap:8px;align-items:baseline}
+  .side-pane .daw-selection-note{display:none}
+  #selDetails .daw-track-details{grid-template-columns:repeat(3,1fr)}
+}
+
+/* landscape: the position bar shares the transport row instead of adding a third one */
+@media (orientation:landscape){
+  .studio-tp .navrow{flex:1 1 140px;order:0;min-width:0}
+  .studio-tp .navrow #nvStart,.studio-tp .navrow #nvBack,.studio-tp .navrow #nvFwd,.studio-tp .navrow .nv-t{display:none}
+  .studio-tp .tp-spacer{display:none}
+  .studio-tp .tp-panel{margin-left:0}
+}
+#sv-playlist .daw-track-faders{display:none}
+#sv-voice .vstyle{flex-wrap:wrap;overflow:visible;gap:6px}
+#sv-voice .vstyle span{width:100%}
+</style>
+<script id="studio-shell-js">
+/* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
+   Views, tabs, side panel, popovers and the single Play, Stop, Record and Export controls.
+   The groove engine (index.html) and the arrangement engine (daw.js) are untouched except for the hooks noted in each. */
+(()=>{
+const $=id=>document.getElementById(id),body=document.body,root=document.documentElement;
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const VIEWS=["pattern","playlist","mixer","voice"];
+let view=VIEWS.includes(ls.get("ps.shell.view"))?ls.get("ps.shell.view"):"pattern";
+
+/* ---- shell on/off: only in the Àyàn room, after sign-in ---- */
+const ayan=$("v-ayan"),dockHome={};
+function shellWanted(){return ayan.classList.contains("on")&&!body.classList.contains("auth-locked")&&!body.classList.contains("profile-required");}
+function syncShell(){
+  const on=shellWanted();
+  if(body.classList.contains("studio-shell")===on)return;
+  body.classList.toggle("studio-shell",on);root.classList.toggle("studio-shell",on);
+  mountWorkspaceDock(on);
+  if(on){showView(view,{quiet:true});restorePanel();}
+  else{closePops();$("sidePanel").hidden=true;$("panelToggle").setAttribute("aria-expanded","false");}
+}
+new MutationObserver(syncShell).observe(ayan,{attributes:true,attributeFilter:["class"]});
+new MutationObserver(syncShell).observe(body,{attributes:true,attributeFilter:["class"]});
+/* programmatic scrolls (older code calls scrollIntoView) must never move the page */
+addEventListener("scroll",()=>{if(body.classList.contains("studio-shell")&&(scrollY||scrollX))scrollTo(0,0);},{passive:true});
+
+/* ---- views and tabs ---- */
+function showView(name,opts={}){
+  if(!VIEWS.includes(name))name="pattern";
+  view=name;
+  VIEWS.forEach(v=>{
+    const tab=$("tab-"+v),pane=$("sv-"+v),on=v===name;
+    tab.setAttribute("aria-selected",String(on));tab.tabIndex=on?0:-1;
+    pane.hidden=!on;pane.classList.toggle("on",on);
+  });
+  ls.set("ps.shell.view",name);
+  if(!opts.quiet)window.dispatchEvent(new CustomEvent("pennio:shell-view",{detail:{view:name}}));
+  paintPlay();
+}
+$("shellTabs").addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b)showView(b.dataset.view);});
+$("shellTabs").addEventListener("keydown",e=>{
+  const keys={ArrowLeft:-1,ArrowUp:-1,ArrowRight:1,ArrowDown:1};
+  if(e.key in keys||e.key==="Home"||e.key==="End"){
+    e.preventDefault();
+    const i=VIEWS.indexOf(view),n=e.key==="Home"?0:e.key==="End"?VIEWS.length-1:(i+keys[e.key]+VIEWS.length)%VIEWS.length;
+    showView(VIEWS[n]);$("tab-"+VIEWS[n]).focus();
+  }
+});
+window.PennioShell={showView,get view(){return view;},openPanel:(pane)=>setPanel(true,pane),closePanel:()=>setPanel(false)};
+
+/* ---- side panel ---- */
+const panel=$("sidePanel"),panelBtn=$("panelToggle"),shellBody=$("shellBody");
+const wide=matchMedia("(min-width:1100px) and (min-height:640px)");
+function showPane(name){
+  ["selected","info","passage","notes","media"].forEach(p=>{
+    const t=$("stab-"+p),pane=$("sp-"+p),on=p===name;
+    t.setAttribute("aria-selected",String(on));t.tabIndex=on?0:-1;pane.hidden=!on;pane.classList.toggle("on",on);
+  });
+  if(name==="media")window.PennioWorkspace?.refresh?.();
+}
+function setPanel(open,pane){
+  if(pane)showPane(pane);
+  panel.hidden=!open;panelBtn.setAttribute("aria-expanded",String(open));
+  ls.set("ps.shell.panel",open?"1":"0");
+}
+function restorePanel(){
+  const stored=ls.get("ps.shell.panel");
+  setPanel(stored===null?wide.matches:stored==="1");
+  syncSide();
+}
+function syncSide(){
+  const dock=$("pennioWorkspaceDock"),side=dock&&dock.dataset.side==="left"?"left":"right";
+  shellBody.dataset.side=side;panel.dataset.side=side;
+}
+panelBtn.addEventListener("click",()=>setPanel(panel.hidden));
+$("sideClose").addEventListener("click",()=>{setPanel(false);panelBtn.focus();});
+document.querySelector(".side-tabs").addEventListener("click",e=>{const b=e.target.closest("[data-pane]");if(b)showPane(b.dataset.pane);});
+/* a clip chosen in the Playlist shows its passage tools; hum-to-beat and the passage buttons live under "Passage" */
+/* the "Workspace" menu item opens the Media tab of this panel instead of a second, separate drawer */
+$("openWorkspacePanel")?.addEventListener("click",()=>{if(body.classList.contains("studio-shell"))setPanel(true,"media");});
+/* the workspace dock (projects, storage, media) is built by workspace.js; it sits in the Media tab while the shell is on */
+function mountWorkspaceDock(on){
+  const dock=$("pennioWorkspaceDock"),move=$("studioPanelPosition");
+  if(!dock)return;
+  if(on){
+    if(!dockHome.dock){dockHome.dock={parent:dock.parentNode,next:dock.nextSibling};dockHome.move=move?{parent:move.parentNode,next:move.nextSibling}:null;}
+    $("sideMediaHost").append(dock);if(move){$("sideMoveHost").append(move);if(!move.dataset.shellBound){move.dataset.shellBound="1";move.addEventListener("click",syncSide);}}
+  }else if(dockHome.dock){
+    dockHome.dock.parent.insertBefore(dock,dockHome.dock.next&&dockHome.dock.next.parentNode===dockHome.dock.parent?dockHome.dock.next:null);
+    if(move&&dockHome.move)dockHome.move.parent.insertBefore(move,dockHome.move.next&&dockHome.move.next.parentNode===dockHome.move.parent?dockHome.move.next:null);
+    $("workspaceMinimize")?.click();
+  }
+}
+
+/* ---- popovers off the transport: tempo, record settings, export ---- */
+const tpVal=$("tpVal"),recCfg=$("recCfg"),exportBtn=$("export"),tpPop=$("tpPop"),recPop=$("recPop"),expPanel=$("expPanel");
+function closePops(except){
+  if(except!==tpPop){tpPop.hidden=true;tpVal.setAttribute("aria-expanded","false");}
+  if(except!==recPop){recPop.hidden=true;recCfg.setAttribute("aria-expanded","false");}
+  if(except!==expPanel&&!expPanel.hidden)$("expClose").click();
+}
+tpVal.addEventListener("click",()=>{const open=tpPop.hidden;closePops(open?tpPop:null);tpPop.hidden=!open;tpVal.setAttribute("aria-expanded",String(open));});
+recCfg.addEventListener("click",()=>{const open=recPop.hidden;closePops(open?recPop:null);recPop.hidden=!open;recCfg.setAttribute("aria-expanded",String(open));});
+exportBtn.addEventListener("click",()=>closePops(expPanel));
+document.querySelectorAll("[data-pop-close]").forEach(b=>b.addEventListener("click",()=>{const pop=b.closest(".tp-pop");closePops();(pop===tpPop?tpVal:recCfg).focus();}));
+document.addEventListener("click",e=>{
+  if(!body.classList.contains("studio-shell"))return;
+  if(e.target.closest(".tp-pop,.exp,#tpVal,#recCfg,#export"))return;
+  closePops();
+});
+addEventListener("keydown",e=>{
+  if(e.key!=="Escape"||!body.classList.contains("studio-shell")||document.querySelector(".sheet.on"))return;
+  if(!tpPop.hidden||!recPop.hidden||!expPanel.hidden){closePops();return;}
+  if(!panel.hidden&&matchMedia("(orientation:portrait) and (max-width:899px)").matches)setPanel(false);
+});
+/* the room menu closes after choosing a Sessions, History or Learn item */
+$("nav").addEventListener("click",e=>{if(e.target.closest("button")&&!e.target.closest("[data-v]")&&!$("nav").hidden)$("moreBtn").click();});
+
+/* ---- Export: one button, one popover; the source is chosen inside it ---- */
+const expSrc=$("expSrc");
+expSrc.addEventListener("click",e=>{
+  const b=e.target.closest("[data-s]");if(!b)return;
+  expSrc.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));
+  expPanel.dataset.src=b.dataset.s;$("expTracks").hidden=b.dataset.s!=="tracks";
+});
+$("expTracksGo").addEventListener("click",()=>{
+  if(!window.PennioDAW?.hasTracks()){window.toast?.("Add a clip to the Playlist first.");return;}
+  window.PennioDAW.exportMix();
+});
+exportBtn.addEventListener("click",()=>{
+  /* opening: start on the source that matches the view you are in (a click that closes the panel leaves it alone) */
+  if(!expPanel.hidden)return;
+  expSrc.querySelector('[data-s="'+(view==="playlist"?"tracks":"beat")+'"]').click();
+},true);
+
+/* ---- Play and Stop: one pair, acting on the engine behind the active view ---- */
+const playBtn=$("play"),grooveClick=playBtn.onclick;
+const beat=()=>window.PennioBeatControl,daw=()=>window.PennioDAW;
+const anyPlaying=()=>!!(beat()&&beat().isPlaying()||daw()&&daw().isPlaying());
+playBtn.onclick=e=>{
+  if(anyPlaying()){beat()?.stop();daw()?.stop();paintPlay();return;}
+  if(view==="playlist"){
+    if(!daw()||!daw().hasTracks()){window.toast?.("The Playlist is empty. Record a take or import audio first.");return;}
+    daw().toggle();
+  }else grooveClick&&grooveClick.call(playBtn,e);
+  paintPlay();
+};
+$("tpStop").addEventListener("click",()=>{beat()?.stop();daw()?.stop();paintPlay();});
+const ICON_PLAY='<path d="M28 24.5l11 7.5-11 7.5z"/>',ICON_STOP='<path d="M26.5 25h4v14h-4zM33.5 25h4v14h-4z"/>';
+function paintPlay(){
+  const on=anyPlaying(),glyph=$("playIcon");
+  if(!glyph)return;
+  const want=on?ICON_STOP:ICON_PLAY;
+  if(glyph.innerHTML!==want)glyph.innerHTML=want;
+  playBtn.classList.toggle("on",on);
+  playBtn.setAttribute("aria-label",on?"Pause (Space)":(view==="playlist"?"Play the Playlist (Space)":"Play (Space)"));
+}
+setInterval(()=>{if(body.classList.contains("studio-shell"))paintPlay();},200);
+
+/* ---- Record: the engine button is the one in the transport; keep the recording label and ARIA honest ---- */
+$("vrec").addEventListener("click",()=>closePops());
+
+
+/* ---- Pattern: grooves as one selector instead of a scrolling chip row ---- */
+(()=>{
+  const presetsEl=$("presets"),tools=$("pvTools");
+  const sel=document.createElement("select");sel.id="presetSel";sel.setAttribute("aria-label","Groove");
+  const chips=()=>[...presetsEl.querySelectorAll(".chip")];
+  function build(){
+    sel.replaceChildren();
+    const none=document.createElement("option");none.value="";none.textContent="Groove";none.hidden=true;sel.append(none);
+    chips().forEach((c,i)=>{const o=document.createElement("option");o.value=String(i);o.textContent=c.textContent;sel.append(o);});
+    sync();
+  }
+  function sync(){const on=chips().findIndex(c=>c.classList.contains("on"));sel.value=on>=0?String(on):"";}
+  sel.addEventListener("change",()=>{const c=chips()[+sel.value];if(c)c.click();});
+  tools.prepend(sel);build();
+  new MutationObserver(sync).observe(presetsEl,{subtree:true,attributes:true,attributeFilter:["class"]});
+})();
+/* ---- first paint ---- */
+addEventListener("DOMContentLoaded",()=>{syncShell();syncSide();});
+if(document.readyState!=="loading"){syncShell();}
+})();
+</script>
 </body>
 </html>
