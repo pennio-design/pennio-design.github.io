@@ -1565,7 +1565,10 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <aside class="shell-side" id="sidePanel" data-side="right" aria-label="Side panel" hidden>
       <div class="side-head">
         <div class="side-tabs" role="tablist" aria-label="Side panel sections">
-          <button type="button" role="tab" id="stab-selected" data-pane="selected" aria-selected="true" aria-controls="sp-selected">Selected</button>
+          <button type="button" role="tab" id="stab-selected" data-pane="selected" aria-selected="true" aria-controls="sp-selected">Clip</button>
+          <button type="button" role="tab" id="stab-info" data-pane="info" aria-selected="false" aria-controls="sp-info" tabindex="-1">Info</button>
+          <button type="button" role="tab" id="stab-passage" data-pane="passage" aria-selected="false" aria-controls="sp-passage" tabindex="-1">Passage</button>
+          <button type="button" role="tab" id="stab-notes" data-pane="notes" aria-selected="false" aria-controls="sp-notes" tabindex="-1">Notes</button>
           <button type="button" role="tab" id="stab-media" data-pane="media" aria-selected="false" aria-controls="sp-media" tabindex="-1">Media</button>
         </div>
         <span class="side-move" id="sideMoveHost"></span>
@@ -1573,8 +1576,12 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       </div>
       <div class="side-pane on" id="sp-selected" role="tabpanel" aria-labelledby="stab-selected">
         <div class="side-sel"><small>SELECTED CLIP</small><b id="selName">Nothing selected</b></div>
+        <div class="side-grid" id="selFaders"></div>
         <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
         <div class="side-actions"><button class="btn" id="dawNormalize" type="button">Normalize</button><button class="btn" id="dawDelete" type="button">Delete clip</button></div>
+      </div>
+      <div class="side-pane" id="sp-info" role="tabpanel" aria-labelledby="stab-info" hidden><div id="selDetails"><p class="side-empty">Select a clip in the Playlist to describe it.</p></div></div>
+      <div class="side-pane" id="sp-passage" role="tabpanel" aria-labelledby="stab-passage" hidden>
         <div class="daw-selection" id="dawSelectionPanel">
           <div class="daw-selection-head"><div><b>Selected passage</b><small id="dawSelectionReadout">Drag across a clip in the Playlist to select a passage.</small></div><button class="btn" id="dawClearSelection" disabled>Clear</button></div>
           <div class="daw-selection-actions">
@@ -1584,6 +1591,8 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
           </div>
           <p class="daw-selection-note">Punch in adds a new aligned take and keeps the original. Use headphones when it plays over the beat.</p>
         </div>
+      </div>
+      <div class="side-pane" id="sp-notes" role="tabpanel" aria-labelledby="stab-notes" hidden>
         <div class="daw-plan" id="dawPlanPanel"><label for="dawPlan">Session notes</label><textarea id="dawPlan" maxlength="4000" placeholder="Goal, take order, edit notes or mix intent for this session."></textarea><small>Saved with this project on this device.</small></div>
       </div>
       <div class="side-pane" id="sp-media" role="tabpanel" aria-labelledby="stab-media" hidden><div id="sideMediaHost"></div></div>
@@ -3193,20 +3202,20 @@ function renderLayers(){
       '<div class="ls"><div><label>Volume <b>'+Math.round(gainsV[d.id]*100)+'</b></label><input type="range" min="0" max="150" value="'+Math.round(gainsV[d.id]*100)+'" data-k="vol" aria-label="'+d.name+' volume"></div>'+second+'</div>';
     if(d.kind==="full" && avail){
       const la=document.createElement("div"); la.className="la";
-      la.innerHTML='<button class="btn">Delete</button>';
+      la.innerHTML='<button class="btn" aria-label="Delete recording" title="Delete recording">✕</button>';
       const [del]=la.querySelectorAll("button");
-      del.onclick=()=>{ if(armDelete(del,"Delete")) deleteRecording(); };
+      del.onclick=()=>{ if(armDelete(del,"✕")) deleteRecording(); };
       el.appendChild(la);
     } else if(d.kind==="drum"){
       const la=document.createElement("div");la.className="la";
-      la.innerHTML='<button class="btn">Re-create lane</button><button class="btn">Clear lane</button>';
+      la.innerHTML='<button class="btn" aria-label="Re-create lane" title="Re-create lane">↻</button><button class="btn" aria-label="Clear lane" title="Clear lane">✕</button>';
       const [fresh,clear]=la.querySelectorAll("button");
       fresh.onclick=()=>recreateLane(d.id);
       clear.onclick=()=>clearLane(d.id);
       el.appendChild(la);
     }
     el.querySelector("b").textContent=d.name;
-    el.querySelector(".layer-sub").textContent=avail?d.sub:(d.kind==="drumv"?"Use Ìlù below to make it first":"Add or record your voice first");
+    el.querySelector(".layer-sub").textContent=avail?d.sub:(d.kind==="drumv"?"Use Voice to drum in Pattern to make it first":"Add or record your voice first");
     const solo=el.querySelector(".layer-solo");solo.onclick=()=>{soloed.has(d.id)?soloed.delete(d.id):soloed.add(d.id);syncLaneBusGains();render();renderLayers();};
     bindHold(el.querySelector(".layer-hold"),d.id);
     el.querySelector(".sw").onclick=()=>{
@@ -3231,10 +3240,7 @@ function renderLayers(){
     layersEl.appendChild(el);
   });
   const items=[...layersEl.children];
-  if(items.length>6){ const avail=LAYER_DEFS.map(layerAvail);
-    items.forEach((el,i)=>{ if(!layersAll && i>=6 && !(i>=items.length-3 && avail[i])) el.hidden=true; });
-    const hid=items.filter(x=>x.hidden).length;
-    if(hid||layersAll){ const m=document.createElement("button"); m.className="btn more"; m.textContent= layersAll? "Show fewer layers" : "Show all "+items.length+" layers"; m.onclick=()=>{ layersAll=!layersAll; renderLayers(); }; layersEl.appendChild(m); } }
+  /* every layer is a strip in the Mixer now, so nothing is collapsed behind a "Show all" button */
   if(typeof updateTake==="function") updateTake();
 }
 renderLayers();
@@ -4692,7 +4698,7 @@ function tourShow(){
   if(el0&&window.PennioShell&&document.body.classList.contains("studio-shell")){ const vw=el0.closest(".shell-view"), pop=el0.closest(".tp-pop"), side=el0.closest("#sidePanel");
     if(vw&&vw.hidden) PennioShell.showView(vw.id.slice(3));
     if(pop&&pop.hidden) document.getElementById(pop.id==="recPop"?"recCfg":"tpVal").click();
-    if(side&&side.hidden) PennioShell.openPanel("selected"); }
+    const sp=el0.closest(".side-pane"); if(side&&(side.hidden||(sp&&sp.hidden))) PennioShell.openPanel(sp?sp.id.slice(3):"selected"); }
   if(mobile() && el0 && el0.closest("#tp")) tpOpen(!!el0.closest(".x"));
   const el=tourTarget(); if(el && !el.closest("#tp") && !el.closest("header")) el.scrollIntoView({block:"center",behavior:"smooth"});
   document.getElementById("tourStep").textContent=tour.t.n+" · "+(tour.i+1)+" of "+tour.t.steps.length;
@@ -5841,6 +5847,109 @@ body.studio-shell .dash-modal-backdrop:not([hidden]){position:fixed;inset:0;z-in
 #sv-voice canvas#wave{flex:1 1 0;min-height:36px;width:100%;height:auto;max-height:none}
 #sv-voice .vmeta{flex:none;margin:0;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-height:520px){#sv-voice #voiceCard>p{display:none}}
+
+/* ---- Mixer: channel strips that share the screen (one row in landscape, wrapping in portrait). Nothing scrolls. ---- */
+#sv-mixer{display:flex;flex-direction:column;gap:8px;overflow:hidden;padding:8px 10px}
+#sv-mixer .mx-block{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+#sv-mixer .mx-block h3,#sv-mixer>.card>p{display:none}
+#sv-mixer .mx-bar,#sv-mixer .daw-effects{display:contents}
+#sv-mixer .mx-bar .btn,#sv-mixer .daw-effects .btn{min-height:36px;height:36px;padding:0 10px;font-size:12px;border-radius:8px}
+#sv-mixer>.card{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:4px;margin:0;padding:0;border:0}
+#sv-mixer>.card>h3{flex:none;margin:0;font-size:12px;color:var(--ts);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+#sv-mixer .layer-isolation-status{flex:none;margin:0}
+#layers{flex:1 1 0;min-height:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(34px,1fr));grid-auto-rows:minmax(0,1fr);gap:3px}
+#layers .layer{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;min-height:0;margin:0;padding:4px 2px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface-1)}
+#layers .layer .lh{display:flex;flex-direction:column;align-items:center;gap:3px;width:100%;margin:0}
+#layers .layer .lh>div:first-child{width:100%;min-width:0;text-align:center}
+#layers .layer .lh b{display:block;font-size:9px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#layers .layer .lh small{display:none!important}
+#layers .layer .lh-tools{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:3px;max-width:100%}
+#layers .layer .lh-tools>button:not(.sw){width:18px;height:18px;min-width:0;min-height:0;padding:0;font-size:9px;border-radius:5px}
+#layers .layer .sw{transform:scale(.7);margin:-4px}
+#layers .layer .ls{flex:1 1 0;min-height:0;width:100%;display:flex;gap:2px;justify-content:center;margin:0}
+#layers .layer .ls>div{flex:1 1 0;min-width:0;min-height:0;display:flex;flex-direction:column-reverse;align-items:center;gap:2px}
+#layers .layer .ls label{display:block;font-size:0;line-height:1;margin:0}
+#layers .layer .ls label b{font-size:9px;color:var(--ts)}
+#layers .layer .ls input[type=range]{flex:1 1 0;min-height:28px;width:16px;height:auto;margin:0;padding:0;background:none;-webkit-appearance:auto;appearance:auto;writing-mode:vertical-lr;direction:rtl;accent-color:var(--orange)}
+#layers .layer .la{display:flex;gap:2px;flex:none;margin:0}
+#layers .layer .la .btn{width:18px;height:18px;min-width:0;min-height:0;padding:0;font-size:11px;border-radius:5px}
+#layers .layer .la .btn[data-arm]{background:var(--danger);border-color:var(--danger);color:#fff}
+
+@media (max-height:520px){#sv-mixer>.card>h3{display:none}}
+
+/* ---- Playlist: clips share the height; level/pan/position are in the side panel for the selected clip ---- */
+#sv-playlist{display:flex;flex-direction:column;overflow:hidden;gap:6px;padding:8px 10px}
+#sv-playlist #dawRoom{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:6px;max-width:none;margin:0;border:0;background:none;padding:0}
+#sv-playlist .pl-bar{flex:none;margin:0}
+#sv-playlist .pl-bar .btn{min-height:36px;height:36px;padding:0 12px;font-size:12px}
+#sv-playlist #dawTracks{flex:1 1 0;min-height:0;display:flex!important;flex-direction:column;gap:4px;background:none;overflow:hidden}
+#sv-playlist .daw-empty{flex:1;display:grid;place-items:center;background:none;padding:8px}
+#sv-playlist .daw-track{flex:1 1 0;min-height:28px;max-height:110px;margin:0;display:grid;grid-template-columns:minmax(96px,150px) minmax(0,1fr);grid-template-rows:minmax(0,1fr);border-radius:8px}
+#sv-playlist .daw-track-head{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:3px 6px;min-width:0;min-height:0;overflow:hidden}
+#sv-playlist .daw-track-name{min-width:0;width:100%;height:24px;font-size:12px;padding:0 4px}
+#sv-playlist .daw-track-controls{display:flex;gap:3px;flex-wrap:nowrap}
+#sv-playlist .daw-track-controls button{width:24px;height:22px;min-width:0;min-height:0;padding:0;font-size:10px}
+#sv-playlist .daw-track-wave{min-width:0;min-height:0;position:relative}
+#sv-playlist .daw-track-wave canvas{position:absolute;inset:0;width:100%;height:100%}
+@media (max-height:420px){#sv-playlist .daw-track-head{flex-direction:row;align-items:center}#sv-playlist .daw-track-name{height:20px}#sv-playlist .daw-track{grid-template-columns:minmax(130px,190px) minmax(0,1fr)}}
+
+/* ---- side panel: short tabs, so every pane fits ---- */
+.side-tabs{overflow:hidden}
+.side-tabs button{flex:1 1 0;min-width:0;padding:0 4px;font-size:12px}
+.side-pane{padding:8px 10px}
+.side-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin:0 0 8px}
+.side-grid label,.side-pane .daw-trim label{display:grid;gap:2px;font-size:11px;color:var(--ts)}
+.side-grid input,.side-pane .daw-trim input{width:100%;min-height:28px;margin:0}
+.side-pane .daw-trim{grid-template-columns:1fr 1fr;gap:6px 10px}
+.side-actions{margin:8px 0 0}
+.side-actions .btn{min-height:40px}
+.side-sel{margin-bottom:6px}
+.side-empty{font-size:12px;color:var(--ts);margin:0}
+#selDetails .daw-track-details{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;padding:0;border:0;background:none}
+#selDetails .daw-track-field{display:grid;gap:2px;min-width:0}
+#selDetails .daw-track-field span{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ts)}
+#selDetails .daw-track-field input,#selDetails .daw-track-field select{width:100%;min-width:0;height:30px;font-size:12px}
+#sp-notes.on{display:flex;flex-direction:column}
+#sp-notes .daw-plan{flex:1 1 auto;min-height:150px;display:flex!important;flex-direction:column}
+#sp-notes .daw-plan textarea{flex:1 1 0;min-height:48px}
+#sp-passage .daw-selection{padding:8px;border:0}
+#sp-passage .daw-selection-actions{grid-template-columns:repeat(3,1fr)}
+@media (max-height:520px){
+  .side-head{padding:4px 6px}
+  #sp-selected.on{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;align-content:start}
+  #sp-selected .side-sel{grid-column:1/-1;margin:0}
+  #sp-selected .side-grid,#sp-selected .daw-trim,#sp-selected .side-actions{display:contents}
+  #sp-selected .side-actions .btn{min-height:30px;height:30px;margin-top:0}
+  .side-grid input,.side-pane .daw-trim input{min-height:18px;height:18px}
+  .side-grid label,.side-pane .daw-trim label{gap:0;font-size:10px}
+  .side-pane{padding:6px 10px}
+  #sp-notes .daw-plan{flex:1 1 0;min-height:0}
+  #sp-notes .daw-plan small{display:none}
+  #sp-notes .daw-plan{gap:3px}
+  .side-head{padding:2px 6px}
+  .side-tabs button,.side-head .btn.ic,.side-move #studioPanelPosition{min-height:32px;height:32px}
+  .side-head .btn.ic{width:32px;min-width:32px}
+  #sp-passage .daw-selection{padding:2px}
+  #sp-passage .daw-selection-head{gap:6px}
+  #sp-passage .daw-selection-head small{margin-top:0}
+  #sp-passage .daw-selection-actions{gap:4px;margin-top:4px}
+  #sp-passage .daw-selection-actions .btn,#sp-passage .daw-selection-head .btn{min-height:30px;height:30px;padding:0 8px;font-size:12px}
+  #sp-notes .daw-plan textarea{min-height:30px}
+  .side-sel{display:flex;gap:8px;align-items:baseline}
+  .side-pane .daw-selection-note{display:none}
+  #selDetails .daw-track-details{grid-template-columns:repeat(3,1fr)}
+}
+
+/* landscape: the position bar shares the transport row instead of adding a third one */
+@media (orientation:landscape){
+  .studio-tp .navrow{flex:1 1 140px;order:0;min-width:0}
+  .studio-tp .navrow #nvStart,.studio-tp .navrow #nvBack,.studio-tp .navrow #nvFwd,.studio-tp .navrow .nv-t{display:none}
+  .studio-tp .tp-spacer{display:none}
+  .studio-tp .tp-panel{margin-left:0}
+}
+#sv-playlist .daw-track-faders{display:none}
+#sv-voice .vstyle{flex-wrap:wrap;overflow:visible;gap:6px}
+#sv-voice .vstyle span{width:100%}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
@@ -5896,7 +6005,7 @@ window.PennioShell={showView,get view(){return view;},openPanel:(pane)=>setPanel
 const panel=$("sidePanel"),panelBtn=$("panelToggle"),shellBody=$("shellBody");
 const wide=matchMedia("(min-width:1100px) and (min-height:640px)");
 function showPane(name){
-  ["selected","media"].forEach(p=>{
+  ["selected","info","passage","notes","media"].forEach(p=>{
     const t=$("stab-"+p),pane=$("sp-"+p),on=p===name;
     t.setAttribute("aria-selected",String(on));t.tabIndex=on?0:-1;pane.hidden=!on;pane.classList.toggle("on",on);
   });
@@ -5919,6 +6028,7 @@ function syncSide(){
 panelBtn.addEventListener("click",()=>setPanel(panel.hidden));
 $("sideClose").addEventListener("click",()=>{setPanel(false);panelBtn.focus();});
 document.querySelector(".side-tabs").addEventListener("click",e=>{const b=e.target.closest("[data-pane]");if(b)showPane(b.dataset.pane);});
+/* a clip chosen in the Playlist shows its passage tools; hum-to-beat and the passage buttons live under "Passage" */
 /* the "Workspace" menu item opens the Media tab of this panel instead of a second, separate drawer */
 $("openWorkspacePanel")?.addEventListener("click",()=>{if(body.classList.contains("studio-shell"))setPanel(true,"media");});
 /* the workspace dock (projects, storage, media) is built by workspace.js; it sits in the Media tab while the shell is on */
