@@ -1356,42 +1356,14 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 
 <main class="wrap"><!-- STUDIO DASHBOARD -->
 <section class="view" id="v-home">
-  <div class="dash-topline"><span class="dash-kicker">PENNIO CREATIVE PLATFORM</span><span class="dash-local"><i></i> <span id="dashAccountIdentity">Authenticated workspace</span></span></div>
-  <div class="dash-intro"><div><h1>Welcome back,<br><em id="dashUserName">creator.</em></h1><p>Your creative workspace is ready.</p></div><button class="dash-new" id="dashNewProject"><span>＋</span> New project</button></div>
-  <div class="dash-command">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
-    <input id="dashSearch" type="search" placeholder="Find a room or start with an idea…" autocomplete="off" aria-label="Search Studio rooms">
-    <kbd>⌘ K</kbd>
-  </div>
-  <div class="dash-section-head"><div><span class="dash-overline">YOUR WORKSPACE</span><h2>Choose a room</h2></div><span class="dash-count" id="dashRoomCount">4 active rooms</span></div>
+  <div class="dash-intro"><a href="https://pennio.agency/" class="dash-logo-link" aria-label="PENNIO"><svg class="dash-logo" viewBox="0 0 81.67 102.67" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PENNIO"><path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></a><button class="dash-new" id="dashNewProject" aria-label="New project" title="New project"><span>＋</span></button></div>
   <div class="dash-rooms" id="dashRooms">
-    <button class="dash-room dash-room-feature" data-room="ayan" data-search="music beat recording voice drum ayaan">
-      <span class="dash-room-index">01 / SOUND</span><span class="dash-room-icon room-icon-sound" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 20h7l7-7v22l-7-7H8z"/><path d="M29 18c3 3 3 9 0 12M34 13c6 6 6 16 0 22"/><path d="M8 39h32" opacity=".35"/></svg></span><b>Àyàn</b><span class="dash-room-desc">Record, arrange, produce. Let the talking drum answer your voice.</span><span class="dash-room-foot"><span>Open music studio</span><span>↗</span></span>
-    </button>
-    <button class="dash-room" data-room="write" data-search="write poetry screenplay lyrics akewi">
-      <span class="dash-room-index">02 / LANGUAGE</span><span class="dash-room-icon room-icon-write" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M11 36 23 9h3l12 27M16 26h19"/><path d="M9 41h30M31 9l8 8" opacity=".5"/></svg></span><b>Ewì</b><span class="dash-room-desc">Write poetry, lyrics, scenes and stories with Yoruba tone support.</span><span class="dash-room-foot"><span>Open writing room</span><span>↗</span></span>
-    </button>
-    <button class="dash-room" data-room="faajiplace" data-search="film video filmmaking faajiplace">
-      <span class="dash-room-index">03 / IMAGE</span><span class="dash-room-icon room-icon-film" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="24" rx="3"/><path d="m20 18 11 6-11 6z"/><path d="M13 8v4m8-4v4m8-4v4m8-4v4M13 36v4m8-4v4m8-4v4m8-4v4" opacity=".55"/></svg></span><b>Eré</b><span class="dash-room-desc">Shape scenes, plan shots and build a film from an idea.</span><span class="dash-room-foot"><span>Open film room</span><span>↗</span></span>
-    </button>
-    <button class="dash-room" data-room="beauty" data-search="ojuloge beauty camera portrait fashion hairstyles face">
-      <span class="dash-room-index">04 / PRESENCE</span><span class="dash-room-icon room-icon-portrait" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 39c2-9 8-13 16-13s14 4 16 13"/><circle cx="24" cy="16" r="8"/><path d="M7 8h8M7 8v8M41 8h-8m8 0v8M7 40h8m-8 0v-8m34 8h-8m8 0v-8" opacity=".5"/></svg></span><b>Ojuloge</b><span class="dash-room-desc">Use the camera, explore looks and create portraits.</span><span class="dash-room-foot"><span>Open Ojuloge</span><span>↗</span></span>
-    </button>
-    <div class="dash-room dash-room-soon" data-search="claps atewo rhythm percussion" aria-disabled="true">
-      <span class="dash-room-index">05 / RHYTHM</span><span class="dash-room-icon room-icon-clap" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="m10 25 8-13c1-2 4-1 4 1v10l5-13c1-2 4-1 4 1l-2 12 5-8c1-2 4 0 3 2l-5 17c-2 6-7 9-13 7l-7-3c-5-2-6-8-2-13z"/><path d="m9 9 4 4m11-8v5m12 0-4 4" opacity=".55"/></svg></span><b>Àtẹ́wọ́</b><span class="dash-room-desc">Claps, body percussion and rhythm patterns.</span><span class="dash-room-foot"><span>In development</span><span>—</span></span>
-    </div>
+    <button class="dash-room" data-room="ayan" aria-label="Àyàn"><span class="dash-room-icon room-icon-sound" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 20h7l7-7v22l-7-7H8z"/><path d="M29 18c3 3 3 9 0 12M34 13c6 6 6 16 0 22"/><path d="M8 39h32" opacity=".35"/></svg></span><b>Àyàn</b></button>
+    <button class="dash-room" data-room="write" aria-label="Ewì"><span class="dash-room-icon room-icon-write" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M11 36 23 9h3l12 27M16 26h19"/><path d="M9 41h30M31 9l8 8" opacity=".5"/></svg></span><b>Ewì</b></button>
+    <button class="dash-room" data-room="faajiplace" aria-label="Eré"><span class="dash-room-icon room-icon-film" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="24" rx="3"/><path d="m20 18 11 6-11 6z"/><path d="M13 8v4m8-4v4m8-4v4m8-4v4M13 36v4m8-4v4m8-4v4m8-4v4" opacity=".55"/></svg></span><b>Eré</b></button>
+    <button class="dash-room" data-room="beauty" aria-label="Ojuloge"><span class="dash-room-icon room-icon-portrait" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 39c2-9 8-13 16-13s14 4 16 13"/><circle cx="24" cy="16" r="8"/><path d="M7 8h8M7 8v8M41 8h-8m8 0v8M7 40h8m-8 0v-8m34 8h-8m8 0v-8" opacity=".5"/></svg></span><b>Ojuloge</b></button>
   </div>
-  <div class="dash-lower">
-    <section class="dash-panel dash-project-panel">
-      <div class="dash-section-head"><div><span class="dash-overline">PROJECT SPACE</span><h2>Recent projects</h2></div><button class="dash-text-btn" id="dashViewAll">View all <span>↗</span></button></div>
-      <div id="dashProjects" class="dash-projects"><div class="dash-empty"><span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button></div></div>
-    </section>
-    <section class="dash-panel dash-start-panel">
-      <span class="dash-overline">A GOOD PLACE TO BEGIN</span><h2>Start with a sound.</h2><p>Hum a melody, speak a line or tap a rhythm. Àyàn can turn the raw idea into a starting point.</p><button class="dash-start-btn" id="dashStartSound">Open Àyàn <span>↗</span></button>
-      <div class="dash-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-    </section>
-  </div>
-  <div class="dash-footer"><span>PENNIO STUDIO</span><span>Made for ideas that deserve a form.</span><a href="/faajiplace/" class="next-pennio">Next from PENNIO · Eré ↗</a><button id="dashHelp">How Studio works ↗</button></div>
+  <div id="dashProjects" class="dash-projects" aria-label="Recent projects"></div>
 </section>
 
 <!-- MUSIC -->
@@ -1529,12 +1501,25 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
         <div class="mx-block">
           <h3>Recorded clips</h3>
           <div class="mx-bar"><button class="btn" id="dawMagicAdjust" type="button" title="Balance track levels while preserving timing and pan">✧ Magic Wand</button><button class="btn" id="dawMerge" type="button" disabled title="Bounce every clip to one stereo track">Bounce to one track</button></div>
-          <div class="daw-effects"><button class="btn" data-fx="eq">EQ</button><button class="btn" data-fx="compressor">Compressor</button><button class="btn" data-fx="reverb">Room reverb</button><button class="btn" data-fx="echo">Echo</button></div>
+          <div class="daw-effects"><button class="btn" data-fx="eq" title="EQ on recorded clips">EQ</button><button class="btn" data-fx="compressor" title="Compressor on recorded clips">Comp</button><button class="btn" data-fx="reverb" title="Room reverb on recorded clips">Reverb</button><button class="btn" data-fx="echo" title="Echo on recorded clips">Echo</button></div>
         </div>
   <div class="card">
     <h3>Layers</h3>
     <p>Every sound in your track. Switch a layer on or off, set its volume, and tune it up or down in semitones.</p>
     <p class="layer-isolation-status" id="laneIsolationStatus" hidden></p><div class="layers" id="layers"></div>
+    <div class="mx-insp" id="mxInsp" role="group" aria-label="Selected strip">
+      <b class="mx-name" id="mxName">Dùndún</b>
+      <label class="mx-aux" id="mxAuxWrap"><span id="mxAuxLab">Tune</span><input type="range" id="mxAux" min="-12" max="12" step="1" value="0" aria-label="Tune"><output id="mxAuxV">0</output></label>
+      <label class="mx-pan">Pan <input type="range" id="mxPan" min="-100" max="100" step="1" value="0" aria-label="Pan"><output id="mxPanV">C</output></label>
+      <div class="mx-fx" role="group" aria-label="Effects for this strip">
+        <button type="button" class="btn" data-sfx="eq" aria-pressed="false">EQ</button>
+        <button type="button" class="btn" data-sfx="comp" aria-pressed="false">Comp</button>
+        <button type="button" class="btn" data-sfx="rev" aria-pressed="false">Reverb</button>
+        <button type="button" class="btn" data-sfx="echo" aria-pressed="false">Echo</button>
+      </div>
+      <div class="mx-mon" role="group" aria-label="Monitor this strip"><button type="button" class="btn" id="mxSolo" aria-pressed="false" title="Solo: keep this strip on until you switch it off">Solo</button><button type="button" class="btn" id="mxHold" aria-pressed="false" title="Hold to hear this strip alone">Hold</button></div>
+      <div class="mx-lane"><button type="button" class="btn" id="mxRe" aria-label="Re-create lane" hidden>Re-create</button><button type="button" class="btn" id="mxClear" aria-label="Clear lane" hidden>Clear</button><button type="button" class="btn" id="mxDel" hidden>Delete recording</button></div>
+    </div>
   </div>
       </section>
 
@@ -2017,7 +2002,33 @@ const tf=id=>Math.pow(2,(tuneV[id]||0)/12);
 const LAY={vox:true,full:false,drum:false};
 let vocalNudge=0; // ms, + plays the vocal later
 let busses=null;
-function makeBusses(ctx,out){ const b={}; Object.keys(gainsV).forEach(k=>{const g=ctx.createGain(); g.gain.value=gainsV[k]; g.connect(out); b[k]=g;}); return b; }
+/* Per-strip effects (Mixer): pan, EQ, compressor, echo, reverb. State lives in stripFx and is saved with the project.
+   Each bus is: level gain -> highpass -> presence EQ -> compressor -> (echo and reverb sends, connected only while on) -> pan -> out. */
+const stripFx={};
+const fxOf=id=>stripFx[id]||(stripFx[id]={pan:0,eq:0,comp:0,rev:0,echo:0});
+const irCache=new WeakMap();
+const irFor=ctx=>{ if(!irCache.has(ctx)) irCache.set(ctx,impulse(ctx,1.3)); return irCache.get(ctx); };
+function makeBusses(ctx,out){ const b={}; Object.keys(gainsV).forEach(k=>{
+  const g=ctx.createGain(); g.gain.value=gainsV[k];
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=10;
+  const pk=ctx.createBiquadFilter(); pk.type="peaking"; pk.frequency.value=2800; pk.Q.value=.8; pk.gain.value=0;
+  const cp=ctx.createDynamicsCompressor(); cp.attack.value=.008; cp.release.value=.18; cp.threshold.value=0; cp.ratio.value=1;
+  const sum=ctx.createGain(), pn=ctx.createStereoPanner? ctx.createStereoPanner() : null;
+  g.connect(hp); hp.connect(pk); pk.connect(cp); cp.connect(sum);
+  if(pn){ sum.connect(pn); pn.connect(out); } else sum.connect(out);
+  g.pennioFx={ctx,hp,pk,cp,sum,pn,echo:null,rev:null};
+  applyStripFx(g,k); b[k]=g; }); return b; }
+function applyStripFx(bus,id){
+  const n=bus&&bus.pennioFx; if(!n) return; const f=fxOf(id);
+  n.hp.frequency.value=f.eq?75:10; n.pk.gain.value=f.eq?3:0;
+  n.cp.threshold.value=f.comp?-22:0; n.cp.ratio.value=f.comp?3.5:1;
+  if(n.pn) n.pn.pan.value=Math.max(-1,Math.min(1,+f.pan||0));
+  const ctx=n.ctx;
+  if(f.echo&&!n.echo){ const dl=ctx.createDelay(1), fb=ctx.createGain(), wet=ctx.createGain(); dl.delayTime.value=.22; fb.gain.value=.18; wet.gain.value=.3; n.cp.connect(dl); dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(n.sum); n.echo={dl,fb,wet}; }
+  else if(!f.echo&&n.echo){ try{ n.cp.disconnect(n.echo.dl); n.echo.wet.disconnect(); n.echo.fb.disconnect(); n.echo.dl.disconnect(); }catch(e){} n.echo=null; }
+  if(f.rev&&!n.rev){ const cv=ctx.createConvolver(), wet=ctx.createGain(); cv.buffer=irFor(ctx); wet.gain.value=.28; n.cp.connect(cv); cv.connect(wet); wet.connect(n.sum); n.rev={cv,wet}; }
+  else if(!f.rev&&n.rev){ try{ n.cp.disconnect(n.rev.cv); n.rev.wet.disconnect(); n.rev.cv.disconnect(); }catch(e){} n.rev=null; }
+}
 /* voice state */
 /* what a session is for, and which project it belongs to */
 const KINDS=[{id:"song",name:"Song"},{id:"beat",name:"Beat only"},{id:"jingle",name:"Jingle or ad"},{id:"chant",name:"Chant or oríkì"},{id:"score",name:"Score for video"},{id:"practice",name:"Practice"}];
@@ -3237,12 +3248,57 @@ function renderLayers(){
       };
       r.onchange=()=>{ if(r.dataset.k==="nudge") restartTracks(); };
     });
+    el.addEventListener("pointerdown",()=>{ if(mixSel!==d.id){ mixSel=d.id; paintInspector(); } });
     layersEl.appendChild(el);
   });
   const items=[...layersEl.children];
   /* every layer is a strip in the Mixer now, so nothing is collapsed behind a "Show all" button */
   if(typeof updateTake==="function") updateTake();
+  paintInspector();
 }
+/* channel inspector: pan, effects and lane actions for the selected strip */
+let mixSel="dd";
+function paintInspector(){
+  const box=document.getElementById("mxInsp"); if(!box) return;
+  const d=LAYER_DEFS.find(x=>x.id===mixSel)||LAYER_DEFS[0]; mixSel=d.id; const f=fxOf(d.id);
+  document.getElementById("mxName").textContent=d.name;
+  const pan=document.getElementById("mxPan"); pan.value=Math.round((+f.pan||0)*100);
+  document.getElementById("mxPanV").textContent=pan.value==0?"C":(pan.value<0?"L ":"R ")+Math.abs(pan.value);
+  box.querySelectorAll("[data-sfx]").forEach(b=>{ const on=!!f[b.dataset.sfx]; b.classList.toggle("on",on); b.setAttribute("aria-pressed",String(on)); });
+  document.getElementById("mxRe").hidden=document.getElementById("mxClear").hidden=d.kind!=="drum";
+  document.getElementById("mxDel").hidden=!(d.kind==="full"&&layerAvail(d));
+  const strip=layersEl.querySelector('.layer[data-l="'+d.id+'"]'), aux=strip&&strip.querySelector(".ls>div:nth-child(2) input"), wrap=document.getElementById("mxAuxWrap");
+  wrap.hidden=!aux;
+  if(aux){ const lab=aux.previousElementSibling, word=(lab.firstChild&&lab.firstChild.textContent||"Tune").trim(), mx=document.getElementById("mxAux");
+    mx.min=aux.min; mx.max=aux.max; mx.step=aux.step||"1"; mx.value=aux.value; mx.setAttribute("aria-label",word+" for "+d.name);
+    document.getElementById("mxAuxLab").textContent=word; document.getElementById("mxAuxV").textContent=lab.querySelector("b").textContent; }
+  const so=soloed.has(d.id); const sb=document.getElementById("mxSolo"); sb.classList.toggle("on",so); sb.setAttribute("aria-pressed",String(so));
+  layersEl.querySelectorAll(".layer").forEach(l=>l.classList.toggle("sel",l.dataset.l===d.id));
+}
+(function(){
+  const box=document.getElementById("mxInsp"); if(!box) return;
+  const apply=()=>{ if(busses&&busses[mixSel]) applyStripFx(busses[mixSel],mixSel); };
+  document.getElementById("mxPan").oninput=e=>{ fxOf(mixSel).pan=e.target.value/100; paintInspector(); apply(); saveSoon(); };
+  box.querySelectorAll("[data-sfx]").forEach(b=>b.onclick=()=>{ const f=fxOf(mixSel); f[b.dataset.sfx]=f[b.dataset.sfx]?0:1; paintInspector(); apply(); saveSoon(); });
+  /* the strip's second control (Tune, or Timing on the full vocal) is edited here; drive the real input so every existing handler runs */
+  const aux=document.getElementById("mxAux"), real=()=>{ const st=layersEl.querySelector('.layer[data-l="'+mixSel+'"]'); return st&&st.querySelector(".ls>div:nth-child(2) input"); };
+  aux.addEventListener("pointerdown",()=>{ const r=real(); if(r) r.dispatchEvent(new Event("pointerdown")); });
+  aux.addEventListener("input",()=>{ const r=real(); if(!r) return; r.value=aux.value; r.dispatchEvent(new Event("input")); document.getElementById("mxAuxV").textContent=r.previousElementSibling.querySelector("b").textContent; });
+  aux.addEventListener("change",()=>{ const r=real(); if(r) r.dispatchEvent(new Event("change")); });
+  document.getElementById("mxSolo").onclick=()=>{ soloed.has(mixSel)?soloed.delete(mixSel):soloed.add(mixSel); syncLaneBusGains(); render(); renderLayers(); };
+  const hold=document.getElementById("mxHold"), tok="mx-hold";
+  const end=()=>{ endLaneIsolation(tok); hold.classList.remove("on"); hold.setAttribute("aria-pressed","false"); };
+  hold.addEventListener("pointerdown",e=>{ if(e.button!==undefined&&e.button!==0) return; e.preventDefault(); try{ hold.setPointerCapture(e.pointerId); }catch(_){} beginLaneIsolation(mixSel,tok); hold.classList.add("on"); hold.setAttribute("aria-pressed","true"); });
+  ["pointerup","pointercancel","lostpointercapture"].forEach(t=>hold.addEventListener(t,end));
+  hold.addEventListener("keydown",e=>{ if((e.key===" "||e.key==="Enter")&&!e.repeat){ e.preventDefault(); beginLaneIsolation(mixSel,tok); hold.classList.add("on"); } });
+  hold.addEventListener("keyup",e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); end(); } });
+  hold.addEventListener("click",e=>e.preventDefault());
+  document.getElementById("mxRe").onclick=()=>recreateLane(mixSel);
+  document.getElementById("mxClear").onclick=()=>clearLane(mixSel);
+  const del=document.getElementById("mxDel"); del.onclick=()=>{ if(armDelete(del,"Delete recording")) deleteRecording(); };
+})();
+/* small surface for tests and later Mixer steps */
+window.PennioMixer={ensureAudio:()=>ensureAudio(), busses:()=>busses, makeBusses, applyStripFx, fxOf, stripFx, soloed, selected:()=>mixSel};
 renderLayers();
 
 /* ---------- WRITE: text + voice to tone-marked Yoruba ---------- */
@@ -3869,7 +3925,7 @@ const kvSet=(k,v)=>tx("kv","readwrite",st=>st.put(v,k));
 const allProjects=()=>tx("projects","readonly",st=>st.getAll());
 function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
 function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
-function stateNow(){ banks[bank]=pattern; return {bank, banks, shown:[...shownRows], pattern, chopOrder, bpm:+bpmEl.value, sw:+swEl.value, n:N, muted, gains:gainsV, tune:tuneV, lay:LAY, nudge:vocalNudge, ddBase, uduBase, vocalOffset, useEnhanced, vstyle, harm:H}; }
+function stateNow(){ banks[bank]=pattern; return {fx:stripFx, bank, banks, shown:[...shownRows], pattern, chopOrder, bpm:+bpmEl.value, sw:+swEl.value, n:N, muted, gains:gainsV, tune:tuneV, lay:LAY, nudge:vocalNudge, ddBase, uduBase, vocalOffset, useEnhanced, vstyle, harm:H}; }
 function saveSoon(withAudio){
   if(!ready||restoring) return;
   clearTimeout(saveT); saveT=setTimeout(saveNow,500);
@@ -3900,6 +3956,7 @@ async function openProject(rec,keepSitting){
   if(banks[bank]) pattern=banks[bank]; banks[bank]=pattern; markBank(); soloed.clear(); shownRows.clear(); (st.shown||[]).forEach(x=>shownRows.add(x));
   chopOrder=st.chopOrder||[...Array(16).keys()];
   if(st.muted) Object.assign(muted,st.muted);
+  Object.keys(stripFx).forEach(k=>delete stripFx[k]); if(st.fx) Object.assign(stripFx,JSON.parse(JSON.stringify(st.fx))); if(busses) Object.keys(busses).forEach(id=>applyStripFx(busses[id],id));
   if(st.gains){ Object.assign(gainsV,st.gains); if(busses) Object.keys(gainsV).forEach(id=>{ if(busses[id]) busses[id].gain.value=gainsV[id]; }); }
   Object.keys(tuneV).forEach(k=>tuneV[k]=0); if(st.tune) Object.assign(tuneV,st.tune);
   vocalNudge=st.nudge||0;
@@ -5202,14 +5259,11 @@ document.getElementById("sylIn").oninput=sylRender;
  const $=id=>document.getElementById(id), KEY="ps.studio.projects.v1";
  const read=()=>{try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}};
  const write=list=>{try{localStorage.setItem(KEY,JSON.stringify(list));return true}catch(e){return false}};
- const rooms=$("dashRooms"),search=$("dashSearch"),projects=$("dashProjects");
+ const rooms=$("dashRooms"),projects=$("dashProjects");
  const roomNames={ayan:"Àyàn",write:"Ewì",faajiplace:"Eré",beauty:"Ojuloge"};
  let showAllProjects=false;
  function go(room){const button=document.querySelector('nav button[data-v="'+room+'"]');if(button)button.click();try{history.replaceState(null,"",room==="home"?"/studio/":"#"+room)}catch(e){}window.scrollTo({top:0,behavior:"smooth"});}
  rooms.addEventListener("click",e=>{const card=e.target.closest("[data-room]");if(card&&roomNames[card.dataset.room])go(card.dataset.room);});
- function filterRooms(){const q=(search.value||"").trim().toLowerCase();let count=0;rooms.querySelectorAll("[data-search]").forEach(card=>{const match=!q||(card.dataset.search+" "+card.textContent).toLowerCase().includes(q);card.hidden=!match;if(match&&card.dataset.room)count++;});$("dashRoomCount").textContent=count+" active room"+(count===1?"":"s");}
- search.addEventListener("input",filterRooms);
- document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"&&!e.target.matches("input,textarea")){e.preventDefault();go("home");search.focus();}});
  const style=document.createElement("style");
  style.textContent='.dash-modal-backdrop{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:18px}.dash-modal{width:min(100%,460px);background:var(--panel,#151515);color:var(--text,#fff);border:1px solid var(--line,rgba(255,255,255,.14));border-radius:18px;padding:24px;box-shadow:0 24px 80px #0008}.dash-modal h2{margin:0 0 8px;font-size:24px}.dash-modal p{margin:0 0 20px;color:var(--muted,#aaa);font-size:14px}.dash-modal label{display:block;margin:14px 0 7px;font-size:12px;color:var(--muted,#aaa)}.dash-modal input,.dash-modal select{width:100%;min-height:46px;border:1px solid var(--line,rgba(255,255,255,.2));border-radius:9px;background:var(--surface,#202020);color:inherit;padding:0 12px;font:inherit}.dash-modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}.dash-modal-actions button{min-height:42px;padding:0 15px;border-radius:9px;border:1px solid var(--line,rgba(255,255,255,.2));background:transparent;color:inherit}.dash-modal-actions button.primary{background:var(--accent,#ff6a00);border-color:var(--accent,#ff6a00);color:#fff}.dash-project-actions button{cursor:pointer}';
  document.head.append(style);
@@ -5234,17 +5288,15 @@ document.getElementById("sylIn").oninput=sylRender;
  });
  function renderProjects(){
   const list=read().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0));projects.replaceChildren();
-  if(!list.length){const empty=document.createElement("div");empty.className="dash-empty";empty.innerHTML='<span>✳</span><b>Your next idea starts here.</b><p>Create a project to keep its name and creative direction close while you work across rooms.</p><button class="dash-outline" id="dashFirstProject">Create a project</button>';projects.append(empty);$("dashFirstProject").onclick=()=>openModal();return;}
+  if(!list.length)return;
   (showAllProjects?list:list.slice(0,5)).forEach(item=>{
    const row=document.createElement("article");row.className="dash-project";
-   const mark=document.createElement("span");mark.className="dash-project-mark";mark.textContent="✳";
-   const copy=document.createElement("div");copy.className="dash-project-copy";
+    const copy=document.createElement("div");copy.className="dash-project-copy";
    const title=document.createElement("b");title.textContent=item.name;
-   const meta=document.createElement("small");meta.textContent=(roomNames[item.room]||"Studio project")+" · "+new Date(item.updated||item.created||Date.now()).toLocaleDateString();
-   copy.append(title,meta);
+   copy.append(title);
    const actions=document.createElement("div");actions.className="dash-project-actions";
-   const open=document.createElement("button");open.textContent="Open";open.onclick=()=>{window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project:item}}));go(roomNames[item.room]?item.room:"ayan");if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;};
-   const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>openModal(item);
+   const open=document.createElement("button");open.textContent="Open";open.className="dash-open";open.onclick=()=>{window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project:item}}));go(roomNames[item.room]?item.room:"ayan");if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;};
+   const edit=document.createElement("button");edit.textContent="✎";edit.setAttribute("aria-label","Rename "+item.name);edit.onclick=()=>openModal(item);
    const remove=document.createElement("button");remove.textContent="×";remove.setAttribute("aria-label","Delete "+item.name);remove.onclick=async()=>{
     if(!confirm('Delete "'+item.name+'" and its recordings, DAW tracks, drafts and Film media from this device?'))return;
     remove.disabled=true;
@@ -5261,14 +5313,12 @@ document.getElementById("sylIn").oninput=sylRender;
       window.PennioWorkspace?.finishProjectDeletion(item.id);
     }catch(error){window.PennioWorkspace?.cancelProjectDeletion(item.id);remove.disabled=false;alert("Project deletion was interrupted: "+error.message+". Check your backup before trying again.");}
    };
-   actions.append(open,edit,remove);row.append(mark,copy,actions);projects.append(row);
+   copy.setAttribute("role","button");copy.tabIndex=0;copy.onclick=()=>open.onclick();copy.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open.onclick();}};
+   actions.append(edit,remove);row.append(copy,actions);projects.append(row);
   });
  }
  $("dashNewProject").onclick=()=>openModal();
- $("dashViewAll").onclick=()=>{showAllProjects=!showAllProjects;$("dashViewAll").innerHTML=showAllProjects?"Show less <span>↑</span>":"View all <span>↗</span>";renderProjects();};
- $("dashStartSound").onclick=()=>{go("ayan");setTimeout(()=>{const target=$("voiceCard");if(target)target.scrollIntoView({behavior:"smooth",block:"start"});},100);};
- $("dashHelp").onclick=()=>{go("ayan");const guide=$("guideLink");if(guide)guide.click();};
- renderProjects();filterRooms();
+ renderProjects();
  window.PennioDashboardProjectsRefresh=renderProjects;
 })();;
 
@@ -5857,7 +5907,7 @@ body.studio-shell .dash-modal-backdrop:not([hidden]){position:fixed;inset:0;z-in
 #sv-mixer .mx-bar,#sv-mixer .daw-effects{display:contents}
 #sv-mixer .mx-bar .btn,#sv-mixer .daw-effects .btn{min-height:36px;height:36px;padding:0 10px;font-size:12px;border-radius:8px}
 #sv-mixer>.card{flex:1 1 0;min-height:0;display:flex;flex-direction:column;gap:4px;margin:0;padding:0;border:0}
-#sv-mixer>.card>h3{flex:none;margin:0;font-size:12px;color:var(--ts);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+#sv-mixer>.card>h3{display:none}
 #sv-mixer .layer-isolation-status{flex:none;margin:0}
 #layers{flex:1 1 0;min-height:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(34px,1fr));grid-auto-rows:minmax(0,1fr);gap:3px}
 #layers .layer{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;min-height:0;margin:0;padding:4px 2px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface-1)}
@@ -5952,6 +6002,72 @@ body.studio-shell .dash-modal-backdrop:not([hidden]){position:fixed;inset:0;z-in
 #sv-playlist .daw-track-faders{display:none}
 #sv-voice .vstyle{flex-wrap:wrap;overflow:visible;gap:6px}
 #sv-voice .vstyle span{width:100%}
+
+/* ---- Mixer step 2: channel inspector (pan, effects, lane actions) for the selected strip ---- */
+#layers .layer{cursor:pointer}
+#layers .layer.sel{border-color:var(--orange);box-shadow:0 0 0 1px var(--orange) inset;background:var(--surface-2)}
+#layers .layer .la,#layers .layer .layer-solo,#layers .layer .layer-hold{display:none}
+#sv-mixer .mx-insp{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface-1)}
+#sv-mixer .mx-name{flex:0 0 auto;min-width:70px;max-width:96px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sv-mixer .mx-fx{flex:1 1 100%}
+#sv-mixer .mx-fx .btn{flex:1 1 0}
+#sv-mixer .mx-pan{display:flex;align-items:center;gap:8px;flex:1 1 110px;min-width:110px;font-size:12px;color:var(--ts)}
+#sv-mixer .mx-pan input{flex:1;min-width:60px;min-height:40px;margin:0}
+#sv-mixer .mx-pan output{width:34px;text-align:right;color:var(--tp);font-variant-numeric:tabular-nums}
+#sv-mixer .mx-fx,#sv-mixer .mx-lane,#sv-mixer .mx-mon{display:flex;gap:6px;flex-wrap:wrap}
+#sv-mixer .mx-mon .btn.on{background:var(--tp);color:var(--bg-base);border-color:var(--tp)}
+#sv-mixer .mx-insp .btn{min-height:40px;min-width:52px;padding:0 12px;font-size:12px;border-radius:8px}
+#sv-mixer .mx-fx .btn.on{background:var(--orange);border-color:var(--orange);color:#111;font-weight:600}
+#sv-mixer .mx-insp [hidden]{display:none!important}
+@media (max-height:520px){
+  #sv-mixer{gap:4px;padding:4px 8px}
+  #sv-mixer .mx-block{gap:4px}
+  #sv-mixer .mx-bar .btn,#sv-mixer .daw-effects .btn{min-height:28px;height:28px;padding:0 8px;font-size:11px}
+  #sv-mixer .mx-insp{padding:2px 8px;gap:4px 10px;flex-wrap:nowrap}
+  #sv-mixer .mx-insp .btn{min-height:32px;height:32px;min-width:44px;padding:0 8px}
+  #sv-mixer .mx-pan input{min-height:30px}
+  #layers .layer .lh-tools>button:not(.sw){width:16px;height:16px}
+  #sv-mixer .mx-name{min-width:64px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px}
+  #sv-mixer .mx-fx,#sv-mixer .mx-lane,#sv-mixer .mx-mon{flex-wrap:nowrap}
+  #sv-mixer .mx-fx{flex:1 1 0}
+}
+
+/* ---- Home: barest minimum. Four rooms, a plus, your recent projects. ---- */
+#v-home{padding-top:20px}
+#v-home .dash-intro{display:flex;justify-content:flex-end;margin:0 0 14px}
+#v-home .dash-new{width:48px;height:48px;min-width:48px;padding:0;border-radius:50%;display:grid;place-items:center;font-size:24px;line-height:1}
+#v-home .dash-rooms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0}
+@media(min-width:900px){#v-home .dash-rooms{grid-template-columns:repeat(4,minmax(0,1fr))}}
+#v-home .dash-room{min-height:clamp(120px,22vh,200px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:16px}
+#v-home .dash-room b{font-size:clamp(20px,3.4vw,28px);font-weight:700;letter-spacing:-.02em}
+#v-home .dash-room-icon{margin:0}
+#v-home .dash-projects{display:grid;gap:8px;margin:22px 0 0}
+#v-home .dash-project{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 6px 6px 16px;min-height:52px}
+#v-home .dash-project-copy{flex:1;min-width:0;cursor:pointer;min-height:44px;display:flex;align-items:center}
+#v-home .dash-project-copy b{font-size:16px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#v-home .dash-project-actions{display:flex;gap:4px}
+#v-home .dash-project-actions button{min-width:44px;min-height:44px}
+/* nothing but the home view on the home page: no casting banner, footer line or header labels */
+body:has(#v-home.on)>main>:not(.view),body:has(#v-home.on)>main>.foot{display:none!important}
+body:has(#v-home.on) .logo>span,body:has(#v-home.on) #studioPanelPosition,body:has(#v-home.on) .theme-toggle span,body:has(#v-home.on) .hsess{display:none!important}
+
+/* ---- Mixer clarity: one labelled fader per strip, real hit areas ---- */
+#layers .layer .ls>div:nth-child(2){display:none}
+#layers .layer .ls>div:first-child label b::before{content:"Vol ";opacity:.65;font-weight:500}
+#layers .layer .ls input[type=range]{width:28px}
+#layers .layer .sw{position:relative}
+#layers .layer .sw::after{content:"";position:absolute;inset:-7px -5px}
+#layers .layer .lh>div:first-child{min-height:0}
+#sv-mixer .mx-aux{display:flex;align-items:center;gap:8px;flex:1 1 130px;min-width:120px;font-size:12px;color:var(--ts)}
+#sv-mixer .mx-aux[hidden]{display:none}
+#sv-mixer .mx-aux input{flex:1;min-width:60px;min-height:40px;margin:0}
+#sv-mixer .mx-aux output{min-width:30px;text-align:right;color:var(--tp);font-variant-numeric:tabular-nums}
+@media (max-height:520px){#sv-mixer .mx-aux input{min-height:30px}#sv-mixer .mx-aux{flex:1 1 100px;min-width:90px}}
+
+/* ---- Home: the logo ---- */
+#v-home .dash-intro{justify-content:space-between;align-items:center}
+#v-home .dash-logo{width:44px;height:auto;display:block}
+#v-home .dash-logo path{fill:var(--text)}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
@@ -6133,7 +6249,10 @@ $("vrec").addEventListener("click",()=>closePops());
   new MutationObserver(sync).observe(presetsEl,{subtree:true,attributes:true,attributeFilter:["class"]});
 })();
 /* ---- first paint ---- */
-addEventListener("DOMContentLoaded",()=>{syncShell();syncSide();});
+/* workspace.js is deferred and builds the dock; sign-in can finish first, so mount whenever the dock appears, not only when the shell flips on */
+const ensureDock=()=>{ if(body.classList.contains("studio-shell")){ const dock=$("pennioWorkspaceDock"); if(dock&&dock.parentNode!==$("sideMediaHost")){ mountWorkspaceDock(true); syncSide(); } } };
+window.addEventListener("pennio:workspace-ready",ensureDock);
+addEventListener("DOMContentLoaded",()=>{syncShell();ensureDock();syncSide();});
 if(document.readyState!=="loading"){syncShell();}
 })();
 </script>
