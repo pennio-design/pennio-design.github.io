@@ -1297,6 +1297,45 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 .auth-gate-bottom a{color:#aaa49c;text-decoration:none}
 @media(max-width:760px){.auth-gate{padding:20px 20px 16px}.auth-gate-main{grid-template-columns:1fr;gap:30px;padding:48px 0}.auth-gate-copy h1{font-size:clamp(48px,13vw,68px)}.auth-gate-rooms{margin-top:28px}.auth-gate-card{max-width:520px}.auth-gate-bottom{font-size:8px;letter-spacing:.08em}}
 </style>
+<style id="pennio-ayan-fluid-beat-grid">
+/* Compact track identity and responsive step sizing. */
+#v-ayan .row{width:100%;min-width:0;grid-template-columns:minmax(104px,160px) minmax(0,1fr)!important;gap:8px}
+#v-ayan .name{min-width:0;align-items:flex-start;padding:4px 5px}
+#v-ayan .name .nmb{min-width:0;width:100%;max-width:100%}
+#v-ayan .name .nmb b{white-space:normal;overflow-wrap:anywhere}
+#v-ayan .name .ms{display:flex;min-width:0;gap:3px;flex-wrap:wrap}
+#v-ayan .name .ms button{min-width:22px;min-height:22px;padding:0 4px}
+#v-ayan .row-context{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 6px;min-width:0;margin-top:3px}
+#v-ayan .row-context span{display:grid;min-width:0;gap:1px}
+#v-ayan .row-context small{font-size:8px;letter-spacing:.06em;color:var(--mute)}
+#v-ayan .row-context b{font-size:9px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-ayan .steps{width:100%;min-width:0;grid-template-columns:repeat(16,minmax(0,1fr));gap:clamp(1px,.35vw,4px);padding-right:0}
+#v-ayan .step{width:100%;min-width:0;min-height:0;height:auto;aspect-ratio:1/1;padding:0;border-radius:clamp(2px,.35vw,6px);font-size:clamp(7px,.7vw,10px)}
+@media(max-width:560px){
+ #v-ayan .row{grid-template-columns:minmax(96px,112px) minmax(0,1fr)!important;gap:5px}
+ #v-ayan .name{padding:3px 2px}
+ #v-ayan .name .ms button{min-width:20px;min-height:20px}
+ #v-ayan .row-context{gap:2px 4px}
+ #v-ayan .row-context small{font-size:7px}
+ #v-ayan .row-context b{font-size:8px}
+ #v-ayan .steps{gap:2px}
+}
+</style>
+
+<style id="pennio-profile-editor-style">
+#profileSheet .profile-editor{display:grid;gap:12px;margin:18px 0;padding:16px;border:1px solid var(--line2);border-radius:14px}
+#profileSheet .profile-editor label{display:grid;gap:6px;font-size:12px;color:var(--mute)}
+#profileSheet .profile-editor input,#profileSheet .profile-editor textarea{width:100%;min-width:0;padding:11px 12px;border:1px solid var(--line2);border-radius:9px;background:var(--surface);color:var(--text);font:inherit}
+#profileSheet .profile-editor textarea{min-height:84px;resize:vertical}
+#profileSheet .profile-image-row{display:flex;align-items:center;gap:14px}
+#profileSheet .profile-image-preview{width:68px;height:68px;flex:0 0 68px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line2);border-radius:50%;background:var(--surface);font-size:24px;font-weight:650}
+#profileSheet .profile-image-preview img{width:100%;height:100%;object-fit:cover}
+#profileSheet .profile-image-actions{display:grid;gap:7px;min-width:0}
+#profileSheet .profile-editor-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#profileSheet #profileSaveStatus{font-size:11px;color:var(--mute)}
+#avatar{overflow:hidden}
+#avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+</style>
 </head>
 <body class="in-studio auth-locked">
 <div id="authGate" class="auth-gate">
@@ -1846,6 +1885,20 @@ A clear image or action.
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
       <h2 id="profileTitle">Your PENNIO profile</h2><button class="btn" id="closeProfile" type="button">Close</button>
     </div>
+    <section class="profile-editor" aria-label="Edit your profile">
+      <div class="profile-image-row">
+        <div class="profile-image-preview" id="profileImagePreview" aria-label="Profile image preview">P</div>
+        <div class="profile-image-actions">
+          <b>Profile image</b>
+          <label>Upload a photo<input id="profileAvatarInput" type="file" accept="image/png,image/jpeg,image/webp"></label>
+          <button class="btn" id="profileAvatarRemove" type="button">Remove image</button>
+        </div>
+      </div>
+      <label for="profileEditName">Display name<input id="profileEditName" type="text" maxlength="60" autocomplete="name" placeholder="Your name"></label>
+      <label for="profileEditBio">About you<textarea id="profileEditBio" maxlength="240" placeholder="A short introduction"></textarea></label>
+      <label for="profileEditWebsite">Website<input id="profileEditWebsite" type="url" maxlength="180" placeholder="https://yourwebsite.com"></label>
+      <div class="profile-editor-actions"><button class="btn primary" id="profileSave" type="button">Save profile</button><small id="profileSaveStatus" aria-live="polite">Profile details are saved on this device.</small></div>
+    </section>
     <div class="set-actions">
       <div class="set-action"><div><b id="profileName">Your profile</b><small id="profileEmail">Profile details saved on this device</small></div></div>
       <div class="set-action profile-id-row"><div><b>Account ID</b><small id="profileAccountId">Loading authenticated account ID…</small></div><button class="btn" id="copyProfileId" type="button">Copy ID</button></div>
@@ -2524,12 +2577,12 @@ function render(){
     eye.onclick=()=>{soloLaneId=soloLaneId===l.id?null:l.id;render();}; eye.classList.toggle("on",soloLaneId===l.id);
     mb.onclick=()=>{ muted[l.id]=!muted[l.id]; syncLaneBusGains(); render(); renderLayers(); };
     sb.onclick=()=>{ soloed.has(l.id)? soloed.delete(l.id) : soloed.add(l.id); syncLaneBusGains(); render(); renderLayers(); };
-    const st=document.createElement("div"); st.className="steps"; st.style.gridTemplateColumns="repeat("+N+",minmax(28px,1fr))";
+    const st=document.createElement("div"); st.className="steps"; st.style.gridTemplateColumns="repeat("+N+",minmax(0,1fr))";
     if(l.id==="vox" && !rawBuf){
       st.className="steps voxempty"; const b=document.createElement("button"); b.className="voxrec"; b.innerHTML='<i></i>Add your voice: tap the red dot at the top. The studio chops it onto this row.';
       b.onclick=()=>{ if(vrec.style.display!=="none"){ vrec.focus(); vrec.animate([{transform:"scale(1)"},{transform:"scale(1.18)"},{transform:"scale(1)"}],{duration:420}); } else window.PennioShell?.showView("voice"); }; st.appendChild(b);
     } else for(let i=0;i<N;i++){ const b=document.createElement("button"); b.dataset.i=i; styleCell(b,l.id,i); st.appendChild(b); }
-    const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;row.appendChild(nm); row.appendChild(meta); row.appendChild(st); rowsEl.appendChild(row);
+    const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;nm.appendChild(meta); row.appendChild(nm); row.appendChild(st); rowsEl.appendChild(row);
   });
   saveSoon();
 }
@@ -4787,7 +4840,20 @@ const moreBtn=document.getElementById("moreBtn"), navEl=document.getElementById(
 function menu(open){ navEl.hidden=!open; moreBtn.setAttribute("aria-expanded",String(open)); }
 moreBtn.onclick=e=>{ e.stopPropagation(); menu(navEl.hidden); };
 addEventListener("click",e=>{ if(!navEl.hidden && !e.target.closest(".more")) menu(false); });
-function paintAvatar(){ const pf=lsGet("ps.profile"); const a=document.getElementById("avatar"); if(a) a.textContent=(pf&&pf.name? pf.name.trim()[0] : "·").toUpperCase(); }
+function paintAvatar(){
+  const pf=lsGet("ps.profile")||{},a=document.getElementById("avatar");
+  if(!a)return;
+  a.replaceChildren();
+  if(pf.avatar){const image=document.createElement("img");image.src=pf.avatar;image.alt="";a.append(image);}
+  else a.textContent=(pf.name?pf.name.trim()[0]:"·").toUpperCase();
+}
+function paintProfileImage(){
+  const pf=lsGet("ps.profile")||{},preview=document.getElementById("profileImagePreview");
+  if(!preview)return;
+  preview.replaceChildren();
+  if(pf.avatar){const image=document.createElement("img");image.src=pf.avatar;image.alt="Profile image preview";preview.append(image);}
+  else preview.textContent=(pf.name?pf.name.trim()[0]:"P").toUpperCase();
+}
 function openProfile(){
   const p=lsGet("ps.profile")||(typeof kvGet==="function"?null:null);
   const accountId=sbSess&&sbSess.user&&sbSess.user.id?sbSess.user.id:"";
@@ -4797,12 +4863,57 @@ function openProfile(){
   document.getElementById("profileAccountId").textContent=accountId||"No authenticated account ID available";
   document.getElementById("copyProfileId").disabled=!accountId;
   document.getElementById("profileCloudNote").textContent=accountId?"Signed in with Supabase. This stable account ID identifies your cloud-owned work.":"No authenticated account is available in this session.";
+  pendingProfileAvatar=undefined;
   const pf=lsGet("ps.profile")||{};
+  document.getElementById("profileEditName").value=pf.name||"";
+  document.getElementById("profileEditBio").value=pf.bio||"";
+  document.getElementById("profileEditWebsite").value=pf.website||"";
+  document.getElementById("profileAvatarInput").value="";
+  document.getElementById("profileSaveStatus").textContent="Profile details are saved on this device.";
+  paintProfileImage();
   document.getElementById("profileMailStatus").textContent=pf.kit?"Your guide email request was accepted by Kit.":pf.kitPending?"The guide email request was submitted, but delivery could not be verified.":"Your guide email has not been confirmed. You can request it again.";
   document.getElementById("profileResend").disabled=!pf.email;
   document.getElementById("profileSheet").classList.add("on");
   document.getElementById("profileSheet").scrollIntoView({behavior:"smooth",block:"start"});
 }
+async function compressProfileImage(file){
+  if(!file||!["image/png","image/jpeg","image/webp"].includes(file.type))throw Error("Choose a PNG, JPEG or WebP image.");
+  if(file.size>8*1024*1024)throw Error("Choose an image smaller than 8 MB.");
+  const bitmap=await createImageBitmap(file);
+  const scale=Math.min(1,512/Math.max(bitmap.width,bitmap.height)),canvas=document.createElement("canvas");
+  canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+  const context=canvas.getContext("2d");if(!context)throw Error("Image editing is unavailable in this browser.");
+  context.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close?.();
+  return canvas.toDataURL("image/jpeg",.82);
+}
+let pendingProfileAvatar;
+document.getElementById("profileAvatarInput").addEventListener("change",async event=>{
+  const file=event.target.files&&event.target.files[0];if(!file)return;
+  const status=document.getElementById("profileSaveStatus");status.textContent="Preparing image…";
+  try{pendingProfileAvatar=await compressProfileImage(file);const preview=document.getElementById("profileImagePreview");preview.replaceChildren();const image=document.createElement("img");image.src=pendingProfileAvatar;image.alt="Profile image preview";preview.append(image);status.textContent="Image ready. Save your profile to keep it.";}
+  catch(error){status.textContent=error.message;event.target.value="";}
+});
+document.getElementById("profileAvatarRemove").onclick=()=>{
+  pendingProfileAvatar="";const preview=document.getElementById("profileImagePreview");preview.textContent=(document.getElementById("profileEditName").value.trim()[0]||"P").toUpperCase();
+  document.getElementById("profileSaveStatus").textContent="Image removal will apply when you save.";
+};
+document.getElementById("profileSave").onclick=async()=>{
+  const button=document.getElementById("profileSave"),status=document.getElementById("profileSaveStatus");
+  const name=document.getElementById("profileEditName").value.trim();
+  if(!name){status.textContent="Enter a display name before saving.";document.getElementById("profileEditName").focus();return;}
+  const previous=lsGet("ps.profile")||{},next={...previous,name,bio:document.getElementById("profileEditBio").value.trim(),website:document.getElementById("profileEditWebsite").value.trim()};
+  if(pendingProfileAvatar!==undefined){if(pendingProfileAvatar)next.avatar=pendingProfileAvatar;else delete next.avatar;}
+  button.disabled=true;button.textContent="Saving…";status.textContent="Saving profile on this device…";
+  try{
+    localStorage.setItem("ps.profile",JSON.stringify(next));
+    if(typeof kvSet==="function")await kvSet("profile",next);
+    pendingProfileAvatar=undefined;paintAvatar();paintProfileImage();
+    document.getElementById("profileName").textContent=name;
+    status.textContent="Profile saved on this device.";
+    toast("Profile saved");
+  }catch(error){status.textContent="Could not save your profile. Check available browser storage.";}
+  finally{button.disabled=false;button.textContent="Save profile";}
+};
 document.getElementById("avatar").onclick=openProfile;
 document.getElementById("copyProfileId").onclick=async()=>{const id=sbSess&&sbSess.user&&sbSess.user.id;if(!id)return;try{await navigator.clipboard.writeText(id);toast("Account ID copied");}catch(e){const field=document.createElement("textarea");field.value=id;document.body.append(field);field.select();document.execCommand("copy");field.remove();toast("Account ID copied");}};
 document.getElementById("profileResend").onclick=async()=>{
