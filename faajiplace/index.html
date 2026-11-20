@@ -90,6 +90,15 @@ header{position:absolute;top:0;left:0;right:0;z-index:20;width:min(1440px,100% -
 @media(max-width:760px){header{width:min(100% - 36px,600px)}.marquee{min-height:92svh}.marquee-bg{grid-template-columns:1fr}.marquee-bg img+img{display:none}.marquee-in{width:min(100% - 36px,600px)}.marquee .acts a{flex:1;justify-content:center}}
 @media(prefers-reduced-motion:reduce){.marquee-bg,body:after{animation:none}}
 </style>
+<style>
+.marquee-vid{position:absolute;inset:5.5vh 0;width:100%;height:calc(100% - 11vh);object-fit:cover;z-index:0;opacity:0;transition:opacity 1.6s ease}
+.marquee-vid.on{opacity:1}
+.marquee .acts button{font:700 11px var(--mono);letter-spacing:.14em;min-height:48px;padding:0 24px;border-radius:99px;border:0;cursor:pointer}
+.trailer{border:0;padding:0;background:#000;width:min(1280px,100vw);max-width:100vw;max-height:100vh}
+.trailer::backdrop{background:rgba(0,0,0,.94)}
+.trailer video{display:block;width:100%;height:auto;max-height:100vh;background:#000}
+.trailer .x{position:fixed;right:14px;top:10px;z-index:2}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -100,12 +109,13 @@ header{position:absolute;top:0;left:0;right:0;z-index:20;width:min(1440px,100% -
 <main>
 <section class="marquee" aria-labelledby="mT">
 <div class="marquee-bg" role="img" aria-label="Abo Lógun, Abíógun, Ìyálógun and Ogunpémi"><img src="ere-ogun/abo-logun.webp" alt="" fetchpriority="high"><img src="ere-ogun/abiogun.webp" alt=""><img src="ere-ogun/iyalogun.webp" alt=""><img src="ere-ogun/ogunpemi.webp" alt=""></div>
+<video class="marquee-vid" src="ere-ogun/teaser-loop.mp4" muted loop playsinline preload="metadata" aria-hidden="true"></video>
 <div class="marquee-in">
 <div class="mono kick">ILÉ ERÉ PRESENTS</div>
 <h1 id="mT">ERÉ OGUN</h1>
 <p class="tag">The war that love started.</p>
 <div class="mono meta">IN DEVELOPMENT · 2026</div>
-<div class="acts"><a class="pri" href="#ere-ogun">MEET THE CAST</a><a class="sec" href="/faajiplace/send/">SEND YOUR STORY</a></div>
+<div class="acts"><button class="pri" type="button" id="playTrailer">▶&nbsp; WATCH TRAILER</button><a class="sec" href="#ere-ogun">MEET THE CAST</a></div>
 </div>
 </section>
 <section class="film" id="ere-ogun" aria-labelledby="ereT">
@@ -154,5 +164,18 @@ function close(){if(d.close){d.close()}else{d.removeAttribute('open')}if(last)la
 document.querySelectorAll('.story').forEach(function(b){b.addEventListener('click',function(){last=b;open(+b.dataset.i)})});
 document.getElementById('dX').addEventListener('click',close);
 d.addEventListener('click',function(e){if(e.target===d)close()});})();</script>
+<dialog class="trailer" id="trailerDlg" aria-label="Eré Ogun trailer"><button class="x" type="button" id="trailerX" aria-label="Close trailer">×</button><video id="trailerVid" src="ere-ogun/trailer.mp4" poster="ere-ogun/trailer-poster.jpg" controls playsinline preload="none"></video></dialog>
+<script>
+(function(){
+var v=document.querySelector('.marquee-vid'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(v&&!reduce){v.addEventListener('playing',function(){v.classList.add('on')});var p=v.play();if(p&&p.catch)p.catch(function(){});}
+var d=document.getElementById('trailerDlg'),tv=document.getElementById('trailerVid');
+function shut(){tv.pause();if(d.close)d.close();else d.removeAttribute('open');if(v&&!reduce)v.play().catch(function(){});}
+document.getElementById('playTrailer').addEventListener('click',function(){if(v)v.pause();if(d.showModal)d.showModal();else d.setAttribute('open','');tv.currentTime=0;tv.play().catch(function(){});});
+document.getElementById('trailerX').addEventListener('click',shut);
+d.addEventListener('close',function(){tv.pause();if(v&&!reduce)v.play().catch(function(){});});
+d.addEventListener('click',function(e){if(e.target===d)shut();});
+})();
+</script>
 </body>
 </html>
