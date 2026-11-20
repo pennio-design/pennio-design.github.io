@@ -4,7 +4,7 @@ const PROJECTS_KEY="ps.studio.projects.v1",ACTIVE_KEY="ps.studio.activeProject.v
 const $=id=>document.getElementById(id);
 let activeProjectId=null,dbPromise=null,assets=[],roomSwitchPromise=Promise.resolve();
 const deletingProjects=new Set(),pendingAssetWrites=new Map();
-const roomNames={ayan:"Àyàn",write:"Ewì",faajiplace:"Eré",beauty:"Ojuloge"};
+const roomNames={ayan:"Àyàn",write:"Ewì",faajiplace:"Ilé Eré",beauty:"Ojuloge"};
 function readProjects(){try{const v=JSON.parse(localStorage.getItem(PROJECTS_KEY)||"[]");return Array.isArray(v)?v:[]}catch(e){return[]}}
 function openDB(){
  if(dbPromise)return dbPromise;
