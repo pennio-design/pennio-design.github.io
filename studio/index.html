@@ -1461,6 +1461,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <div class="tp-pop-row"><span>Steps per bar</span>    <div class="seg x" id="len" aria-label="Steps per bar"><button data-n="12">12</button><button data-n="16" class="on">16</button></div></div>
       <div class="tp-pop-row"><span>Playback</span><div class="seg x" id="perfMode" aria-label="Playback mode"><button data-m="auto" class="on">Auto</button><button data-m="smooth">Smooth</button><button data-m="full">Full</button></div></div>
       <p class="perf-note" id="perfNote" role="status"></p>
+      <div class="tp-pop-row"><span>Sound</span><div class="seg x" id="soundMode" aria-label="Studio sound"><button data-s="rich" class="on">Rich</button><button data-s="classic">Classic</button></div></div>
     </div>
 
     <div class="tp-pop" id="recPop" role="dialog" aria-label="Record settings" hidden>
@@ -2088,7 +2089,7 @@ function wireStrip(bus,f){
 }
 function applyStripFx(bus,id){
   const n=bus&&bus.pennioFx; if(!n) return; const f=fxOf(id);
-  if(n.pn) n.pn.pan.value=Math.max(-1,Math.min(1,+f.pan||0));
+  if(n.pn) n.pn.pan.value=Math.max(-1,Math.min(1,(+f.pan)?+f.pan:(SOUND.rich?(SPREAD[id]||0):0))); /* a pan you set is exact; at 0 the lane sits where Rich places it */
   const ctx=n.ctx;
   if(f.echo&&!n.echo){ const dl=ctx.createDelay(1), fb=ctx.createGain(), wet=ctx.createGain(); dl.delayTime.value=.22; fb.gain.value=.18; wet.gain.value=.3; dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(n.sum); n.echo={dl,fb,wet}; n.wired=""; }
   else if(!f.echo&&n.echo){ try{ n.tail.disconnect(n.echo.dl); n.echo.wet.disconnect(); n.echo.fb.disconnect(); n.echo.dl.disconnect(); }catch(e){} n.echo=null; n.wired=""; }
@@ -2262,14 +2263,48 @@ function noise(ctx){
   for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
   noiseCache.set(ctx,b); return b;
 }
+/* ---------- Studio sound ----------
+   Measured on the shared groove before this change: left and right identical (correlation 1.000), about 90% of the
+   energy under 1 kHz and 8 to 16 kHz at -26 dB (boomy, dull), and nothing between the mix and the speaker but a
+   gentle compressor. "Rich" fixes the balance on the master, spreads the lanes across the stereo field, adds a
+   small shared room and a limiter. The same master is built for live playback and for export, so what you hear is
+   what you export. "Classic" is the earlier sound, kept for comparison. */
+const SOUND=(()=>{ let rich; try{ rich=localStorage.getItem("ps.sound")!=="classic"; }catch(e){ rich=true; }
+  return { get rich(){return rich;}, set(v){ rich=!!v; try{ localStorage.setItem("ps.sound",rich?"rich":"classic"); }catch(e){} } }; })();
+window.PennioSound=SOUND;
+/* where each lane sits, -1 left to 1 right; bass, kick-weight and voice stay centred so the low end stays mono-safe */
+const SPREAD={dd:-.25,bata:.45,agogo:.5,shek:-.6,udu:-.3,duru:.28,clap:.3,keys:-.42,gtr:.45,pluck:-.34,flute:.38,reed:-.3};
 function makeMaster(ctx){
   const comp=ctx.createDynamicsCompressor();
-  comp.threshold.value=-14; comp.ratio.value=4; comp.attack.value=.004; comp.release.value=.15;
   const g=ctx.createGain(); g.gain.value=.85;
-  comp.connect(g); g.connect(ctx.destination);
-  comp.pennioOutputGain=g;
-  return comp;
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=32; hp.Q.value=.7;
+  const mud=ctx.createBiquadFilter(); mud.type="peaking"; mud.frequency.value=280; mud.Q.value=.7; mud.gain.value=-3.5;
+  const pres=ctx.createBiquadFilter(); pres.type="peaking"; pres.frequency.value=2500; pres.Q.value=.5; pres.gain.value=5;
+  const air=ctx.createBiquadFilter(); air.type="highshelf"; air.frequency.value=6500; air.gain.value=6;
+  const lim=ctx.createDynamicsCompressor(); lim.threshold.value=-2; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=.002; lim.release.value=.09;
+  const wet=ctx.createGain(); wet.gain.value=.11; let room=null;
+  comp.pennioOutputGain=g; comp.pennioNodes={ctx,hp,mud,pres,air,lim,wet,g,room:null,mode:null};
+  wireMaster(comp); return comp;
 }
+function wireMaster(comp){
+  const n=comp.pennioNodes, ctx=n.ctx, rich=SOUND.rich, lite=!(window.OfflineAudioContext&&ctx instanceof OfflineAudioContext)&&!!(window.PennioPerf&&PennioPerf.lite), key=rich?(lite?"rich-lite":"rich"):"classic";
+  if(n.mode===key) return; n.mode=key;
+  [comp,n.hp,n.mud,n.pres,n.air,n.lim,n.wet].forEach(x=>{ try{ x.disconnect(); }catch(e){} });
+  if(n.room){ try{ n.room.disconnect(); }catch(e){} }
+  if(!rich){
+    comp.threshold.value=-14; comp.ratio.value=4; comp.attack.value=.004; comp.release.value=.15; comp.knee.value=30;
+    comp.connect(n.g); n.g.connect(ctx.destination); return;
+  }
+  comp.threshold.value=-18; comp.ratio.value=2.6; comp.attack.value=.012; comp.release.value=.2; comp.knee.value=12;
+  if(lite){ comp.connect(n.pres); n.pres.connect(n.air); n.air.connect(n.lim); } /* Smooth: two filters and the limiter, no low-cut or low-mid cut */
+  else{ comp.connect(n.hp); n.hp.connect(n.mud); n.mud.connect(n.pres); n.pres.connect(n.air); n.air.connect(n.lim); }
+  if(!lite){ /* a short shared room; skipped in Smooth mode because a convolver is the costliest node here */
+    if(!n.room){ n.room=ctx.createConvolver(); n.room.buffer=impulse(ctx,.45); }
+    n.pres.connect(n.room); n.room.connect(n.wet); n.wet.connect(n.lim);
+  }
+  n.lim.connect(n.g); n.g.connect(ctx.destination);
+}
+window.PennioMasterRewire=()=>{ try{ if(typeof master!=="undefined"&&master&&master.pennioNodes){ wireMaster(master); if(busses) Object.keys(busses).forEach(id=>applyStripFx(busses[id],id)); } }catch(e){} };
 function setTransportOutput(level){
   const gain=master&&master.pennioOutputGain&&master.pennioOutputGain.gain;
   if(!gain||!ac) return;
@@ -2396,9 +2431,9 @@ const V = {
     const o=ctx.createOscillator(), o2=ctx.createOscillator(); o.type="sine"; o2.type="triangle";
     o.frequency.setValueAtTime(f*1.02,t); o.frequency.exponentialRampToValueAtTime(f,t+.03); o2.frequency.setValueAtTime(f*2,t);
     const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=650;
-    const g=ctx.createGain(), g2=ctx.createGain(); env(ctx,g,t,.95,.006,.45); env(ctx,g2,t,.12,.004,.16);
+    const g=ctx.createGain(), g2=ctx.createGain(); env(ctx,g,t,.95,.006,.45); env(ctx,g2,t,SOUND.rich?.34:.12,.004,SOUND.rich?.3:.16);
     o.connect(g); o2.connect(g2); g.connect(lp); g2.connect(lp); lp.connect(out);
-    o.start(t); o2.start(t); o.stop(t+.52); o2.stop(t+.25);
+    o.start(t); o2.start(t); o.stop(t+.52); o2.stop(t+(SOUND.rich?.4:.25));
   },
   keys(ctx,out,t,v){
     const dur= v===2? Math.min(3, stepDur()*(N===12?6:8)) : .34;
@@ -2462,10 +2497,16 @@ function trigger(id,ctx,out,t,v,i){ try{ if(v<0){ const g=ctx.createGain(); g.ga
 (function(){
   const seg=document.getElementById("perfMode"), note=document.getElementById("perfNote"); if(!seg||!note) return;
   const paint=()=>{ seg.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.m===PERF.mode)); note.textContent="Playback: "+PERF.text()+(PERF.mode==="auto"?". Auto turns Smooth on if this phone falls behind.":"."); };
-  seg.addEventListener("click",e=>{ const b=e.target.closest("[data-m]"); if(!b) return; PERF.setMode(b.dataset.m); if(ac&&!playing) toast("Smooth mode fully applies the next time you open the Studio."); paint(); });
-  PERF.onChange=paint; paint();
+  seg.addEventListener("click",e=>{ const b=e.target.closest("[data-m]"); if(!b) return; PERF.setMode(b.dataset.m); if(false) toast("Smooth mode fully applies the next time you open the Studio."); paint(); });
+  PERF.onChange=()=>{ paint(); window.PennioMasterRewire&&window.PennioMasterRewire(); }; paint();
   document.getElementById("tpVal")?.addEventListener("click",paint);
   setInterval(()=>{ const pop=document.getElementById("tpPop"); if(pop&&!pop.hidden) paint(); },1000);
+})();
+(function(){
+  const seg=document.getElementById("soundMode"); if(!seg) return;
+  const paint=()=>seg.querySelectorAll("button").forEach(b=>b.classList.toggle("on",(b.dataset.s==="rich")===SOUND.rich));
+  seg.addEventListener("click",e=>{ const b=e.target.closest("[data-s]"); if(!b) return; SOUND.set(b.dataset.s==="rich"); window.PennioMasterRewire(); paint(); });
+  paint();
 })();
 /* ---------- sequencer ---------- */
 const phQ=[]; function phLoop(){ if(!playing){ phQ.length=0; return; } while(phQ.length && phQ[0][0]<=ac.currentTime){ const st=phQ.shift()[1]; mark(st); if(!PERF.lite||st%(N===12?3:4)===0){ posPaint(st); iluHit(st); } } requestAnimationFrame(phLoop); }
