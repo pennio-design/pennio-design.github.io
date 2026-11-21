@@ -83,6 +83,7 @@
     if (c.rtfRender != null) add("speed", "Render speed", c.rtfRender >= 5 ? "pass" : c.rtfRender >= 2 ? "warn" : "fail", c.rtfRender.toFixed(1) + "x real time", "5x or more", false, true);
     if (c.rtfTotal != null) add("total", "Whole export speed", c.rtfTotal >= 2.5 ? "pass" : c.rtfTotal >= 1 ? "warn" : "fail", c.rtfTotal.toFixed(1) + "x real time", "2.5x or more", false, true);
     if (c.longMaxMs != null) add("freeze", "Page stayed responsive", c.longMaxMs <= 200 ? "pass" : c.longMaxMs <= 500 ? "warn" : "fail", Math.round(c.longMaxMs) + " ms longest freeze", "200 ms or less", false, true);
+    if (c.tags) add("tags", "Credits and cover art", c.tags.ok ? "pass" : "fail", c.tags.ok ? "title, credits and cover written" : "missing from the file", "in every file", true);
     if (c.verify) add("file", "File verified", c.verify.ok ? "pass" : "fail", c.verify.note, "decodes and matches", true);
     return g;
   }
@@ -108,7 +109,7 @@
       const sec = info.sec || (m && m.sec) || run.meta.expectedSec || 0;
       const rtfRender = st("render") ? sec / (st("render") / 1000) : null, rtfTotal = totalMs ? sec / (totalMs / 1000) : null;
       run.speed = { totalMs, rtfRender, rtfTotal, longMaxMs: po ? longMax : null, longCount };
-      run.gates = m ? gates(m, { expectedSec: run.meta.expectedSec, lufs: info.lufs, targetLufs: run.meta.targetLufs, matched: !!info.matched, rtfRender, rtfTotal, longMaxMs: po ? longMax : null, verify: info.verify }) : [];
+      run.gates = m ? gates(m, { expectedSec: run.meta.expectedSec, lufs: info.lufs, targetLufs: run.meta.targetLufs, matched: !!info.matched, rtfRender, rtfTotal, longMaxMs: po ? longMax : null, verify: info.verify, tags: info.tags }) : [];
       run.verdict = verdictOf(run.gates.filter(x => !x.perf)); run.perfVerdict = verdictOf(run.gates.filter(x => x.perf));
       run.blocked = run.gates.some(x => x.block && x.level === "fail");
       run.info = { lufsBefore: info.lufsBefore, lufs: info.lufs, fixed: !!info.fixed, bytes: info.bytes };

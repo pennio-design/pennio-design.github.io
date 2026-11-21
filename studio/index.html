@@ -123,6 +123,20 @@ h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.025em;line-he
 
 .exp-row .btn{min-height:44px}
 .exp-note,.exp-meta{font-size:12px;color:var(--mute);font-weight:300}
+.exp-credits{border:1px solid var(--border,rgba(var(--fg-rgb),.14));border-radius:12px;padding:8px 10px;margin:2px 0}
+.exp-credits summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none;min-height:44px}
+.exp-credits summary::-webkit-details-marker{display:none}
+.exp-credits summary img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:none;background:rgba(var(--fg-rgb),.08)}
+.exp-credits summary span{display:flex;flex-direction:column;min-width:0}
+.exp-credits summary em{font-style:normal;font-size:12px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cred-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-top:8px}
+.cred-grid .wide{grid-column:1/-1}
+.cred-grid label{display:flex;flex-direction:column;gap:4px;font-size:12px;opacity:.9}
+.cred-grid input,.cred-grid textarea{font:inherit;font-size:14px;padding:9px 10px;border-radius:8px;border:1px solid rgba(var(--fg-rgb),.2);background:rgba(var(--fg-rgb),.05);color:inherit;min-height:44px;width:100%;box-sizing:border-box}
+.cred-btns{display:flex;flex-wrap:wrap;gap:8px}
+.cred-up{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.cred-note{font-size:11.5px;line-height:1.4;opacity:.65;margin:0}
+@media (max-width:480px){.cred-grid{grid-template-columns:1fr}}
 .exp-meta:empty{display:none}
 .inst{display:flex;align-items:center;gap:12px;margin:12px 0 22px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--black)}
 .inst[hidden]{display:none}
@@ -1485,6 +1499,16 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <div class="seg" id="expSrc" aria-label="What to export"><button type="button" data-s="beat" class="on">Beat and voice</button><button type="button" data-s="tracks">Playlist clips</button></div>
       <button class="btn exp-dismiss" id="expClose" type="button" aria-label="Close export panel">Close ×</button>
     </div>
+    <details class="exp-credits" id="expCred">
+      <summary><img id="credThumb" alt="Cover art preview" width="44" height="44"><span><b>Credits and cover art</b><em id="credLine">Written into every file you export</em></span></summary>
+      <div class="cred-grid">
+        <label>Title<input id="credTitle" maxlength="80" autocomplete="off"></label>
+        <label>Artist<input id="credArtist" maxlength="80" autocomplete="off"></label>
+        <label class="wide">More credits, one per line (optional)<textarea id="credExtra" rows="2" maxlength="400" placeholder="Lyrics by, Mixed by, Thanks to"></textarea></label>
+        <div class="cred-btns wide"><button class="btn" id="credLook" type="button">Change look</button><label class="btn cred-up">Use my image<input id="credImg" type="file" accept="image/*" hidden></label><button class="btn" id="credSave" type="button">Save cover</button></div>
+        <p class="cred-note wide">Only what the project knows is credited: your names, the instruments switched on, and key and tempo. Use an image you have the rights to.</p>
+      </div>
+    </details>
     <div class="exp-row exp-beat-only"><div class="seg" id="expFmt"><button data-f="mp3" class="on">MP3</button><button data-f="wav">WAV</button></div><span class="exp-note" id="expNote">Small file, right for WhatsApp and Instagram.</span></div>
     <div class="exp-tracks" id="expTracks" hidden><p>One stereo WAV of the Playlist clips you can hear, with the Mixer effects applied.</p><button class="btn primary" id="expTracksGo" type="button">Download WAV</button></div>
     <div class="exp-row exp-beat-only"><span class="exp-lab">Length</span><div class="seg" id="expLen"><button data-l="0" class="on">Auto</button><button data-l="4">4 bars</button><button data-l="8">8</button><button data-l="16">16</button></div></div>
@@ -3013,6 +3037,35 @@ expBtn.onclick=()=>{
 document.querySelectorAll("#expFmt button").forEach(b=>b.onclick=()=>{ expFmt=b.dataset.f; document.querySelectorAll("#expFmt button").forEach(x=>x.classList.toggle("on",x===b)); document.getElementById("expNote").textContent= expFmt==="mp3"? "Small file, right for WhatsApp and Instagram." : "Full quality, for a producer or another music app."; });
 swLoud.onclick=()=>{ const on=!swLoud.classList.contains("on"); swLoud.classList.toggle("on",on); swLoud.setAttribute("aria-checked",String(on)); };
 if(inClaude) expShare.hidden=true;
+/* ---------- credits and cover art for everything exported ---------- */
+addEventListener("DOMContentLoaded",()=>{
+  const C=window.PennioCredits; if(!C) return;
+  C.provide(src=>{
+    const pf=lsGet("ps.profile")||{}, base={title:(document.getElementById("pname").value||"").trim(), artist:(pf.name||"").trim()};
+    if(src==="tracks") return Object.assign(base,{pattern:null,laneIds:[],instruments:[],voice:false});
+    const ids=LANES.map(l=>l.id).filter(id=>id!=="vox"&&pattern[id]&&pattern[id].some(Boolean)&&laneOn(id));
+    return Object.assign(base,{bpm:+bpmEl.value,keyName:KEYN[H.key]+" "+H.scale,steps:N,laneIds:ids,pattern,instruments:ids.map(id=>LANES.find(l=>l.id===id).name),voice:!!(vbuf()&&LAY.vox&&LANES.find(l=>l.id==="vox")&&pattern.vox&&pattern.vox.some(Boolean)||vbuf()&&LAY.full)});
+  });
+  const ti=document.getElementById("credTitle"), ar=document.getElementById("credArtist"), ex=document.getElementById("credExtra"), th=document.getElementById("credThumb"), line=document.getElementById("credLine");
+  let touched=false, url="", timer=0, src="beat";
+  const saved=C.saved; ar.value=saved.artist||(lsGet("ps.profile")||{}).name||""; ex.value=saved.extra||"";
+  async function refresh(){
+    if(!touched) ti.value=(document.getElementById("pname").value||"").trim();
+    C.setTitle(touched?ti.value:""); const m=C.meta(src);
+    try{ const b=await C.cover(src); if(url) URL.revokeObjectURL(url); url=URL.createObjectURL(b); th.src=url; }catch(e){}
+    line.textContent=(m.artist?m.artist+" · ":"")+m.title;
+  }
+  const later=()=>{ clearTimeout(timer); timer=setTimeout(refresh,250); };
+  ti.addEventListener("input",()=>{ touched=true; later(); });
+  ar.addEventListener("input",()=>{ C.save({artist:ar.value}); later(); });
+  ex.addEventListener("input",()=>{ C.save({extra:ex.value}); later(); });
+  document.getElementById("credLook").addEventListener("click",()=>{ const n=C.nextLook(); document.getElementById("credImg").value=""; refresh(); toast("Cover look: "+n+"."); });
+  document.getElementById("credImg").addEventListener("change",async e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; try{ await C.useImage(f); refresh(); toast("Your image will be the cover."); }catch(x){ toast("That image could not be read."); } });
+  document.getElementById("credSave").addEventListener("click",async()=>{ try{ const b=await C.cover(src), m=C.meta(src); await downloads.save({filename:(C.slug(m.title)||"cover")+"-cover.jpg",data:b}); toast("Cover saved."); }catch(e){ toast("Could not save the cover here."); } });
+  document.getElementById("expSrc").addEventListener("click",e=>{ const b=e.target.closest("[data-s]"); if(b){ src=b.dataset.s==="tracks"?"tracks":"beat"; refresh(); } });
+  document.getElementById("export").addEventListener("click",()=>{ touched=touched&&ti.value.trim()!==""; refresh(); });
+  refresh();
+});
 function closeExportPanel(){
   expPanel.hidden=true;
   document.body.classList.remove("export-open");
@@ -3083,11 +3136,12 @@ async function buildExport(){
       const g=Math.pow(10,(-1.2-metrics.truePeakDb)/20); for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++) d[i]*=g; }
       fixed=true; if(lufs!=null) lufs+=20*Math.log10(g); metrics=R.analyze(buf); if(run) run.fixed=true;
     }
-    let blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ let b=isMp3?await mp3(buf):new Blob([wav(buf)],{type:"audio/wav"}); if(isMp3) b=addPennioCredit(b); return b; });
+    let blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ return isMp3?await mp3(buf):new Blob([wav(buf)],{type:"audio/wav"}); });
+    const tagged=await st("tags","Credits and cover art",()=>PennioCredits.tag(blob,isMp3?"mp3":"wav","beat")); blob=tagged.blob;
     const verify=await st("verify","Verify file",()=>verifyBlob(blob,buf,isMp3));
-    const name="pennio-studio-"+(new Date().toISOString().slice(0,10))+(isMp3?".mp3":".wav");
-    info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+(isMp3?" · Credit: PENNIO Studio.":"");
-    if(run){ run.finish({metrics,lufs,lufsBefore,matched:matchOn,verify,fixed,bytes:blob.size,sec:buf.duration});
+    const name=tagged.name;
+    info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+" Credited to "+(tagged.meta.artist||"PENNIO Studio")+", with cover art.";
+    if(run){ run.finish({metrics,lufs,lufsBefore,matched:matchOn,verify,tags:tagged.check,fixed,bytes:blob.size,sec:buf.duration});
       if(run.blocked){ const bad=run.gates.filter(g=>g.block&&g.level==="fail").map(g=>g.label.toLowerCase()).join(", "); const err=new Error("render-blocked"); err.detail=bad; throw err; } }
     return {blob,name,info};
   }catch(e){ if(run&&run.state==="running") run.fail(e); throw e; }
@@ -5671,6 +5725,7 @@ window.PennioStudioProgress={begin(label="Working",description="Your work is bei
 </script>
 <script src="/studio/workspace.js" defer></script>
 <script src="/studio/render-monitor.js" defer></script>
+<script src="/studio/credits.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
 <script id="pennio-first-play-bind">(()=>{const b=document.getElementById("firstPlay"),p=document.getElementById("play");if(!b||!p)return;b.addEventListener("click",()=>p.click());p.addEventListener("click",()=>{setTimeout(()=>{b.innerHTML=p.getAttribute("aria-label")==="Stop (Space)"?"Stop the groove":"Hear the groove <span>↗</span>";},0);});})();</script>
