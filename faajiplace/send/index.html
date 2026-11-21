@@ -69,15 +69,46 @@ footer .fin{font-size:clamp(28px,8vw,44px);font-weight:700;letter-spacing:-.035e
 footer a{color:var(--text)}
 @media (max-width:440px){:root{--g:6px}.two{grid-template-columns:1fr}}
 </style>
+<style>
+/* Ilé Eré story form: cinematic layer */
+:root{--orange:#e66b36}
+body:after{content:"";position:fixed;inset:-50%;z-index:50;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html,body{background:#0c0907}.page{background:transparent}
+.top{position:relative;z-index:3}
+.brand b{color:var(--orange);font-weight:700}
+.brand{font-weight:700;letter-spacing:-.02em;font-size:16px}
+.scene{position:relative;margin:0 calc(50% - 50vw);min-height:78svh;display:flex;align-items:flex-end;overflow:hidden;margin-top:-68px}
+.scene img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%;animation:push 24s ease-out forwards}
+@keyframes push{from{transform:scale(1.12)}to{transform:scale(1)}}
+.scene:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(12,9,7,.85) 0,rgba(12,9,7,.1) 30%,rgba(12,9,7,.35) 60%,#0c0907 97%)}
+.scene:after{content:"";position:absolute;inset:0;z-index:2;border-top:4.5vh solid #000;pointer-events:none}
+.scene .in{position:relative;z-index:2;width:min(720px,100% - 56px);margin:0 auto;padding:0 0 46px}
+.scene .k{color:#f0b18a;text-shadow:0 1px 12px #000}
+.scene h1{font-size:clamp(46px,11vw,96px);letter-spacing:-.05em;line-height:.95;margin-top:16px;text-shadow:0 4px 40px rgba(0,0,0,.6)}
+.scene .tr{color:#e6dbcd;text-shadow:0 1px 14px #000}
+.k{color:#f0b18a}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.steps li{flex-direction:column;gap:10px;padding:22px 18px 22px 0;border-bottom:0;font-size:14px}
+.steps li+li{padding-left:18px;border-left:1px solid var(--hair)}
+.steps i{color:var(--orange)}
+form{background:linear-gradient(180deg,rgba(243,236,228,.035),rgba(243,236,228,0));border:1px solid var(--hair);padding:28px;border-radius:4px}
+.send{background:#f3e8da}
+.send:hover{background:#fff}
+@media(max-width:700px){.steps{grid-template-columns:1fr 1fr}.steps li:nth-child(3){padding-left:0;border-left:0}.steps li:nth-child(n+3){border-top:1px solid var(--hair)}form{padding:20px 16px}}
+@media(prefers-reduced-motion:reduce){.scene img{animation:none}}
+</style>
 </head>
 <body>
 <div class="page">
-  <div class="top"><a class="brand" href="/faajiplace/" style="color:inherit;min-height:44px;display:inline-flex;align-items:center">Ilé Eré</a><a href="/faajiplace/">← Story worlds</a></div>
+  <div class="top"><a class="brand" href="/faajiplace/" style="color:inherit;min-height:44px;display:inline-flex;align-items:center;gap:.28em">ILÉ <b>ERÉ</b></a><a href="/faajiplace/">← Story worlds</a></div>
 
-  <section class="hero">
-    <div class="k">Now receiving stories</div>
+  <section class="scene">
+    <img src="../ere-ogun/river.webp" width="1600" height="900" alt="A young man alone by a river at dusk, reading a bundle of letters" fetchpriority="high">
+    <div class="in">
+    <div class="k">Ilé Eré · now receiving stories</div>
     <h1>Send me your story.</h1>
-    <p class="tr">Ilé Eré is the film side of PENNIO. I am receiving African stories, told by the people who know them, in any African language or in English. A page is enough to begin.</p>
+    <p class="tr">African stories, in any African language or English. A page is enough to begin.</p>
+    </div>
   </section>
 
   <div class="gap"></div>

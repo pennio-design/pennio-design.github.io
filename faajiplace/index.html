@@ -99,6 +99,27 @@ header{position:absolute;top:0;left:0;right:0;z-index:20;width:min(1440px,100% -
 .trailer video{display:block;width:100%;height:auto;max-height:100vh;background:#000}
 .trailer .x{position:fixed;right:14px;top:10px;z-index:2}
 </style>
+<style>
+/* Story world stills */
+.story{background:#120d0a!important;isolation:isolate}
+.story:before,.story:after{display:none}
+.story>img.still{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;transition:transform 1.4s cubic-bezier(.2,.7,.2,1),filter 1.4s;filter:saturate(.92) brightness(.9)}
+.story>.story-top,.story>span:nth-child(3){position:relative;z-index:2}
+.story>.story-top{text-shadow:0 1px 10px rgba(0,0,0,.8)}
+.story>span:last-child{text-shadow:0 2px 18px rgba(0,0,0,.7)}
+.story:hover>img.still,.story:focus-visible>img.still{transform:scale(1.05);filter:saturate(1) brightness(1)}
+.story>img.still+*:before{content:none}
+.story .shade{display:none}
+.story{box-shadow:inset 0 -260px 140px -60px rgba(8,6,4,.92),inset 0 120px 80px -60px rgba(8,6,4,.7)}
+.story>.story-top,.story>span:not(.story-top){z-index:2}
+/* full-bleed image bands */
+.band{position:relative;margin-left:calc(50% - 50vw)!important;margin-right:calc(50% - 50vw)!important;padding-left:max(32px,calc(50vw - 720px))!important;padding-right:max(32px,calc(50vw - 720px))!important;border:0!important;overflow:hidden;isolation:isolate}
+.band>.bg{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;filter:brightness(.42) saturate(.85)}
+.band:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,var(--ink) 0,transparent 22%,transparent 78%,var(--ink) 100%)}
+.manifesto.band{padding-top:150px!important;padding-bottom:150px!important}
+.closing.band{padding-top:160px!important;padding-bottom:120px!important}
+@media(max-width:760px){.band{padding-left:18px!important;padding-right:18px!important}.manifesto.band{padding-top:96px!important;padding-bottom:96px!important}.closing.band{padding-top:110px!important}}
+</style>
 </head>
 <body>
 <div class="shell">
@@ -137,19 +158,19 @@ header{position:absolute;top:0;left:0;right:0;z-index:20;width:min(1440px,100% -
 <section id="stories">
 <div class="section-head"><div><div class="mono">ALSO FROM ILÉ ERÉ</div><h2>Coming next.</h2></div><div class="mono">01 TO 05</div></div>
 <div class="slate">
-<button class="story" type="button" data-i="0"><span class="story-top"><span class="mono kind">ORIGIN / ILE-IFE</span><span class="number">01</span></span><span><h3>The chain at Ilé-Ifẹ̀</h3><p>Ọbàtálá, Odùduwà and the sand.</p><span class="open mono">NOTE +</span></span></button>
-<button class="story" type="button" data-i="1"><span class="story-top"><span class="mono kind">HISTORY / COURAGE</span><span class="number">02</span></span><span><h3>Mọ́remí Àjàṣorò</h3><p>The queen who let herself be taken.</p><span class="open mono">NOTE +</span></span></button>
-<button class="story" type="button" data-i="2"><span class="story-top"><span class="mono kind">LEGEND / CONSEQUENCE</span><span class="number">03</span></span><span><h3>Ṣàngó, Ọya and Ọba</h3><p>The king, the storm and the ear.</p><span class="open mono">NOTE +</span></span></button>
-<button class="story" type="button" data-i="3"><span class="story-top"><span class="mono kind">RESISTANCE / MEMORY</span><span class="number">04</span></span><span><h3>Lísàbí and the aró</h3><p>A revolt hidden inside farm work.</p><span class="open mono">NOTE +</span></span></button>
-<button class="story" type="button" data-i="4"><span class="story-top"><span class="mono kind">COVENANT / OSOGBO</span><span class="number">05</span></span><span><h3>Ọ̀ṣun and Larooye</h3><p>The covenant behind Òṣogbo.</p><span class="open mono">NOTE +</span></span></button>
+<button class="story" type="button" data-i="0"><img class="still" src="worlds/ife.webp" alt="A golden chain descending from storm clouds to a mound of sand on the sea, a hen standing on it" loading="lazy" decoding="async" style="object-position:50% 30%"><span class="story-top"><span class="mono kind">ORIGIN / ILE-IFE</span><span class="number">01</span></span><span><h3>The chain at Ilé-Ifẹ̀</h3><p>Ọbàtálá, Odùduwà and the sand.</p><span class="open mono">NOTE +</span></span></button>
+<button class="story" type="button" data-i="1"><img class="still" src="worlds/moremi.webp" alt="A Yoruba queen at night among thatched roofs, raiders' torches on a far hill" loading="lazy" decoding="async" style="object-position:50% 25%"><span class="story-top"><span class="mono kind">HISTORY / COURAGE</span><span class="number">02</span></span><span><h3>Mọ́remí Àjàṣorò</h3><p>The queen who let herself be taken.</p><span class="open mono">NOTE +</span></span></button>
+<button class="story" type="button" data-i="2"><img class="still" src="worlds/sango.webp" alt="Lightning over a red-earth palace compound in a night storm" loading="lazy" decoding="async" style="object-position:50% 30%"><span class="story-top"><span class="mono kind">LEGEND / CONSEQUENCE</span><span class="number">03</span></span><span><h3>Ṣàngó, Ọya and Ọba</h3><p>The king, the storm and the ear.</p><span class="open mono">NOTE +</span></span></button>
+<button class="story" type="button" data-i="3"><img class="still" src="worlds/lisabi.webp" alt="Farmers with hoes in a yam field at dusk, one looking back over his shoulder" loading="lazy" decoding="async" style="object-position:50% 30%"><span class="story-top"><span class="mono kind">RESISTANCE / MEMORY</span><span class="number">04</span></span><span><h3>Lísàbí and the aró</h3><p>A revolt hidden inside farm work.</p><span class="open mono">NOTE +</span></span></button>
+<button class="story" type="button" data-i="4"><img class="still" src="worlds/osun.webp" alt="The Ọ̀ṣun river through a sacred grove at sunrise, carved figures among the roots" loading="lazy" decoding="async" style="object-position:50% 45%"><span class="story-top"><span class="mono kind">COVENANT / OSOGBO</span><span class="number">05</span></span><span><h3>Ọ̀ṣun and Larooye</h3><p>The covenant behind Òṣogbo.</p><span class="open mono">NOTE +</span></span></button>
 </div>
 <p class="note">Tap a story for where the tellings differ. Not yet reviewed by an elder.</p>
 </section>
-<section class="manifesto">
+<section class="manifesto band"><img class="bg" src="worlds/osun.webp" alt="" loading="lazy" decoding="async">
 <div class="mono">HOW I WORK</div>
 <div><blockquote>Where a tradition is <span>still practised,</span> I ask before I write.</blockquote></div>
 </section>
-<section class="closing">
+<section class="closing band"><img class="bg" src="ere-ogun/river.webp" alt="" loading="lazy" decoding="async" style="object-position:60% 40%">
 <div><div class="mono">ILÉ ERÉ · PENNIO STUDIO</div><h2>Your story<br>next.</h2></div>
 <a href="/faajiplace/send/">SEND ME YOUR STORY →</a>
 </section>
