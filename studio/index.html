@@ -1344,7 +1344,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <div class="auth-gate-copy"><span class="auth-gate-eyebrow">A CREATIVE PLATFORM BY PENNIO</span><h1>Make something<br><em>worth keeping.</em></h1><p>Sound, language, image and story. One workspace for ideas that deserve a form.</p>
       <div class="auth-gate-rooms"><div><b>01</b><span><strong>Àyàn</strong><small>Music and sound</small></span></div><div><b>02</b><span><strong>Ewì</strong><small>Writing and poetry</small></span></div><div><b>03</b><span><strong>Ilé Eré</strong><small>Film and image</small></span></div><div><b>04</b><span><strong>Beauty Room</strong><small>Camera and portraiture</small></span></div></div>
     </div>
-    <section class="auth-gate-card" aria-labelledby="authGateTitle"><span class="auth-gate-eyebrow">YOUR PENNIO ACCOUNT</span><h2 id="authGateTitle">Enter your workspace.</h2><p>Sign in with your email. We’ll send you a secure one-time code.</p>
+    <section class="auth-gate-card" aria-labelledby="authGateTitle"><div class="gate-listen" id="gateListen" hidden><div class="gl-grid" id="glGrid" role="img" aria-label="Pattern preview"></div><div class="gl-row"><button type="button" id="glPlay" aria-label="Play this groove">▶</button><span id="glMeta"></span></div></div><span class="auth-gate-eyebrow">YOUR PENNIO ACCOUNT</span><h2 id="authGateTitle">Enter your workspace.</h2><p>Sign in with your email. We’ll send you a secure one-time code.</p>
       <label for="gateEmail">Email address</label><input id="gateEmail" type="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
       <button id="gateSend" type="button">Send sign-in code <span>↗</span></button>
       <div id="gateCodeRow" hidden><label for="gateCode">Verification code</label><input id="gateCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Enter the code from your email"><button id="gateVerify" type="button">Verify and enter <span>↗</span></button></div>
@@ -1493,6 +1493,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <button class="btn" id="expLink">Copy groove link</button>
     </div>
     <p class="exp-meta exp-beat-only" id="expMeta"></p>
+    <div class="rm exp-beat-only" id="rmBox" hidden aria-label="Render report"></div>
   </div>
   </div>
   <div class="shell-status" id="shellStatus"><span class="daw-status" id="dawStatus" role="status" aria-live="polite">Pick a groove, press Play, then add your voice.</span></div>
@@ -2710,36 +2711,78 @@ async function renderMix(){
       LANES.forEach(l=>{const v=pattern[l.id][i]; if(v&&laneOn(l.id)&&!(l.id==="vox"&&!LAY.vox)) trigger(l.id,oc,bs[l.id],t,v,i);});
     }
   }
-  return oc.startRendering();
+  const out=await oc.startRendering(); out.pennioPlanSec=total+.2; return out;
 }
-/* loudness (ITU BS.1770 style: K-weighting, 400 ms blocks, gating) */
-async function lufsOf(buf){
+/* loudness (ITU BS.1770 style: K-weighting, 400 ms blocks, gating)
+   The K-weighted signal is made once; level changes and limiting are then measured on it in plain JS, with no further offline renders. */
+async function kWeight(buf){
   const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
   const oc=new OC(buf.numberOfChannels,buf.length,buf.sampleRate);
   const src=oc.createBufferSource(); src.buffer=buf;
   const hs=oc.createBiquadFilter(); hs.type="highshelf"; hs.frequency.value=1681; hs.gain.value=4;
   const hp=oc.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=38; hp.Q.value=-6.02; // Web Audio takes Q in dB here: linear 0.5
   src.connect(hs); hs.connect(hp); hp.connect(oc.destination); src.start();
-  const k=await oc.startRendering(), sr=k.sampleRate, blk=Math.round(.4*sr), hop=Math.round(.1*sr), chs=[...Array(k.numberOfChannels).keys()].map(c=>k.getChannelData(c));
-  const ms=[]; for(let i=0;i+blk<=k.length;i+=hop){ let z=0; chs.forEach(d=>{ for(let j=i;j<i+blk;j++) z+=d[j]*d[j]; }); ms.push(z/blk); }
+  const k=await oc.startRendering(); return [...Array(k.numberOfChannels).keys()].map(c=>k.getChannelData(c));
+}
+/* gated loudness of K-weighted channels, as if they were scaled by G and (optionally) a per-sample gain curve */
+function lufsFromK(k,sr,G,gc){
+  const n=k[0].length, e=new Float64Array(n+1);
+  for(let i=0;i<n;i++){ const g=G*(gc?gc[i]:1); let z=0; for(let c=0;c<k.length;c++){ const v=k[c][i]*g; z+=v*v; } e[i+1]=e[i]+z; }
+  const blk=Math.round(.4*sr), hop=Math.round(.1*sr), ms=[];
+  for(let i=0;i+blk<=n;i+=hop) ms.push((e[i+blk]-e[i])/blk);
   const L=x=>-0.691+10*Math.log10(x||1e-12);
   let g=ms.filter(x=>L(x)>-70); if(!g.length) return -70;
   const rel=L(g.reduce((a,b)=>a+b,0)/g.length)-10; g=g.filter(x=>L(x)>rel);
-  return L(g.reduce((a,b)=>a+b,0)/g.length);
+  return g.length? L(g.reduce((a,b)=>a+b,0)/g.length) : -70;
 }
+async function lufsOf(buf){ return lufsFromK(await kWeight(buf),buf.sampleRate,1); }
 function peakOf(buf){ let p=0; for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++){ const a=Math.abs(d[i]); if(a>p) p=a; } } return p; }
+/* look-ahead brick-wall limiter gain curve: needed gain, minimum over +-W samples, slow release, then a W-sample smoother.
+   The result never exceeds the gain needed at any sample, so peaks stay under the ceiling. */
+function limiterCurve(ch,G,ceil,sr){
+  const n=ch[0].length, W=Math.max(8,Math.round(sr*.0015)), g=new Float32Array(n);
+  for(let i=0;i<n;i++){ let a=0; for(let c=0;c<ch.length;c++){ const v=ch[c][i]<0?-ch[c][i]:ch[c][i]; if(v>a) a=v; } a*=G; g[i]=a>ceil? ceil/a : 1; }
+  const m=new Float32Array(n), dq=new Int32Array(n+W); let h=0,t=0;
+  for(let i=0;i<n+W-1;i++){
+    if(i<n){ while(t>h&&g[dq[t-1]]>=g[i]) t--; dq[t++]=i; }
+    const j=i-(W-1); if(j>=0&&j<n){ while(dq[h]<j-(W-1)) h++; m[j]=g[dq[h]]; }
+  }
+  const rel=1-Math.exp(-1/(.06*sr)); let r=1; for(let i=0;i<n;i++){ r=Math.min(m[i],r+(1-r)*rel); m[i]=r; }
+  const P=new Float64Array(n+1); for(let i=0;i<n;i++) P[i+1]=P[i]+m[i];
+  const out=new Float32Array(n); for(let i=0;i<n;i++){ const lo=Math.max(0,i-W+1); out[i]=(P[i+1]-P[lo])/(i+1-lo); }
+  return out;
+}
+/* set the mix to the target loudness with a limiter, searching for the gain that lands on target without clipping */
+const yieldUI=()=>new Promise(r=>setTimeout(r,0));
 async function matchLoudness(buf,tgt){
-  const target= tgt==null? -14 : tgt, ceil=Math.pow(10,-1/20);
-  const before=await lufsOf(buf); let gain=Math.pow(10,(target-before)/20);
-  const pk=peakOf(buf); gain=Math.min(gain, ceil*2/(pk||1e-9));
-  for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c);
-    for(let i=0;i<d.length;i++){ let x=d[i]*gain; const ax=Math.abs(x); if(ax>ceil*.7){ const over=ax-ceil*.7, room=ceil*.3; x=Math.sign(x)*(ceil*.7+room*Math.tanh(over/room)); } d[i]=x; } }
-  return {before, after: await lufsOf(buf), peakDb: 20*Math.log10(peakOf(buf)||1e-9)};
+  const target= tgt==null? -14 : tgt, sr=buf.sampleRate, ceil=Math.pow(10,-1.5/20);
+  const k=await kWeight(buf); await yieldUI(); const before=lufsFromK(k,sr,1); await yieldUI();
+  if(before<-60) return {before, after:before, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:0};
+  const dry=[...Array(buf.numberOfChannels).keys()].map(c=>buf.getChannelData(c).slice());
+  let gdb=Math.min(24,target-before), best=null, it=0;
+  for(;it<6;it++){
+    const G=Math.pow(10,gdb/20); await yieldUI(); const gc=limiterCurve(dry,G,ceil,sr); await yieldUI(); const after=lufsFromK(k,sr,G,gc);
+    if(!best||Math.abs(target-after)<Math.abs(target-best.after)) best={G,gc,after};
+    const err=target-after; if(Math.abs(err)<=.15) break;
+    gdb+=err*(it<2?1:.8); if(gdb>24){ gdb=24; }
+  }
+  for(let c=0;c<buf.numberOfChannels;c++){ await yieldUI(); const d=buf.getChannelData(c), x=dry[c]; for(let i=0;i<d.length;i++) d[i]=x[i]*best.G*best.gc[i]; }
+  return {before, after:best.after, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:it+1};
 }
 let lameP=null;
 function loadLame(){ if(window.lamejs) return Promise.resolve(); if(lameP) return lameP;
   lameP=new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="vendor/lame.min.js"; sc.onload=()=>res(); sc.onerror=()=>{ lameP=null; rej(new Error("encoder")); }; document.head.appendChild(sc); }); return lameP; }
-async function mp3(buf){
+function mp3Worker(buf,onP){
+  return new Promise((res,rej)=>{
+    let w; try{ w=new Worker("mp3-worker.js"); }catch(e){ rej(e); return; }
+    const L=buf.getChannelData(0).slice(), R=(buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0)).slice();
+    w.onmessage=e=>{ const d=e.data; if(d.p!=null){ onP&&onP(d.p); } else if(d.done){ w.terminate(); res(new Blob(d.chunks,{type:"audio/mpeg"})); } else if(d.error){ w.terminate(); rej(new Error(d.error)); } };
+    w.onerror=e=>{ w.terminate(); rej(new Error(e.message||"worker")); };
+    w.postMessage({L,R,sr:buf.sampleRate,kbps:192},[L.buffer,R.buffer]);
+  });
+}
+async function mp3(buf,onP){
+  try{ return await mp3Worker(buf,onP); }catch(e){ console.warn("MP3 worker unavailable, encoding on the page:",e&&e.message||e); }
   await loadLame();
   const enc=new lamejs.Mp3Encoder(2,buf.sampleRate,192), L=buf.getChannelData(0), R=buf.numberOfChannels>1?buf.getChannelData(1):L, n=L.length, out=[], blk=1152, l=new Int16Array(blk), rr=new Int16Array(blk);
   const s16=v=>Math.max(-32768,Math.min(32767,Math.round(v*32767)));
@@ -2899,22 +2942,55 @@ async function saveExport(x){
   try{await downloads.save({filename:x.name,data:x.blob});}
   catch(e){await downloads.save({filename:x.name,data:new Uint8Array(await x.blob.arrayBuffer())});}
 }
+/* decode the finished file again and compare it with what was rendered */
+async function verifyBlob(blob,buf,isMp3){
+  const R=window.PennioRender;
+  try{
+    const ab=await blob.arrayBuffer();
+    if(!isMp3){
+      const dv=new DataView(ab), tag=String.fromCharCode(...new Uint8Array(ab,0,4));
+      const ok=tag==="RIFF"&&dv.getUint32(24,true)===buf.sampleRate&&dv.getUint16(22,true)===buf.numberOfChannels&&dv.getUint32(40,true)===buf.length*buf.numberOfChannels*2;
+      return {ok,note:ok?"WAV header and length match":"WAV header does not match"};
+    }
+    const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+    const d=await new OC(2,1,44100).decodeAudioData(ab.slice(0));
+    const durDiff=Math.abs(d.duration-buf.duration), lvl=R?Math.abs(R.analyze(d).rmsDb-R.analyze(buf).rmsDb):0;
+    const ok=d.numberOfChannels===2&&durDiff<=.12&&lvl<=1;
+    return {ok,note:"decoded "+d.duration.toFixed(2)+" s, level differs "+lvl.toFixed(2)+" dB",durDiff,lvl};
+  }catch(e){ return {ok:false,note:"could not decode: "+((e&&e.message)||e)}; }
+}
 async function buildExport(){
-  const buf=await renderMix(); let info="";
-  if(swLoud.classList.contains("on")){ const m=await matchLoudness(buf); info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
-  const isMp3=expFmt==="mp3"; let blob=isMp3?await mp3(buf):new Blob([wav(buf)],{type:"audio/wav"});
-  if(isMp3)blob=addPennioCredit(blob);
-  const name="pennio-studio-"+(new Date().toISOString().slice(0,10))+(isMp3?".mp3":".wav");
-  info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+(isMp3?" · Credit: PENNIO Studio.":"");
-  return {blob,name,info};
+  const R=window.PennioRender, isMp3=expFmt==="mp3", matchOn=swLoud.classList.contains("on"), TARGET=-14;
+  const run=R? R.begin({kind:"export",fmt:isMp3?"mp3":"wav",targetLufs:TARGET,bpm:+bpmEl.value}) : null;
+  const st=(n,l,f)=>run? run.stage(n,l,f) : f();
+  try{
+    const buf=await st("render","Render mix",()=>renderMix());
+    if(run) run.meta.expectedSec=buf.pennioPlanSec||buf.duration;
+    let lufsBefore=null, lufs=null, info="";
+    if(matchOn){ const m=await st("match","Match loudness",async()=>{ const r=await matchLoudness(buf,TARGET); r.after=await lufsOf(buf); return r; }); lufsBefore=m.before; lufs=m.after; info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
+    else { lufs=await st("meter","Measure loudness",()=>lufsOf(buf)); }
+    /* never ship a peak that can clip after decoding: trim to -1.2 dBTP and re-check */
+    let fixed=false, metrics=R? await st("check","Quality check",()=>R.analyze(buf)) : null;
+    if(metrics&&metrics.nan===0&&metrics.truePeakDb>-1){
+      const g=Math.pow(10,(-1.2-metrics.truePeakDb)/20); for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++) d[i]*=g; }
+      fixed=true; if(lufs!=null) lufs+=20*Math.log10(g); metrics=R.analyze(buf); if(run) run.fixed=true;
+    }
+    let blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ let b=isMp3?await mp3(buf):new Blob([wav(buf)],{type:"audio/wav"}); if(isMp3) b=addPennioCredit(b); return b; });
+    const verify=await st("verify","Verify file",()=>verifyBlob(blob,buf,isMp3));
+    const name="pennio-studio-"+(new Date().toISOString().slice(0,10))+(isMp3?".mp3":".wav");
+    info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+(isMp3?" · Credit: PENNIO Studio.":"");
+    if(run){ run.finish({metrics,lufs,lufsBefore,matched:matchOn,verify,fixed,bytes:blob.size,sec:buf.duration});
+      if(run.blocked){ const bad=run.gates.filter(g=>g.block&&g.level==="fail").map(g=>g.label.toLowerCase()).join(", "); const err=new Error("render-blocked"); err.detail=bad; throw err; } }
+    return {blob,name,info};
+  }catch(e){ if(run&&run.state==="running") run.fail(e); throw e; }
 }
 expGo.onclick=async()=>{
   if(!downloads){ toast("Export is not available in this view."); return; }
   expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…";
   try{ const x=await buildExport(); expMeta.textContent=x.info;
     await saveExport(x);
-    toast("Track exported."); closeExportPanel(); }
-  catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : "Export was cancelled or blocked."); }
+    toast("Track exported."); }
+  catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : e&&e.message==="render-blocked"? "Export stopped: the file failed its quality check ("+(e.detail||"see report")+")." : "Export was cancelled or blocked."); }
   expGo.disabled=expShare.disabled=false; expGo.textContent="Download";
 };
 expShare.onclick=async()=>{
@@ -4643,6 +4719,7 @@ document.getElementById("obReturn").onclick=async()=>{ try{if(sbSess)await sbFet
 /* boot: the workspace is mounted only after Supabase confirms a valid account session. */
 let pennioWorkspaceStarted=false, pennioProfileGateOpen=false, pendingWorkspaceAuthState=null;
 async function startPENNIOWorkspace(authState){
+  try{ if(playing) stopAll(); }catch(e){}
   if(pennioWorkspaceStarted||pennioProfileGateOpen) return;
   const authEmail=(sbSess&&sbSess.user&&sbSess.user.email||"").trim().toLowerCase();
   let prof=lsGet("ps.profile")||(await kvGet("profile"));
@@ -4667,7 +4744,9 @@ async function startPENNIOWorkspace(authState){
   const displayName=String(profileForGreeting.name||emailName||"creator").trim().split(/\s+/)[0];
   const greetingName=document.getElementById("dashUserName");
   if(greetingName)greetingName.textContent=(displayName.charAt(0).toUpperCase()+displayName.slice(1))+".";
-  const g=new URLSearchParams(location.search).get("g");
+  let g=new URLSearchParams(location.search).get("g");
+  if(!g){ const pend=lsGet("ps.pendingGroove"); if(pend&&pend.g&&Date.now()-pend.t<864e5) g=pend.g; }
+  try{ localStorage.removeItem("ps.pendingGroove"); }catch(e){}
   if(g){ try{ const st=grooveDecode(g); await saveNow(); const shared={id:newId(), name:"Shared groove", created:Date.now(), updated:Date.now(), state:{...st, banks:null}, audio:null};
       await openProject(shared); ready=true; await saveNow(); toast("Opened a shared groove as a new session. Your own work is in Sessions."); }
     catch(e){ toast("That groove link is broken or incomplete."); }
@@ -4678,12 +4757,32 @@ async function startPENNIOWorkspace(authState){
   window.addEventListener("pagehide",()=>{ if(ready) saveNow(); });
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"&&ready){ saveNow(); if(edits>editsAtCk) checkpoint("When you left"); } });
 }
+/* Shared grooves play without an account. The groove is also kept for 24 hours so it opens as a new session after sign-in. */
+function applyListen(st){
+  pattern=fillLanes(JSON.parse(JSON.stringify(st.pattern))); banks={A:pattern,B:null,C:null,D:null,E:null,F:null}; bank="A";
+  bpmEl.value=st.bpm; bpmEl.oninput(); swEl.value=st.sw; swEl.oninput();
+  Object.assign(H,{key:9,scale:"minor",prog:0},st.harm||{}); renderHarm(); setN(st.n||16);
+}
+function initListenGate(){
+  const gp=new URLSearchParams(location.search).get("g"); if(!gp) return;
+  let st; try{ st=grooveDecode(gp); }catch(e){ return; }
+  lsSet("ps.pendingGroove",{g:gp,t:Date.now()});
+  const box=document.getElementById("gateListen"), grid=document.getElementById("glGrid"), btn=document.getElementById("glPlay");
+  grid.replaceChildren(); grid.style.setProperty("--cols",st.n);
+  LANES.forEach(l=>{ const a=st.pattern[l.id]; if(!a||!a.some(Boolean)) return; const row=document.createElement("div"); row.className="gl-r"; row.style.gridTemplateColumns="repeat("+st.n+",1fr)";
+    for(let i=0;i<st.n;i++){ const c=document.createElement("i"); const v=a[i]; if(v) c.className=v<0?"gh":"on"; if(i%(st.n===12?3:4)===0) c.dataset.b="1"; row.appendChild(c); } grid.appendChild(row); });
+  document.getElementById("glMeta").textContent=st.bpm+" BPM · "+KEYN[st.harm.key]+" "+st.harm.scale;
+  box.hidden=false;
+  btn.onclick=()=>{ if(playing){ stopAll(); btn.textContent="▶"; btn.setAttribute("aria-label","Play this groove"); return; }
+    applyListen(st); ensureAudio(); start(); btn.textContent="■"; btn.setAttribute("aria-label","Stop"); };
+}
 window.__pennioAyanBoot=(async()=>{
   db=await idb();
   const authState=await cloudBoot();
   if(!authState||!authState.ok){
     document.body.classList.add("auth-locked");
     document.getElementById("authGate").hidden=false;
+    try{ initListenGate(); }catch(e){ console.warn("listen mode",e); }
     const saved=lsGet("ps.sbEmail"); if(saved) document.getElementById("gateEmail").value=saved;
     if(authState&&authState.transient) document.getElementById("gateStatus").textContent="We could not verify your saved session. Check your connection and reload to try again.";
     return;
@@ -5463,6 +5562,7 @@ window.PennioStudioProgress={begin(label="Working",description="Your work is bei
 })();
 </script>
 <script src="/studio/workspace.js" defer></script>
+<script src="/studio/render-monitor.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
 <script id="pennio-first-play-bind">(()=>{const b=document.getElementById("firstPlay"),p=document.getElementById("play");if(!b||!p)return;b.addEventListener("click",()=>p.click());p.addEventListener("click",()=>{setTimeout(()=>{b.innerHTML=p.getAttribute("aria-label")==="Stop (Space)"?"Stop the groove":"Hear the groove <span>↗</span>";},0);});})();</script>
@@ -6179,6 +6279,42 @@ body:has(#v-home.on) .logo>span,body:has(#v-home.on) #studioPanelPosition,body:h
 #v-home .dash-intro{justify-content:space-between;align-items:center}
 #v-home .dash-logo{width:44px;height:auto;display:block}
 #v-home .dash-logo path{fill:var(--text)}
+
+/* ---- Render monitor: stages, gates and history inside the Export popover ---- */
+.rm{display:grid;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2)}
+.rm[hidden]{display:none}
+.rm[data-state="pass"]{border-color:rgba(70,180,110,.55)}.rm[data-state="warn"]{border-color:rgba(214,155,54,.7)}.rm[data-state="fail"]{border-color:var(--danger)}
+.rm-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px}
+.rm-head span{font-variant-numeric:tabular-nums;color:var(--ts);font-size:12px}
+.rm-stages{list-style:none;padding:0;display:grid;gap:3px;font-size:12px}
+.rm-stages li{display:flex;justify-content:space-between;gap:8px;color:var(--ts)}
+.rm-stages li.running{color:var(--tp)}.rm-stages li.running em::after{content:"";display:inline-block;width:6px;height:6px;margin-left:6px;border-radius:50%;background:var(--orange);animation:rmPulse .8s ease-in-out infinite}
+.rm-stages li.fail{color:var(--danger)}
+.rm-stages em{font-style:normal;font-variant-numeric:tabular-nums}
+@keyframes rmPulse{50%{opacity:.25}}
+.rm-gates{display:flex;flex-wrap:wrap;gap:5px}
+.rm-chip{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--border);color:var(--ts)}
+.rm-chip.perf{border-style:dashed}
+.rm-chip.pass::before{content:"\2713 ";color:#4cc27a}.rm-chip.warn{border-color:rgba(214,155,54,.7);color:var(--tp)}.rm-chip.warn::before{content:"! ";color:#d69b36}
+.rm-chip.fail{border-color:var(--danger);color:var(--tp)}.rm-chip.fail::before{content:"\2715 ";color:var(--danger)}
+.rm-foot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rm-foot small{color:var(--ts);font-size:11px}
+.rm-btn{min-height:32px;padding:0 10px;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--tp);margin-left:6px}
+@media (prefers-reduced-motion:reduce){.rm-stages li.running em::after{animation:none}}
+
+/* ---- shared groove: listen without an account ---- */
+.gate-listen{display:grid;gap:14px;margin:0 0 20px;padding:14px;border:1px solid var(--line2,rgba(255,255,255,.18));border-radius:14px;background:rgba(255,255,255,.04)}
+.gate-listen[hidden]{display:none}
+.gl-grid{display:grid;gap:3px}
+.gl-r{display:grid;gap:2px}
+.gl-r i{display:block;height:9px;border-radius:2px;background:rgba(255,255,255,.12)}
+.gl-r i[data-b="1"]{background:rgba(255,255,255,.2)}
+.gl-r i.on{background:#F26522}.gl-r i.gh{background:rgba(242,101,34,.4)}
+.gl-row{display:flex;align-items:center;gap:14px}
+#glPlay{width:56px;height:56px;border-radius:50%;background:#F26522;color:#111;font-size:20px;display:grid;place-items:center;flex:none}
+#glPlay:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#glMeta{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+html[data-theme="light"] .gl-r i{background:rgba(9,9,9,.12)}html[data-theme="light"] .gl-r i[data-b="1"]{background:rgba(9,9,9,.2)}html[data-theme="light"] .gate-listen{background:rgba(9,9,9,.04)}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
@@ -6363,7 +6499,7 @@ $("vrec").addEventListener("click",()=>closePops());
 /* workspace.js is deferred and builds the dock; sign-in can finish first, so mount whenever the dock appears, not only when the shell flips on */
 const ensureDock=()=>{ if(body.classList.contains("studio-shell")){ const dock=$("pennioWorkspaceDock"); if(dock&&dock.parentNode!==$("sideMediaHost")){ mountWorkspaceDock(true); syncSide(); } } };
 window.addEventListener("pennio:workspace-ready",ensureDock);
-addEventListener("DOMContentLoaded",()=>{syncShell();ensureDock();syncSide();});
+addEventListener("DOMContentLoaded",()=>{syncShell();ensureDock();syncSide();if(window.PennioRender)PennioRender.mount($("rmBox"));});
 if(document.readyState!=="loading"){syncShell();}
 })();
 </script>
