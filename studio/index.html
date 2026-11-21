@@ -1459,6 +1459,8 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
           <div class="ctl x"><label>Tempo <b id="bpmV">104</b></label><input type="range" id="bpm" min="60" max="160" value="104" aria-label="Tempo"></div>
           <div class="ctl x"><label>Swing <b id="swV">12%</b></label><input type="range" id="swing" min="0" max="60" value="12" aria-label="Swing"></div>
       <div class="tp-pop-row"><span>Steps per bar</span>    <div class="seg x" id="len" aria-label="Steps per bar"><button data-n="12">12</button><button data-n="16" class="on">16</button></div></div>
+      <div class="tp-pop-row"><span>Playback</span><div class="seg x" id="perfMode" aria-label="Playback mode"><button data-m="auto" class="on">Auto</button><button data-m="smooth">Smooth</button><button data-m="full">Full</button></div></div>
+      <p class="perf-note" id="perfNote" role="status"></p>
     </div>
 
     <div class="tp-pop" id="recPop" role="dialog" aria-label="Record settings" hidden>
@@ -2064,24 +2066,35 @@ const irCache=new WeakMap();
 const irFor=ctx=>{ if(!irCache.has(ctx)) irCache.set(ctx,impulse(ctx,1.3)); return irCache.get(ctx); };
 function makeBusses(ctx,out){ const b={}; Object.keys(gainsV).forEach(k=>{
   const g=ctx.createGain(); g.gain.value=gainsV[k];
-  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=10;
-  const pk=ctx.createBiquadFilter(); pk.type="peaking"; pk.frequency.value=2800; pk.Q.value=.8; pk.gain.value=0;
-  const cp=ctx.createDynamicsCompressor(); cp.attack.value=.008; cp.release.value=.18; cp.threshold.value=0; cp.ratio.value=1;
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=75;
+  const pk=ctx.createBiquadFilter(); pk.type="peaking"; pk.frequency.value=2800; pk.Q.value=.8; pk.gain.value=3;
+  const cp=ctx.createDynamicsCompressor(); cp.attack.value=.008; cp.release.value=.18; cp.threshold.value=-22; cp.ratio.value=3.5;
   const sum=ctx.createGain(), pn=ctx.createStereoPanner? ctx.createStereoPanner() : null;
-  g.connect(hp); hp.connect(pk); pk.connect(cp); cp.connect(sum);
   if(pn){ sum.connect(pn); pn.connect(out); } else sum.connect(out);
-  g.pennioFx={ctx,hp,pk,cp,sum,pn,echo:null,rev:null};
+  g.pennioFx={ctx,hp,pk,cp,sum,pn,echo:null,rev:null,tail:g,wired:null};
   applyStripFx(g,k); b[k]=g; }); return b; }
+/* A strip with EQ, compressor, echo and reverb all off is just level -> pan. Filters and a
+   compressor left running at neutral cost CPU on every strip, which slower phones cannot spare. */
+function wireStrip(bus,f){
+  const n=bus.pennioFx, key=(f.eq?"e":"")+(f.comp?"c":"")+(f.echo?"d":"")+(f.rev?"r":"");
+  if(n.wired===key) return; n.wired=key;
+  try{ bus.disconnect(); n.hp.disconnect(); n.pk.disconnect(); n.cp.disconnect(); }catch(e){}
+  let last=bus;
+  if(f.eq){ last.connect(n.hp); n.hp.connect(n.pk); last=n.pk; }
+  if(f.comp){ last.connect(n.cp); last=n.cp; }
+  last.connect(n.sum); n.tail=last;
+  if(n.echo) last.connect(n.echo.dl);
+  if(n.rev) last.connect(n.rev.cv);
+}
 function applyStripFx(bus,id){
   const n=bus&&bus.pennioFx; if(!n) return; const f=fxOf(id);
-  n.hp.frequency.value=f.eq?75:10; n.pk.gain.value=f.eq?3:0;
-  n.cp.threshold.value=f.comp?-22:0; n.cp.ratio.value=f.comp?3.5:1;
   if(n.pn) n.pn.pan.value=Math.max(-1,Math.min(1,+f.pan||0));
   const ctx=n.ctx;
-  if(f.echo&&!n.echo){ const dl=ctx.createDelay(1), fb=ctx.createGain(), wet=ctx.createGain(); dl.delayTime.value=.22; fb.gain.value=.18; wet.gain.value=.3; n.cp.connect(dl); dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(n.sum); n.echo={dl,fb,wet}; }
-  else if(!f.echo&&n.echo){ try{ n.cp.disconnect(n.echo.dl); n.echo.wet.disconnect(); n.echo.fb.disconnect(); n.echo.dl.disconnect(); }catch(e){} n.echo=null; }
-  if(f.rev&&!n.rev){ const cv=ctx.createConvolver(), wet=ctx.createGain(); cv.buffer=irFor(ctx); wet.gain.value=.28; n.cp.connect(cv); cv.connect(wet); wet.connect(n.sum); n.rev={cv,wet}; }
-  else if(!f.rev&&n.rev){ try{ n.cp.disconnect(n.rev.cv); n.rev.wet.disconnect(); n.rev.cv.disconnect(); }catch(e){} n.rev=null; }
+  if(f.echo&&!n.echo){ const dl=ctx.createDelay(1), fb=ctx.createGain(), wet=ctx.createGain(); dl.delayTime.value=.22; fb.gain.value=.18; wet.gain.value=.3; dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(n.sum); n.echo={dl,fb,wet}; n.wired=""; }
+  else if(!f.echo&&n.echo){ try{ n.tail.disconnect(n.echo.dl); n.echo.wet.disconnect(); n.echo.fb.disconnect(); n.echo.dl.disconnect(); }catch(e){} n.echo=null; n.wired=""; }
+  if(f.rev&&!n.rev){ const cv=ctx.createConvolver(), wet=ctx.createGain(); cv.buffer=irFor(ctx); wet.gain.value=.28; cv.connect(wet); wet.connect(n.sum); n.rev={cv,wet}; n.wired=""; }
+  else if(!f.rev&&n.rev){ try{ n.tail.disconnect(n.rev.cv); n.rev.wet.disconnect(); n.rev.cv.disconnect(); }catch(e){} n.rev=null; n.wired=""; }
+  wireStrip(bus,f);
 }
 /* voice state */
 /* what a session is for, and which project it belongs to */
@@ -2265,10 +2278,44 @@ function setTransportOutput(level){
   gain.setValueAtTime(gain.value,now);
   gain.linearRampToValueAtTime(level,now+.012);
 }
+/* ---------- playback health: measured, and adapted to the phone ----------
+   The sequencer looks ahead and hands notes to the audio clock. On a slower phone the page thread can stall
+   for longer than that look-ahead, so notes arrive late. This counts how often that happens, lengthens the
+   look-ahead, drops steps that are already too late (a pile-up of late notes sounds worse than a gap), and
+   switches to a lighter mode: bigger audio buffer, fewer screen updates, no sub-audible noise layers. */
+const PERF=(()=>{
+  const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  const weak=()=>{ const m=navigator.deviceMemory, c=navigator.hardwareConcurrency; return (m&&m<=4)||(c&&c<=4); };
+  let mode=store.get("ps.perf.mode")||"auto";                 // auto | smooth | full
+  let sensed=store.get("ps.perf.sensed")==="1";               // this phone missed deadlines before
+  const st={ticks:0,late:0,dropped:0,maxGapMs:0,minLeadMs:1e9,lastTick:0,ahead:.12,since:Date.now()};
+  const api={st,
+    get mode(){return mode;},
+    get lite(){return mode==="smooth"||(mode==="auto"&&(sensed||weak()));},
+    get ahead(){return st.ahead;},
+    hint(){ return api.lite?"playback":"interactive"; },
+    setMode(m){ mode=m; store.set("ps.perf.mode",m); st.ahead=api.lite?.3:.12; api.onChange&&api.onChange(); },
+    reset(){ st.ticks=st.late=st.dropped=0; st.maxGapMs=0; st.minLeadMs=1e9; st.lastTick=0; },
+    tick(now,lead){ /* once per scheduler pass */
+      st.ticks++; const t=performance.now();
+      if(st.lastTick){ const gap=t-st.lastTick; if(gap>st.maxGapMs) st.maxGapMs=gap; }
+      st.lastTick=t; if(lead!=null&&lead*1000<st.minLeadMs) st.minLeadMs=lead*1000;
+    },
+    miss(by){ /* a note was due before the scheduler reached it */
+      if(document.hidden||by>1) return;
+      st.late++; st.ahead=Math.min(.5,Math.max(st.ahead,.12)+.08);
+      if(mode==="auto"&&!sensed&&st.late>=3){ sensed=true; store.set("ps.perf.sensed","1"); st.ahead=Math.max(st.ahead,.3); try{ toast("Playback set to Smooth mode for this phone."); }catch(e){} api.onChange&&api.onChange(); }
+    },
+    text(){ const m=api.lite?"Smooth":"Full"; return m+" · "+(st.late?st.late+" late, "+st.dropped+" skipped":"no late notes")+" · look-ahead "+Math.round(st.ahead*1000)+" ms"; }
+  };
+  st.ahead=api.lite?.3:.12;
+  return api;
+})();
+window.PennioPerf=PERF;
 function ensureAudio(){
   if(!ac){
     const C=window.AudioContext||window.webkitAudioContext;
-    ac=new C(); master=makeMaster(ac); busses=makeBusses(ac,master); syncLaneBusGains();
+    try{ ac=new C({latencyHint:PERF.hint()}); }catch(e){ ac=new C(); } master=makeMaster(ac); busses=makeBusses(ac,master); syncLaneBusGains();
   }
   if(ac.state==="suspended") ac.resume();
 }
@@ -2278,6 +2325,7 @@ function env(ctx,g,t,peak,a,d){
   g.gain.exponentialRampToValueAtTime(0.0001,t+a+d);
 }
 function noiseHit(ctx,out,t,type,freq,q,peak,d){
+  if(PERF.lite&&peak<.08) return;
   const s=ctx.createBufferSource(); s.buffer=noise(ctx);
   const f=ctx.createBiquadFilter(); f.type=type; f.frequency.value=freq; f.Q.value=q;
   const g=ctx.createGain(); env(ctx,g,t,peak,.002,d);
@@ -2410,8 +2458,17 @@ const V = {
 };
 function trigger(id,ctx,out,t,v,i){ try{ if(v<0){ const g=ctx.createGain(); g.gain.value=.35; g.connect(out); out=g; v=-v; } V[id](ctx,out,t,v,i); }catch(e){} }
 
+/* ---------- playback mode control (Tempo and feel) ---------- */
+(function(){
+  const seg=document.getElementById("perfMode"), note=document.getElementById("perfNote"); if(!seg||!note) return;
+  const paint=()=>{ seg.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.m===PERF.mode)); note.textContent="Playback: "+PERF.text()+(PERF.mode==="auto"?". Auto turns Smooth on if this phone falls behind.":"."); };
+  seg.addEventListener("click",e=>{ const b=e.target.closest("[data-m]"); if(!b) return; PERF.setMode(b.dataset.m); if(ac&&!playing) toast("Smooth mode fully applies the next time you open the Studio."); paint(); });
+  PERF.onChange=paint; paint();
+  document.getElementById("tpVal")?.addEventListener("click",paint);
+  setInterval(()=>{ const pop=document.getElementById("tpPop"); if(pop&&!pop.hidden) paint(); },1000);
+})();
 /* ---------- sequencer ---------- */
-const phQ=[]; function phLoop(){ if(!playing){ phQ.length=0; return; } while(phQ.length && phQ[0][0]<=ac.currentTime){ const st=phQ.shift()[1]; mark(st); posPaint(st); iluHit(st); } requestAnimationFrame(phLoop); }
+const phQ=[]; function phLoop(){ if(!playing){ phQ.length=0; return; } while(phQ.length && phQ[0][0]<=ac.currentTime){ const st=phQ.shift()[1]; mark(st); if(!PERF.lite||st%(N===12?3:4)===0){ posPaint(st); iluHit(st); } } requestAnimationFrame(phLoop); }
 let playing=false, cur=0, nextT=0, timer=null, loopIdx=0, fullSrcs=[], recClick=false, seekFrom=-1, preRoll=0, loopA=-1, loopB=-1;
 let drumBuf=null;
 /* full-length layers: your whole vocal, and the talking-drum version of it */
@@ -2424,8 +2481,10 @@ const bpmEl=document.getElementById("bpm"), swEl=document.getElementById("swing"
 function stepDur(){ return 60/(+bpmEl.value)/(N===12?3:4); }
 function swingOffset(i){ return (N===16 && i%2===1) ? stepDur()*(+swEl.value/100)*.5 : 0; }
 function schedule(){
-  while(nextT < ac.currentTime + .12){
+  PERF.tick(0,nextT-ac.currentTime);
+  while(nextT < ac.currentTime + PERF.ahead){
     const t = nextT + swingOffset(cur);
+    if(t < ac.currentTime-.005){ PERF.miss(ac.currentTime-t); if(cur!==0 && t < ac.currentTime-.09){ PERF.st.dropped++; nextT += stepDur(); cur=(cur+1)%N; continue; } }
     if(cur===0 && preRoll>0){ preRoll--; barNow=0; }
     else if(cur===0){ if(loopA>=0 && loopB>=loopA && loopIdx>loopB){ stopTracksAt(t); loopIdx=loopA; seekFrom=loopA; } barNow=loopIdx; const bn=barNow; setTimeout(()=>paintStrip(bn),Math.max(0,(t-ac.currentTime)*1000)); fullTracks().forEach(tr=>{ const k=loopIdx%barsFor(tr); if(k===0) fullSrcs.push(playTrack(ac,busses[tr.bus],t,tr,0)); else if(loopIdx===seekFrom) fullSrcs.push(playTrack(ac,busses[tr.bus],t,tr,k)); }); if(loopIdx===seekFrom) seekFrom=-1; loopIdx++; }
     if(recClick && cur%(N===12?3:4)===0) clickAt(ac,t,cur===0);
@@ -2434,10 +2493,17 @@ function schedule(){
     nextT += stepDur(); cur=(cur+1)%N;
   }
 }
+let tickWorker=null, tickOK=true;
+function clockStart(){
+  clockStop();
+  if(tickOK&&window.Worker){ try{ tickWorker=tickWorker||new Worker("/studio/tick-worker.js"); tickWorker.onmessage=()=>{ if(playing) schedule(); }; tickWorker.onerror=()=>{ tickOK=false; try{tickWorker.terminate();}catch(e){} tickWorker=null; if(playing){ clockStop(); clockStart(); } }; tickWorker.postMessage({start:1,ms:25}); return; }catch(e){ tickOK=false; tickWorker=null; } }
+  timer=setInterval(schedule,25);
+}
+function clockStop(){ clearInterval(timer); timer=null; if(tickWorker){ try{ tickWorker.postMessage({stop:1}); }catch(e){} } }
 function stopTracks(){ fullSrcs.forEach(s=>{ try{s.stop();}catch(e){} }); fullSrcs=[]; }
 function stopTracksAt(t){ fullSrcs.forEach(s=>{ try{s.stop(t);}catch(e){} }); fullSrcs=[]; }
-function start(t0,bar,pre){ ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clearInterval(timer); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
-function stop(){ playing=false; clearInterval(timer); seekFrom=-1; preRoll=0; stopTracks(); setTransportOutput(0); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
+function start(t0,bar,pre){ ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clockStop(); PERF.reset(); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; clockStart(); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
+function stop(){ playing=false; clockStop(); seekFrom=-1; preRoll=0; stopTracks(); setTransportOutput(0); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
 /* ---------- one sound at a time, shown in the Now playing bar ---------- */
 let npKind=null, prevSrc=null, drumPrev=null, npSrc=null, npT0=0, npDur=0, npRaf=0;
 const mmss=x=>{ x=Math.max(0,Math.round(x)); return Math.floor(x/60)+":"+String(x%60).padStart(2,"0"); };
@@ -2621,10 +2687,11 @@ function markBank(){ document.querySelectorAll("#bank button").forEach(b=>b.clas
 document.querySelectorAll("#bank button").forEach(b=>b.onclick=()=>{ const to=b.dataset.b; if(to===bank) return; pushHist(); banks[bank]=pattern;
   let fresh=false; if(!banks[to]){ banks[to]=fillLanes(JSON.parse(JSON.stringify(pattern))); fresh=true; }
   bank=to; pattern=banks[to]; markBank(); render(); renderLayers(); saveSoon(); if(fresh) toast("Bank "+to+" starts as a copy of what you had. Change it, then switch back and forth."); });
+let marked=[];
 function mark(s){
-  rowsEl.querySelectorAll(".step.now").forEach(e=>e.classList.remove("now"));
+  marked.forEach(e=>e.classList.remove("now")); marked=[];
   if(s<0) return;
-  rowsEl.querySelectorAll('.step[data-i="'+s+'"]').forEach(e=>e.classList.add("now"));
+  marked=[...rowsEl.querySelectorAll('.step[data-i="'+s+'"]')]; marked.forEach(e=>e.classList.add("now"));
 }
 function setN(n){
   N=n;
@@ -5924,6 +5991,7 @@ body.studio-shell .shell-notices>[hidden]{display:none!important}
 .tp-pop-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .tp-pop-head b{font-size:14px}
 .tp-pop .pop-x{font-size:22px!important;width:40px;min-height:40px}
+.perf-note{margin:8px 0 0;font-size:12px;line-height:1.45;color:var(--ts)}
 .tp-pop-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:var(--ts)}
 .tp-pop .ctl{display:grid!important;gap:6px;order:0!important}
 .tp-pop .ctl label{display:flex;justify-content:space-between;font-size:13px}
