@@ -1370,6 +1370,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 <header>
   <div class="wrap bar">
     <div class="logo"><svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81.67 102.67" role="img" aria-label="PENNIO"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg>PENNIO Studio <span>· PENNIO</span></div>
+    <span class="hroom" id="hroom" aria-live="polite"></span>
     <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span><span class="local-status" id="localStatus"><i></i>Saved on device</span></div>
     <div class="hright">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
@@ -1379,6 +1380,8 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
         <nav id="nav" hidden>
           <button data-v="ayan" class="on">Ìlù <small>Àyàn</small></button>
           <button data-v="write">Ewì <small>Writing and poetry</small></button>
+          <button data-v="faajiplace">Ilé Eré <small>Film and image</small></button>
+          <button data-v="beauty">Ojuloge <small>Camera room</small></button>
           <button data-v="home">Projects <small>My work</small></button>
           <button type="button" id="openWorkspacePanel">Workspace <small>Projects, media and storage</small></button>
           <button type="button" id="openWork">Sessions <small>Saved beats and sessions</small></button>
@@ -1614,27 +1617,27 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 </section>
     </div>
 
-    <aside class="shell-side" id="sidePanel" data-side="right" aria-label="Side panel" hidden>
+    <aside class="shell-side" id="sidePanel" data-side="right" data-view="pattern" aria-label="Inspector" hidden>
       <div class="side-head">
         <div class="side-tabs" role="tablist" aria-label="Side panel sections">
-          <button type="button" role="tab" id="stab-selected" data-pane="selected" aria-selected="true" aria-controls="sp-selected">Clip</button>
-          <button type="button" role="tab" id="stab-info" data-pane="info" aria-selected="false" aria-controls="sp-info" tabindex="-1">Info</button>
-          <button type="button" role="tab" id="stab-passage" data-pane="passage" aria-selected="false" aria-controls="sp-passage" tabindex="-1">Passage</button>
-          <button type="button" role="tab" id="stab-notes" data-pane="notes" aria-selected="false" aria-controls="sp-notes" tabindex="-1">Notes</button>
+          <button type="button" role="tab" id="stab-inspect" data-pane="inspect" aria-selected="true" aria-controls="sp-inspect">Inspector</button>
           <button type="button" role="tab" id="stab-media" data-pane="media" aria-selected="false" aria-controls="sp-media" tabindex="-1">Media</button>
+          <button type="button" role="tab" id="stab-notes" data-pane="notes" aria-selected="false" aria-controls="sp-notes" tabindex="-1">Notes</button>
         </div>
         <span class="side-move" id="sideMoveHost"></span>
-        <button class="btn ic" type="button" id="sideClose" aria-label="Close side panel">×</button>
+        <button class="btn ic" type="button" id="sideClose" aria-label="Close inspector">×</button>
       </div>
-      <div class="side-pane on" id="sp-selected" role="tabpanel" aria-labelledby="stab-selected">
-        <div class="side-sel"><small>SELECTED CLIP</small><b id="selName">Nothing selected</b></div>
-        <div class="side-grid" id="selFaders"></div>
-        <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
-        <div class="side-actions"><button class="btn" id="dawNormalize" type="button">Normalize</button><button class="btn" id="dawDelete" type="button">Delete clip</button></div>
-      </div>
-      <div class="side-pane" id="sp-info" role="tabpanel" aria-labelledby="stab-info" hidden><div id="selDetails"><p class="side-empty">Select a clip in the Playlist to describe it.</p></div></div>
-      <div class="side-pane" id="sp-passage" role="tabpanel" aria-labelledby="stab-passage" hidden>
-        <div class="daw-selection" id="dawSelectionPanel">
+      <div class="side-pane on" id="sp-inspect" role="tabpanel" aria-labelledby="stab-inspect">
+        <div class="ins-title"><small id="insKind">INSPECTOR</small><b id="insName">Nothing selected</b></div>
+        <section class="ins-sec" data-for="pattern" id="insLane"><p class="side-empty" id="insLaneHint">Touch any instrument in the grid and its controls appear here: tune, pan and effects.</p></section>
+        <div class="ins-seg" data-for="playlist" role="tablist" aria-label="Inspector sections"><button type="button" role="tab" id="insTab-clip" data-sub="clip" aria-selected="true">Clip</button><button type="button" role="tab" id="insTab-passage" data-sub="passage" aria-selected="false" tabindex="-1">Passage</button><button type="button" role="tab" id="insTab-info" data-sub="info" aria-selected="false" tabindex="-1">Details</button></div>
+        <section class="ins-sec ins-sub" data-for="playlist" id="insClip" data-sub="clip">
+          <div class="side-sel"><small>SELECTED CLIP</small><b id="selName">Nothing selected</b></div>
+          <div class="side-grid" id="selFaders"></div>
+          <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
+          <div class="side-actions"><button class="btn" id="dawNormalize" type="button">Normalize</button><button class="btn" id="dawDelete" type="button">Delete clip</button></div>
+        </section>
+        <section class="ins-sec ins-sub" data-for="playlist" id="sp-passage" data-sub="passage"><div class="daw-selection" id="dawSelectionPanel">
           <div class="daw-selection-head"><div><b>Selected passage</b><small id="dawSelectionReadout">Drag across a clip in the Playlist to select a passage.</small></div><button class="btn" id="dawClearSelection" disabled>Clear</button></div>
           <div class="daw-selection-actions">
             <button class="btn" id="dawPlaySelection" disabled>Hear passage</button>
@@ -1642,7 +1645,10 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
             <button class="btn" id="dawPunchRecord" disabled>Punch in</button>
           </div>
           <p class="daw-selection-note">Punch in adds a new aligned take and keeps the original. Use headphones when it plays over the beat.</p>
-        </div>
+        </div></section>
+        <section class="ins-sec ins-sub" data-for="playlist" id="sp-info" data-sub="info"><div id="selDetails"><p class="side-empty">Select a clip in the Playlist to describe it.</p></div></section>
+        <section class="ins-sec" data-for="mixer"><p class="side-empty">Each layer's level, pan and effects are in the Mixer. Tap a layer there to edit it.</p></section>
+        <section class="ins-sec" data-for="voice"><p class="side-empty">Pick a recorded take from <b>Media</b> to hear it or send it to the beat.</p><button class="btn" type="button" id="insToMedia">Open Media</button></section>
       </div>
       <div class="side-pane" id="sp-notes" role="tabpanel" aria-labelledby="stab-notes" hidden>
         <div class="daw-plan" id="dawPlanPanel"><label for="dawPlan">Session notes</label><textarea id="dawPlan" maxlength="4000" placeholder="Goal, take order, edit notes or mix intent for this session."></textarea><small>Saved with this project on this device.</small></div>
@@ -2714,7 +2720,7 @@ function render(){
       st.className="steps voxempty"; const b=document.createElement("button"); b.className="voxrec"; b.innerHTML='<i></i>Add your voice: tap the red dot at the top. The studio chops it onto this row.';
       b.onclick=()=>{ if(vrec.style.display!=="none"){ vrec.focus(); vrec.animate([{transform:"scale(1)"},{transform:"scale(1.18)"},{transform:"scale(1)"}],{duration:420}); } else window.PennioShell?.showView("voice"); }; st.appendChild(b);
     } else for(let i=0;i<N;i++){ const b=document.createElement("button"); b.dataset.i=i; styleCell(b,l.id,i); st.appendChild(b); }
-    const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;nm.appendChild(meta); row.appendChild(nm); row.appendChild(st); rowsEl.appendChild(row);
+    const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;row.appendChild(nm); row.appendChild(meta); row.appendChild(st); rowsEl.appendChild(row);
   });
   saveSoon();
 }
@@ -3565,6 +3571,8 @@ function paintInspector(){
     document.getElementById("mxAuxLab").textContent=word; document.getElementById("mxAuxV").textContent=lab.querySelector("b").textContent; }
   const so=soloed.has(d.id); const sb=document.getElementById("mxSolo"); sb.classList.toggle("on",so); sb.setAttribute("aria-pressed",String(so));
   layersEl.querySelectorAll(".layer").forEach(l=>l.classList.toggle("sel",l.dataset.l===d.id));
+  try{ rowsEl.querySelectorAll(".row").forEach(r=>r.classList.toggle("sel",r.dataset.l===d.id)); }catch(e){}
+  window.dispatchEvent(new CustomEvent("pennio:lane-selected",{detail:{id:d.id,name:d.name}}));
 }
 (function(){
   const box=document.getElementById("mxInsp"); if(!box) return;
@@ -3589,7 +3597,7 @@ function paintInspector(){
   const del=document.getElementById("mxDel"); del.onclick=()=>{ if(armDelete(del,"Delete recording")) deleteRecording(); };
 })();
 /* small surface for tests and later Mixer steps */
-window.PennioMixer={ensureAudio:()=>ensureAudio(), busses:()=>busses, makeBusses, applyStripFx, fxOf, stripFx, soloed, selected:()=>mixSel};
+window.PennioMixer={ensureAudio:()=>ensureAudio(), busses:()=>busses, makeBusses, applyStripFx, fxOf, stripFx, soloed, selected:()=>mixSel, select:id=>{ if(LAYER_DEFS.some(x=>x.id===id)&&mixSel!==id){ mixSel=id; paintInspector(); } }};
 renderLayers();
 
 /* ---------- WRITE: text + voice to tone-marked Yoruba ---------- */
@@ -5069,7 +5077,7 @@ function tourShow(){
   if(el0&&window.PennioShell&&document.body.classList.contains("studio-shell")){ const vw=el0.closest(".shell-view"), pop=el0.closest(".tp-pop"), side=el0.closest("#sidePanel");
     if(vw&&vw.hidden) PennioShell.showView(vw.id.slice(3));
     if(pop&&pop.hidden) document.getElementById(pop.id==="recPop"?"recCfg":"tpVal").click();
-    const sp=el0.closest(".side-pane"); if(side&&(side.hidden||(sp&&sp.hidden))) PennioShell.openPanel(sp?sp.id.slice(3):"selected"); }
+    const sp=el0.closest(".side-pane"); if(side&&(side.hidden||(sp&&sp.hidden))) PennioShell.openPanel(sp?sp.id.slice(3):"inspect"); const sub=el0.closest(".ins-sub"); if(sub&&window.PennioShell&&PennioShell.sub) PennioShell.sub(sub.dataset.sub); }
   if(mobile() && el0 && el0.closest("#tp")) tpOpen(!!el0.closest(".x"));
   const el=tourTarget(); if(el && !el.closest("#tp") && !el.closest("header")) el.scrollIntoView({block:"center",behavior:"smooth"});
   document.getElementById("tourStep").textContent=tour.t.n+" · "+(tour.i+1)+" of "+tour.t.steps.length;
@@ -5200,7 +5208,7 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   if((e.ctrlKey||e.metaKey) && k==="z"){ e.preventDefault(); (e.shiftKey? redoBtn : undoBtn).click(); }
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
-  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="home"?"Projects":v==="ayan"?"Ìlù":v==="write"?"Ewì":v==="beauty"?"Ojuloge":"Ilé Eré";
+  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); const RN=v==="home"?"Projects":v==="ayan"?"Ìlù":v==="write"?"Ewì":v==="beauty"?"Ojuloge":"Ilé Eré"; document.getElementById("moreLbl").textContent=RN; document.getElementById("hroom").textContent=RN; document.body.dataset.room=v;
   document.querySelectorAll("nav button[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
@@ -6343,10 +6351,10 @@ body.studio-shell .dash-modal-backdrop:not([hidden]){position:fixed;inset:0;z-in
 #sp-passage .daw-selection-actions{grid-template-columns:repeat(3,1fr)}
 @media (max-height:520px){
   .side-head{padding:4px 6px}
-  #sp-selected.on{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;align-content:start}
-  #sp-selected .side-sel{grid-column:1/-1;margin:0}
-  #sp-selected .side-grid,#sp-selected .daw-trim,#sp-selected .side-actions{display:contents}
-  #sp-selected .side-actions .btn{min-height:30px;height:30px;margin-top:0}
+  #sidePanel[data-view="playlist"][data-sub="clip"] #insClip{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;align-content:start}
+  #insClip .side-sel{grid-column:1/-1;margin:0}
+  #insClip .side-grid,#insClip .daw-trim,#insClip .side-actions{display:contents}
+  #insClip .side-actions .btn{min-height:30px;height:30px;margin-top:0}
   .side-grid input,.side-pane .daw-trim input{min-height:18px;height:18px}
   .side-grid label,.side-pane .daw-trim label{gap:0;font-size:10px}
   .side-pane{padding:6px 10px}
@@ -6479,6 +6487,92 @@ body:has(#v-home.on) .logo>span,body:has(#v-home.on) #studioPanelPosition,body:h
 #glPlay:focus-visible{outline:3px solid #fff;outline-offset:3px}
 #glMeta{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 html[data-theme="light"] .gl-r i{background:rgba(9,9,9,.12)}html[data-theme="light"] .gl-r i[data-b="1"]{background:rgba(9,9,9,.2)}html[data-theme="light"] .gate-listen{background:rgba(9,9,9,.04)}
+
+/* ================= Inspector (side panel) ================= */
+.ins-title{display:grid;gap:2px;margin:0 0 10px}
+.ins-title small{font-size:10px;letter-spacing:.1em;color:var(--ts)}
+.ins-title b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ins-sec{display:none}
+#sidePanel[data-view="pattern"] .ins-sec[data-for~="pattern"],#sidePanel[data-view="playlist"] .ins-sec[data-for~="playlist"],#sidePanel[data-view="mixer"] .ins-sec[data-for~="mixer"],#sidePanel[data-view="voice"] .ins-sec[data-for~="voice"]{display:block}
+#insClip .side-grid{margin-top:4px}
+@media (max-height:520px), (orientation:portrait) and (max-width:899px){ .ins-title{display:none} .ins-seg{margin:0 0 4px} .ins-seg button{min-height:32px;font-size:12px} #sp-inspect{padding-top:4px;padding-bottom:2px} #sp-passage .daw-selection-note{display:none} #sidePanel[data-view="playlist"][data-sub="clip"] #insClip{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;align-content:start} }
+.ins-seg{display:none;gap:4px;margin:0 0 10px}
+#sidePanel[data-view="playlist"] .ins-seg{display:flex}
+.ins-seg button{flex:1 1 0;min-height:40px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-weight:500;color:var(--ts);background:none}
+.ins-seg button[aria-selected="true"]{background:var(--surface-2);color:var(--tp);border-color:transparent}
+#sidePanel[data-view="playlist"][data-sub="clip"] .ins-sub:not([data-sub="clip"]),#sidePanel[data-view="playlist"][data-sub="passage"] .ins-sub:not([data-sub="passage"]),#sidePanel[data-view="playlist"][data-sub="info"] .ins-sub:not([data-sub="info"]){display:none}
+#sp-passage .daw-selection{padding:0;border:0}
+#insLane .side-empty,.ins-sec .side-empty{font-size:13px;line-height:1.5;color:var(--ts);margin:0 0 10px}
+#insLane .mx-insp{display:grid;gap:10px;padding:0;border:0;background:none}
+#insLane .mx-name{display:none}
+#insLane .mx-pan,#insLane .mx-aux{display:grid;grid-template-columns:44px 1fr 38px;align-items:center;gap:8px;min-width:0;flex:none;font-size:12px;color:var(--ts)}
+#insLane .mx-fx,#insLane .mx-lane,#insLane .mx-mon{display:flex;flex-wrap:wrap;gap:6px}
+#insLane .mx-fx .btn{flex:1 1 0;min-width:56px}
+#insLane .mx-insp .btn{min-height:44px}
+#insLane .mx-fx .btn.on{background:var(--orange);border-color:var(--orange);color:#111;font-weight:600}
+.shell-view .row.sel .name,#rows .row.sel .name{color:var(--orange)}
+#rows .row.sel{box-shadow:inset 3px 0 0 var(--orange)}
+@media (orientation:portrait) and (max-width:899px){ .shell-side{max-height:62%} }
+.shell-side .ins-title{position:sticky;top:-12px;background:var(--surface-1);padding:2px 0 6px;z-index:1}
+
+/* ================= One header for every room ================= */
+/* ---- header: one slim row, in every room ---- */
+body.studio-chrome>header{position:relative;top:auto;flex:none;z-index:70}
+body.studio-chrome>header .wrap{max-width:none;padding:0 8px}
+body.studio-chrome>header .bar{height:auto;min-height:48px;padding:4px 0;gap:8px;flex-wrap:nowrap}
+body.studio-chrome>header .bar>.logo{order:0}body.studio-chrome>header .bar>.hsess{order:1}body.studio-chrome>header .bar>.hright{order:2}
+body.studio-chrome .logo{font-size:0;gap:0;flex:none}
+body.studio-chrome .logo .logo-mark{width:26px;height:auto}
+body.studio-chrome .hsess{flex:1 1 0;min-width:0}
+body.studio-chrome .hsess input{max-width:100%;min-width:0;font-size:15px}
+body.studio-chrome .hsess .saved{display:none}
+body.studio-chrome .local-status{font-size:0;gap:0}
+body.studio-chrome .hright{flex:none;flex-wrap:nowrap;gap:4px;margin-left:0;max-width:none}
+body.studio-chrome .more{width:auto;order:0;flex-wrap:nowrap}
+body.studio-chrome .theme-toggle{min-width:44px;width:44px;min-height:44px;padding:0}
+body.studio-chrome .theme-toggle span{display:none}
+body.studio-chrome #siteSettingsBtn,body.studio-chrome .avatar,body.studio-chrome .morebtn{min-height:44px}
+body.studio-chrome #siteSettingsBtn,body.studio-chrome .avatar{min-width:44px}
+/* the room menu is a dropdown over the shell, not a row in the page */
+body.studio-chrome nav#nav{position:absolute;top:100%;right:8px;left:auto;z-index:90;display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:2px;width:min(300px,calc(100vw - 16px));max-width:none;max-height:calc(100dvh - 64px);overflow:auto;padding:6px;border-radius:12px;background:var(--surface-1);border:1px solid var(--border);box-shadow:0 18px 50px rgba(0,0,0,.45);order:0}
+body.studio-chrome nav#nav[hidden]{display:none!important}
+body.studio-chrome nav#nav button{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:44px;padding:0 12px;border-radius:8px;text-align:left;white-space:nowrap;flex:none;color:var(--tp)}
+body.studio-chrome nav#nav button small{color:var(--ts);font-size:11px}
+body.studio-chrome nav#nav button.on{background:var(--surface-2)}
+
+body.studio-chrome .hroom{display:none;flex:1 1 0;min-width:0;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.studio-chrome:not(.in-studio) .hsess{display:none}
+body.studio-chrome:not(.in-studio) .hroom{display:block}
+body.studio-chrome .morebtn span{max-width:none}
+body.studio-chrome .morebtn{padding:0 10px}
+body.studio-chrome:not(.studio-shell) #studioRecLaunch{min-width:44px;min-height:44px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+@media (max-width:640px){ body.studio-chrome:not(.studio-shell) #studioRecLaunch{font-size:0;gap:0;width:44px;padding:0} body.studio-chrome:not(.studio-shell) #studioRecLaunch span{font-size:16px} }
+@media (max-width:430px){ body.studio-chrome:not(.in-studio) .hroom{display:none} body.studio-chrome .avatar{display:none} }
+body.studio-chrome:not(.studio-shell)>header{position:sticky;top:0}
+body.studio-chrome:not(.studio-shell) #studioPanelPosition{display:none!important}
+body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
+#insLane .mx-insp{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface-1)}
+#insLane .mx-name{flex:0 0 auto;min-width:70px;max-width:96px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#insLane .mx-fx{flex:1 1 100%}
+#insLane .mx-fx .btn{flex:1 1 0}
+#insLane .mx-pan{display:flex;align-items:center;gap:8px;flex:1 1 110px;min-width:110px;font-size:12px;color:var(--ts)}
+#insLane .mx-pan input{flex:1;min-width:60px;min-height:40px;margin:0}
+#insLane .mx-pan output{width:34px;text-align:right;color:var(--tp);font-variant-numeric:tabular-nums}
+#insLane .mx-fx,#insLane .mx-lane,#insLane .mx-mon{display:flex;gap:6px;flex-wrap:wrap}
+#insLane .mx-insp .btn{min-height:40px;min-width:52px;padding:0 12px;font-size:12px;border-radius:8px}
+#insLane .mx-fx .btn.on{background:var(--orange);border-color:var(--orange);color:#111;font-weight:600}
+#insLane .mx-insp [hidden]{display:none!important}
+#insLane .mx-aux{display:flex;align-items:center;gap:8px;flex:1 1 130px;min-width:120px;font-size:12px;color:var(--ts)}
+#insLane .mx-aux[hidden]{display:none}
+#insLane .mx-aux input{flex:1;min-width:60px;min-height:40px;margin:0}
+#insLane .mx-aux output{min-width:30px;text-align:right;color:var(--tp);font-variant-numeric:tabular-nums}
+@media (max-height:520px), (orientation:portrait) and (max-width:899px){
+#insLane .mx-insp{grid-template-columns:1fr 1fr;gap:4px 10px}
+#insLane .mx-fx,#insLane .mx-lane,#insLane .mx-mon{grid-column:1/-1;flex-wrap:nowrap}
+#insLane .mx-insp .btn{min-height:34px;min-width:0;padding:0 6px}
+#insLane .mx-pan,#insLane .mx-aux{grid-template-columns:30px 1fr 28px;gap:4px}
+#insLane .mx-pan input,#insLane .mx-aux input{min-height:28px}
+}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
@@ -6488,12 +6582,14 @@ html[data-theme="light"] .gl-r i{background:rgba(9,9,9,.12)}html[data-theme="lig
 const $=id=>document.getElementById(id),body=document.body,root=document.documentElement;
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const VIEWS=["pattern","playlist","mixer","voice"];
+const PANES=["inspect","media","notes"], PANE_ALIAS={selected:"inspect",info:"inspect",passage:"inspect"};
 let view=VIEWS.includes(ls.get("ps.shell.view"))?ls.get("ps.shell.view"):"pattern";
 
 /* ---- shell on/off: only in the Àyàn room, after sign-in ---- */
 const ayan=$("v-ayan"),dockHome={};
 function shellWanted(){return ayan.classList.contains("on")&&!body.classList.contains("auth-locked")&&!body.classList.contains("profile-required");}
 function syncShell(){
+  body.classList.toggle("studio-chrome",!body.classList.contains("auth-locked")&&!body.classList.contains("profile-required"));
   const on=shellWanted();
   if(body.classList.contains("studio-shell")===on)return;
   body.classList.toggle("studio-shell",on);root.classList.toggle("studio-shell",on);
@@ -6517,6 +6613,7 @@ function showView(name,opts={}){
   });
   ls.set("ps.shell.view",name);
   if(!opts.quiet)window.dispatchEvent(new CustomEvent("pennio:shell-view",{detail:{view:name}}));
+  $("sidePanel").dataset.view=name; placeInspector();
   paintPlay();
 }
 $("shellTabs").addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b)showView(b.dataset.view);});
@@ -6528,17 +6625,19 @@ $("shellTabs").addEventListener("keydown",e=>{
     showView(VIEWS[n]);$("tab-"+VIEWS[n]).focus();
   }
 });
-window.PennioShell={showView,get view(){return view;},openPanel:(pane)=>setPanel(true,pane),closePanel:()=>setPanel(false)};
+window.PennioShell={sub:n=>insSub(n),showView,get view(){return view;},openPanel:(pane)=>setPanel(true,pane),closePanel:()=>setPanel(false)};
 
 /* ---- side panel ---- */
 const panel=$("sidePanel"),panelBtn=$("panelToggle"),shellBody=$("shellBody");
 const wide=matchMedia("(min-width:1100px) and (min-height:640px)");
 function showPane(name){
-  ["selected","info","passage","notes","media"].forEach(p=>{
+  name=PANE_ALIAS[name]||name; if(!PANES.includes(name)) name="inspect";
+  PANES.forEach(p=>{
     const t=$("stab-"+p),pane=$("sp-"+p),on=p===name;
     t.setAttribute("aria-selected",String(on));t.tabIndex=on?0:-1;pane.hidden=!on;pane.classList.toggle("on",on);
   });
   if(name==="media")window.PennioWorkspace?.refresh?.();
+  if(name==="inspect") placeInspector();
 }
 function setPanel(open,pane){
   if(pane)showPane(pane);
@@ -6574,6 +6673,28 @@ function mountWorkspaceDock(on){
   }
 }
 
+/* ---- Inspector: follows the view. The channel strip (level, pan, tune, effects) is the Mixer's own control,
+   moved here while you are in Pattern so there is one set of controls, not two. ---- */
+const insp=$("mxInsp"), inspHome=insp?{parent:insp.parentNode,next:insp.nextSibling}:null;
+function placeInspector(){
+  if(!insp) return;
+  const intoPanel=view==="pattern"&&body.classList.contains("studio-shell");
+  if(intoPanel&&insp.parentNode!==$("insLane")){ $("insLane").append(insp); $("insLaneHint").hidden=true; }
+  else if(!intoPanel&&insp.parentNode===$("insLane")&&inspHome){ inspHome.parent.insertBefore(insp,inspHome.next&&inspHome.next.parentNode===inspHome.parent?inspHome.next:null); }
+  const kind={pattern:"LANE",playlist:"CLIP",mixer:"MIXER",voice:"VOICE"}[view]||"INSPECTOR";
+  $("insKind").textContent=kind;
+  if(view==="pattern"){ const n=$("mxName"); $("insName").textContent=n?n.textContent:"Pick a lane"; }
+  else if(view==="playlist"){ $("insName").textContent=($("selName")||{}).textContent||"Nothing selected"; }
+  else $("insName").textContent=view==="mixer"?"Layers":"Takes";
+}
+window.addEventListener("pennio:lane-selected",placeInspector);
+function insSub(name){ $("sidePanel").dataset.sub=name; document.querySelectorAll(".ins-seg [data-sub]").forEach(b=>{ const on=b.dataset.sub===name; b.setAttribute("aria-selected",String(on)); b.tabIndex=on?0:-1; }); }
+document.querySelector(".ins-seg")?.addEventListener("click",e=>{ const b=e.target.closest("[data-sub]"); if(b) insSub(b.dataset.sub); });
+insSub("clip");
+new MutationObserver(placeInspector).observe($("selName"),{childList:true,characterData:true,subtree:true});
+$("insToMedia")?.addEventListener("click",()=>setPanel(true,"media"));
+/* tap an instrument in the grid to select it; the Inspector shows it */
+$("rows")?.addEventListener("pointerdown",e=>{ const r=e.target.closest(".row[data-l]"); if(!r||!window.PennioMixer) return; try{ window.PennioMixer.select(r.dataset.l); }catch(_){} },true);
 /* ---- popovers off the transport: tempo, record settings, export ---- */
 const tpVal=$("tpVal"),recCfg=$("recCfg"),exportBtn=$("export"),tpPop=$("tpPop"),recPop=$("recPop"),expPanel=$("expPanel");
 function closePops(except){
