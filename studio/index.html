@@ -2849,6 +2849,8 @@ async function renderMix(){
       LANES.forEach(l=>{const v=pattern[l.id][i]; if(v&&laneOn(l.id)&&!(l.id==="vox"&&!LAY.vox)) trigger(l.id,oc,bs[l.id],t,v,i);});
     }
   }
+  /* the offline renderer reports nothing while it runs, so pause it at a few checkpoints to learn how far it has got */
+  try{ const len=oc.length, step=Math.max(.5,(len/sr)/16); for(let t=step;t<len/sr-.1;t+=step){ const at=Math.ceil(t*sr/128)*128; if(at>=len) break; oc.suspend(at/sr).then(()=>{ try{ window.PennioRender&&PennioRender.progress(at/len); }catch(e){} return oc.resume(); }).catch(()=>{}); } }catch(e){}
   const out=await oc.startRendering(); out.pennioPlanSec=total+.2; return out;
 }
 /* loudness (ITU BS.1770 style: K-weighting, 400 ms blocks, gating)
@@ -2923,8 +2925,9 @@ function blockLufs(st,G,g,sr){
 async function matchLoudness(buf,tgt){
   const target= tgt==null? -14 : tgt, sr=buf.sampleRate, ceil=Math.pow(10,-1.9/20), B=blockSize(sr);
   const ch=[...Array(buf.numberOfChannels).keys()].map(c=>buf.getChannelData(c));
-  const k=await kWeight(buf); await yieldUI();
-  const st=blockStats(ch,k,B); await yieldUI();
+  const prog=f=>{ try{ window.PennioRender&&PennioRender.progress(f); }catch(e){} };
+  const k=await kWeight(buf); prog(.4); await yieldUI();
+  const st=blockStats(ch,k,B); prog(.6); await yieldUI();
   const ones=new Float32Array(st.nb).fill(1), before=blockLufs(st,1,ones,sr);
   if(before<-60) return {before, after:before, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:0};
   let gdb=Math.min(24,target-before), best=null, it=0;
@@ -2936,7 +2939,7 @@ async function matchLoudness(buf,tgt){
   }
   /* apply once: block gains, linearly interpolated between block centres (never above the gain a neighbouring block needs) */
   const {G,g}=best, nb=st.nb, n=st.n;
-  for(let c=0;c<ch.length;c++){ if(c) await yieldUI(); const d=ch[c];
+  for(let c=0;c<ch.length;c++){ prog(.7+.3*c/ch.length); if(c) await yieldUI(); const d=ch[c];
     for(let i=0;i<n;i++){ const pos=(i+.5)/B-.5, b0=pos<0?0:Math.floor(pos), b1=b0+1<nb?b0+1:nb-1, t=pos<0?0:pos-b0; d[i]*=G*(g[b0]*(1-t)+g[b1]*t); } }
   return {before, after:best.after, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:it+1};
 }
@@ -3193,7 +3196,7 @@ async function buildExport(){
       const g=Math.pow(10,(-1.2-metrics.truePeakDb)/20); for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++) d[i]*=g; }
       fixed=true; if(lufs!=null) lufs+=20*Math.log10(g); metrics=R.analyze(buf); if(run) run.fixed=true;
     }
-    let blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ return isMp3?await mp3(buf,p=>{ expGo.textContent="Encoding "+Math.round(p*100)+"%"; }):new Blob([wav(buf)],{type:"audio/wav"}); });
+    let blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ return isMp3?await mp3(buf,p=>{ if(window.PennioRender) PennioRender.progress(p); }):new Blob([wav(buf)],{type:"audio/wav"}); });
     const tagged=await st("tags","Credits and cover art",()=>PennioCredits.tag(blob,isMp3?"mp3":"wav","beat")); blob=tagged.blob;
     const verify=await st("verify","Verify file",()=>verifyBlob(blob,buf,isMp3,metrics));
     const name=tagged.name;
@@ -3205,7 +3208,7 @@ async function buildExport(){
 }
 expGo.onclick=async()=>{
   if(!downloads){ toast("Export is not available in this view."); return; }
-  expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…"; if(window.PennioRender) PennioRender.onStage=l=>{ expGo.textContent=l+"…"; expShare.textContent=l+"…"; };
+  expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…"; if(window.PennioRender) PennioRender.onStage=(l,o)=>{ expGo.textContent=l+" "+Math.round((o||0)*100)+"%"; };
   try{ const x=await buildExport(); expMeta.textContent=x.info;
     await saveExport(x);
     toast("Track exported."); }
@@ -3213,7 +3216,7 @@ expGo.onclick=async()=>{
   expGo.disabled=expShare.disabled=false; expGo.textContent="Download"; expShare.textContent="Share to WhatsApp";
 };
 expShare.onclick=async()=>{
-  expGo.disabled=expShare.disabled=true;expShare.textContent="Rendering…";
+  expGo.disabled=expShare.disabled=true;expShare.textContent="Working…"; if(window.PennioRender) PennioRender.onStage=(l,o)=>{ expShare.textContent=l+" "+Math.round((o||0)*100)+"%"; };
   const text="Made with PENNIO Studio. Bring your voice. Leave with a record: https://pennio.agency/studio/?utm_source=studio&utm_medium=whatsapp&utm_campaign=creator_export";
   const phone=savedWhatsApp();
   let canShareFile=false;
@@ -6507,6 +6510,8 @@ body:has(#v-home.on) .logo>span,body:has(#v-home.on) #studioPanelPosition,body:h
 .rm{display:grid;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2)}
 .rm[hidden]{display:none}
 .rm[data-state="pass"]{border-color:rgba(70,180,110,.55)}.rm[data-state="warn"]{border-color:rgba(214,155,54,.7)}.rm[data-state="fail"]{border-color:var(--danger)}
+.rm-bar{height:6px;border-radius:99px;background:rgba(var(--fg-rgb),.12);overflow:hidden;margin:0 0 8px}
+.rm-bar i{display:block;height:100%;background:var(--orange);border-radius:99px;transition:width .12s linear}
 .rm-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px}
 .rm-head span{font-variant-numeric:tabular-nums;color:var(--ts);font-size:12px}
 .rm-stages{list-style:none;padding:0;display:grid;gap:3px;font-size:12px}
