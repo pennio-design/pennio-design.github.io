@@ -1424,7 +1424,6 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
           <button type="button" class="dh-ghost" id="dhRec"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.5"/></svg>Record</button>
         </div>
       </div>
-      <img class="dh-art" src="/studio/art/studio-figure-sm.webp" width="498" height="739" alt="" decoding="async">
     </header>
     <section class="dh-block" id="dhSessionsBlock" hidden>
       <div class="dh-head"><h2>Recent</h2><button type="button" class="dh-link" id="dhAll">All sessions</button></div>
@@ -1547,6 +1546,21 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <button class="btn" id="expShare">Share to WhatsApp</button>
       <button class="btn" id="expLink">Copy groove link</button>
     </div>
+    <details class="reel exp-beat-only" id="reelBox">
+      <summary>Make a reel</summary>
+      <div class="reel-body">
+        <div class="exp-row"><span class="exp-lab">Size</span><div class="seg" id="reelSize"><button data-r="9:16" class="on">Story 9:16</button><button data-r="1:1">Square</button><button data-r="16:9">Wide</button></div></div>
+        <div class="exp-row"><span class="exp-lab">Look</span><div class="seg" id="reelLook"><button data-k="bars" class="on">Bars</button><button data-k="wave">Wave</button><button data-k="cover">Cover</button></div></div>
+        <div class="exp-row"><span class="exp-lab">Length</span><div class="seg" id="reelLen"><button data-s="15" class="on">15 s</button><button data-s="30">30 s</button><button data-s="60">60 s</button></div></div>
+        <p class="exp-note" id="reelNote">A video of your beat with your cover art and title. It records as it plays, so 15 s takes about 15 s. Keep this screen open.</p>
+        <div class="exp-row"><button class="btn primary" id="reelGo" type="button">Make reel</button></div>
+        <div class="reel-out" id="reelOut" hidden>
+          <video id="reelVid" controls playsinline preload="metadata"></video>
+          <div class="exp-row"><button class="btn primary" id="reelShare" type="button">Share</button><button class="btn" id="reelSave" type="button">Save</button><button class="btn" id="reelCopy" type="button">Copy caption</button></div>
+          <p class="exp-meta" id="reelMeta"></p>
+        </div>
+      </div>
+    </details>
     <p class="exp-meta exp-beat-only" id="expMeta"></p>
     <div class="rm exp-beat-only" id="rmBox" hidden aria-label="Render report"></div>
   </div>
@@ -3336,7 +3350,7 @@ expGo.onclick=async()=>{
   expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…"; if(window.PennioRender) PennioRender.onStage=(l,o)=>{ expGo.textContent=o<0?l+"…":l+" "+Math.round((o||0)*100)+"%"; };
   try{ const x=await buildExport(); expMeta.textContent=x.info;
     await saveExport(x);
-    toast("Track exported."); }
+    (window.PennioMascot?PennioMascot.moment("celebrate","Track exported.","Saved with your credits and cover art."):toast("Track exported.")); }
   catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : e&&e.message==="render-blocked"? (e.stale? "The MP3 encoder on this phone is out of date. Close the Studio completely, open it again, then export again." : "Export stopped: the file failed its quality check ("+(e.detail||"see report")+").") : "Export was cancelled or blocked."); }
   expGo.disabled=expShare.disabled=false; expGo.textContent="Download"; expShare.textContent="Share to WhatsApp";
 };
@@ -3379,6 +3393,42 @@ expShare.onclick=async()=>{
   expGo.disabled=expShare.disabled=false;expGo.textContent="Download";expShare.textContent="Share to WhatsApp";
 };
 
+/* ---------- reel: a short video of the beat, three sizes and looks ---------- */
+(()=>{
+  const R=()=>window.PennioReel, box=document.getElementById("reelBox"), go=document.getElementById("reelGo"), out=document.getElementById("reelOut"), vid=document.getElementById("reelVid"), meta=document.getElementById("reelMeta"), note=document.getElementById("reelNote");
+  const pick={r:"9:16",k:"bars",s:15}; let made=null, url="";
+  const seg=(id,key,attr,conv)=>document.querySelectorAll("#"+id+" button").forEach(b=>b.onclick=()=>{ pick[key]=conv?conv(b.dataset[attr]):b.dataset[attr]; document.querySelectorAll("#"+id+" button").forEach(x=>x.classList.toggle("on",x===b)); });
+  seg("reelSize","r","r"); seg("reelLook","k","k"); seg("reelLen","s","s",Number);
+  addEventListener("DOMContentLoaded",()=>{ if(R()&&!R().support()){ go.disabled=true; note.textContent="This browser cannot record video. Open the Studio in Chrome, Safari or Edge to make reels."; } });
+  const caption=()=>{ const m=PennioCredits.meta("beat"); return (m.title+(m.artist?" by "+m.artist:""))+". Made with PENNIO Studio: https://pennio.agency/studio/?utm_source=studio&utm_medium=reel&utm_campaign=creator_export"; };
+  const msg=e=>{ const m=e&&e.message; return m==="reel-hidden"?"The reel stopped because the screen was switched away. Keep the Studio open while it records.":m==="reel-unsupported"?"This browser cannot record video.":m==="reel-empty"?"The reel came out empty. Try again, or try the Square size.":m==="encoder"?"The MP3 encoder did not load. Check your connection.":"The reel did not finish. Try again."; };
+  go.onclick=async()=>{
+    if(!R()||!R().support()){ toast("This browser cannot record video."); return; }
+    if(playing){ toast("Stop playback first."); return; }
+    go.disabled=true; out.hidden=true; let label="Make reel";
+    try{
+      const run=null; if(window.PennioRender) PennioRender.onStage=(l,o)=>{ go.textContent=o<0?l+"…":l+" "+Math.round((o||0)*100)+"%"; };
+      go.textContent="Rendering…";
+      const m=await prepareMix(true,swLoud.classList.contains("on"),run);
+      const cm=PennioCredits.meta("beat"), cover=await PennioCredits.cover("beat");
+      const r=await R().make({buf:m.buf,cover,title:cm.title,artist:cm.artist,bpm:cm.bpm,keyName:cm.keyName,ratio:pick.r,look:pick.k,seconds:pick.s,onProgress:(p,d)=>{ go.textContent="Recording "+Math.min(d,Math.round(p*d))+" / "+Math.round(d)+" s"; }});
+      made=r; if(url) URL.revokeObjectURL(url); url=URL.createObjectURL(r.blob); vid.src=url; out.hidden=false;
+      meta.textContent=r.w+" x "+r.h+", "+Math.round(r.sec)+" s, "+(r.blob.size/1048576).toFixed(1)+" MB, "+r.ext.toUpperCase()+(r.ext==="webm"?". This browser records WebM; WhatsApp and Instagram may need MP4, so open the Studio in Safari or a current Chrome for MP4.":".");
+      (window.PennioMascot?PennioMascot.moment("success","Reel ready.","Tap Share or Save."):toast("Reel ready. Tap Share or Save."));
+    }catch(e){ toast(msg(e)); }
+    go.disabled=false; go.textContent=label;
+  };
+  document.getElementById("reelShare").onclick=async()=>{
+    if(!made) return; const file=new File([made.blob],made.name,{type:made.mime});
+    const res=await R().share(file,caption(),"PENNIO Studio");
+    if(res==="shared") toast("Shared.");
+    else if(res==="cancelled") return;
+    else{ try{ await saveExport({name:made.name,blob:made.blob}); }catch(e){ toast("Could not save the reel."); return; }
+      try{ await navigator.clipboard.writeText(caption()); toast("This browser cannot share files directly. The reel is saved and the caption is copied. Attach it in your app."); }catch(e){ toast("Reel saved. Attach it in your app."); } }
+  };
+  document.getElementById("reelSave").onclick=async()=>{ if(!made) return; try{ await saveExport({name:made.name,blob:made.blob}); toast("Reel saved."); }catch(e){ toast("Could not save the reel."); } };
+  document.getElementById("reelCopy").onclick=async()=>{ try{ await navigator.clipboard.writeText(caption()); toast("Caption copied."); }catch(e){ prompt("Copy this caption",caption()); } };
+})();
 /* ---------- voice: load, slice, enhance ---------- */
 const wave=document.getElementById("wave"), vmeta=document.getElementById("vmeta"), vprev=document.getElementById("vprev");
 let currentAudio=null;
@@ -6091,6 +6141,8 @@ window.PennioStudioProgress={begin(label="Working",description="Your work is bei
 <script src="/studio/workspace.js" defer></script>
 <script src="/studio/render-monitor.js" defer></script>
 <script src="/studio/credits.js" defer></script>
+<script src="/studio/reel.js" defer></script>
+<script src="/studio/mascot.js" defer></script>
 <script src="/studio/voicebeat.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
@@ -6940,7 +6992,7 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 /* ================= Studio dashboard ================= */
 #v-home{padding:0}
 #v-home .dh{max-width:1040px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:26px}
-.dh-hero{position:relative;display:grid;grid-template-columns:1fr minmax(180px,40%);min-height:300px;border-radius:24px;overflow:hidden;background:#FAF7F3;color:#1E1713;box-shadow:0 20px 60px rgba(0,0,0,.35),inset 0 0 0 1px rgba(30,23,19,.08)}
+.dh-hero{position:relative;display:grid;grid-template-columns:1fr;min-height:240px;border-radius:24px;overflow:hidden;background:#FAF7F3;color:#1E1713;box-shadow:0 20px 60px rgba(0,0,0,.35),inset 0 0 0 1px rgba(30,23,19,.08)}
 .dh-copy{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:30px 28px;min-width:0}
 .dh-hi{margin:0;font-size:13px;font-weight:600;letter-spacing:.02em;color:#6b5b4b}
 .dh-title{margin:0 0 6px;font-size:clamp(30px,5vw,50px);line-height:1.03;letter-spacing:-.03em;font-weight:800;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -6953,7 +7005,6 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 .dh-ghost:hover{background:rgba(30,23,19,.07)}
 .dh-ghost svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 .dh-ghost svg circle{fill:#E5604F;stroke:none}
-.dh-art{position:absolute;right:0;top:0;height:100%;width:min(46%,430px);object-fit:contain;object-position:100% 100%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
 .dh-block{display:grid;gap:12px}
 .dh-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .dh-head h2{margin:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ts)}
@@ -6977,13 +7028,20 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 @media (max-width:760px){
   .dh-hero{grid-template-columns:1fr;min-height:0}
   .dh-copy{padding:22px 20px 22px;max-width:62%}
-  .dh-art{width:54%;opacity:.95}
   .dh-actions{flex-direction:column;align-items:stretch}
   .dh-primary,.dh-ghost{justify-content:center;padding:0 14px}
   #v-home .dash-rooms{grid-template-columns:repeat(2,minmax(0,1fr))}
   .dh-sessions{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:420px){.dh-copy{max-width:58%;padding:20px 16px}.dh-title{font-size:28px}}
+.reel{border:1px solid var(--line);border-radius:12px;margin:10px 0;padding:0 12px;background:rgba(255,255,255,.02)}
+.reel>summary{cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;font-weight:700;font-size:13px}
+.reel>summary::-webkit-details-marker{display:none}
+.reel>summary::after{content:"+";margin-left:auto;color:var(--orange);font-size:18px}
+.reel[open]>summary::after{content:"\2212"}
+.reel-body{padding:2px 0 12px;display:grid;gap:10px}
+.reel-out{display:grid;gap:10px}
+.reel-out video{width:100%;max-height:46vh;border-radius:12px;background:#000;object-fit:contain}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
