@@ -156,6 +156,7 @@
   /* how much of an export each stage is worth, so one bar can run across all of them */
   const WEIGHT = { render: .46, match: .12, meter: .08, check: .04, encode: .22, tags: .04, verify: .04 };
   const overall = run => {
+    if (run.stages.some(s => s.name === "wait" && s.state === "running")) return -1; /* the mix is being finished in the background: no honest percentage */
     let done = 0, total = 0; const planned = ["render", "match", "check", "encode", "tags", "verify"];
     const names = planned.concat(run.stages.some(s => s.name === "meter") ? ["meter"] : []);
     names.forEach(n => { total += WEIGHT[n]; });
@@ -168,12 +169,12 @@
     function paint(run) {
       if (!run) return;
       root.hidden = false; root.dataset.state = run.state === "running" ? "running" : run.verdict || "fail";
-      const pct = run.state === "running" ? Math.round(overall(run) * 100) : 100;
-      const head = run.state === "running" ? "Working " + pct + "%" : run.state === "error" ? "Render failed" : word[run.verdict] + (run.fixed ? " (auto-corrected)" : "");
+      const ov = run.state === "running" ? overall(run) : 1, pct = ov < 0 ? 0 : Math.round(ov * 100);
+      const head = run.state === "running" ? (ov < 0 ? "Finishing the mix" : "Working " + pct + "%") : run.state === "error" ? "Render failed" : word[run.verdict] + (run.fixed ? " (auto-corrected)" : "");
       const total = run.speed ? Math.round(run.speed.totalMs) + " ms" : "";
       const sum = summary();
       root.innerHTML =
-        (run.state === "running" ? '<div class="rm-bar" role="progressbar" aria-label="Export progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' : '') +
+        (run.state === "running" ? '<div class="rm-bar' + (ov < 0 ? ' ind' : '') + '" role="progressbar" aria-label="Export progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' : '') +
         '<div class="rm-head"><b role="status" aria-live="polite">' + esc(head) + '</b><span>' + esc(total) + '</span></div>' +
         '<ol class="rm-stages">' + run.stages.map(s => '<li class="' + s.state + '"><span>' + esc(s.label || s.name) + '</span><em>' + (s.ms != null ? Math.round(s.ms) + ' ms' : (s.p > 0 ? Math.round(s.p * 100) + '%' : '…')) + '</em></li>').join("") + '</ol>' +
         (run.gates.length ? '<div class="rm-gates">' + run.gates.map(g => '<span class="rm-chip ' + g.level + (g.perf ? ' perf' : '') + '" title="' + esc(g.label + ": " + g.value + " (limit " + g.limit + ")") + '">' + esc(g.label) + '</span>').join("") + '</div>' : "") +
