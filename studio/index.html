@@ -1413,14 +1413,38 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 
 <main class="wrap"><!-- STUDIO DASHBOARD -->
 <section class="view" id="v-home">
-  <div class="dash-intro"><a href="https://pennio.agency/" class="dash-logo-link" aria-label="PENNIO"><svg class="dash-logo" viewBox="0 0 81.67 102.67" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PENNIO"><path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></a><button class="dash-new" id="dashNewProject" aria-label="New project" title="New project"><span>＋</span></button></div>
-  <div class="dash-rooms" id="dashRooms">
+  <div class="dh">
+    <header class="dh-hero" id="dhHero">
+      <div class="dh-copy">
+        <p class="dh-hi" id="dhHi"></p>
+        <h1 class="dh-title" id="dhTitle">Start a beat</h1>
+        <div class="dh-actions">
+          <button type="button" class="dh-primary" id="dhContinue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg><span id="dhContinueLbl">Start</span></button>
+          <button type="button" class="dh-ghost" id="dhNew"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>New beat</button>
+          <button type="button" class="dh-ghost" id="dhRec"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.5"/></svg>Record</button>
+        </div>
+      </div>
+      <img class="dh-art" src="/studio/art/studio-figure-sm.webp" width="498" height="739" alt="" decoding="async">
+    </header>
+    <section class="dh-block" id="dhSessionsBlock" hidden>
+      <div class="dh-head"><h2>Recent</h2><button type="button" class="dh-link" id="dhAll">All sessions</button></div>
+      <div class="dh-sessions" id="dhSessions"></div>
+    </section>
+    <section class="dh-block">
+      <div class="dh-head"><h2>Rooms</h2></div>
+      <div class="dash-rooms" id="dashRooms">
     <button class="dash-room" data-room="ayan" aria-label="Àyàn"><span class="dash-room-icon room-icon-sound" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 20h7l7-7v22l-7-7H8z"/><path d="M29 18c3 3 3 9 0 12M34 13c6 6 6 16 0 22"/><path d="M8 39h32" opacity=".35"/></svg></span><b>Àyàn</b></button>
     <button class="dash-room" data-room="write" aria-label="Ewì"><span class="dash-room-icon room-icon-write" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M11 36 23 9h3l12 27M16 26h19"/><path d="M9 41h30M31 9l8 8" opacity=".5"/></svg></span><b>Ewì</b></button>
     <button class="dash-room" data-room="faajiplace" aria-label="Ilé Eré"><span class="dash-room-icon room-icon-film" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="24" rx="3"/><path d="m20 18 11 6-11 6z"/><path d="M13 8v4m8-4v4m8-4v4m8-4v4M13 36v4m8-4v4m8-4v4m8-4v4" opacity=".55"/></svg></span><b>Ilé Eré</b></button>
     <button class="dash-room" data-room="beauty" aria-label="Ojuloge"><span class="dash-room-icon room-icon-portrait" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 39c2-9 8-13 16-13s14 4 16 13"/><circle cx="24" cy="16" r="8"/><path d="M7 8h8M7 8v8M41 8h-8m8 0v8M7 40h8m-8 0v-8m34 8h-8m8 0v-8" opacity=".5"/></svg></span><b>Ojuloge</b></button>
   </div>
-  <div id="dashProjects" class="dash-projects" aria-label="Recent projects"></div>
+    </section>
+    <section class="dh-block" id="dhProjectsBlock">
+      <div class="dh-head"><h2>Projects</h2><button type="button" class="dh-link" id="dashNewProject"><span aria-hidden="true">+</span> New project</button></div>
+      <div id="dashProjects" class="dash-projects" aria-label="Projects"></div>
+    </section>
+    <p class="dh-foot" id="dhFoot"></p>
+  </div>
 </section>
 
 <!-- MUSIC -->
@@ -3015,6 +3039,13 @@ async function mp3(buf,onP){
   const e=enc.flush(); if(e.length) out.push(new Uint8Array(e));
   return new Blob(out,{type:"audio/mpeg"});
 }
+window.PennioSessions={
+  async list(){ const all=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated);
+    return all.map(r=>({id:r.id,name:r.name||"Untitled beat",updated:r.updated,created:r.created,kind:r.kind||"",voice:!!r.audio,bpm:r.state&&r.state.bpm,key:(r.state&&r.state.harm)?KEYN[(r.state.harm.key|0)%12]+" "+(r.state.harm.scale==="major"?"major":"minor"):"",n:(r.state&&r.state.n)||16,pattern:(r.state&&r.state.pattern)||null,current:r.id===currentId})); },
+  async open(id){ const rec=((await allProjects())||[]).find(x=>x.id===id); if(!rec) return false; await saveNow(); await openProject(rec); ready=true; return true; },
+  async create(){ await saveNow(); await newProject(); return true; },
+  current:()=>currentId
+};
 window.PennioVoice={raw:()=>rawBuf,pro:()=>proBuf,clean:()=>cleanCache&&cleanCache.buf,hum:()=>cleanCache&&cleanCache.hum||null};
 window.PennioState={harm:()=>({key:H.key,scale:H.scale,prog:H.prog}),offset:()=>vocalOffset,N:()=>N,pattern:()=>JSON.parse(JSON.stringify(pattern)),ddBase:()=>ddBase,uduBase:()=>uduBase,lastBeat:()=>window.__lastVoiceBeat||null};
 window.PennioEncode={mp3:(buf,onP,workers)=>mp3Worker(buf,onP,workers),frames:mp3Frames,key:()=>exportKey(true)};
@@ -5945,6 +5976,7 @@ document.getElementById("sylIn").oninput=sylRender;
  });
  function renderProjects(){
   const list=read().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0));projects.replaceChildren();
+  const pb=document.getElementById("dhProjectsBlock");if(pb)pb.classList.toggle("empty",!list.length);
   if(!list.length)return;
   (showAllProjects?list:list.slice(0,5)).forEach(item=>{
    const row=document.createElement("article");row.className="dash-project";
@@ -5977,6 +6009,54 @@ document.getElementById("sylIn").oninput=sylRender;
  $("dashNewProject").onclick=()=>openModal();
  renderProjects();
  window.PennioDashboardProjectsRefresh=renderProjects;
+ /* ---- the dashboard: continue, recent sessions, quick actions, status ---- */
+ const LC={dd:"#F26522",bata:"#E0577A",agogo:"#F2B33D",shek:"#3FB59A",udu:"#4F8FE0",duru:"#B77BE8",clap:"#E8A0C0",bass:"#7FB6E8",keys:"#D59AC0",gtr:"#F28B5E",pluck:"#C9A0DC",flute:"#9AE0C9",reed:"#E8C07A"};
+ const hashOf=str=>{let h=2166136261;for(const c of String(str)){h=Math.imul(h^c.charCodeAt(0),16777619);}return h>>>0;};
+ function thumb(sess){
+  const n=sess.n===12?12:16, lanes=Object.keys(LC).filter(id=>sess.pattern&&sess.pattern[id]&&sess.pattern[id].slice(0,n).some(Boolean)).slice(0,8);
+  let g="";
+  if(lanes.length){
+   const W=160,H=90,pad=8,gap=2,cw=(W-pad*2-gap*(n-1))/n,rh=Math.min(9,(H-pad*2-gap*(lanes.length-1))/lanes.length);
+   const top=(H-(rh*lanes.length+gap*(lanes.length-1)))/2;
+   lanes.forEach((id,r)=>{for(let i=0;i<n;i++){const on=sess.pattern[id][i];g+='<rect x="'+(pad+i*(cw+gap)).toFixed(1)+'" y="'+(top+r*(rh+gap)).toFixed(1)+'" width="'+cw.toFixed(1)+'" height="'+rh.toFixed(1)+'" rx="1.6" fill="'+(on?LC[id]:"#ffffff")+'"'+(on?"":' opacity=".09"')+'/>';}});
+  }else{
+   let h=hashOf(sess.name);for(let i=0;i<28;i++){h=Math.imul(h^i,16777619)>>>0;const bh=10+(h%1000)/1000*48;g+='<rect x="'+(10+i*5.1).toFixed(1)+'" y="'+(45-bh/2).toFixed(1)+'" width="3.2" height="'+bh.toFixed(1)+'" rx="1.6" fill="'+(i%5===0?"#F26522":"#ffffff")+'"'+(i%5===0?"":' opacity=".22"')+'/>';}
+  }
+  return '<svg viewBox="0 0 160 90" aria-hidden="true" preserveAspectRatio="xMidYMid slice">'+g+'</svg>';
+ }
+ const ago=t=>{const m=Math.max(0,Math.round((Date.now()-(t||Date.now()))/60000));return m<1?"now":m<60?m+" min":m<1440?Math.round(m/60)+" h":m<10080?Math.round(m/1440)+" d":new Date(t).toLocaleDateString(undefined,{day:"numeric",month:"short"});};
+ const S=()=>window.PennioSessions;
+ let heroSession=null;
+ async function refreshDash(){
+  let list=[];try{list=S()?await S().list():[];}catch(e){}
+  let prof=null;try{prof=JSON.parse(localStorage.getItem("ps.profile")||"null");}catch(e){}
+  const first=((prof&&prof.name)||"").trim().split(/\s+/)[0], hr=new Date().getHours();
+  $("dhHi").textContent=(hr<12?"Good morning":hr<18?"Good afternoon":"Good evening")+(first?", "+first:"");
+  heroSession=list[0]||null;
+  $("dhTitle").textContent=heroSession?heroSession.name:"Start a beat";
+  $("dhContinueLbl").textContent=heroSession?"Continue":"Start";
+  const wrap=$("dhSessions");wrap.replaceChildren();
+  $("dhSessionsBlock").hidden=!list.length;
+  list.slice(0,6).forEach(sess=>{
+   const b=document.createElement("button");b.type="button";b.className="dh-card"+(sess.current?" cur":"");
+   b.innerHTML='<span class="dh-thumb">'+thumb(sess)+(sess.voice?'<i class="dh-mic" title="Has a voice recording"><svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zM6 12a6 6 0 0 0 12 0M12 18v3"/></svg></i>':"")+'</span><b></b><small></small>';
+   b.querySelector("b").textContent=sess.name;
+   b.querySelector("small").textContent=[sess.bpm?sess.bpm+" BPM":"",sess.key,ago(sess.updated)].filter(Boolean).join(" · ");
+   b.setAttribute("aria-label","Open "+sess.name);
+   b.onclick=async()=>{b.disabled=true;try{await S().open(sess.id);go("ayan");}finally{b.disabled=false;}};
+   wrap.append(b);
+  });
+  $("dhFoot").textContent=list.length?list.length+(list.length===1?" session":" sessions")+" saved on this device":"";
+ }
+ $("dhContinue").onclick=async()=>{const b=$("dhContinue");b.disabled=true;try{if(heroSession)await S().open(heroSession.id);else await S().create();go("ayan");}finally{b.disabled=false;}};
+ $("dhNew").onclick=async()=>{const b=$("dhNew");b.disabled=true;try{await S().create();go("ayan");}finally{b.disabled=false;}};
+ $("dhRec").onclick=()=>{const r=document.getElementById("studioRecLaunch");if(r)r.click();};
+ $("dhAll").onclick=()=>{const w=document.getElementById("openWork");if(w)w.click();};
+ const homeEl=$("v-home");new MutationObserver(()=>{if(homeEl.classList.contains("on"))refreshDash();}).observe(homeEl,{attributes:true,attributeFilter:["class"]});
+ setTimeout(refreshDash,1200);addEventListener("focus",()=>{if(homeEl.classList.contains("on"))refreshDash();});
+ window.PennioDashRefresh=refreshDash;
+ $("dhProjectsBlock").classList.toggle("empty",!read().length);
+
 })();;
 
 </script>
@@ -6856,6 +6936,54 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 #insLane .mx-pan,#insLane .mx-aux{grid-template-columns:30px 1fr 28px;gap:4px}
 #insLane .mx-pan input,#insLane .mx-aux input{min-height:28px}
 }
+
+/* ================= Studio dashboard ================= */
+#v-home{padding:0}
+#v-home .dh{max-width:1040px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:26px}
+.dh-hero{position:relative;display:grid;grid-template-columns:1fr minmax(180px,40%);min-height:300px;border-radius:24px;overflow:hidden;background:#FAF7F3;color:#1E1713;box-shadow:0 20px 60px rgba(0,0,0,.35),inset 0 0 0 1px rgba(30,23,19,.08)}
+.dh-copy{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:30px 28px;min-width:0}
+.dh-hi{margin:0;font-size:13px;font-weight:600;letter-spacing:.02em;color:#6b5b4b}
+.dh-title{margin:0 0 6px;font-size:clamp(30px,5vw,50px);line-height:1.03;letter-spacing:-.03em;font-weight:800;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dh-actions{display:flex;flex-wrap:wrap;gap:10px}
+.dh-primary,.dh-ghost{min-height:48px;padding:0 18px;border-radius:14px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:transform .12s ease,background .15s ease}
+.dh-primary{background:#F26522;color:#1a0d05;border:0;box-shadow:0 6px 18px rgba(242,101,34,.35)}
+.dh-primary:hover{background:#FF7436}.dh-primary:active,.dh-ghost:active{transform:scale(.97)}
+.dh-primary svg{width:16px;height:16px;fill:currentColor}
+.dh-ghost{background:transparent;color:#1E1713;border:1.5px solid rgba(30,23,19,.7)}
+.dh-ghost:hover{background:rgba(30,23,19,.07)}
+.dh-ghost svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.dh-ghost svg circle{fill:#E5604F;stroke:none}
+.dh-art{position:absolute;right:0;top:0;height:100%;width:min(46%,430px);object-fit:contain;object-position:100% 100%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%);mask-image:linear-gradient(90deg,transparent 0,#000 22%)}
+.dh-block{display:grid;gap:12px}
+.dh-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.dh-head h2{margin:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ts)}
+.dh-link{min-height:44px;padding:0 4px;font-size:13px;font-weight:600;color:var(--ts);display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.dh-link:hover{color:var(--tp)}
+.dh-sessions{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px}
+.dh-card{display:grid;gap:6px;text-align:left;padding:8px 8px 12px;border-radius:16px;background:var(--surface-1);border:1px solid var(--border);min-width:0;cursor:pointer;transition:transform .14s ease,border-color .15s ease}
+.dh-card:hover{border-color:rgba(var(--fg-rgb),.3);transform:translateY(-2px)}
+.dh-card.cur{border-color:rgba(242,101,34,.7)}
+.dh-card b{padding:2px 6px 0;font-size:14px;font-weight:700;color:var(--tp);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dh-card small{padding:0 6px;font-size:12px;color:var(--ts);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dh-thumb{position:relative;display:block;aspect-ratio:16/9;border-radius:11px;overflow:hidden;background:#0d0d10}
+.dh-thumb svg{position:absolute;inset:0;width:100%;height:100%}
+.dh-mic{position:absolute;right:6px;bottom:6px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.6);display:grid;place-items:center}
+.dh-mic svg{position:static;width:13px;height:13px;fill:none;stroke:#F26522;stroke-width:2.2;stroke-linecap:round}
+#v-home .dash-rooms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0}
+#v-home .dash-room{min-height:128px;border-radius:18px}
+#dhProjectsBlock.empty .dh-head h2{display:none}
+#dhProjectsBlock.empty .dash-projects{display:none}
+.dh-foot{margin:0;text-align:center;font-size:12px;color:var(--tt)}
+@media (max-width:760px){
+  .dh-hero{grid-template-columns:1fr;min-height:0}
+  .dh-copy{padding:22px 20px 22px;max-width:62%}
+  .dh-art{width:54%;opacity:.95}
+  .dh-actions{flex-direction:column;align-items:stretch}
+  .dh-primary,.dh-ghost{justify-content:center;padding:0 14px}
+  #v-home .dash-rooms{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .dh-sessions{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:420px){.dh-copy{max-width:58%;padding:20px 16px}.dh-title{font-size:28px}}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
