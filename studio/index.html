@@ -3015,6 +3015,7 @@ async function mp3(buf,onP){
   const e=enc.flush(); if(e.length) out.push(new Uint8Array(e));
   return new Blob(out,{type:"audio/mpeg"});
 }
+window.PennioVoice={raw:()=>rawBuf,pro:()=>proBuf,clean:()=>cleanCache&&cleanCache.buf,hum:()=>cleanCache&&cleanCache.hum||null};
 window.PennioState={harm:()=>({key:H.key,scale:H.scale,prog:H.prog}),offset:()=>vocalOffset,N:()=>N,pattern:()=>JSON.parse(JSON.stringify(pattern)),ddBase:()=>ddBase,uduBase:()=>uduBase,lastBeat:()=>window.__lastVoiceBeat||null};
 window.PennioEncode={mp3:(buf,onP,workers)=>mp3Worker(buf,onP,workers),frames:mp3Frames,key:()=>exportKey(true)};
 /* ---------- OGBIFỌ̀: detect Yoruba or English, translate to the other ----------
@@ -3399,9 +3400,30 @@ function impulse(ctx,sec){ const n=Math.floor(sec*ctx.sampleRate), b=ctx.createB
 function fft(re,im){ const n=re.length; for(let i=1,j=0;i<n;i++){ let bit=n>>1; for(;j&bit;bit>>=1) j^=bit; j^=bit; if(i<j){ let t=re[i]; re[i]=re[j]; re[j]=t; t=im[i]; im[i]=im[j]; im[j]=t; } }
   for(let len=2;len<=n;len<<=1){ const ang=-2*Math.PI/len, wr=Math.cos(ang), wi=Math.sin(ang);
     for(let i=0;i<n;i+=len){ let cr=1,ci=0; for(let k=0;k<len/2;k++){ const a=i+k, b=a+len/2, xr=re[b]*cr-im[b]*ci, xi=re[b]*ci+im[b]*cr; re[b]=re[a]-xr; im[b]=im[a]-xi; re[a]+=xr; im[a]+=xi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } } }
+/* ---------- voice cleanup helpers ---------- */
+/* Mains hum: look at the quietest stretch of the recording, where nothing else is playing, for narrow peaks at 50 or 60 Hz and their harmonics. */
+function detectHum(x,sr){
+  const N=32768; if(x.length<N) return null;
+  const w=Math.floor(sr*.2), en=[]; for(let i=0;i+w<=x.length;i+=w){ let e=0; for(let j=i;j<i+w;j++) e+=x[j]*x[j]; en.push(e/w); }
+  const span=Math.ceil(N/w); let best=0, be=1e30; for(let i=0;i+span<=en.length;i++){ let e=0; for(let j=0;j<span;j++) e+=en[i+j]; if(e<be){ be=e; best=i; } }
+  const st=Math.min(best*w,x.length-N), re=new Float64Array(N), im=new Float64Array(N);
+  for(let i=0;i<N;i++) re[i]=x[st+i]*(.5-.5*Math.cos(2*Math.PI*i/N));
+  fft(re,im); const P=new Float64Array(N/2); for(let k=0;k<N/2;k++) P[k]=re[k]*re[k]+im[k]*im[k];
+  const bin=sr/N, ratioAt=f=>{ const k=Math.round(f/bin); if(k<4||k>=N/2-4) return 0; let pk=0; for(let d=-2;d<=2;d++) pk=Math.max(pk,P[k+d]);
+    const nb=[]; for(let d=10;d<=60;d++){ if(k-d>=0) nb.push(P[k-d]); if(k+d<N/2) nb.push(P[k+d]); } if(nb.length<10) return 0; nb.sort((a,b)=>a-b); return pk/(nb[nb.length>>1]+1e-18); };
+  let bf=0, bs=0; for(const f0 of [50,60]){ let sum=0; for(let h=1;h<=4;h++) sum+=Math.log(Math.max(1e-6,ratioAt(f0*h))); if(sum>bs){ bs=sum; bf=f0; } }
+  const mean=Math.exp(bs/4); if(mean<6) return null;
+  const freqs=[]; for(let h=1;h<=10;h++){ const f=bf*h; if(f>sr/2-100) break; if(ratioAt(f)>=5) freqs.push(f); }
+  return freqs.length? {base:bf,freqs,db:+(10*Math.log10(mean)).toFixed(1)} : null;
+}
+function notchInPlace(x,sr,f,Q){
+  const w0=2*Math.PI*f/sr, al=Math.sin(w0)/(2*Q), cs=Math.cos(w0), a0=1+al, b0=1/a0, b1=-2*cs/a0, b2=1/a0, a1=-2*cs/a0, a2=(1-al)/a0;
+  let x1=0,x2=0,y1=0,y2=0; for(let i=0;i<x.length;i++){ const v=x[i], y=b0*v+b1*x1+b2*x2-a1*y1-a2*y2; x2=x1; x1=v; y2=y1; y1=y; x[i]=y; }
+}
 async function denoise(b){
   const sr=b.sampleRate, n=b.length, chs=b.numberOfChannels, x=new Float32Array(n);
   for(let c=0;c<chs;c++){ const d=b.getChannelData(c); for(let i=0;i<n;i++) x[i]+=d[i]/chs; }
+  const hum=detectHum(x,sr); if(hum) hum.freqs.forEach(f=>{ notchInPlace(x,sr,f,8); notchInPlace(x,sr,f,8); notchInPlace(x,sr,f,8); }); /* two wide notches: mains drifts, and a narrow one leaves its skirts */
   const N=2048, H=512, B=N/2+1, win=new Float32Array(N); for(let i=0;i<N;i++) win[i]=.5-.5*Math.cos(2*Math.PI*i/N);
   const F=Math.max(1,Math.ceil((n+N)/H)); const mags=new Float32Array(F*B), phs=new Float32Array(F*B), energy=new Float32Array(F);
   const re=new Float64Array(N), im=new Float64Array(N);
@@ -3412,13 +3434,20 @@ async function denoise(b){
   // noise profile: average power of the quietest fifth of the recording, per frequency
   const ord=[...Array(F).keys()].sort((p,q)=>energy[p]-energy[q]), quiet=ord.slice(0,Math.max(4,Math.floor(F*.2))), noise=new Float32Array(B);
   for(let k=0;k<B;k++){ let s=0; for(const f of quiet) s+=mags[f*B+k]*mags[f*B+k]; noise[k]=Math.sqrt(s/quiet.length)+1e-9; }
+  let quietE=0; for(const f of quiet) quietE+=energy[f]; quietE/=quiet.length;
+  /* sibilance: frames where the 5 to 10 kHz energy is far above what this voice's own vowels carry get that band eased down, so "s" does not stick out */
+  const h0=Math.floor(5000*N/sr), h1=Math.min(B-1,Math.floor(10000*N/sr)), m0=Math.floor(500*N/sr), m1=Math.floor(3000*N/sr), ratio=new Float32Array(F), voicedR=[];
+  for(let f=0;f<F;f++){ let hi=0,mid=0; for(let k=h0;k<h1;k++){ const m=mags[f*B+k]; hi+=m*m; } for(let k=m0;k<m1;k++){ const m=mags[f*B+k]; mid+=m*m; } ratio[f]=hi/(mid+1e-12); if(energy[f]>quietE*6) voicedR.push(ratio[f]); }
+  voicedR.sort((p,q)=>p-q); const essThr=Math.max(1e-6,(voicedR.length? voicedR[Math.floor(voicedR.length*.5)] : 1)*1.7); let ess=1;
   // onset strength for the beat finder (spectral flux, 100 Hz to 4 kHz)
   const k0=Math.floor(100*N/sr), k1=Math.floor(4000*N/sr), flux=new Float32Array(F);
   for(let f=1;f<F;f++){ let s=0; for(let k=k0;k<k1;k++){ const d=Math.log(1+mags[f*B+k]/noise[k])-Math.log(1+mags[(f-1)*B+k]/noise[k]); if(d>0) s+=d; } flux[f]=s; }
   // spectral gate with smoothing, so speech stays natural and the hiss goes
   const G=new Float32Array(B), floor=.1, y=new Float32Array(n+N), wsum=new Float32Array(n+N);
   for(let f=0;f<F;f++){
-    for(let k=0;k<B;k++){ const m=mags[f*B+k], snr=(m*m)/(noise[k]*noise[k]); let g=Math.max(floor,Math.sqrt(Math.max(0,1-1.6/(snr+1e-9)))); g=Math.min(1,g); G[k]= g>G[k]? g : G[k]*.55+g*.45; }
+    const floorF=energy[f]<quietE*3? .03 : floor; /* quieter in the gaps between phrases, as before inside them */
+    const wantEss=(energy[f]>quietE*6&&ratio[f]>essThr)? Math.max(.3,Math.pow(essThr/ratio[f],.9)) : 1; ess= wantEss<ess? wantEss : ess*.7+wantEss*.3;
+    for(let k=0;k<B;k++){ const m=mags[f*B+k], snr=(m*m)/(noise[k]*noise[k]); let g=Math.max(floorF,Math.sqrt(Math.max(0,1-1.6/(snr+1e-9)))); g=Math.min(1,g); if(ess<1&&k>=h0-8&&k<=h1+8){ const edge=Math.min(1,Math.min(k-(h0-8),(h1+8)-k)/8); g*=1-(1-ess)*Math.max(0,edge); } G[k]= g>G[k]? g : G[k]*.55+g*.45; }
     for(let k=0;k<B;k++){ const g=(k>0&&k<B-1)? (G[k-1]+2*G[k]+G[k+1])/4 : G[k]; const m=mags[f*B+k]*g, ph=phs[f*B+k]; re[k]=m*Math.cos(ph); im[k]=m*Math.sin(ph); if(k>0&&k<N/2){ re[N-k]=re[k]; im[N-k]=-im[k]; } }
     for(let i=0;i<N;i++) im[i]=-im[i]; fft(re,im);
     const st=f*H-N/2; for(let i=0;i<N;i++){ const k=st+i; if(k<0||k>=n) continue; y[k]+=re[i]/N*win[i]; wsum[k]+=win[i]*win[i]; }
@@ -3431,7 +3460,7 @@ async function denoise(b){
   let gs=1; const gains=rms.map(v=>{ const tgt= v<gate? Math.max(.35,v/gate) : Math.min(3,Math.max(.6,loud*.7/v)); gs= tgt<gs? gs*.6+tgt*.4 : gs*.85+tgt*.15; return gs; });
   const out=new Float32Array(n); for(let i=0;i<n;i++){ const q=i/w, a=Math.floor(q), t=q-a, g=(gains[a]||1)*(1-t)+(gains[a+1]||gains[a]||1)*t; out[i]=y[i]*g; }
   ensureAudio(); const res=ac.createBuffer(1,n,sr); res.getChannelData(0).set(out);
-  return {buf:res, flux, hop:H/sr, noiseDb: 20*Math.log10(1/floor)};
+  return {buf:res, flux, hop:H/sr, noiseDb: 20*Math.log10(1/floor), hum};
 }
 const VSTYLES={
   natural:{n:"Natural",hp:80,mud:-2,pres:2,air:1.5,ess:-2,th:-24,ra:2.5,rev:0,wet:0},
@@ -3458,9 +3487,13 @@ async function styleVoice(clean,key){
   try{ await matchLoudness(out,-16); }catch(e){}
   return out;
 }
+/* the level of the quietest fifth of the recording, in dB: what the background sounds like when nobody is speaking */
+function quietFloorDb(buf){ const d=buf.getChannelData(0), w=Math.floor(buf.sampleRate*.05), r=[]; for(let i=0;i+w<=d.length;i+=w){ let e=0; for(let j=i;j<i+w;j++) e+=d[j]*d[j]; r.push(10*Math.log10(e/w+1e-14)); } r.sort((a,b)=>a-b); const k=Math.max(1,Math.floor(r.length*.2)); return r.slice(0,k).reduce((a,b)=>a+b,0)/k; }
+let voiceStats=null;
 async function enhance(b){
   vmeta.textContent="Removing background noise…";
   const dn=await denoise(b); cleanCache=dn;
+  try{ voiceStats={ noiseDown:Math.max(0,Math.round(quietFloorDb(b)-quietFloorDb(dn.buf))), hum:dn.hum?dn.hum.base:0 }; }catch(e){ voiceStats=null; }
   vmeta.textContent="Applying the "+(VSTYLES[vstyle]||VSTYLES.studio).n+" voice style…";
   return styleVoice(dn.buf,vstyle);
 }
@@ -3471,7 +3504,7 @@ async function setVoiceStyle(key){
   proBuf=await styleVoice(cleanCache.buf,key); slices=findSlices(proBuf); drawWave(); restartTracks&&restartTracks(); saveSoon();
   vmeta.textContent=voiceMeta(); if(was||true){ setEnhanced(true); vprev.click(); }
 }
-function voiceMeta(){ return (currentAudio?currentAudio.name+" · ":"")+(rawBuf?rawBuf.duration.toFixed(1)+"s · ":"")+slices.length+" chops · background noise removed, levels evened out, "+(VSTYLES[vstyle]||VSTYLES.studio).n+" style, loudness set for playback."; }
+function voiceMeta(){ return (currentAudio?currentAudio.name+" · ":"")+(rawBuf?rawBuf.duration.toFixed(1)+"s · ":"")+slices.length+" chops · "+(voiceStats? "background noise down "+voiceStats.noiseDown+" dB"+(voiceStats.hum? ", "+voiceStats.hum+" Hz hum removed" : "") : "background noise removed")+", harsh s sounds eased, levels evened out, "+(VSTYLES[vstyle]||VSTYLES.studio).n+" style, loudness set for playback."; }
 function findSlices(b){
   const d=b.getChannelData(0), sr=b.sampleRate, hop=Math.floor(sr*.01), fr=[];
   for(let i=0;i+hop<d.length;i+=hop){ let e=0; for(let j=0;j<hop;j++) e+=d[i+j]*d[i+j]; fr.push(Math.sqrt(e/hop)); }
