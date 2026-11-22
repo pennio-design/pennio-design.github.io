@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Let’s Create: motion ad (9:16)</title>
+<style>
+@font-face{font-family:'Inter';font-weight:400;src:url('../../../fonts/inter-400.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:500;src:url('../../../fonts/inter-500.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:700;src:url('../../../fonts/inter-700.woff2') format('woff2')}
+@font-face{font-family:'Inter';font-weight:800;src:url('../../../fonts/inter-800.woff2') format('woff2')}
+:root{--ink:#14110f;--ink2:#4a3f36;--orange:#F26522;--m:84px}
+*{box-sizing:border-box;margin:0}
+html,body{background:#111}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:'Inter',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;background:#F8E1C3}
+.scene{position:absolute;inset:0;overflow:hidden}
+.scene::after{content:"";position:absolute;inset:0;background:radial-gradient(130% 90% at 50% 40%,transparent 55%,rgba(120,60,10,.10));pointer-events:none}
+.eyebrow{position:absolute;left:var(--m);font-weight:700;text-transform:uppercase;color:var(--orange);white-space:nowrap}
+.h{position:absolute;left:var(--m);width:912px;font-weight:800;letter-spacing:-.048em}
+.ln{display:block;overflow:hidden;padding:.06em 0 .1em;margin:-.06em 0 -.1em}
+.ln>span{display:inline-block;will-change:transform}
+.dot{display:inline-block;color:var(--orange);transform-origin:50% 80%}
+.sub{position:absolute;left:var(--m);width:912px;font-weight:400;color:var(--ink2);letter-spacing:-.012em;line-height:1.36}
+.art{position:absolute;left:0;width:1080px;will-change:transform;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 13%,#000 88%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 13%,#000 88%,transparent 100%)}
+.art img,.art .layer{position:absolute;left:0;top:0;width:1080px;height:auto;display:block}
+#w{position:absolute;left:0;top:0;width:1080px;height:1920px;background:var(--orange);transform:translateY(100%);will-change:transform}
+#end{position:absolute;inset:0}
+#end>*{position:absolute;left:0;width:1080px;text-align:center}
+#end .mark{left:470px;top:512px;width:140px;will-change:transform}
+.mark svg{width:140px;height:auto;display:block;fill:var(--ink)}
+#end .ring{left:540px;top:600px;width:10px;height:10px;margin:-5px 0 0 -5px;border:6px solid var(--ink);border-radius:50%;opacity:0;text-align:left}
+.wm{top:722px;font-weight:800;font-size:62px;letter-spacing:-.02em}
+.big{top:850px;font-weight:800;font-size:168px;letter-spacing:-.05em;line-height:.95}
+#end .cta{left:190px;top:1230px;width:700px;height:112px;text-align:center;border-radius:56px;background:var(--ink);color:#FBEDDB;font-weight:700;font-size:40px;display:grid;place-items:center;letter-spacing:-.01em}
+</style></head><body>
+<div id="stage">
+  <!-- 1. key and door -->
+  <section class="scene" id="s1" style="background:#F8E1C3">
+    <span class="eyebrow" id="s1e" style="top:268px;font-size:26px">Let’s Create</span>
+    <h1 class="h" id="s1h" style="top:318px;font-size:112px;line-height:.93"><span class="ln"><span>A new home</span></span><span class="ln"><span>for creatives<i class="dot" id="s1d">.</i></span></span></h1>
+    <p class="sub" id="s1s" style="top:576px;font-size:36px"><span class="ln"><span>Something is taking shape.</span></span><span class="ln"><span id="s1s2">Watch this space.</span></span></p>
+    <div class="art" id="s1a" style="top:640px;height:1065px;transform-origin:50% 100%">
+      <img class="layer" id="kb" src="key-bottom.png" alt="">
+      <div id="glow" style="position:absolute;left:310px;top:660px;width:460px;height:340px;background:radial-gradient(closest-side,rgba(255,150,40,.85),rgba(255,120,20,0));mix-blend-mode:screen;opacity:0"></div>
+      <img class="layer" id="kt" src="key-top.png" alt="">
+    </div>
+  </section>
+  <!-- 2. laptop -->
+  <section class="scene" id="s2" style="background:#FBEDDB;visibility:hidden">
+    <span class="eyebrow" id="s2e" style="top:268px;font-size:26px">A learning group for African creatives</span>
+    <h1 class="h" id="s2h" style="top:316px;font-size:196px;line-height:.92"><span class="ln"><span>Let’s</span></span><span class="ln"><span>create<i class="dot" id="s2d">.</i></span></span></h1>
+    <p class="sub" id="s2s" style="top:736px;font-size:36px;width:760px"><span class="ln"><span>A practical space to grow</span></span><span class="ln"><span>your creative work.</span></span></p>
+    <div class="art" id="s2a" style="top:790px;height:991px;transform-origin:60% 70%">
+      <img class="layer" src="art-laptop.jpg" alt="">
+      <div id="sweep" style="position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);mix-blend-mode:soft-light;opacity:.9"></div>
+    </div>
+  </section>
+  <!-- 3. person -->
+  <section class="scene" id="s3" style="background:#FAE7CE;visibility:hidden">
+    <span class="eyebrow" id="s3e" style="top:268px;font-size:24px">A learning group for African creatives</span>
+    <h1 class="h" id="s3h" style="top:326px;font-size:84px;line-height:1.02"><span class="ln"><span>Make real work.</span></span><span class="ln"><span>Get honest feedback.</span></span><span class="ln"><span>Grow in public<i class="dot" id="s3d">.</i></span></span></h1>
+    <div class="art" id="s3a" style="top:920px;height:733px;transform-origin:78% 55%"><img class="layer" src="art-person.jpg" alt=""></div>
+  </section>
+  <div id="w"></div>
+  <!-- 4. end card -->
+  <div id="end" style="visibility:hidden">
+    <div class="ring" id="ring"></div>
+    <div class="mark" id="mark"><svg viewBox="0 0 81.67 102.67"><path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg></div>
+    <div class="wm" id="wm">PENNIO</div>
+    <div class="big" id="big">Let’s<br>create.</div>
+    <div class="cta" id="cta">Apply at pennio.agency/letscreate</div>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const prog=(t,s,d)=>clamp((t-s)/d);
+const eOutExpo=x=>x>=1?1:1-Math.pow(2,-10*x);
+const eInOut=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const eOutBack=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const eOutCubic=x=>1-Math.pow(1-x,3);
+const T={W1:3.95,W2:8.55,W3:12.05,WD:1.0,END:15.0};
+function line(el,t,s,d=.95){const p=eOutExpo(prog(t,s,d));el.style.transform=`translateY(${(1-p)*140}%)`;}
+function fade(el,t,s,d=.6){el.style.opacity=eOutCubic(prog(t,s,d));}
+function dot(el,t,s){const p=prog(t,s,.55);el.style.transform=`scale(${p<=0?0:eOutBack(p)})`;el.style.opacity=p>0?1:0;}
+function render(t){
+  /* scene switching happens under the wipe */
+  $('s1').style.visibility=t<T.W1?'visible':'hidden';
+  $('s2').style.visibility=(t>=T.W1&&t<T.W2)?'visible':'hidden';
+  $('s3').style.visibility=(t>=T.W2&&t<T.W3)?'visible':'hidden';
+  $('end').style.visibility=t>=T.W3?'visible':'hidden';
+  /* ---- scene 1 ---- */
+  { const e=$('s1e'); const p=eOutExpo(prog(t,.15,.9)); e.style.opacity=p; e.style.letterSpacing=(.42-.22*p)+'em';
+    const ls=$('s1h').querySelectorAll('.ln>span'); line(ls[0],t,.35); line(ls[1],t,.5); dot($('s1d'),t,1.25);
+    const ss=$('s1s').querySelectorAll('.ln>span'); line(ss[0],t,1.25,.8); line(ss[1],t,2.0,.8);
+    const a=$('s1a'); const z=1+.05*eInOut(prog(t,0,T.W1)); a.style.transform=`scale(${z})`;
+    const drop=eOutExpo(prog(t,.1,1.5)); const bob=Math.sin(t*2*Math.PI/3.4)*16*drop, rot=Math.sin(t*2*Math.PI/3.4+.6)*1.6*drop;
+    const kt=$('kt'); kt.style.transform=`translateY(${(1-drop)*-170+bob}px) rotate(${rot}deg)`; kt.style.transformOrigin='42% 28%'; kt.style.opacity=clamp(drop*1.6);
+    $('kb').style.opacity=eOutCubic(prog(t,0,.9));
+    const g=$('glow'); const gp=prog(t,.9,1.2); g.style.opacity=gp*(.55+.25*Math.sin(t*2*Math.PI/2.4)); }
+  /* ---- scene 2 ---- */
+  if(t>=T.W1-.1&&t<T.W2){ const u=t-T.W1;
+    const e=$('s2e'); const p=eOutExpo(prog(u,.35,.9)); e.style.opacity=p; e.style.letterSpacing=(.34-.14*p)+'em';
+    const ls=$('s2h').querySelectorAll('.ln>span'); line(ls[0],u,.5,1.05); line(ls[1],u,.68,1.05); dot($('s2d'),u,1.55);
+    const ss=$('s2s').querySelectorAll('.ln>span'); line(ss[0],u,1.6,.8); line(ss[1],u,1.75,.8);
+    const a=$('s2a'); const z=1.13-.13*eOutExpo(prog(u,.3,2.2)); const fl=Math.sin(u*2*Math.PI/3.6)*11;
+    a.style.transform=`translateY(${fl}px) scale(${z+ .012*prog(u,2.2,2.4)})`;
+    $('sweep').style.transform=`translateX(${(-70+ 140*prog(u,1.8,2.2))}%)`; }
+  /* ---- scene 3 ---- */
+  if(t>=T.W2-.1&&t<T.W3){ const u=t-T.W2;
+    const e=$('s3e'); const p=eOutExpo(prog(u,.4,.9)); e.style.opacity=p; e.style.letterSpacing=(.34-.14*p)+'em';
+    const ls=$('s3h').querySelectorAll('.ln>span'); line(ls[0],u,.5,.9); line(ls[1],u,1.3,.9); line(ls[2],u,2.1,.9); dot($('s3d'),u,2.7);
+    const a=$('s3a'); const k=eInOut(prog(u,0,T.W3-T.W2+.3)); a.style.transform=`scale(${1.0+.13*k}) translateX(${-14*k}px)`; a.style.opacity=eOutCubic(prog(u,.1,.9)); }
+  /* ---- end card ---- */
+  if(t>=T.W3){ const u=t-T.W3;
+    const m=$('mark'); const p=prog(u,.12,.9); const s=p<=0?0:eOutBack(p); m.style.transform=`scale(${.35+.65*s}) rotate(${(1-eOutExpo(p))*-14}deg)`; m.style.opacity=clamp(p*3);
+    const r=$('ring'); const rp=prog(u,.5,1.1); r.style.opacity=rp>0?(1-rp)*.55:0; const rs=eOutExpo(rp); r.style.width=r.style.height=(10+520*rs)+'px'; r.style.margin=`${-(10+520*rs)/2}px 0 0 ${-(10+520*rs)/2}px`;
+    const w=$('wm'); const wp=eOutExpo(prog(u,.7,.8)); w.style.opacity=wp; w.style.transform=`translateY(${(1-wp)*26}px)`;
+    const b=$('big'); const bp=eOutExpo(prog(u,.95,.9)); b.style.opacity=bp; b.style.transform=`translateY(${(1-bp)*40}px)`;
+    const c=$('cta'); const cp=eOutBack(prog(u,1.5,.7)); c.style.opacity=clamp(prog(u,1.5,.4)); c.style.transform=`scale(${.85+.15*cp})`; }
+  /* ---- wipes: an orange sheet rises, covers, and (except the last) rises away ---- */
+  let y=100;
+  for(const [c,keep] of [[T.W1,false],[T.W2,false],[T.W3,true]]){
+    const s=c-T.WD/2, p=prog(t,s,T.WD);
+    if(p>0&&p<1||(p>=1&&keep)){ y=keep?(1-eInOut(clamp(p*2,0,1)))*100:100-200*eInOut(p); if(keep&&p>=.5)y=0; }
+  }
+  $('w').style.transform=`translateY(${y}%)`;
+}
+window.render=render;window.T=T;render(0);
+</script></body></html>

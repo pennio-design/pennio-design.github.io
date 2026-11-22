@@ -123,6 +123,20 @@ h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.025em;line-he
 
 .exp-row .btn{min-height:44px}
 .exp-note,.exp-meta{font-size:12px;color:var(--mute);font-weight:300}
+.exp-credits{border:1px solid var(--border,rgba(var(--fg-rgb),.14));border-radius:12px;padding:8px 10px;margin:2px 0}
+.exp-credits summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none;min-height:44px}
+.exp-credits summary::-webkit-details-marker{display:none}
+.exp-credits summary img{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:none;background:rgba(var(--fg-rgb),.08)}
+.exp-credits summary span{display:flex;flex-direction:column;min-width:0}
+.exp-credits summary em{font-style:normal;font-size:12px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cred-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-top:8px}
+.cred-grid .wide{grid-column:1/-1}
+.cred-grid label{display:flex;flex-direction:column;gap:4px;font-size:12px;opacity:.9}
+.cred-grid input,.cred-grid textarea{font:inherit;font-size:14px;padding:9px 10px;border-radius:8px;border:1px solid rgba(var(--fg-rgb),.2);background:rgba(var(--fg-rgb),.05);color:inherit;min-height:44px;width:100%;box-sizing:border-box}
+.cred-btns{display:flex;flex-wrap:wrap;gap:8px}
+.cred-up{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.cred-note{font-size:11.5px;line-height:1.4;opacity:.65;margin:0}
+@media (max-width:480px){.cred-grid{grid-template-columns:1fr}}
 .exp-meta:empty{display:none}
 .inst{display:flex;align-items:center;gap:12px;margin:12px 0 22px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--black)}
 .inst[hidden]{display:none}
@@ -1344,7 +1358,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <div class="auth-gate-copy"><span class="auth-gate-eyebrow">A CREATIVE PLATFORM BY PENNIO</span><h1>Make something<br><em>worth keeping.</em></h1><p>Sound, language, image and story. One workspace for ideas that deserve a form.</p>
       <div class="auth-gate-rooms"><div><b>01</b><span><strong>Àyàn</strong><small>Music and sound</small></span></div><div><b>02</b><span><strong>Ewì</strong><small>Writing and poetry</small></span></div><div><b>03</b><span><strong>Ilé Eré</strong><small>Film and image</small></span></div><div><b>04</b><span><strong>Beauty Room</strong><small>Camera and portraiture</small></span></div></div>
     </div>
-    <section class="auth-gate-card" aria-labelledby="authGateTitle"><span class="auth-gate-eyebrow">YOUR PENNIO ACCOUNT</span><h2 id="authGateTitle">Enter your workspace.</h2><p>Sign in with your email. We’ll send you a secure one-time code.</p>
+    <section class="auth-gate-card" aria-labelledby="authGateTitle"><div class="gate-listen" id="gateListen" hidden><div class="gl-grid" id="glGrid" role="img" aria-label="Pattern preview"></div><div class="gl-row"><button type="button" id="glPlay" aria-label="Play this groove">▶</button><span id="glMeta"></span></div></div><span class="auth-gate-eyebrow">YOUR PENNIO ACCOUNT</span><h2 id="authGateTitle">Enter your workspace.</h2><p>Sign in with your email. We’ll send you a secure one-time code.</p>
       <label for="gateEmail">Email address</label><input id="gateEmail" type="email" autocomplete="email" placeholder="you@example.com" maxlength="120">
       <button id="gateSend" type="button">Send sign-in code <span>↗</span></button>
       <div id="gateCodeRow" hidden><label for="gateCode">Verification code</label><input id="gateCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Enter the code from your email"><button id="gateVerify" type="button">Verify and enter <span>↗</span></button></div>
@@ -1356,6 +1370,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 <header>
   <div class="wrap bar">
     <div class="logo"><svg class="logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81.67 102.67" role="img" aria-label="PENNIO"><path fill="#fff" d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42"/></svg>PENNIO Studio <span>· PENNIO</span></div>
+    <span class="hroom" id="hroom" aria-live="polite"></span>
     <div class="hsess" id="hsess"><input id="pname" value="Untitled beat" aria-label="Session name" maxlength="60"><span class="saved" id="savedNote"></span><span class="local-status" id="localStatus"><i></i>Saved on device</span></div>
     <div class="hright">
       <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light theme"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><span>Light</span></button>
@@ -1365,6 +1380,8 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
         <nav id="nav" hidden>
           <button data-v="ayan" class="on">Ìlù <small>Àyàn</small></button>
           <button data-v="write">Ewì <small>Writing and poetry</small></button>
+          <button data-v="faajiplace">Ilé Eré <small>Film and image</small></button>
+          <button data-v="beauty">Ojuloge <small>Camera room</small></button>
           <button data-v="home">Projects <small>My work</small></button>
           <button type="button" id="openWorkspacePanel">Workspace <small>Projects, media and storage</small></button>
           <button type="button" id="openWork">Sessions <small>Saved beats and sessions</small></button>
@@ -1459,6 +1476,9 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
           <div class="ctl x"><label>Tempo <b id="bpmV">104</b></label><input type="range" id="bpm" min="60" max="160" value="104" aria-label="Tempo"></div>
           <div class="ctl x"><label>Swing <b id="swV">12%</b></label><input type="range" id="swing" min="0" max="60" value="12" aria-label="Swing"></div>
       <div class="tp-pop-row"><span>Steps per bar</span>    <div class="seg x" id="len" aria-label="Steps per bar"><button data-n="12">12</button><button data-n="16" class="on">16</button></div></div>
+      <div class="tp-pop-row"><span>Playback</span><div class="seg x" id="perfMode" aria-label="Playback mode"><button data-m="auto" class="on">Auto</button><button data-m="smooth">Smooth</button><button data-m="full">Full</button></div></div>
+      <p class="perf-note" id="perfNote" role="status"></p>
+      <div class="tp-pop-row"><span>Sound</span><div class="seg x" id="soundMode" aria-label="Studio sound"><button data-s="rich" class="on">Rich</button><button data-s="classic">Classic</button></div></div>
     </div>
 
     <div class="tp-pop" id="recPop" role="dialog" aria-label="Record settings" hidden>
@@ -1482,6 +1502,16 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <div class="seg" id="expSrc" aria-label="What to export"><button type="button" data-s="beat" class="on">Beat and voice</button><button type="button" data-s="tracks">Playlist clips</button></div>
       <button class="btn exp-dismiss" id="expClose" type="button" aria-label="Close export panel">Close ×</button>
     </div>
+    <details class="exp-credits" id="expCred">
+      <summary><img id="credThumb" alt="Cover art preview" width="44" height="44"><span><b>Credits and cover art</b><em id="credLine">Written into every file you export</em></span></summary>
+      <div class="cred-grid">
+        <label>Title<input id="credTitle" maxlength="80" autocomplete="off"></label>
+        <label>Artist<input id="credArtist" maxlength="80" autocomplete="off"></label>
+        <label class="wide">More credits, one per line (optional)<textarea id="credExtra" rows="2" maxlength="400" placeholder="Lyrics by, Mixed by, Thanks to"></textarea></label>
+        <div class="cred-btns wide"><button class="btn" id="credLook" type="button">Change look</button><label class="btn cred-up">Use my image<input id="credImg" type="file" accept="image/*" hidden></label><button class="btn" id="credSave" type="button">Save cover</button></div>
+        <p class="cred-note wide">Only what the project knows is credited: your names, the instruments switched on, and key and tempo. Use an image you have the rights to.</p>
+      </div>
+    </details>
     <div class="exp-row exp-beat-only"><div class="seg" id="expFmt"><button data-f="mp3" class="on">MP3</button><button data-f="wav">WAV</button></div><span class="exp-note" id="expNote">Small file, right for WhatsApp and Instagram.</span></div>
     <div class="exp-tracks" id="expTracks" hidden><p>One stereo WAV of the Playlist clips you can hear, with the Mixer effects applied.</p><button class="btn primary" id="expTracksGo" type="button">Download WAV</button></div>
     <div class="exp-row exp-beat-only"><span class="exp-lab">Length</span><div class="seg" id="expLen"><button data-l="0" class="on">Auto</button><button data-l="4">4 bars</button><button data-l="8">8</button><button data-l="16">16</button></div></div>
@@ -1493,6 +1523,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <button class="btn" id="expLink">Copy groove link</button>
     </div>
     <p class="exp-meta exp-beat-only" id="expMeta"></p>
+    <div class="rm exp-beat-only" id="rmBox" hidden aria-label="Render report"></div>
   </div>
   </div>
   <div class="shell-status" id="shellStatus"><span class="daw-status" id="dawStatus" role="status" aria-live="polite">Pick a groove, press Play, then add your voice.</span></div>
@@ -1586,27 +1617,27 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 </section>
     </div>
 
-    <aside class="shell-side" id="sidePanel" data-side="right" aria-label="Side panel" hidden>
+    <aside class="shell-side" id="sidePanel" data-side="right" data-view="pattern" aria-label="Inspector" hidden>
       <div class="side-head">
         <div class="side-tabs" role="tablist" aria-label="Side panel sections">
-          <button type="button" role="tab" id="stab-selected" data-pane="selected" aria-selected="true" aria-controls="sp-selected">Clip</button>
-          <button type="button" role="tab" id="stab-info" data-pane="info" aria-selected="false" aria-controls="sp-info" tabindex="-1">Info</button>
-          <button type="button" role="tab" id="stab-passage" data-pane="passage" aria-selected="false" aria-controls="sp-passage" tabindex="-1">Passage</button>
-          <button type="button" role="tab" id="stab-notes" data-pane="notes" aria-selected="false" aria-controls="sp-notes" tabindex="-1">Notes</button>
+          <button type="button" role="tab" id="stab-inspect" data-pane="inspect" aria-selected="true" aria-controls="sp-inspect">Inspector</button>
           <button type="button" role="tab" id="stab-media" data-pane="media" aria-selected="false" aria-controls="sp-media" tabindex="-1">Media</button>
+          <button type="button" role="tab" id="stab-notes" data-pane="notes" aria-selected="false" aria-controls="sp-notes" tabindex="-1">Notes</button>
         </div>
         <span class="side-move" id="sideMoveHost"></span>
-        <button class="btn ic" type="button" id="sideClose" aria-label="Close side panel">×</button>
+        <button class="btn ic" type="button" id="sideClose" aria-label="Close inspector">×</button>
       </div>
-      <div class="side-pane on" id="sp-selected" role="tabpanel" aria-labelledby="stab-selected">
-        <div class="side-sel"><small>SELECTED CLIP</small><b id="selName">Nothing selected</b></div>
-        <div class="side-grid" id="selFaders"></div>
-        <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
-        <div class="side-actions"><button class="btn" id="dawNormalize" type="button">Normalize</button><button class="btn" id="dawDelete" type="button">Delete clip</button></div>
-      </div>
-      <div class="side-pane" id="sp-info" role="tabpanel" aria-labelledby="stab-info" hidden><div id="selDetails"><p class="side-empty">Select a clip in the Playlist to describe it.</p></div></div>
-      <div class="side-pane" id="sp-passage" role="tabpanel" aria-labelledby="stab-passage" hidden>
-        <div class="daw-selection" id="dawSelectionPanel">
+      <div class="side-pane on" id="sp-inspect" role="tabpanel" aria-labelledby="stab-inspect">
+        <div class="ins-title"><small id="insKind">INSPECTOR</small><b id="insName">Nothing selected</b></div>
+        <section class="ins-sec" data-for="pattern" id="insLane"><p class="side-empty" id="insLaneHint">Touch any instrument in the grid and its controls appear here: tune, pan and effects.</p></section>
+        <div class="ins-seg" data-for="playlist" role="tablist" aria-label="Inspector sections"><button type="button" role="tab" id="insTab-clip" data-sub="clip" aria-selected="true">Clip</button><button type="button" role="tab" id="insTab-passage" data-sub="passage" aria-selected="false" tabindex="-1">Passage</button><button type="button" role="tab" id="insTab-info" data-sub="info" aria-selected="false" tabindex="-1">Details</button></div>
+        <section class="ins-sec ins-sub" data-for="playlist" id="insClip" data-sub="clip">
+          <div class="side-sel"><small>SELECTED CLIP</small><b id="selName">Nothing selected</b></div>
+          <div class="side-grid" id="selFaders"></div>
+          <div class="daw-trim"><label>Trim start <input id="dawTrimStart" type="range" min="0" max="0" step=".01" value="0" disabled></label><label>Trim end <input id="dawTrimEnd" type="range" min="0" max="0" step=".01" value="0" disabled></label></div>
+          <div class="side-actions"><button class="btn" id="dawNormalize" type="button">Normalize</button><button class="btn" id="dawDelete" type="button">Delete clip</button></div>
+        </section>
+        <section class="ins-sec ins-sub" data-for="playlist" id="sp-passage" data-sub="passage"><div class="daw-selection" id="dawSelectionPanel">
           <div class="daw-selection-head"><div><b>Selected passage</b><small id="dawSelectionReadout">Drag across a clip in the Playlist to select a passage.</small></div><button class="btn" id="dawClearSelection" disabled>Clear</button></div>
           <div class="daw-selection-actions">
             <button class="btn" id="dawPlaySelection" disabled>Hear passage</button>
@@ -1614,7 +1645,10 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
             <button class="btn" id="dawPunchRecord" disabled>Punch in</button>
           </div>
           <p class="daw-selection-note">Punch in adds a new aligned take and keeps the original. Use headphones when it plays over the beat.</p>
-        </div>
+        </div></section>
+        <section class="ins-sec ins-sub" data-for="playlist" id="sp-info" data-sub="info"><div id="selDetails"><p class="side-empty">Select a clip in the Playlist to describe it.</p></div></section>
+        <section class="ins-sec" data-for="mixer"><p class="side-empty">Each layer's level, pan and effects are in the Mixer. Tap a layer there to edit it.</p></section>
+        <section class="ins-sec" data-for="voice"><p class="side-empty">Pick a recorded take from <b>Media</b> to hear it or send it to the beat.</p><button class="btn" type="button" id="insToMedia">Open Media</button></section>
       </div>
       <div class="side-pane" id="sp-notes" role="tabpanel" aria-labelledby="stab-notes" hidden>
         <div class="daw-plan" id="dawPlanPanel"><label for="dawPlan">Session notes</label><textarea id="dawPlan" maxlength="4000" placeholder="Goal, take order, edit notes or mix intent for this session."></textarea><small>Saved with this project on this device.</small></div>
@@ -2063,24 +2097,35 @@ const irCache=new WeakMap();
 const irFor=ctx=>{ if(!irCache.has(ctx)) irCache.set(ctx,impulse(ctx,1.3)); return irCache.get(ctx); };
 function makeBusses(ctx,out){ const b={}; Object.keys(gainsV).forEach(k=>{
   const g=ctx.createGain(); g.gain.value=gainsV[k];
-  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=10;
-  const pk=ctx.createBiquadFilter(); pk.type="peaking"; pk.frequency.value=2800; pk.Q.value=.8; pk.gain.value=0;
-  const cp=ctx.createDynamicsCompressor(); cp.attack.value=.008; cp.release.value=.18; cp.threshold.value=0; cp.ratio.value=1;
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=75;
+  const pk=ctx.createBiquadFilter(); pk.type="peaking"; pk.frequency.value=2800; pk.Q.value=.8; pk.gain.value=3;
+  const cp=ctx.createDynamicsCompressor(); cp.attack.value=.008; cp.release.value=.18; cp.threshold.value=-22; cp.ratio.value=3.5;
   const sum=ctx.createGain(), pn=ctx.createStereoPanner? ctx.createStereoPanner() : null;
-  g.connect(hp); hp.connect(pk); pk.connect(cp); cp.connect(sum);
   if(pn){ sum.connect(pn); pn.connect(out); } else sum.connect(out);
-  g.pennioFx={ctx,hp,pk,cp,sum,pn,echo:null,rev:null};
+  g.pennioFx={ctx,hp,pk,cp,sum,pn,echo:null,rev:null,tail:g,wired:null};
   applyStripFx(g,k); b[k]=g; }); return b; }
+/* A strip with EQ, compressor, echo and reverb all off is just level -> pan. Filters and a
+   compressor left running at neutral cost CPU on every strip, which slower phones cannot spare. */
+function wireStrip(bus,f){
+  const n=bus.pennioFx, key=(f.eq?"e":"")+(f.comp?"c":"")+(f.echo?"d":"")+(f.rev?"r":"");
+  if(n.wired===key) return; n.wired=key;
+  try{ bus.disconnect(); n.hp.disconnect(); n.pk.disconnect(); n.cp.disconnect(); }catch(e){}
+  let last=bus;
+  if(f.eq){ last.connect(n.hp); n.hp.connect(n.pk); last=n.pk; }
+  if(f.comp){ last.connect(n.cp); last=n.cp; }
+  last.connect(n.sum); n.tail=last;
+  if(n.echo) last.connect(n.echo.dl);
+  if(n.rev) last.connect(n.rev.cv);
+}
 function applyStripFx(bus,id){
   const n=bus&&bus.pennioFx; if(!n) return; const f=fxOf(id);
-  n.hp.frequency.value=f.eq?75:10; n.pk.gain.value=f.eq?3:0;
-  n.cp.threshold.value=f.comp?-22:0; n.cp.ratio.value=f.comp?3.5:1;
-  if(n.pn) n.pn.pan.value=Math.max(-1,Math.min(1,+f.pan||0));
+  if(n.pn) n.pn.pan.value=Math.max(-1,Math.min(1,(+f.pan)?+f.pan:(SOUND.rich?(SPREAD[id]||0):0))); /* a pan you set is exact; at 0 the lane sits where Rich places it */
   const ctx=n.ctx;
-  if(f.echo&&!n.echo){ const dl=ctx.createDelay(1), fb=ctx.createGain(), wet=ctx.createGain(); dl.delayTime.value=.22; fb.gain.value=.18; wet.gain.value=.3; n.cp.connect(dl); dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(n.sum); n.echo={dl,fb,wet}; }
-  else if(!f.echo&&n.echo){ try{ n.cp.disconnect(n.echo.dl); n.echo.wet.disconnect(); n.echo.fb.disconnect(); n.echo.dl.disconnect(); }catch(e){} n.echo=null; }
-  if(f.rev&&!n.rev){ const cv=ctx.createConvolver(), wet=ctx.createGain(); cv.buffer=irFor(ctx); wet.gain.value=.28; n.cp.connect(cv); cv.connect(wet); wet.connect(n.sum); n.rev={cv,wet}; }
-  else if(!f.rev&&n.rev){ try{ n.cp.disconnect(n.rev.cv); n.rev.wet.disconnect(); n.rev.cv.disconnect(); }catch(e){} n.rev=null; }
+  if(f.echo&&!n.echo){ const dl=ctx.createDelay(1), fb=ctx.createGain(), wet=ctx.createGain(); dl.delayTime.value=.22; fb.gain.value=.18; wet.gain.value=.3; dl.connect(fb); fb.connect(dl); dl.connect(wet); wet.connect(n.sum); n.echo={dl,fb,wet}; n.wired=""; }
+  else if(!f.echo&&n.echo){ try{ n.tail.disconnect(n.echo.dl); n.echo.wet.disconnect(); n.echo.fb.disconnect(); n.echo.dl.disconnect(); }catch(e){} n.echo=null; n.wired=""; }
+  if(f.rev&&!n.rev){ const cv=ctx.createConvolver(), wet=ctx.createGain(); cv.buffer=irFor(ctx); wet.gain.value=.28; cv.connect(wet); wet.connect(n.sum); n.rev={cv,wet}; n.wired=""; }
+  else if(!f.rev&&n.rev){ try{ n.tail.disconnect(n.rev.cv); n.rev.wet.disconnect(); n.rev.cv.disconnect(); }catch(e){} n.rev=null; n.wired=""; }
+  wireStrip(bus,f);
 }
 /* voice state */
 /* what a session is for, and which project it belongs to */
@@ -2248,14 +2293,48 @@ function noise(ctx){
   for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
   noiseCache.set(ctx,b); return b;
 }
+/* ---------- Studio sound ----------
+   Measured on the shared groove before this change: left and right identical (correlation 1.000), about 90% of the
+   energy under 1 kHz and 8 to 16 kHz at -26 dB (boomy, dull), and nothing between the mix and the speaker but a
+   gentle compressor. "Rich" fixes the balance on the master, spreads the lanes across the stereo field, adds a
+   small shared room and a limiter. The same master is built for live playback and for export, so what you hear is
+   what you export. "Classic" is the earlier sound, kept for comparison. */
+const SOUND=(()=>{ let rich; try{ rich=localStorage.getItem("ps.sound")!=="classic"; }catch(e){ rich=true; }
+  return { get rich(){return rich;}, set(v){ rich=!!v; try{ localStorage.setItem("ps.sound",rich?"rich":"classic"); }catch(e){} } }; })();
+window.PennioSound=SOUND;
+/* where each lane sits, -1 left to 1 right; bass, kick-weight and voice stay centred so the low end stays mono-safe */
+const SPREAD={dd:-.25,bata:.45,agogo:.5,shek:-.6,udu:-.3,duru:.28,clap:.3,keys:-.42,gtr:.45,pluck:-.34,flute:.38,reed:-.3};
 function makeMaster(ctx){
   const comp=ctx.createDynamicsCompressor();
-  comp.threshold.value=-14; comp.ratio.value=4; comp.attack.value=.004; comp.release.value=.15;
   const g=ctx.createGain(); g.gain.value=.85;
-  comp.connect(g); g.connect(ctx.destination);
-  comp.pennioOutputGain=g;
-  return comp;
+  const hp=ctx.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=32; hp.Q.value=.7;
+  const mud=ctx.createBiquadFilter(); mud.type="peaking"; mud.frequency.value=280; mud.Q.value=.7; mud.gain.value=-3.5;
+  const pres=ctx.createBiquadFilter(); pres.type="peaking"; pres.frequency.value=2500; pres.Q.value=.5; pres.gain.value=5;
+  const air=ctx.createBiquadFilter(); air.type="highshelf"; air.frequency.value=6500; air.gain.value=6;
+  const lim=ctx.createDynamicsCompressor(); lim.threshold.value=-2; lim.knee.value=0; lim.ratio.value=20; lim.attack.value=.002; lim.release.value=.09;
+  const wet=ctx.createGain(); wet.gain.value=.11; let room=null;
+  comp.pennioOutputGain=g; comp.pennioNodes={ctx,hp,mud,pres,air,lim,wet,g,room:null,mode:null};
+  wireMaster(comp); return comp;
 }
+function wireMaster(comp){
+  const n=comp.pennioNodes, ctx=n.ctx, rich=SOUND.rich, lite=!!(window.PennioPerf&&PennioPerf.lite), key=rich?(lite?"rich-lite":"rich"):"classic";
+  if(n.mode===key) return; n.mode=key;
+  [comp,n.hp,n.mud,n.pres,n.air,n.lim,n.wet].forEach(x=>{ try{ x.disconnect(); }catch(e){} });
+  if(n.room){ try{ n.room.disconnect(); }catch(e){} }
+  if(!rich){
+    comp.threshold.value=-14; comp.ratio.value=4; comp.attack.value=.004; comp.release.value=.15; comp.knee.value=30;
+    comp.connect(n.g); n.g.connect(ctx.destination); return;
+  }
+  comp.threshold.value=-18; comp.ratio.value=2.6; comp.attack.value=.012; comp.release.value=.2; comp.knee.value=12;
+  if(lite){ comp.connect(n.pres); n.pres.connect(n.air); n.air.connect(n.lim); } /* Smooth: two filters and the limiter, no low-cut or low-mid cut */
+  else{ comp.connect(n.hp); n.hp.connect(n.mud); n.mud.connect(n.pres); n.pres.connect(n.air); n.air.connect(n.lim); }
+  if(!lite){ /* a short shared room; skipped in Smooth mode because a convolver is the costliest node here */
+    if(!n.room){ n.room=ctx.createConvolver(); n.room.buffer=impulse(ctx,.35); }
+    n.pres.connect(n.room); n.room.connect(n.wet); n.wet.connect(n.lim);
+  }
+  n.lim.connect(n.g); n.g.connect(ctx.destination);
+}
+window.PennioMasterRewire=()=>{ try{ if(typeof master!=="undefined"&&master&&master.pennioNodes){ wireMaster(master); if(busses) Object.keys(busses).forEach(id=>applyStripFx(busses[id],id)); } }catch(e){} };
 function setTransportOutput(level){
   const gain=master&&master.pennioOutputGain&&master.pennioOutputGain.gain;
   if(!gain||!ac) return;
@@ -2264,10 +2343,44 @@ function setTransportOutput(level){
   gain.setValueAtTime(gain.value,now);
   gain.linearRampToValueAtTime(level,now+.012);
 }
+/* ---------- playback health: measured, and adapted to the phone ----------
+   The sequencer looks ahead and hands notes to the audio clock. On a slower phone the page thread can stall
+   for longer than that look-ahead, so notes arrive late. This counts how often that happens, lengthens the
+   look-ahead, drops steps that are already too late (a pile-up of late notes sounds worse than a gap), and
+   switches to a lighter mode: bigger audio buffer, fewer screen updates, no sub-audible noise layers. */
+const PERF=(()=>{
+  const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  const weak=()=>{ const m=navigator.deviceMemory, c=navigator.hardwareConcurrency; return (m&&m<=4)||(c&&c<=4); };
+  let mode=store.get("ps.perf.mode")||"auto";                 // auto | smooth | full
+  let sensed=store.get("ps.perf.sensed")==="1";               // this phone missed deadlines before
+  const st={ticks:0,late:0,dropped:0,maxGapMs:0,minLeadMs:1e9,lastTick:0,ahead:.12,since:Date.now()};
+  const api={st,
+    get mode(){return mode;},
+    get lite(){return mode==="smooth"||(mode==="auto"&&(sensed||weak()));},
+    get ahead(){return st.ahead;},
+    hint(){ return api.lite?"playback":"interactive"; },
+    setMode(m){ mode=m; store.set("ps.perf.mode",m); st.ahead=api.lite?.3:.12; api.onChange&&api.onChange(); },
+    reset(){ st.ticks=st.late=st.dropped=0; st.maxGapMs=0; st.minLeadMs=1e9; st.lastTick=0; },
+    tick(now,lead){ /* once per scheduler pass */
+      st.ticks++; const t=performance.now();
+      if(st.lastTick){ const gap=t-st.lastTick; if(gap>st.maxGapMs) st.maxGapMs=gap; }
+      st.lastTick=t; if(lead!=null&&lead*1000<st.minLeadMs) st.minLeadMs=lead*1000;
+    },
+    miss(by){ /* a note was due before the scheduler reached it */
+      if(document.hidden||by>1) return;
+      st.late++; st.ahead=Math.min(.5,Math.max(st.ahead,.12)+.08);
+      if(mode==="auto"&&!sensed&&st.late>=3){ sensed=true; store.set("ps.perf.sensed","1"); st.ahead=Math.max(st.ahead,.3); try{ toast("Playback set to Smooth mode for this phone."); }catch(e){} api.onChange&&api.onChange(); }
+    },
+    text(){ const m=api.lite?"Smooth":"Full"; return m+" · "+(st.late?st.late+" late, "+st.dropped+" skipped":"no late notes")+" · look-ahead "+Math.round(st.ahead*1000)+" ms"; }
+  };
+  st.ahead=api.lite?.3:.12;
+  return api;
+})();
+window.PennioPerf=PERF;
 function ensureAudio(){
   if(!ac){
     const C=window.AudioContext||window.webkitAudioContext;
-    ac=new C(); master=makeMaster(ac); busses=makeBusses(ac,master); syncLaneBusGains();
+    try{ ac=new C({latencyHint:PERF.hint()}); }catch(e){ ac=new C(); } master=makeMaster(ac); busses=makeBusses(ac,master); syncLaneBusGains();
   }
   if(ac.state==="suspended") ac.resume();
 }
@@ -2277,6 +2390,7 @@ function env(ctx,g,t,peak,a,d){
   g.gain.exponentialRampToValueAtTime(0.0001,t+a+d);
 }
 function noiseHit(ctx,out,t,type,freq,q,peak,d){
+  if(PERF.lite&&peak<.08) return;
   const s=ctx.createBufferSource(); s.buffer=noise(ctx);
   const f=ctx.createBiquadFilter(); f.type=type; f.frequency.value=freq; f.Q.value=q;
   const g=ctx.createGain(); env(ctx,g,t,peak,.002,d);
@@ -2347,9 +2461,9 @@ const V = {
     const o=ctx.createOscillator(), o2=ctx.createOscillator(); o.type="sine"; o2.type="triangle";
     o.frequency.setValueAtTime(f*1.02,t); o.frequency.exponentialRampToValueAtTime(f,t+.03); o2.frequency.setValueAtTime(f*2,t);
     const lp=ctx.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=650;
-    const g=ctx.createGain(), g2=ctx.createGain(); env(ctx,g,t,.95,.006,.45); env(ctx,g2,t,.12,.004,.16);
+    const g=ctx.createGain(), g2=ctx.createGain(); env(ctx,g,t,.95,.006,.45); env(ctx,g2,t,SOUND.rich?.34:.12,.004,SOUND.rich?.3:.16);
     o.connect(g); o2.connect(g2); g.connect(lp); g2.connect(lp); lp.connect(out);
-    o.start(t); o2.start(t); o.stop(t+.52); o2.stop(t+.25);
+    o.start(t); o2.start(t); o.stop(t+.52); o2.stop(t+(SOUND.rich?.4:.25));
   },
   keys(ctx,out,t,v){
     const dur= v===2? Math.min(3, stepDur()*(N===12?6:8)) : .34;
@@ -2409,8 +2523,23 @@ const V = {
 };
 function trigger(id,ctx,out,t,v,i){ try{ if(v<0){ const g=ctx.createGain(); g.gain.value=.35; g.connect(out); out=g; v=-v; } V[id](ctx,out,t,v,i); }catch(e){} }
 
+/* ---------- playback mode control (Tempo and feel) ---------- */
+(function(){
+  const seg=document.getElementById("perfMode"), note=document.getElementById("perfNote"); if(!seg||!note) return;
+  const paint=()=>{ seg.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.m===PERF.mode)); note.textContent="Playback: "+PERF.text()+(PERF.mode==="auto"?". Auto turns Smooth on if this phone falls behind.":"."); };
+  seg.addEventListener("click",e=>{ const b=e.target.closest("[data-m]"); if(!b) return; PERF.setMode(b.dataset.m); if(false) toast("Smooth mode fully applies the next time you open the Studio."); paint(); });
+  PERF.onChange=()=>{ paint(); window.PennioMasterRewire&&window.PennioMasterRewire(); }; paint();
+  document.getElementById("tpVal")?.addEventListener("click",paint);
+  setInterval(()=>{ const pop=document.getElementById("tpPop"); if(pop&&!pop.hidden) paint(); },1000);
+})();
+(function(){
+  const seg=document.getElementById("soundMode"); if(!seg) return;
+  const paint=()=>seg.querySelectorAll("button").forEach(b=>b.classList.toggle("on",(b.dataset.s==="rich")===SOUND.rich));
+  seg.addEventListener("click",e=>{ const b=e.target.closest("[data-s]"); if(!b) return; SOUND.set(b.dataset.s==="rich"); window.PennioMasterRewire(); paint(); });
+  paint();
+})();
 /* ---------- sequencer ---------- */
-const phQ=[]; function phLoop(){ if(!playing){ phQ.length=0; return; } while(phQ.length && phQ[0][0]<=ac.currentTime){ const st=phQ.shift()[1]; mark(st); posPaint(st); iluHit(st); } requestAnimationFrame(phLoop); }
+const phQ=[]; function phLoop(){ if(!playing){ phQ.length=0; return; } while(phQ.length && phQ[0][0]<=ac.currentTime){ const st=phQ.shift()[1]; mark(st); if(!PERF.lite||st%(N===12?3:4)===0){ posPaint(st); iluHit(st); } } requestAnimationFrame(phLoop); }
 let playing=false, cur=0, nextT=0, timer=null, loopIdx=0, fullSrcs=[], recClick=false, seekFrom=-1, preRoll=0, loopA=-1, loopB=-1;
 let drumBuf=null;
 /* full-length layers: your whole vocal, and the talking-drum version of it */
@@ -2423,8 +2552,10 @@ const bpmEl=document.getElementById("bpm"), swEl=document.getElementById("swing"
 function stepDur(){ return 60/(+bpmEl.value)/(N===12?3:4); }
 function swingOffset(i){ return (N===16 && i%2===1) ? stepDur()*(+swEl.value/100)*.5 : 0; }
 function schedule(){
-  while(nextT < ac.currentTime + .12){
+  PERF.tick(0,nextT-ac.currentTime);
+  while(nextT < ac.currentTime + PERF.ahead){
     const t = nextT + swingOffset(cur);
+    if(t < ac.currentTime-.005){ PERF.miss(ac.currentTime-t); if(cur!==0 && t < ac.currentTime-.09){ PERF.st.dropped++; nextT += stepDur(); cur=(cur+1)%N; continue; } }
     if(cur===0 && preRoll>0){ preRoll--; barNow=0; }
     else if(cur===0){ if(loopA>=0 && loopB>=loopA && loopIdx>loopB){ stopTracksAt(t); loopIdx=loopA; seekFrom=loopA; } barNow=loopIdx; const bn=barNow; setTimeout(()=>paintStrip(bn),Math.max(0,(t-ac.currentTime)*1000)); fullTracks().forEach(tr=>{ const k=loopIdx%barsFor(tr); if(k===0) fullSrcs.push(playTrack(ac,busses[tr.bus],t,tr,0)); else if(loopIdx===seekFrom) fullSrcs.push(playTrack(ac,busses[tr.bus],t,tr,k)); }); if(loopIdx===seekFrom) seekFrom=-1; loopIdx++; }
     if(recClick && cur%(N===12?3:4)===0) clickAt(ac,t,cur===0);
@@ -2433,10 +2564,17 @@ function schedule(){
     nextT += stepDur(); cur=(cur+1)%N;
   }
 }
+let tickWorker=null, tickOK=true;
+function clockStart(){
+  clockStop();
+  if(tickOK&&window.Worker){ try{ tickWorker=tickWorker||new Worker("/studio/tick-worker.js"); tickWorker.onmessage=()=>{ if(playing) schedule(); }; tickWorker.onerror=()=>{ tickOK=false; try{tickWorker.terminate();}catch(e){} tickWorker=null; if(playing){ clockStop(); clockStart(); } }; tickWorker.postMessage({start:1,ms:25}); return; }catch(e){ tickOK=false; tickWorker=null; } }
+  timer=setInterval(schedule,25);
+}
+function clockStop(){ clearInterval(timer); timer=null; if(tickWorker){ try{ tickWorker.postMessage({stop:1}); }catch(e){} } }
 function stopTracks(){ fullSrcs.forEach(s=>{ try{s.stop();}catch(e){} }); fullSrcs=[]; }
 function stopTracksAt(t){ fullSrcs.forEach(s=>{ try{s.stop(t);}catch(e){} }); fullSrcs=[]; }
-function start(t0,bar,pre){ ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clearInterval(timer); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; timer=setInterval(schedule,25); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
-function stop(){ playing=false; clearInterval(timer); seekFrom=-1; preRoll=0; stopTracks(); setTransportOutput(0); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
+function start(t0,bar,pre){ ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clockStop(); PERF.reset(); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; clockStart(); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
+function stop(){ playing=false; clockStop(); seekFrom=-1; preRoll=0; stopTracks(); setTransportOutput(0); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
 /* ---------- one sound at a time, shown in the Now playing bar ---------- */
 let npKind=null, prevSrc=null, drumPrev=null, npSrc=null, npT0=0, npDur=0, npRaf=0;
 const mmss=x=>{ x=Math.max(0,Math.round(x)); return Math.floor(x/60)+":"+String(x%60).padStart(2,"0"); };
@@ -2582,7 +2720,7 @@ function render(){
       st.className="steps voxempty"; const b=document.createElement("button"); b.className="voxrec"; b.innerHTML='<i></i>Add your voice: tap the red dot at the top. The studio chops it onto this row.';
       b.onclick=()=>{ if(vrec.style.display!=="none"){ vrec.focus(); vrec.animate([{transform:"scale(1)"},{transform:"scale(1.18)"},{transform:"scale(1)"}],{duration:420}); } else window.PennioShell?.showView("voice"); }; st.appendChild(b);
     } else for(let i=0;i<N;i++){ const b=document.createElement("button"); b.dataset.i=i; styleCell(b,l.id,i); st.appendChild(b); }
-    const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;nm.appendChild(meta); row.appendChild(nm); row.appendChild(st); rowsEl.appendChild(row);
+    const meta=document.createElement("div");meta.className="row-context";const tonal=["bass","keys","gtr","pluck","flute","reed"].includes(l.id);const role=({dd:"Talking drum",bata:"Percussion",agogo:"Bell pulse",shek:"Shaker texture",udu:"Low percussion",duru:"Drum accent",clap:"Body percussion",bass:"Low-end harmony",keys:"Chord support",gtr:"Harmonic picking",pluck:"Melodic motif",flute:"Lead melody",reed:"Sustained melody",vox:"Vocal phrase"})[l.id]||"Rhythmic layer";meta.innerHTML='<span><small>ROLE</small><b></b></span><span><small>'+ (tonal?"HARMONY":"TRACK TYPE") +'</small><b></b></span>';meta.children[0].querySelector("b").textContent=role;meta.children[1].querySelector("b").textContent=tonal?chordName(barNow):l.kind==="vox"?"Voice":l.sub;row.appendChild(nm); row.appendChild(meta); row.appendChild(st); rowsEl.appendChild(row);
   });
   saveSoon();
 }
@@ -2620,10 +2758,11 @@ function markBank(){ document.querySelectorAll("#bank button").forEach(b=>b.clas
 document.querySelectorAll("#bank button").forEach(b=>b.onclick=()=>{ const to=b.dataset.b; if(to===bank) return; pushHist(); banks[bank]=pattern;
   let fresh=false; if(!banks[to]){ banks[to]=fillLanes(JSON.parse(JSON.stringify(pattern))); fresh=true; }
   bank=to; pattern=banks[to]; markBank(); render(); renderLayers(); saveSoon(); if(fresh) toast("Bank "+to+" starts as a copy of what you had. Change it, then switch back and forth."); });
+let marked=[];
 function mark(s){
-  rowsEl.querySelectorAll(".step.now").forEach(e=>e.classList.remove("now"));
+  marked.forEach(e=>e.classList.remove("now")); marked=[];
   if(s<0) return;
-  rowsEl.querySelectorAll('.step[data-i="'+s+'"]').forEach(e=>e.classList.add("now"));
+  marked=[...rowsEl.querySelectorAll('.step[data-i="'+s+'"]')]; marked.forEach(e=>e.classList.add("now"));
 }
 function setN(n){
   N=n;
@@ -2710,36 +2849,111 @@ async function renderMix(){
       LANES.forEach(l=>{const v=pattern[l.id][i]; if(v&&laneOn(l.id)&&!(l.id==="vox"&&!LAY.vox)) trigger(l.id,oc,bs[l.id],t,v,i);});
     }
   }
-  return oc.startRendering();
+  const out=await oc.startRendering(); out.pennioPlanSec=total+.2; return out;
 }
-/* loudness (ITU BS.1770 style: K-weighting, 400 ms blocks, gating) */
-async function lufsOf(buf){
+/* loudness (ITU BS.1770 style: K-weighting, 400 ms blocks, gating)
+   The K-weighted signal is made once; level changes and limiting are then measured on it in plain JS, with no further offline renders. */
+async function kWeight(buf){
   const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
   const oc=new OC(buf.numberOfChannels,buf.length,buf.sampleRate);
   const src=oc.createBufferSource(); src.buffer=buf;
   const hs=oc.createBiquadFilter(); hs.type="highshelf"; hs.frequency.value=1681; hs.gain.value=4;
   const hp=oc.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=38; hp.Q.value=-6.02; // Web Audio takes Q in dB here: linear 0.5
   src.connect(hs); hs.connect(hp); hp.connect(oc.destination); src.start();
-  const k=await oc.startRendering(), sr=k.sampleRate, blk=Math.round(.4*sr), hop=Math.round(.1*sr), chs=[...Array(k.numberOfChannels).keys()].map(c=>k.getChannelData(c));
-  const ms=[]; for(let i=0;i+blk<=k.length;i+=hop){ let z=0; chs.forEach(d=>{ for(let j=i;j<i+blk;j++) z+=d[j]*d[j]; }); ms.push(z/blk); }
+  const k=await oc.startRendering(); return [...Array(k.numberOfChannels).keys()].map(c=>k.getChannelData(c));
+}
+/* gated loudness of K-weighted channels, as if they were scaled by G and (optionally) a per-sample gain curve */
+function lufsFromK(k,sr,G,gc){
+  const n=k[0].length, e=new Float64Array(n+1);
+  for(let i=0;i<n;i++){ const g=G*(gc?gc[i]:1); let z=0; for(let c=0;c<k.length;c++){ const v=k[c][i]*g; z+=v*v; } e[i+1]=e[i]+z; }
+  const blk=Math.round(.4*sr), hop=Math.round(.1*sr), ms=[];
+  for(let i=0;i+blk<=n;i+=hop) ms.push((e[i+blk]-e[i])/blk);
   const L=x=>-0.691+10*Math.log10(x||1e-12);
   let g=ms.filter(x=>L(x)>-70); if(!g.length) return -70;
   const rel=L(g.reduce((a,b)=>a+b,0)/g.length)-10; g=g.filter(x=>L(x)>rel);
-  return L(g.reduce((a,b)=>a+b,0)/g.length);
+  return g.length? L(g.reduce((a,b)=>a+b,0)/g.length) : -70;
 }
+async function lufsOf(buf){ return lufsFromK(await kWeight(buf),buf.sampleRate,1); }
 function peakOf(buf){ let p=0; for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++){ const a=Math.abs(d[i]); if(a>p) p=a; } } return p; }
+/* look-ahead brick-wall limiter gain curve: needed gain, minimum over +-W samples, slow release, then a W-sample smoother.
+   The result never exceeds the gain needed at any sample, so peaks stay under the ceiling. */
+function limiterCurve(ch,G,ceil,sr){
+  const n=ch[0].length, W=Math.max(8,Math.round(sr*.0015)), g=new Float32Array(n);
+  for(let i=0;i<n;i++){ let a=0; for(let c=0;c<ch.length;c++){ const v=ch[c][i]<0?-ch[c][i]:ch[c][i]; if(v>a) a=v; } a*=G; g[i]=a>ceil? ceil/a : 1; }
+  const m=new Float32Array(n), dq=new Int32Array(n+W); let h=0,t=0;
+  for(let i=0;i<n+W-1;i++){
+    if(i<n){ while(t>h&&g[dq[t-1]]>=g[i]) t--; dq[t++]=i; }
+    const j=i-(W-1); if(j>=0&&j<n){ while(dq[h]<j-(W-1)) h++; m[j]=g[dq[h]]; }
+  }
+  const rel=1-Math.exp(-1/(.06*sr)); let r=1; for(let i=0;i<n;i++){ r=Math.min(m[i],r+(1-r)*rel); m[i]=r; }
+  const P=new Float64Array(n+1); for(let i=0;i<n;i++) P[i+1]=P[i]+m[i];
+  const out=new Float32Array(n); for(let i=0;i<n;i++){ const lo=Math.max(0,i-W+1); out[i]=(P[i+1]-P[lo])/(i+1-lo); }
+  return out;
+}
+/* Set the mix to the target loudness with a limiter. The gain search runs on a block envelope (about 1 ms per block),
+   so each trial costs a few thousand steps instead of a pass over every sample; the real samples are touched twice:
+   once to read them, once to apply the result. The limiter keeps the same guarantee as before: the gain at any
+   sample never exceeds the gain needed to hold that sample under the ceiling. */
+const yieldUI=()=>new Promise(r=>setTimeout(r,0));
+function blockSize(sr){ const hop=Math.round(.1*sr), blk=Math.round(.4*sr); for(let d=16;d>=1;d--) if(hop%d===0&&blk%d===0) return d; return 1; }
+function blockStats(ch,k,B){
+  const n=ch[0].length, nb=Math.ceil(n/B), pk=new Float32Array(nb), ke=new Float64Array(nb);
+  for(let b=0;b<nb;b++){ const a=b*B, z=Math.min(n,a+B); let m=0,e=0;
+    for(let c=0;c<ch.length;c++){ const x=ch[c], y=k[c]; for(let i=a;i<z;i++){ const v=x[i]<0?-x[i]:x[i]; if(v>m) m=v; e+=y[i]*y[i]; } }
+    pk[b]=m; ke[b]=e; }
+  return {pk,ke,nb,B,n};
+}
+function blockGains(st,G,ceil,sr){
+  const {pk,nb,B}=st, Wb=Math.max(2,Math.ceil(sr*.0015/B)), g=new Float32Array(nb), m=new Float32Array(nb);
+  for(let b=0;b<nb;b++){ const a=pk[b]*G; g[b]=a>ceil? ceil/a : 1; }
+  for(let b=0;b<nb;b++){ let v=1; for(let j=Math.max(0,b-Wb+1);j<=Math.min(nb-1,b+Wb-1);j++) if(g[j]<v) v=g[j]; m[b]=v; }
+  const rel=1-Math.exp(-B/(.06*sr)); let r=1; for(let b=0;b<nb;b++){ r=Math.min(m[b],r+(1-r)*rel); m[b]=r; }
+  const out=new Float32Array(nb); for(let b=0;b<nb;b++){ let t=0,c=0; for(let j=Math.max(0,b-Wb+1);j<=b;j++){ t+=m[j]; c++; } out[b]=t/c; }
+  return out;
+}
+function blockLufs(st,G,g,sr){
+  const {ke,nb,B}=st, e=new Float64Array(nb+1);
+  for(let b=0;b<nb;b++){ const gg=G*g[b]; e[b+1]=e[b]+ke[b]*gg*gg; }
+  const blk=Math.round(.4*sr)/B, hop=Math.round(.1*sr)/B, ms=[], L=x=>-0.691+10*Math.log10(x||1e-12);
+  for(let i=0;i+blk<=nb;i+=hop) ms.push((e[i+blk]-e[i])/(blk*B));
+  let q=ms.filter(x=>L(x)>-70); if(!q.length) return -70;
+  const rel=L(q.reduce((a,b)=>a+b,0)/q.length)-10; q=q.filter(x=>L(x)>rel);
+  return q.length? L(q.reduce((a,b)=>a+b,0)/q.length) : -70;
+}
 async function matchLoudness(buf,tgt){
-  const target= tgt==null? -14 : tgt, ceil=Math.pow(10,-1/20);
-  const before=await lufsOf(buf); let gain=Math.pow(10,(target-before)/20);
-  const pk=peakOf(buf); gain=Math.min(gain, ceil*2/(pk||1e-9));
-  for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c);
-    for(let i=0;i<d.length;i++){ let x=d[i]*gain; const ax=Math.abs(x); if(ax>ceil*.7){ const over=ax-ceil*.7, room=ceil*.3; x=Math.sign(x)*(ceil*.7+room*Math.tanh(over/room)); } d[i]=x; } }
-  return {before, after: await lufsOf(buf), peakDb: 20*Math.log10(peakOf(buf)||1e-9)};
+  const target= tgt==null? -14 : tgt, sr=buf.sampleRate, ceil=Math.pow(10,-1.9/20), B=blockSize(sr);
+  const ch=[...Array(buf.numberOfChannels).keys()].map(c=>buf.getChannelData(c));
+  const k=await kWeight(buf); await yieldUI();
+  const st=blockStats(ch,k,B); await yieldUI();
+  const ones=new Float32Array(st.nb).fill(1), before=blockLufs(st,1,ones,sr);
+  if(before<-60) return {before, after:before, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:0};
+  let gdb=Math.min(24,target-before), best=null, it=0;
+  for(;it<8;it++){
+    const G=Math.pow(10,gdb/20), g=blockGains(st,G,ceil,sr), after=blockLufs(st,G,g,sr);
+    if(!best||Math.abs(target-after)<Math.abs(target-best.after)) best={G,g,after};
+    const err=target-after; if(Math.abs(err)<=.05) break;
+    gdb+=err*(it<2?1:.8); if(gdb>24) gdb=24;
+  }
+  /* apply once: block gains, linearly interpolated between block centres (never above the gain a neighbouring block needs) */
+  const {G,g}=best, nb=st.nb, n=st.n;
+  for(let c=0;c<ch.length;c++){ if(c) await yieldUI(); const d=ch[c];
+    for(let i=0;i<n;i++){ const pos=(i+.5)/B-.5, b0=pos<0?0:Math.floor(pos), b1=b0+1<nb?b0+1:nb-1, t=pos<0?0:pos-b0; d[i]*=G*(g[b0]*(1-t)+g[b1]*t); } }
+  return {before, after:best.after, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:it+1};
 }
 let lameP=null;
 function loadLame(){ if(window.lamejs) return Promise.resolve(); if(lameP) return lameP;
   lameP=new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="vendor/lame.min.js"; sc.onload=()=>res(); sc.onerror=()=>{ lameP=null; rej(new Error("encoder")); }; document.head.appendChild(sc); }); return lameP; }
-async function mp3(buf){
+function mp3Worker(buf,onP){
+  return new Promise((res,rej)=>{
+    let w; try{ w=new Worker("mp3-worker.js"); }catch(e){ rej(e); return; }
+    const L=buf.getChannelData(0).slice(), R=(buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0)).slice();
+    w.onmessage=e=>{ const d=e.data; if(d.p!=null){ onP&&onP(d.p); } else if(d.done){ w.terminate(); res(new Blob(d.chunks,{type:"audio/mpeg"})); } else if(d.error){ w.terminate(); rej(new Error(d.error)); } };
+    w.onerror=e=>{ w.terminate(); rej(new Error(e.message||"worker")); };
+    w.postMessage({L,R,sr:buf.sampleRate,kbps:192},[L.buffer,R.buffer]);
+  });
+}
+async function mp3(buf,onP){
+  try{ return await mp3Worker(buf,onP); }catch(e){ console.warn("MP3 worker unavailable, encoding on the page:",e&&e.message||e); }
   await loadLame();
   const enc=new lamejs.Mp3Encoder(2,buf.sampleRate,192), L=buf.getChannelData(0), R=buf.numberOfChannels>1?buf.getChannelData(1):L, n=L.length, out=[], blk=1152, l=new Int16Array(blk), rr=new Int16Array(blk);
   const s16=v=>Math.max(-32768,Math.min(32767,Math.round(v*32767)));
@@ -2862,6 +3076,35 @@ expBtn.onclick=()=>{
 document.querySelectorAll("#expFmt button").forEach(b=>b.onclick=()=>{ expFmt=b.dataset.f; document.querySelectorAll("#expFmt button").forEach(x=>x.classList.toggle("on",x===b)); document.getElementById("expNote").textContent= expFmt==="mp3"? "Small file, right for WhatsApp and Instagram." : "Full quality, for a producer or another music app."; });
 swLoud.onclick=()=>{ const on=!swLoud.classList.contains("on"); swLoud.classList.toggle("on",on); swLoud.setAttribute("aria-checked",String(on)); };
 if(inClaude) expShare.hidden=true;
+/* ---------- credits and cover art for everything exported ---------- */
+addEventListener("DOMContentLoaded",()=>{
+  const C=window.PennioCredits; if(!C) return;
+  C.provide(src=>{
+    const pf=lsGet("ps.profile")||{}, base={title:(document.getElementById("pname").value||"").trim(), artist:(pf.name||"").trim()};
+    if(src==="tracks") return Object.assign(base,{pattern:null,laneIds:[],instruments:[],voice:false});
+    const ids=LANES.map(l=>l.id).filter(id=>id!=="vox"&&pattern[id]&&pattern[id].some(Boolean)&&laneOn(id));
+    return Object.assign(base,{bpm:+bpmEl.value,keyName:KEYN[H.key]+" "+H.scale,steps:N,laneIds:ids,pattern,instruments:ids.map(id=>LANES.find(l=>l.id===id).name),voice:!!(vbuf()&&LAY.vox&&LANES.find(l=>l.id==="vox")&&pattern.vox&&pattern.vox.some(Boolean)||vbuf()&&LAY.full)});
+  });
+  const ti=document.getElementById("credTitle"), ar=document.getElementById("credArtist"), ex=document.getElementById("credExtra"), th=document.getElementById("credThumb"), line=document.getElementById("credLine");
+  let touched=false, url="", timer=0, src="beat";
+  const saved=C.saved; ar.value=saved.artist||(lsGet("ps.profile")||{}).name||""; ex.value=saved.extra||"";
+  async function refresh(){
+    if(!touched) ti.value=(document.getElementById("pname").value||"").trim();
+    C.setTitle(touched?ti.value:""); const m=C.meta(src);
+    try{ const b=await C.cover(src); if(url) URL.revokeObjectURL(url); url=URL.createObjectURL(b); th.src=url; }catch(e){}
+    line.textContent=(m.artist?m.artist+" · ":"")+m.title;
+  }
+  const later=()=>{ clearTimeout(timer); timer=setTimeout(refresh,250); };
+  ti.addEventListener("input",()=>{ touched=true; later(); });
+  ar.addEventListener("input",()=>{ C.save({artist:ar.value}); later(); });
+  ex.addEventListener("input",()=>{ C.save({extra:ex.value}); later(); });
+  document.getElementById("credLook").addEventListener("click",()=>{ const n=C.nextLook(); document.getElementById("credImg").value=""; refresh(); toast("Cover look: "+n+"."); });
+  document.getElementById("credImg").addEventListener("change",async e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; try{ await C.useImage(f); refresh(); toast("Your image will be the cover."); }catch(x){ toast("That image could not be read."); } });
+  document.getElementById("credSave").addEventListener("click",async()=>{ try{ const b=await C.cover(src), m=C.meta(src); await downloads.save({filename:(C.slug(m.title)||"cover")+"-cover.jpg",data:b}); toast("Cover saved."); }catch(e){ toast("Could not save the cover here."); } });
+  document.getElementById("expSrc").addEventListener("click",e=>{ const b=e.target.closest("[data-s]"); if(b){ src=b.dataset.s==="tracks"?"tracks":"beat"; refresh(); } });
+  document.getElementById("export").addEventListener("click",()=>{ touched=touched&&ti.value.trim()!==""; refresh(); });
+  refresh();
+});
 function closeExportPanel(){
   expPanel.hidden=true;
   document.body.classList.remove("export-open");
@@ -2899,23 +3142,75 @@ async function saveExport(x){
   try{await downloads.save({filename:x.name,data:x.blob});}
   catch(e){await downloads.save({filename:x.name,data:new Uint8Array(await x.blob.arrayBuffer())});}
 }
+/* decode the finished file again and compare it with what was rendered */
+/* walk the MP3 frames: sync, version, layer, bitrate, sample rate, padding. Gives duration and channel mode without decoding. */
+function mp3Structure(u8){
+  let p=0; if(u8[0]===73&&u8[1]===68&&u8[2]===51) p=10+((u8[6]<<21)|(u8[7]<<14)|(u8[8]<<7)|u8[9]);
+  const BR=[0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0], SR=[44100,48000,32000];
+  let frames=0, sr=0, mode=-1;
+  while(p+4<=u8.length){
+    if(u8[p]!==255||(u8[p+1]&0xE0)!==0xE0){ p++; continue; }
+    const ver=(u8[p+1]>>3)&3, layer=(u8[p+1]>>1)&3, bri=u8[p+2]>>4, sri=(u8[p+2]>>2)&3, pad=(u8[p+2]>>1)&1;
+    if(ver!==3||layer!==1||bri===0||bri===15||sri>2){ p++; continue; }
+    const len=Math.floor(144000*BR[bri]/SR[sri])+pad; if(!sr){ sr=SR[sri]; mode=u8[p+3]>>6; }
+    frames++; p+=len;
+  }
+  return {frames,sr,mode,sec:sr?frames*1152/sr:0};
+}
+async function verifyBlob(blob,buf,isMp3,metrics){
+  const R=window.PennioRender;
+  try{
+    const ab=await blob.arrayBuffer();
+    if(!isMp3){
+      const dv=new DataView(ab), tag=String.fromCharCode(...new Uint8Array(ab,0,4));
+      const ok=tag==="RIFF"&&dv.getUint32(24,true)===buf.sampleRate&&dv.getUint16(22,true)===buf.numberOfChannels&&dv.getUint32(40,true)===buf.length*buf.numberOfChannels*2;
+      return {ok,note:ok?"WAV header and length match":"WAV header does not match"};
+    }
+    if(PERF.lite){ /* a phone: check the frames instead of decoding the whole file again */
+      const m=mp3Structure(new Uint8Array(ab)), durDiff=Math.abs(m.sec-buf.duration), ok=m.frames>0&&m.sr===buf.sampleRate&&m.mode!==3&&durDiff<=.12;
+      return {ok,note:"checked "+m.frames+" frames, "+m.sec.toFixed(2)+" s, stereo",durDiff,lvl:0};
+    }
+    const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+    const d=await new OC(2,1,44100).decodeAudioData(ab.slice(0));
+    const durDiff=Math.abs(d.duration-buf.duration), ref=metrics||(R&&R.analyze(buf)), lvl=R&&ref?Math.abs(R.analyze(d).rmsDb-ref.rmsDb):0;
+    const ok=d.numberOfChannels===2&&durDiff<=.12&&lvl<=1;
+    return {ok,note:"decoded "+d.duration.toFixed(2)+" s, level differs "+lvl.toFixed(2)+" dB",durDiff,lvl};
+  }catch(e){ return {ok:false,note:"could not decode: "+((e&&e.message)||e)}; }
+}
 async function buildExport(){
-  const buf=await renderMix(); let info="";
-  if(swLoud.classList.contains("on")){ const m=await matchLoudness(buf); info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
-  const isMp3=expFmt==="mp3"; let blob=isMp3?await mp3(buf):new Blob([wav(buf)],{type:"audio/wav"});
-  if(isMp3)blob=addPennioCredit(blob);
-  const name="pennio-studio-"+(new Date().toISOString().slice(0,10))+(isMp3?".mp3":".wav");
-  info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+(isMp3?" · Credit: PENNIO Studio.":"");
-  return {blob,name,info};
+  const R=window.PennioRender, isMp3=expFmt==="mp3", matchOn=swLoud.classList.contains("on"), TARGET=-14;
+  const run=R? R.begin({kind:"export",fmt:isMp3?"mp3":"wav",targetLufs:TARGET,bpm:+bpmEl.value}) : null;
+  const st=(n,l,f)=>run? run.stage(n,l,f) : f();
+  try{
+    const buf=await st("render","Render mix",()=>renderMix());
+    if(run) run.meta.expectedSec=buf.pennioPlanSec||buf.duration;
+    let lufsBefore=null, lufs=null, info="";
+    if(matchOn){ const m=await st("match","Match loudness",async()=>{ const r=await matchLoudness(buf,TARGET); if(!PERF.lite) r.after=await lufsOf(buf); return r; }); lufsBefore=m.before; lufs=m.after; info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
+    else { lufs=await st("meter","Measure loudness",()=>lufsOf(buf)); }
+    /* never ship a peak that can clip after decoding: trim to -1.2 dBTP and re-check */
+    let fixed=false, metrics=R? await st("check","Quality check",()=>R.analyze(buf)) : null;
+    if(metrics&&metrics.nan===0&&metrics.truePeakDb>-1){
+      const g=Math.pow(10,(-1.2-metrics.truePeakDb)/20); for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++) d[i]*=g; }
+      fixed=true; if(lufs!=null) lufs+=20*Math.log10(g); metrics=R.analyze(buf); if(run) run.fixed=true;
+    }
+    let blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ return isMp3?await mp3(buf,p=>{ expGo.textContent="Encoding "+Math.round(p*100)+"%"; }):new Blob([wav(buf)],{type:"audio/wav"}); });
+    const tagged=await st("tags","Credits and cover art",()=>PennioCredits.tag(blob,isMp3?"mp3":"wav","beat")); blob=tagged.blob;
+    const verify=await st("verify","Verify file",()=>verifyBlob(blob,buf,isMp3,metrics));
+    const name=tagged.name;
+    info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+" Credited to "+(tagged.meta.artist||"PENNIO Studio")+", with cover art.";
+    if(run){ run.finish({metrics,lufs,lufsBefore,matched:matchOn,verify,tags:tagged.check,fixed,bytes:blob.size,sec:buf.duration});
+      if(run.blocked){ const bad=run.gates.filter(g=>g.block&&g.level==="fail").map(g=>g.label.toLowerCase()).join(", "); const err=new Error("render-blocked"); err.detail=bad; throw err; } }
+    return {blob,name,info};
+  }catch(e){ if(run&&run.state==="running") run.fail(e); throw e; }
 }
 expGo.onclick=async()=>{
   if(!downloads){ toast("Export is not available in this view."); return; }
-  expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…";
+  expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…"; if(window.PennioRender) PennioRender.onStage=l=>{ expGo.textContent=l+"…"; expShare.textContent=l+"…"; };
   try{ const x=await buildExport(); expMeta.textContent=x.info;
     await saveExport(x);
-    toast("Track exported."); closeExportPanel(); }
-  catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : "Export was cancelled or blocked."); }
-  expGo.disabled=expShare.disabled=false; expGo.textContent="Download";
+    toast("Track exported."); }
+  catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : e&&e.message==="render-blocked"? "Export stopped: the file failed its quality check ("+(e.detail||"see report")+")." : "Export was cancelled or blocked."); }
+  expGo.disabled=expShare.disabled=false; expGo.textContent="Download"; expShare.textContent="Share to WhatsApp";
 };
 expShare.onclick=async()=>{
   expGo.disabled=expShare.disabled=true;expShare.textContent="Rendering…";
@@ -3327,6 +3622,8 @@ function paintInspector(){
     document.getElementById("mxAuxLab").textContent=word; document.getElementById("mxAuxV").textContent=lab.querySelector("b").textContent; }
   const so=soloed.has(d.id); const sb=document.getElementById("mxSolo"); sb.classList.toggle("on",so); sb.setAttribute("aria-pressed",String(so));
   layersEl.querySelectorAll(".layer").forEach(l=>l.classList.toggle("sel",l.dataset.l===d.id));
+  try{ rowsEl.querySelectorAll(".row").forEach(r=>r.classList.toggle("sel",r.dataset.l===d.id)); }catch(e){}
+  window.dispatchEvent(new CustomEvent("pennio:lane-selected",{detail:{id:d.id,name:d.name}}));
 }
 (function(){
   const box=document.getElementById("mxInsp"); if(!box) return;
@@ -3351,7 +3648,7 @@ function paintInspector(){
   const del=document.getElementById("mxDel"); del.onclick=()=>{ if(armDelete(del,"Delete recording")) deleteRecording(); };
 })();
 /* small surface for tests and later Mixer steps */
-window.PennioMixer={ensureAudio:()=>ensureAudio(), busses:()=>busses, makeBusses, applyStripFx, fxOf, stripFx, soloed, selected:()=>mixSel};
+window.PennioMixer={ensureAudio:()=>ensureAudio(), busses:()=>busses, makeBusses, applyStripFx, fxOf, stripFx, soloed, selected:()=>mixSel, select:id=>{ if(LAYER_DEFS.some(x=>x.id===id)&&mixSel!==id){ mixSel=id; paintInspector(); } }};
 renderLayers();
 
 /* ---------- WRITE: text + voice to tone-marked Yoruba ---------- */
@@ -4643,6 +4940,7 @@ document.getElementById("obReturn").onclick=async()=>{ try{if(sbSess)await sbFet
 /* boot: the workspace is mounted only after Supabase confirms a valid account session. */
 let pennioWorkspaceStarted=false, pennioProfileGateOpen=false, pendingWorkspaceAuthState=null;
 async function startPENNIOWorkspace(authState){
+  try{ if(playing) stopAll(); }catch(e){}
   if(pennioWorkspaceStarted||pennioProfileGateOpen) return;
   const authEmail=(sbSess&&sbSess.user&&sbSess.user.email||"").trim().toLowerCase();
   let prof=lsGet("ps.profile")||(await kvGet("profile"));
@@ -4667,7 +4965,9 @@ async function startPENNIOWorkspace(authState){
   const displayName=String(profileForGreeting.name||emailName||"creator").trim().split(/\s+/)[0];
   const greetingName=document.getElementById("dashUserName");
   if(greetingName)greetingName.textContent=(displayName.charAt(0).toUpperCase()+displayName.slice(1))+".";
-  const g=new URLSearchParams(location.search).get("g");
+  let g=new URLSearchParams(location.search).get("g");
+  if(!g){ const pend=lsGet("ps.pendingGroove"); if(pend&&pend.g&&Date.now()-pend.t<864e5) g=pend.g; }
+  try{ localStorage.removeItem("ps.pendingGroove"); }catch(e){}
   if(g){ try{ const st=grooveDecode(g); await saveNow(); const shared={id:newId(), name:"Shared groove", created:Date.now(), updated:Date.now(), state:{...st, banks:null}, audio:null};
       await openProject(shared); ready=true; await saveNow(); toast("Opened a shared groove as a new session. Your own work is in Sessions."); }
     catch(e){ toast("That groove link is broken or incomplete."); }
@@ -4678,12 +4978,32 @@ async function startPENNIOWorkspace(authState){
   window.addEventListener("pagehide",()=>{ if(ready) saveNow(); });
   document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="hidden"&&ready){ saveNow(); if(edits>editsAtCk) checkpoint("When you left"); } });
 }
+/* Shared grooves play without an account. The groove is also kept for 24 hours so it opens as a new session after sign-in. */
+function applyListen(st){
+  pattern=fillLanes(JSON.parse(JSON.stringify(st.pattern))); banks={A:pattern,B:null,C:null,D:null,E:null,F:null}; bank="A";
+  bpmEl.value=st.bpm; bpmEl.oninput(); swEl.value=st.sw; swEl.oninput();
+  Object.assign(H,{key:9,scale:"minor",prog:0},st.harm||{}); renderHarm(); setN(st.n||16);
+}
+function initListenGate(){
+  const gp=new URLSearchParams(location.search).get("g"); if(!gp) return;
+  let st; try{ st=grooveDecode(gp); }catch(e){ return; }
+  lsSet("ps.pendingGroove",{g:gp,t:Date.now()});
+  const box=document.getElementById("gateListen"), grid=document.getElementById("glGrid"), btn=document.getElementById("glPlay");
+  grid.replaceChildren(); grid.style.setProperty("--cols",st.n);
+  LANES.forEach(l=>{ const a=st.pattern[l.id]; if(!a||!a.some(Boolean)) return; const row=document.createElement("div"); row.className="gl-r"; row.style.gridTemplateColumns="repeat("+st.n+",1fr)";
+    for(let i=0;i<st.n;i++){ const c=document.createElement("i"); const v=a[i]; if(v) c.className=v<0?"gh":"on"; if(i%(st.n===12?3:4)===0) c.dataset.b="1"; row.appendChild(c); } grid.appendChild(row); });
+  document.getElementById("glMeta").textContent=st.bpm+" BPM · "+KEYN[st.harm.key]+" "+st.harm.scale;
+  box.hidden=false;
+  btn.onclick=()=>{ if(playing){ stopAll(); btn.textContent="▶"; btn.setAttribute("aria-label","Play this groove"); return; }
+    applyListen(st); ensureAudio(); start(); btn.textContent="■"; btn.setAttribute("aria-label","Stop"); };
+}
 window.__pennioAyanBoot=(async()=>{
   db=await idb();
   const authState=await cloudBoot();
   if(!authState||!authState.ok){
     document.body.classList.add("auth-locked");
     document.getElementById("authGate").hidden=false;
+    try{ initListenGate(); }catch(e){ console.warn("listen mode",e); }
     const saved=lsGet("ps.sbEmail"); if(saved) document.getElementById("gateEmail").value=saved;
     if(authState&&authState.transient) document.getElementById("gateStatus").textContent="We could not verify your saved session. Check your connection and reload to try again.";
     return;
@@ -4808,7 +5128,7 @@ function tourShow(){
   if(el0&&window.PennioShell&&document.body.classList.contains("studio-shell")){ const vw=el0.closest(".shell-view"), pop=el0.closest(".tp-pop"), side=el0.closest("#sidePanel");
     if(vw&&vw.hidden) PennioShell.showView(vw.id.slice(3));
     if(pop&&pop.hidden) document.getElementById(pop.id==="recPop"?"recCfg":"tpVal").click();
-    const sp=el0.closest(".side-pane"); if(side&&(side.hidden||(sp&&sp.hidden))) PennioShell.openPanel(sp?sp.id.slice(3):"selected"); }
+    const sp=el0.closest(".side-pane"); if(side&&(side.hidden||(sp&&sp.hidden))) PennioShell.openPanel(sp?sp.id.slice(3):"inspect"); const sub=el0.closest(".ins-sub"); if(sub&&window.PennioShell&&PennioShell.sub) PennioShell.sub(sub.dataset.sub); }
   if(mobile() && el0 && el0.closest("#tp")) tpOpen(!!el0.closest(".x"));
   const el=tourTarget(); if(el && !el.closest("#tp") && !el.closest("header")) el.scrollIntoView({block:"center",behavior:"smooth"});
   document.getElementById("tourStep").textContent=tour.t.n+" · "+(tour.i+1)+" of "+tour.t.steps.length;
@@ -4939,7 +5259,7 @@ addEventListener("keydown",e=>{ if(!document.getElementById("v-ayan").classList.
   if((e.ctrlKey||e.metaKey) && k==="z"){ e.preventDefault(); (e.shiftKey? redoBtn : undoBtn).click(); }
   else if((e.ctrlKey||e.metaKey) && k==="y"){ e.preventDefault(); redoBtn.click(); } });
 function show(v){
-  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); document.getElementById("moreLbl").textContent= v==="home"?"Projects":v==="ayan"?"Ìlù":v==="write"?"Ewì":v==="beauty"?"Ojuloge":"Ilé Eré";
+  menu(false); document.body.classList.toggle("in-studio",v==="ayan"); const RN=v==="home"?"Projects":v==="ayan"?"Ìlù":v==="write"?"Ewì":v==="beauty"?"Ojuloge":"Ilé Eré"; document.getElementById("moreLbl").textContent=RN; document.getElementById("hroom").textContent=RN; document.body.dataset.room=v;
   document.querySelectorAll("nav button[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
 }
@@ -5463,6 +5783,8 @@ window.PennioStudioProgress={begin(label="Working",description="Your work is bei
 })();
 </script>
 <script src="/studio/workspace.js" defer></script>
+<script src="/studio/render-monitor.js" defer></script>
+<script src="/studio/credits.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
 <script id="pennio-first-play-bind">(()=>{const b=document.getElementById("firstPlay"),p=document.getElementById("play");if(!b||!p)return;b.addEventListener("click",()=>p.click());p.addEventListener("click",()=>{setTimeout(()=>{b.innerHTML=p.getAttribute("aria-label")==="Stop (Space)"?"Stop the groove":"Hear the groove <span>↗</span>";},0);});})();</script>
@@ -5824,6 +6146,7 @@ body.studio-shell .shell-notices>[hidden]{display:none!important}
 .tp-pop-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .tp-pop-head b{font-size:14px}
 .tp-pop .pop-x{font-size:22px!important;width:40px;min-height:40px}
+.perf-note{margin:8px 0 0;font-size:12px;line-height:1.45;color:var(--ts)}
 .tp-pop-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:var(--ts)}
 .tp-pop .ctl{display:grid!important;gap:6px;order:0!important}
 .tp-pop .ctl label{display:flex;justify-content:space-between;font-size:13px}
@@ -6079,10 +6402,10 @@ body.studio-shell .dash-modal-backdrop:not([hidden]){position:fixed;inset:0;z-in
 #sp-passage .daw-selection-actions{grid-template-columns:repeat(3,1fr)}
 @media (max-height:520px){
   .side-head{padding:4px 6px}
-  #sp-selected.on{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;align-content:start}
-  #sp-selected .side-sel{grid-column:1/-1;margin:0}
-  #sp-selected .side-grid,#sp-selected .daw-trim,#sp-selected .side-actions{display:contents}
-  #sp-selected .side-actions .btn{min-height:30px;height:30px;margin-top:0}
+  #sidePanel[data-view="playlist"][data-sub="clip"] #insClip{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;align-content:start}
+  #insClip .side-sel{grid-column:1/-1;margin:0}
+  #insClip .side-grid,#insClip .daw-trim,#insClip .side-actions{display:contents}
+  #insClip .side-actions .btn{min-height:30px;height:30px;margin-top:0}
   .side-grid input,.side-pane .daw-trim input{min-height:18px;height:18px}
   .side-grid label,.side-pane .daw-trim label{gap:0;font-size:10px}
   .side-pane{padding:6px 10px}
@@ -6179,6 +6502,128 @@ body:has(#v-home.on) .logo>span,body:has(#v-home.on) #studioPanelPosition,body:h
 #v-home .dash-intro{justify-content:space-between;align-items:center}
 #v-home .dash-logo{width:44px;height:auto;display:block}
 #v-home .dash-logo path{fill:var(--text)}
+
+/* ---- Render monitor: stages, gates and history inside the Export popover ---- */
+.rm{display:grid;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2)}
+.rm[hidden]{display:none}
+.rm[data-state="pass"]{border-color:rgba(70,180,110,.55)}.rm[data-state="warn"]{border-color:rgba(214,155,54,.7)}.rm[data-state="fail"]{border-color:var(--danger)}
+.rm-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px}
+.rm-head span{font-variant-numeric:tabular-nums;color:var(--ts);font-size:12px}
+.rm-stages{list-style:none;padding:0;display:grid;gap:3px;font-size:12px}
+.rm-stages li{display:flex;justify-content:space-between;gap:8px;color:var(--ts)}
+.rm-stages li.running{color:var(--tp)}.rm-stages li.running em::after{content:"";display:inline-block;width:6px;height:6px;margin-left:6px;border-radius:50%;background:var(--orange);animation:rmPulse .8s ease-in-out infinite}
+.rm-stages li.fail{color:var(--danger)}
+.rm-stages em{font-style:normal;font-variant-numeric:tabular-nums}
+@keyframes rmPulse{50%{opacity:.25}}
+.rm-gates{display:flex;flex-wrap:wrap;gap:5px}
+.rm-chip{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--border);color:var(--ts)}
+.rm-chip.perf{border-style:dashed}
+.rm-chip.pass::before{content:"\2713 ";color:#4cc27a}.rm-chip.warn{border-color:rgba(214,155,54,.7);color:var(--tp)}.rm-chip.warn::before{content:"! ";color:#d69b36}
+.rm-chip.fail{border-color:var(--danger);color:var(--tp)}.rm-chip.fail::before{content:"\2715 ";color:var(--danger)}
+.rm-foot{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rm-foot small{color:var(--ts);font-size:11px}
+.rm-btn{min-height:32px;padding:0 10px;border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--tp);margin-left:6px}
+@media (prefers-reduced-motion:reduce){.rm-stages li.running em::after{animation:none}}
+
+/* ---- shared groove: listen without an account ---- */
+.gate-listen{display:grid;gap:14px;margin:0 0 20px;padding:14px;border:1px solid var(--line2,rgba(255,255,255,.18));border-radius:14px;background:rgba(255,255,255,.04)}
+.gate-listen[hidden]{display:none}
+.gl-grid{display:grid;gap:3px}
+.gl-r{display:grid;gap:2px}
+.gl-r i{display:block;height:9px;border-radius:2px;background:rgba(255,255,255,.12)}
+.gl-r i[data-b="1"]{background:rgba(255,255,255,.2)}
+.gl-r i.on{background:#F26522}.gl-r i.gh{background:rgba(242,101,34,.4)}
+.gl-row{display:flex;align-items:center;gap:14px}
+#glPlay{width:56px;height:56px;border-radius:50%;background:#F26522;color:#111;font-size:20px;display:grid;place-items:center;flex:none}
+#glPlay:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#glMeta{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+html[data-theme="light"] .gl-r i{background:rgba(9,9,9,.12)}html[data-theme="light"] .gl-r i[data-b="1"]{background:rgba(9,9,9,.2)}html[data-theme="light"] .gate-listen{background:rgba(9,9,9,.04)}
+
+/* ================= Inspector (side panel) ================= */
+.ins-title{display:grid;gap:2px;margin:0 0 10px}
+.ins-title small{font-size:10px;letter-spacing:.1em;color:var(--ts)}
+.ins-title b{font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ins-sec{display:none}
+#sidePanel[data-view="pattern"] .ins-sec[data-for~="pattern"],#sidePanel[data-view="playlist"] .ins-sec[data-for~="playlist"],#sidePanel[data-view="mixer"] .ins-sec[data-for~="mixer"],#sidePanel[data-view="voice"] .ins-sec[data-for~="voice"]{display:block}
+#insClip .side-grid{margin-top:4px}
+@media (max-height:520px), (orientation:portrait) and (max-width:899px){ .ins-title{display:none} .ins-seg{margin:0 0 4px} .ins-seg button{min-height:32px;font-size:12px} #sp-inspect{padding-top:4px;padding-bottom:2px} #sp-passage .daw-selection-note{display:none} #sidePanel[data-view="playlist"][data-sub="clip"] #insClip{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;align-content:start} }
+.ins-seg{display:none;gap:4px;margin:0 0 10px}
+#sidePanel[data-view="playlist"] .ins-seg{display:flex}
+.ins-seg button{flex:1 1 0;min-height:40px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-weight:500;color:var(--ts);background:none}
+.ins-seg button[aria-selected="true"]{background:var(--surface-2);color:var(--tp);border-color:transparent}
+#sidePanel[data-view="playlist"][data-sub="clip"] .ins-sub:not([data-sub="clip"]),#sidePanel[data-view="playlist"][data-sub="passage"] .ins-sub:not([data-sub="passage"]),#sidePanel[data-view="playlist"][data-sub="info"] .ins-sub:not([data-sub="info"]){display:none}
+#sp-passage .daw-selection{padding:0;border:0}
+#insLane .side-empty,.ins-sec .side-empty{font-size:13px;line-height:1.5;color:var(--ts);margin:0 0 10px}
+#insLane .mx-insp{display:grid;gap:10px;padding:0;border:0;background:none}
+#insLane .mx-name{display:none}
+#insLane .mx-pan,#insLane .mx-aux{display:grid;grid-template-columns:44px 1fr 38px;align-items:center;gap:8px;min-width:0;flex:none;font-size:12px;color:var(--ts)}
+#insLane .mx-fx,#insLane .mx-lane,#insLane .mx-mon{display:flex;flex-wrap:wrap;gap:6px}
+#insLane .mx-fx .btn{flex:1 1 0;min-width:56px}
+#insLane .mx-insp .btn{min-height:44px}
+#insLane .mx-fx .btn.on{background:var(--orange);border-color:var(--orange);color:#111;font-weight:600}
+.shell-view .row.sel .name,#rows .row.sel .name{color:var(--orange)}
+#rows .row.sel{box-shadow:inset 3px 0 0 var(--orange)}
+@media (orientation:portrait) and (max-width:899px){ .shell-side{max-height:62%} }
+.shell-side .ins-title{position:sticky;top:-12px;background:var(--surface-1);padding:2px 0 6px;z-index:1}
+
+/* ================= One header for every room ================= */
+/* ---- header: one slim row, in every room ---- */
+body.studio-chrome>header{position:relative;top:auto;flex:none;z-index:70}
+body.studio-chrome>header .wrap{max-width:none;padding:0 8px}
+body.studio-chrome>header .bar{height:auto;min-height:48px;padding:4px 0;gap:8px;flex-wrap:nowrap}
+body.studio-chrome>header .bar>.logo{order:0}body.studio-chrome>header .bar>.hsess{order:1}body.studio-chrome>header .bar>.hright{order:2}
+body.studio-chrome .logo{font-size:0;gap:0;flex:none}
+body.studio-chrome .logo .logo-mark{width:26px;height:auto}
+body.studio-chrome .hsess{flex:1 1 0;min-width:0}
+body.studio-chrome .hsess input{max-width:100%;min-width:0;font-size:15px}
+body.studio-chrome .hsess .saved{display:none}
+body.studio-chrome .local-status{font-size:0;gap:0}
+body.studio-chrome .hright{flex:none;flex-wrap:nowrap;gap:4px;margin-left:0;max-width:none}
+body.studio-chrome .more{width:auto;order:0;flex-wrap:nowrap}
+body.studio-chrome .theme-toggle{min-width:44px;width:44px;min-height:44px;padding:0}
+body.studio-chrome .theme-toggle span{display:none}
+body.studio-chrome #siteSettingsBtn,body.studio-chrome .avatar,body.studio-chrome .morebtn{min-height:44px}
+body.studio-chrome #siteSettingsBtn,body.studio-chrome .avatar{min-width:44px}
+/* the room menu is a dropdown over the shell, not a row in the page */
+body.studio-chrome nav#nav{position:absolute;top:100%;right:8px;left:auto;z-index:90;display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:2px;width:min(300px,calc(100vw - 16px));max-width:none;max-height:calc(100dvh - 64px);overflow:auto;padding:6px;border-radius:12px;background:var(--surface-1);border:1px solid var(--border);box-shadow:0 18px 50px rgba(0,0,0,.45);order:0}
+body.studio-chrome nav#nav[hidden]{display:none!important}
+body.studio-chrome nav#nav button{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-height:44px;padding:0 12px;border-radius:8px;text-align:left;white-space:nowrap;flex:none;color:var(--tp)}
+body.studio-chrome nav#nav button small{color:var(--ts);font-size:11px}
+body.studio-chrome nav#nav button.on{background:var(--surface-2)}
+
+body.studio-chrome .hroom{display:none;flex:1 1 0;min-width:0;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.studio-chrome:not(.in-studio) .hsess{display:none}
+body.studio-chrome:not(.in-studio) .hroom{display:block}
+body.studio-chrome .morebtn span{max-width:none}
+body.studio-chrome .morebtn{padding:0 10px}
+body.studio-chrome:not(.studio-shell) #studioRecLaunch{min-width:44px;min-height:44px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+@media (max-width:640px){ body.studio-chrome:not(.studio-shell) #studioRecLaunch{font-size:0;gap:0;width:44px;padding:0} body.studio-chrome:not(.studio-shell) #studioRecLaunch span{font-size:16px} }
+@media (max-width:430px){ body.studio-chrome:not(.in-studio) .hroom{display:none} body.studio-chrome .avatar{display:none} }
+body.studio-chrome:not(.studio-shell)>header{position:sticky;top:0}
+body.studio-chrome:not(.studio-shell) #studioPanelPosition{display:none!important}
+body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
+#insLane .mx-insp{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:var(--surface-1)}
+#insLane .mx-name{flex:0 0 auto;min-width:70px;max-width:96px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#insLane .mx-fx{flex:1 1 100%}
+#insLane .mx-fx .btn{flex:1 1 0}
+#insLane .mx-pan{display:flex;align-items:center;gap:8px;flex:1 1 110px;min-width:110px;font-size:12px;color:var(--ts)}
+#insLane .mx-pan input{flex:1;min-width:60px;min-height:40px;margin:0}
+#insLane .mx-pan output{width:34px;text-align:right;color:var(--tp);font-variant-numeric:tabular-nums}
+#insLane .mx-fx,#insLane .mx-lane,#insLane .mx-mon{display:flex;gap:6px;flex-wrap:wrap}
+#insLane .mx-insp .btn{min-height:40px;min-width:52px;padding:0 12px;font-size:12px;border-radius:8px}
+#insLane .mx-fx .btn.on{background:var(--orange);border-color:var(--orange);color:#111;font-weight:600}
+#insLane .mx-insp [hidden]{display:none!important}
+#insLane .mx-aux{display:flex;align-items:center;gap:8px;flex:1 1 130px;min-width:120px;font-size:12px;color:var(--ts)}
+#insLane .mx-aux[hidden]{display:none}
+#insLane .mx-aux input{flex:1;min-width:60px;min-height:40px;margin:0}
+#insLane .mx-aux output{min-width:30px;text-align:right;color:var(--tp);font-variant-numeric:tabular-nums}
+@media (max-height:520px), (orientation:portrait) and (max-width:899px){
+#insLane .mx-insp{grid-template-columns:1fr 1fr;gap:4px 10px}
+#insLane .mx-fx,#insLane .mx-lane,#insLane .mx-mon{grid-column:1/-1;flex-wrap:nowrap}
+#insLane .mx-insp .btn{min-height:34px;min-width:0;padding:0 6px}
+#insLane .mx-pan,#insLane .mx-aux{grid-template-columns:30px 1fr 28px;gap:4px}
+#insLane .mx-pan input,#insLane .mx-aux input{min-height:28px}
+}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
@@ -6188,12 +6633,14 @@ body:has(#v-home.on) .logo>span,body:has(#v-home.on) #studioPanelPosition,body:h
 const $=id=>document.getElementById(id),body=document.body,root=document.documentElement;
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const VIEWS=["pattern","playlist","mixer","voice"];
+const PANES=["inspect","media","notes"], PANE_ALIAS={selected:"inspect",info:"inspect",passage:"inspect"};
 let view=VIEWS.includes(ls.get("ps.shell.view"))?ls.get("ps.shell.view"):"pattern";
 
 /* ---- shell on/off: only in the Àyàn room, after sign-in ---- */
 const ayan=$("v-ayan"),dockHome={};
 function shellWanted(){return ayan.classList.contains("on")&&!body.classList.contains("auth-locked")&&!body.classList.contains("profile-required");}
 function syncShell(){
+  body.classList.toggle("studio-chrome",!body.classList.contains("auth-locked")&&!body.classList.contains("profile-required"));
   const on=shellWanted();
   if(body.classList.contains("studio-shell")===on)return;
   body.classList.toggle("studio-shell",on);root.classList.toggle("studio-shell",on);
@@ -6217,6 +6664,7 @@ function showView(name,opts={}){
   });
   ls.set("ps.shell.view",name);
   if(!opts.quiet)window.dispatchEvent(new CustomEvent("pennio:shell-view",{detail:{view:name}}));
+  $("sidePanel").dataset.view=name; placeInspector();
   paintPlay();
 }
 $("shellTabs").addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(b)showView(b.dataset.view);});
@@ -6228,17 +6676,19 @@ $("shellTabs").addEventListener("keydown",e=>{
     showView(VIEWS[n]);$("tab-"+VIEWS[n]).focus();
   }
 });
-window.PennioShell={showView,get view(){return view;},openPanel:(pane)=>setPanel(true,pane),closePanel:()=>setPanel(false)};
+window.PennioShell={sub:n=>insSub(n),showView,get view(){return view;},openPanel:(pane)=>setPanel(true,pane),closePanel:()=>setPanel(false)};
 
 /* ---- side panel ---- */
 const panel=$("sidePanel"),panelBtn=$("panelToggle"),shellBody=$("shellBody");
 const wide=matchMedia("(min-width:1100px) and (min-height:640px)");
 function showPane(name){
-  ["selected","info","passage","notes","media"].forEach(p=>{
+  name=PANE_ALIAS[name]||name; if(!PANES.includes(name)) name="inspect";
+  PANES.forEach(p=>{
     const t=$("stab-"+p),pane=$("sp-"+p),on=p===name;
     t.setAttribute("aria-selected",String(on));t.tabIndex=on?0:-1;pane.hidden=!on;pane.classList.toggle("on",on);
   });
   if(name==="media")window.PennioWorkspace?.refresh?.();
+  if(name==="inspect") placeInspector();
 }
 function setPanel(open,pane){
   if(pane)showPane(pane);
@@ -6274,6 +6724,28 @@ function mountWorkspaceDock(on){
   }
 }
 
+/* ---- Inspector: follows the view. The channel strip (level, pan, tune, effects) is the Mixer's own control,
+   moved here while you are in Pattern so there is one set of controls, not two. ---- */
+const insp=$("mxInsp"), inspHome=insp?{parent:insp.parentNode,next:insp.nextSibling}:null;
+function placeInspector(){
+  if(!insp) return;
+  const intoPanel=view==="pattern"&&body.classList.contains("studio-shell");
+  if(intoPanel&&insp.parentNode!==$("insLane")){ $("insLane").append(insp); $("insLaneHint").hidden=true; }
+  else if(!intoPanel&&insp.parentNode===$("insLane")&&inspHome){ inspHome.parent.insertBefore(insp,inspHome.next&&inspHome.next.parentNode===inspHome.parent?inspHome.next:null); }
+  const kind={pattern:"LANE",playlist:"CLIP",mixer:"MIXER",voice:"VOICE"}[view]||"INSPECTOR";
+  $("insKind").textContent=kind;
+  if(view==="pattern"){ const n=$("mxName"); $("insName").textContent=n?n.textContent:"Pick a lane"; }
+  else if(view==="playlist"){ $("insName").textContent=($("selName")||{}).textContent||"Nothing selected"; }
+  else $("insName").textContent=view==="mixer"?"Layers":"Takes";
+}
+window.addEventListener("pennio:lane-selected",placeInspector);
+function insSub(name){ $("sidePanel").dataset.sub=name; document.querySelectorAll(".ins-seg [data-sub]").forEach(b=>{ const on=b.dataset.sub===name; b.setAttribute("aria-selected",String(on)); b.tabIndex=on?0:-1; }); }
+document.querySelector(".ins-seg")?.addEventListener("click",e=>{ const b=e.target.closest("[data-sub]"); if(b) insSub(b.dataset.sub); });
+insSub("clip");
+new MutationObserver(placeInspector).observe($("selName"),{childList:true,characterData:true,subtree:true});
+$("insToMedia")?.addEventListener("click",()=>setPanel(true,"media"));
+/* tap an instrument in the grid to select it; the Inspector shows it */
+$("rows")?.addEventListener("pointerdown",e=>{ const r=e.target.closest(".row[data-l]"); if(!r||!window.PennioMixer) return; try{ window.PennioMixer.select(r.dataset.l); }catch(_){} },true);
 /* ---- popovers off the transport: tempo, record settings, export ---- */
 const tpVal=$("tpVal"),recCfg=$("recCfg"),exportBtn=$("export"),tpPop=$("tpPop"),recPop=$("recPop"),expPanel=$("expPanel");
 function closePops(except){
@@ -6363,7 +6835,7 @@ $("vrec").addEventListener("click",()=>closePops());
 /* workspace.js is deferred and builds the dock; sign-in can finish first, so mount whenever the dock appears, not only when the shell flips on */
 const ensureDock=()=>{ if(body.classList.contains("studio-shell")){ const dock=$("pennioWorkspaceDock"); if(dock&&dock.parentNode!==$("sideMediaHost")){ mountWorkspaceDock(true); syncSide(); } } };
 window.addEventListener("pennio:workspace-ready",ensureDock);
-addEventListener("DOMContentLoaded",()=>{syncShell();ensureDock();syncSide();});
+addEventListener("DOMContentLoaded",()=>{syncShell();ensureDock();syncSide();if(window.PennioRender)PennioRender.mount($("rmBox"));});
 if(document.readyState!=="loading"){syncShell();}
 })();
 </script>

@@ -1,0 +1,21 @@
+/* One navbar geometry for every PENNIO page.
+   Each page marks its bar with data-site-nav and keeps its own links, colours and mark.
+   This file only fixes what must be the same: where the bar starts and ends, how tall it is,
+   how the wordmark is drawn, and that every link and button is at least 44px to tap. */
+:root{--nav-h:72px;--nav-gutter:max(20px,5vw)}
+[data-site-nav]{box-sizing:border-box;min-height:var(--nav-h);padding-block:0;padding-inline:max(var(--nav-gutter),calc((100vw - 1200px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px}
+/* wordmark: mark + PENNIO + orange dot, identical everywhere, whole lockup is the link */
+[data-site-nav] .nav-logo,[data-site-nav] .pn-brand,[data-site-nav] .brand-lockup,[data-site-nav] a.nav-wordmark{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:inherit;text-decoration:none}
+[data-site-nav] .nav-wordmark,[data-site-nav] .brand-lockup span{font-size:.95rem;font-weight:700;letter-spacing:-.01em;line-height:1;white-space:nowrap}
+[data-site-nav] .nav-wordmark>span:not(.wm),[data-site-nav] .wm>span,[data-site-nav] .brand-lockup span::after{color:var(--orange-ink,#F26522)}
+[data-site-nav] .nav-wordmark .wm{color:inherit}
+[data-site-nav] .brand-lockup span::after{content:"."}
+[data-site-nav] .nav-logo svg,[data-site-nav] .pn-brand svg,[data-site-nav] .brand-lockup svg,[data-site-nav] a.nav-wordmark svg{width:18px;height:auto;flex:none}
+/* targets: nothing in the bar is smaller than 44px to hit */
+[data-site-nav] a,[data-site-nav] button{min-height:44px}
+[data-site-nav] a:not(.btn):not(.btn-cta):not(.btn-primary){display:inline-flex;align-items:center}
+[data-site-nav] .theme-toggle{min-width:44px;width:44px;height:44px;padding:0}
+[data-site-nav] a:focus-visible,[data-site-nav] button:focus-visible{outline:2px solid var(--orange-ink,#F26522);outline-offset:3px;border-radius:6px}
+/* the right-hand group sits at the edge and never wraps under the brand */
+[data-site-nav] .nav-right,[data-site-nav] .nav-actions{display:flex;align-items:center;gap:12px;flex:none}
+@media (max-width:420px){[data-site-nav]{gap:8px}[data-site-nav] .nav-back{font-size:.74rem}}

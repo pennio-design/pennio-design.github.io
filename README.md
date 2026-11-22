@@ -22,7 +22,7 @@ Static website for PENNIO, published through GitHub Pages on the custom domain
 | `/review/` | `review/index.html` | Brand Review service |
 | `/letscreate/` | `letscreate/index.html` | Let's Create community |
 | `/oju-gbooro/` | `oju-gbooro/index.html` | Ojú Gbooro project |
-| `/studio/` | `studio/index.html` | pennio.studio application |
+| `/studio/` | `studio/index.html` | PENNIO Studio application |
 | `/studio/guide/` | `studio/guide/index.html` | Studio guide |
 
 `404.html` is an error document and should not be indexed. The Reel Studio,
