@@ -2,12 +2,12 @@
    Pages: network first, so a new version shows as soon as you are online.
    Fonts, icons and the MP3 encoder: cache first, they rarely change.
    Anything on another site (forms, Kit, cloud saving) is never touched. */
-const CACHE = "pennio-studio-v5";
+const CACHE = "pennio-studio-v6";
 const SHELL = [
   "/studio/", "/studio/guide/", "/studio/manifest.webmanifest",
   "/favicon.svg", "/apple-touch-icon.png",
   "/studio/icons/icon-192.png", "/studio/icons/icon-512.png",
-  "/studio/mp3-worker.js", "/studio/tick-worker.js", "/studio/render-monitor.js", "/studio/credits.js",
+  "/studio/mp3-worker.js", "/studio/tick-worker.js", "/studio/render-monitor.js", "/studio/credits.js", "/studio/voicebeat.js",
   "/fonts/inter-300.woff2", "/fonts/inter-400.woff2", "/fonts/inter-500.woff2",
   "/fonts/inter-600.woff2", "/fonts/inter-700.woff2", "/fonts/inter-800.woff2"
 ];

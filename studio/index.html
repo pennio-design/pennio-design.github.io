@@ -2997,6 +2997,7 @@ async function mp3(buf,onP){
   const e=enc.flush(); if(e.length) out.push(new Uint8Array(e));
   return new Blob(out,{type:"audio/mpeg"});
 }
+window.PennioState={harm:()=>({key:H.key,scale:H.scale,prog:H.prog}),offset:()=>vocalOffset,N:()=>N,pattern:()=>JSON.parse(JSON.stringify(pattern)),ddBase:()=>ddBase,uduBase:()=>uduBase,lastBeat:()=>window.__lastVoiceBeat||null};
 window.PennioEncode={mp3:(buf,onP,workers)=>mp3Worker(buf,onP,workers),frames:mp3Frames,key:()=>exportKey(true)};
 /* ---------- OGBIFỌ̀: detect Yoruba or English, translate to the other ----------
    Detection runs on the phone. Live translation is not connected yet: when it is,
@@ -4245,7 +4246,7 @@ document.getElementById("vbeat").onclick=()=>{
   if(!rawBuf) return;
   const btn=document.getElementById("vbeat"); btn.disabled=true; btn.textContent="Listening…";
   window.PennioStudioProgress?.begin("Finding your groove","Analysing the vocal rhythm and preparing a beat. Playback is paused until this finishes.");
-  setTimeout(()=>{ try{ beatFromVoice(); window.PennioStudioProgress?.finish("Your beat is ready"); }catch(e){ toast("Could not read a rhythm from this recording."); window.PennioStudioProgress?.fail(e.message||"Could not read a rhythm from this recording."); } finally{ btn.disabled=false; btn.textContent="Make another beat from my voice"; } },30);
+  setTimeout(()=>{ try{ if(beatFromVoice()===false) window.PennioStudioProgress?.fail("No beat was made. See the message."); else window.PennioStudioProgress?.finish("Your beat is ready"); }catch(e){ toast("Could not read a rhythm from this recording."); window.PennioStudioProgress?.fail(e.message||"Could not read a rhythm from this recording."); } finally{ btn.disabled=false; btn.textContent="Make another beat from my voice"; } },30);
 };
 /* tempo and downbeat from the voice's onset strength, or from the user's own taps */
 function tempoFromFlux(flux,hop){
@@ -4289,7 +4290,45 @@ let tapFit=null;
     taps.push(ac.currentTime-t0); bt.textContent="Tap on the beat · "+taps.length; if(taps.length>=12) finish();
   };
 })();
+/* Voice match: the analysis and the groove design live in voicebeat.js; this applies the plan to the Studio. */
+const pitchCache=new WeakMap();
+function pitchOf(b){ let r=pitchCache.get(b); if(!r){ r=analysePitch(b); pitchCache.set(b,r); } return r; }
+let beatVariant=0, beatVariantFor=null;
 function beatFromVoice(fit){
+  const VB=window.PennioVoiceBeat; if(!VB) return beatFromVoiceLegacy(fit);
+  checkpoint("Before a beat from your voice");
+  const {frames}=pitchOf(rawBuf);
+  if(frames.filter(f=>f.f).length<80){ toast("I could not hear a clear voice in this recording. Try a closer, quieter take."); return false; }
+  const det= fit || (cleanCache? tempoFromFlux(cleanCache.flux,cleanCache.hop) : null);
+  let on= det&&det.onsets&&det.onsets.length>=3? det.onsets.slice() : [];
+  /* voiced-run starts and energy slices add onsets the spectral detector can miss */
+  { let prev=false, last=-99; const extra=[]; frames.forEach((f,i)=>{ const v=!!f.f; if(v&&!prev&&i-last>8){ extra.push(f.t); last=i; } prev=v; }); on=on.concat(extra); if(on.length<3) on=on.concat(findSlices(rawBuf).map(s=>s.start)); }
+  on=[...new Set(on.map(t=>Math.round(t*100)/100))].sort((a,b)=>a-b);
+  if(on.length<3 && !fit){ toast("Not enough rhythm in this recording. Try a longer phrase, or tap along."); return false; }
+  if(!det){ toast("Could not hear a steady pulse. Use Tap along to set it yourself."); return false; }
+  const a=VB.analyse({frames,onsets:on,fluxOnsets:(det.onsets||[]),bpm:det.bpm,downbeat:det.downbeat,duration:rawBuf.duration,PROGS,fixedTempo:!!fit});
+  /* pressing again for the same voice moves to the next style that fits, not a random one */
+  if(beatVariantFor!==rawBuf){ beatVariantFor=rawBuf; beatVariant=0; } else beatVariant++;
+  const sy=segmentSyllables(frames); classify(sy);
+  const tones=sy.slice(0,4).map(x=>x.tone==="H"?1:x.tone==="M"?2:3);
+  const plan=VB.design(a,PRESETS,fit?0:beatVariant,tones), M=VB.match(a,plan.pattern);
+  pushHist();
+  vocalOffset=a.offset;
+  const tf=intoRange(440*Math.pow(2,((a.key-9)/12)),1,2000);
+  ddBase=intoRange(tf,170,250); uduBase=intoRange(tf,48,78);
+  H.key=a.key; H.scale=a.mode; H.prog=a.prog; renderHarm();
+  LANES.forEach(l=>{ if(l.id==="vox") return; const src=plan.pattern[l.id]; const o=new Array(16).fill(0); if(src) for(let i=0;i<src.length&&i<16;i++) o[i]=src[i]||0; pattern[l.id]=o; });
+  const style=(plan.order||[]).length? plan.style:"";
+  const styleSw=(PRESETS.find(p=>p.name===plan.style)||{}).sw;
+  bpmEl.value=a.bpm; bpmEl.oninput(); swEl.value=a.swing==null? (styleSw!=null?styleSw:10) : a.swing; swEl.oninput();
+  LAY.full=true; LAY.vox=false; vocalNudge=0; restartTracks(); renderLayers(); setN(a.N); markPresets(-1);
+  const pct=x=>Math.round(100*x)+"%", lowKey=a.keyMargin<.04||a.keyR<.55;
+  window.__lastVoiceBeat={analysis:a,plan,match:M,variant:beatVariant,input:{frames:frames.map(f=>[+f.t.toFixed(3),+f.e.toFixed(5),+(f.f||0).toFixed(1)]),onsets:on,fluxOnsets:det.onsets||[],bpm:det.bpm,downbeat:det.downbeat,duration:rawBuf.duration}};
+  document.getElementById("vmeta").textContent="Heard "+a.bpm+" BPM"+(a.N===12?" in a 12/8 feel":"")+(a.swing?", swing "+a.swing+"%":"")+". Key "+KEYN[a.key]+" "+a.mode+(lowKey?" (less sure)":"")+": "+pct(a.inKey)+" of your notes sit in it, and the chords follow your melody. "+pct(a.gridLock)+" of your entries land on the beat grid and "+M.locked+" of your "+M.total+" strongest accents have a drum under them. Style: "+style+". Tap again for the next style that fits, or Undo to go back.";
+  if(!playing) start(); else { loopIdx=0; }
+  return true;
+}
+function beatFromVoiceLegacy(fit){
   checkpoint("Before a beat from your voice");
   const {frames}=analysePitch(rawBuf);
   let det= fit || (cleanCache? tempoFromFlux(cleanCache.flux,cleanCache.hop) : null);
@@ -5862,6 +5901,7 @@ window.PennioStudioProgress={begin(label="Working",description="Your work is bei
 <script src="/studio/workspace.js" defer></script>
 <script src="/studio/render-monitor.js" defer></script>
 <script src="/studio/credits.js" defer></script>
+<script src="/studio/voicebeat.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
 <script id="pennio-first-play-bind">(()=>{const b=document.getElementById("firstPlay"),p=document.getElementById("play");if(!b||!p)return;b.addEventListener("click",()=>p.click());p.addEventListener("click",()=>{setTimeout(()=>{b.innerHTML=p.getAttribute("aria-label")==="Stop (Space)"?"Stop the groove":"Hear the groove <span>↗</span>";},0);});})();</script>
