@@ -135,6 +135,7 @@ h1{font-size:clamp(26px,5vw,40px);font-weight:600;letter-spacing:-.025em;line-he
 .cred-grid input,.cred-grid textarea{font:inherit;font-size:14px;padding:9px 10px;border-radius:8px;border:1px solid rgba(var(--fg-rgb),.2);background:rgba(var(--fg-rgb),.05);color:inherit;min-height:44px;width:100%;box-sizing:border-box}
 .cred-btns{display:flex;flex-wrap:wrap;gap:8px}
 .cred-up{display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.exp{padding-bottom:18px}
 .cred-note{font-size:11.5px;line-height:1.4;opacity:.65;margin:0}
 @media (max-width:480px){.cred-grid{grid-template-columns:1fr}}
 .exp-meta:empty{display:none}
@@ -6775,6 +6776,17 @@ addEventListener("keydown",e=>{
 /* the room menu closes after choosing a Sessions, History or Learn item */
 $("nav").addEventListener("click",e=>{if(e.target.closest("button")&&!e.target.closest("[data-v]")&&!$("nav").hidden)$("moreBtn").click();});
 
+/* ---- the popovers must end above the bottom tab bar (phones) or the screen edge, however tall their content is ---- */
+function fitPops(){
+  if(!body.classList.contains("studio-shell")) return;
+  const tabs=$("shellTabs"), tr=tabs.getBoundingClientRect();
+  const barBelow=tr.width>innerWidth*.6&&tr.top>innerHeight*.5, limit=barBelow?tr.top:innerHeight;
+  [expPanel,tpPop,recPop].forEach(el=>{ if(!el||el.hidden) return; const top=el.getBoundingClientRect().top; el.style.maxHeight=Math.max(140,Math.floor(limit-top-8))+"px"; el.style.overflowY="auto"; el.style.overscrollBehavior="contain"; });
+}
+addEventListener("resize",fitPops); addEventListener("orientationchange",()=>setTimeout(fitPops,200));
+new MutationObserver(()=>requestAnimationFrame(fitPops)).observe($("expPanel"),{attributes:true,attributeFilter:["hidden"],subtree:false});
+document.addEventListener("toggle",e=>{ if(e.target&&e.target.id==="expCred") requestAnimationFrame(fitPops); },true);
+window.addEventListener("pennio:render",()=>{ const r=$("rmBox"); requestAnimationFrame(()=>{ fitPops(); if(r&&!r.hidden&&!expPanel.hidden){ const st=window.PennioRender&&PennioRender.last&&PennioRender.last(); if(st&&st.state==="running"&&!r._seen){ r._seen=1; r.scrollIntoView({block:"nearest"}); } if(st&&st.state!=="running") r._seen=0; } }); });
 /* ---- Export: one button, one popover; the source is chosen inside it ---- */
 const expSrc=$("expSrc");
 expSrc.addEventListener("click",e=>{
