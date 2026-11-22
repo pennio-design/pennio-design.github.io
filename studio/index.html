@@ -1544,6 +1544,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
         <div class="pv-tools" id="pvTools">
               <div class="seg" id="bank" aria-label="Take versions"><button data-b="A" title="Take A" class="on">A</button><button data-b="B" title="Take B">B</button><button data-b="C" title="Take C">C</button><button data-b="D" title="Take D">D</button><button data-b="E" title="Take E">E</button><button data-b="F" title="Take F">F</button></div>
           <button class="btn primary" id="remix" type="button">Re-create beat</button>
+          <button class="btn" id="makeTracks" type="button" title="Build every track and set a first mix">Create tracks</button>
           <span class="vmeta" id="ver"></span>
               <div class="tgroup x"><button class="btn ic" id="undo" disabled aria-label="Undo"><svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span>Undo</span></button><button class="btn ic" id="redo" disabled aria-label="Redo"><svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg><span>Redo</span></button></div>
               <button class="btn ghost x" id="clear">Clear</button>
@@ -1563,7 +1564,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 
       <section class="shell-view" id="sv-playlist" role="tabpanel" aria-labelledby="tab-playlist" aria-label="Playlist" hidden>
         <div id="dawRoom">
-          <div class="pl-bar" id="dawToolbar"><label class="btn primary file">Import audio clip<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="dawUndo" disabled>Undo edit</button><span class="daw-clock" id="dawClock">00:00.0</span></div>
+          <div class="pl-bar" id="dawToolbar"><label class="btn primary file">Import audio clip<input id="dawImport" type="file" accept="audio/*" multiple></label><button class="btn" id="beatToTracks" type="button" title="Render each part of the beat as its own track">Beat to tracks</button><button class="btn" id="dawUndo" disabled>Undo edit</button><span class="daw-clock" id="dawClock">00:00.0</span></div>
           <div class="daw-tracks" id="dawTracks"><div class="daw-empty" id="dawEmpty">Your clips will appear here. Record a take, or import audio, stems or field recordings.</div></div>
         </div>
       </section>
@@ -2305,6 +2306,8 @@ const SOUND=(()=>{ let rich; try{ rich=localStorage.getItem("ps.sound")!=="class
 window.PennioSound=SOUND;
 /* where each lane sits, -1 left to 1 right; bass, kick-weight and voice stay centred so the low end stays mono-safe */
 const SPREAD={dd:-.25,bata:.45,agogo:.5,shek:-.6,udu:-.3,duru:.28,clap:.3,keys:-.42,gtr:.45,pluck:-.34,flute:.38,reed:-.3};
+/* beat tracks leave the master chain out: they are the parts before the glue, so they can be mixed again */
+function makeMasterDry(ctx){ const g=ctx.createGain(); g.gain.value=1; g.connect(ctx.destination); g.pennioOutputGain=g; return g; }
 function makeMaster(ctx){
   const comp=ctx.createDynamicsCompressor();
   const g=ctx.createGain(); g.gain.value=.85;
@@ -2673,13 +2676,15 @@ addEventListener("keydown",e=>{
 /* ---------- history: every change can be undone ---------- */
 const hist=[]; let restoring=false;
 const undoBtn=document.getElementById("undo");
-function snap(){ return {bank, p:JSON.parse(JSON.stringify(pattern)), c:chopOrder.slice(), bpm:+bpmEl.value, sw:+swEl.value, n:N, lay:{...LAY}, tune:{...tuneV}, nudge:vocalNudge, dd:ddBase, udu:uduBase, off:vocalOffset, harm:{...H}}; }
+function snap(){ return {bank, p:JSON.parse(JSON.stringify(pattern)), c:chopOrder.slice(), bpm:+bpmEl.value, sw:+swEl.value, n:N, lay:{...LAY}, tune:{...tuneV}, nudge:vocalNudge, dd:ddBase, udu:uduBase, off:vocalOffset, harm:{...H}, mix:{g:{...gainsV}, fx:JSON.parse(JSON.stringify(stripFx))}}; }
 const redoStack=[]; const redoBtn=document.getElementById("redo");
 function pushHist(){ hist.push(snap()); if(hist.length>80) hist.shift(); undoBtn.disabled=false; redoStack.length=0; redoBtn.disabled=true; }
 function applySnap(s){
   if(s.bank&&s.bank!==bank){ banks[bank]=pattern; bank=s.bank; markBank(); } pattern=fillLanes(s.p); banks[bank]=pattern; chopOrder=s.c; bpmEl.value=s.bpm; bpmEl.oninput(); swEl.value=s.sw; swEl.oninput();
   ddBase=s.dd||208; uduBase=s.udu||62; vocalOffset=s.off||0; vocalNudge=s.nudge||0;
-  if(s.lay) Object.assign(LAY,s.lay); if(s.tune) Object.assign(tuneV,s.tune); if(s.harm) Object.assign(H,s.harm); renderHarm(); restartTracks(); renderLayers(); setN(s.n||16);
+  if(s.lay) Object.assign(LAY,s.lay); if(s.tune) Object.assign(tuneV,s.tune); if(s.harm) Object.assign(H,s.harm);
+  if(s.mix){ Object.assign(gainsV,s.mix.g); Object.keys(stripFx).forEach(k=>delete stripFx[k]); Object.assign(stripFx,JSON.parse(JSON.stringify(s.mix.fx))); if(busses) Object.keys(busses).forEach(id=>applyStripFx(busses[id],id)); syncLaneBusGains(); }
+  renderHarm(); restartTracks(); renderLayers(); setN(s.n||16);
 }
 undoBtn.onclick=()=>{ const s=hist.pop(); if(!s) return; redoStack.push(snap()); applySnap(s); undoBtn.disabled=!hist.length; redoBtn.disabled=false; markPresets(-1); saveSoon(); toast("Undone"); };
 /* Remix carries its own Undo and Redo: same history, mirrored state */
@@ -2835,13 +2840,15 @@ if(inClaude){
   // on pennio's own site: a normal browser download
   downloads={ save: async ({filename,data})=>{ const url=URL.createObjectURL(data instanceof Blob? data : new Blob([data])); const a=document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000); } };
 }
-async function renderMix(){
-  const tracks=fullTracks(); if(expDrum && drumBuf && !LAY.drum) tracks.push({buf:drumBuf,off:0,bus:"drumv"});
-  const vb = tracks.length? Math.max(...tracks.map(barsFor)) : 1;
+async function renderMix(opts){
+  const only=(opts&&opts.lanes)||null, dry=!!(opts&&opts.dry);
+  const allTracks=fullTracks(); if(expDrum && drumBuf && !LAY.drum) allTracks.push({buf:drumBuf,off:0,bus:"drumv"});
+  const vb = allTracks.length? Math.max(...allTracks.map(barsFor)) : 1; /* length comes from every track, so beat tracks line up with the full mix */
+  const tracks=allTracks.filter(tr=>!only||only.has(tr.bus));
   const pl=progD().length, base=Math.max(4,pl);
   const loops = expBars || Math.max(base, Math.ceil(base/vb)*vb), sd=stepDur(), total=loops*N*sd+1.6, sr=44100;
   const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
-  const oc=new OC(2,Math.ceil((total+.2)*sr),sr); const m=makeMaster(oc); const bs=makeBusses(oc,m);
+  const oc=new OC(2,Math.ceil((total+.2)*sr),sr); const m=dry? makeMasterDry(oc) : makeMaster(oc); const bs=makeBusses(oc,m);
   /* One bar is scheduled at a time, just ahead of the render. Creating every note of a long track up front leaves thousands of idle
      nodes in the graph, and the audio engine visits all of them on every tick: a 65 s render took 20 s here and 230 s on a phone,
      where an 11 s render took 0.75 s. Scheduling a bar ahead keeps the graph small, so the cost grows with the length instead of its square. */
@@ -2850,7 +2857,7 @@ async function renderMix(){
     tracks.forEach(tr=>{ if(L%barsFor(tr)===0) playTrack(oc,bs[tr.bus],L*N*sd+.02+.2,tr); });
     for(let i=0;i<N;i++){
       const t=(L*N+i)*sd + swingOffset(i) + .02 + .2;
-      LANES.forEach(l=>{const v=pattern[l.id][i]; if(v&&laneOn(l.id)&&!(l.id==="vox"&&!LAY.vox)) trigger(l.id,oc,bs[l.id],t,v,i);});
+      LANES.forEach(l=>{ if(only&&!only.has(l.id)) return; const v=pattern[l.id][i]; if(v&&laneOn(l.id)&&!(l.id==="vox"&&!LAY.vox)) trigger(l.id,oc,bs[l.id],t,v,i);});
     }
   };
   const len=oc.length;
@@ -3227,7 +3234,8 @@ async function verifyBlob(blob,buf,isMp3,metrics){
 const expCache=window.__expCache={v:null,key:""};
 const bufIds=new WeakMap(); let bufSeq=0; const bufId=b=>b?(bufIds.get(b)||(bufIds.set(b,++bufSeq),bufSeq)):0;
 function exportKey(matchOn){
-  return JSON.stringify({s:snap(),g:gainsV,fx:Object.keys(gainsV).map(k=>{ const f=stripFx[k]||{}; return [+f.pan||0,f.eq?1:0,f.comp?1:0,f.rev?1:0,f.echo?1:0]; }),solo:[...soloed],mute:muted,on:LANES.map(l=>laneOn(l.id)),rich:SOUND.rich,lite:PERF.lite,bars:expBars,drum:expDrum,match:matchOn,
+  const sn=snap(); delete sn.mix; /* the mix is keyed below in a normalised form */
+  return JSON.stringify({s:sn,g:gainsV,fx:Object.keys(gainsV).map(k=>{ const f=stripFx[k]||{}; return [+f.pan||0,f.eq?1:0,f.comp?1:0,f.rev?1:0,f.echo?1:0]; }),solo:[...soloed],mute:muted,on:LANES.map(l=>laneOn(l.id)),rich:SOUND.rich,lite:PERF.lite,bars:expBars,drum:expDrum,match:matchOn,
     buf:[bufId(rawBuf),bufId(proBuf),bufId(drumBuf)],enh:useEnhanced,sl:slices});
 }
 /* render, match, check and encode: the slow part. With a run it reports every stage; without one it works quietly in the background. */
@@ -3589,21 +3597,68 @@ hearDrum.onclick=()=>{ ensureAudio(); if(drumPrev){ stopPreviews(); npUpdate(); 
 /* ---------- remix ---------- */
 let version=1;
 const verEl=document.getElementById("ver");
-document.getElementById("remix").onclick=()=>{
-  pushHist();
+/* Re-create beat: the best-fitting style for the tempo and key already set, every lane filled and kept clear of the others.
+   With a recording it makes the next beat that fits the voice instead. Pressing again moves to the next style, never a shuffle. */
+let composeVariant=0;
+function composeBeatNow(){
+  const VB=window.PennioVoiceBeat; if(!VB||!VB.composeBeat) return null;
+  const states=Object.fromEntries(LANES.map(l=>[l.id,l.states]));
+  const plan=VB.composeBeat({N,bpm:+bpmEl.value,swing:+swEl.value,mode:H.scale},PRESETS,composeVariant++,states);
+  LANES.forEach(l=>{ if(l.id==="vox"||(l.id==="dd"&&drumBuf)) return; const src=plan.pattern[l.id], o=new Array(16).fill(0); if(src) for(let i=0;i<src.length&&i<16;i++) o[i]=src[i]||0; pattern[l.id]=o; });
+  banks[bank]=pattern; return plan;
+}
+function legacyRemix(){
   const beat=N===12?3:4;
-  LANES.forEach(l=>{
-    const a=pattern[l.id];
-    for(let i=0;i<N;i++){
-      if(i%beat===0 && a[i]) continue;
-      const r=Math.random(), dens=l.id==="dd"?.22:l.id==="vox"?.3:.16;
-      if(r<dens){ a[i]= a[i]? 0 : 1+Math.floor(Math.random()*l.states); }
-      else if(a[i] && l.states>1 && r<dens+.12){ a[i]=1+Math.floor(Math.random()*l.states); }
-    }
-  });
+  LANES.forEach(l=>{ const a=pattern[l.id]; for(let i=0;i<N;i++){ if(i%beat===0 && a[i]) continue; const r=Math.random(), dens=l.id==="dd"?.22:l.id==="vox"?.3:.16; if(r<dens){ a[i]= a[i]? 0 : 1+Math.floor(Math.random()*l.states); } else if(a[i] && l.states>1 && r<dens+.12){ a[i]=1+Math.floor(Math.random()*l.states); } } });
+}
+document.getElementById("remix").onclick=()=>{
+  if(rawBuf&&window.PennioVoiceBeat){ let ok; try{ ok=beatFromVoice(); }catch(e){ ok=false; } if(ok!==false){ version++; verEl.textContent="Version "+version; return; } }
+  pushHist();
+  const plan=composeBeatNow(); if(!plan) legacyRemix();
   for(let i=15;i>0;i--){ if(Math.random()<.5){ const j=Math.floor(Math.random()*(i+1)); [chopOrder[i],chopOrder[j]]=[chopOrder[j],chopOrder[i]]; } }
-  version++; verEl.textContent="Version "+version; markPresets(-1); render();
+  version++; verEl.textContent="Version "+version+(plan?" · "+plan.style:""); markPresets(-1); render(); renderLayers(); saveSoon();
   if(!playing) start();
+};
+/* a first mix by role, from the same engine: levels and effects, set once and editable in the Mixer */
+function applyAutoMix(hasVoice){
+  const VB=window.PennioVoiceBeat; if(!VB||!VB.autoMix) return false;
+  const m=VB.autoMix(pattern,hasVoice);
+  Object.assign(gainsV,m.gains);
+  Object.keys(m.fx).forEach(id=>{ const f=fxOf(id); ["eq","comp","rev","echo"].forEach(k=>{ f[k]=m.fx[id][k]?1:0; }); });
+  if(busses) Object.keys(busses).forEach(id=>applyStripFx(busses[id],id));
+  syncLaneBusGains(); renderLayers(); return true;
+}
+document.getElementById("makeTracks").onclick=()=>{
+  const voice=!!rawBuf; let made=false;
+  if(voice&&window.PennioVoiceBeat){ try{ made=beatFromVoice()!==false; }catch(e){ made=false; } }
+  if(!made){ pushHist(); const plan=composeBeatNow(); if(!plan) legacyRemix(); version++; verEl.textContent="Version "+version+(plan?" · "+plan.style:""); markPresets(-1); render(); }
+  applyAutoMix(voice); saveSoon();
+  const n=LANES.filter(l=>l.id!=="vox"&&pattern[l.id]&&pattern[l.id].slice(0,N).some(Boolean)).length;
+  toast("Built "+n+" tracks and set a first mix. Undo brings the last beat and mix back.");
+  if(!playing) start();
+};
+/* Beat to tracks: each part of the beat rendered on its own, before the master chain, as a track in the Playlist */
+const STEM_GROUPS=[{n:"Drums",l:["udu","clap","duru"]},{n:"Percussion",l:["bata","agogo","shek"]},{n:"Talking drum",l:["dd","drumv"]},{n:"Bass",l:["bass"]},{n:"Harmony",l:["keys","gtr"]},{n:"Melody",l:["pluck","flute","reed"]},{n:"Voice",l:["full","vox"]}];
+async function renderStems(onP){
+  const has=id=>{ if(id==="full") return !!(LAY.full&&vbuf()); if(id==="drumv") return !!(LAY.drum&&drumBuf); if(id==="vox") return !!(LAY.vox&&vbuf()&&pattern.vox&&pattern.vox.slice(0,N).some(Boolean)); const a=pattern[id]; return !!(a&&a.slice(0,N).some(Boolean)&&laneOn(id)); };
+  const groups=STEM_GROUPS.filter(g=>g.l.some(has)), out=[];
+  for(let i=0;i<groups.length;i++){
+    onP&&onP(i,groups.length,groups[i].n);
+    const buf=await renderMix({lanes:new Set(groups[i].l.filter(has)),dry:true});
+    const pk=await peakOfAsync(buf); if(pk>.98){ const g=.98/pk; for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let k=0;k<d.length;k++) d[k]*=g; } }
+    out.push({name:groups[i].n+" (beat)",buffer:buf}); await yieldUI();
+  }
+  return out;
+}
+document.getElementById("beatToTracks").onclick=async()=>{
+  const btn=document.getElementById("beatToTracks");
+  if(!window.PennioDAW||!PennioDAW.addStems){ toast("The Playlist is not ready yet."); return; }
+  if(LANES.every(l=>!(pattern[l.id]&&pattern[l.id].slice(0,N).some(Boolean)))&&!(LAY.full&&vbuf())){ toast("Make a beat first."); return; }
+  stopAll(); btn.disabled=true; const label=btn.textContent;
+  try{ const stems=await renderStems((i,n,name)=>{ btn.textContent="Rendering "+name+" "+(i+1)+"/"+n+"…"; });
+    if(stems.length&&PennioDAW.addStems(stems)) toast(stems.length+" beat tracks added. Adding them again replaces them."); }
+  catch(e){ toast("The beat tracks could not be made here."); }
+  btn.disabled=false; btn.textContent=label;
 };
 
 /* ---------- layers: on/off, volume and tune for every sound ---------- */
@@ -3621,9 +3676,20 @@ function clearLane(id){
   if(!pattern[id])return;
   pushHist();pattern[id].fill(0);render();renderLayers();markPresets(-1);saveSoon();toast("Lane cleared. Undo brings it back.");
 }
+const laneRank={};
 function recreateLane(id){
   if(!pattern[id])return;
-  pushHist();pattern[id]=newLanePattern(id);banks[bank]=pattern;render();renderLayers();markPresets(-1);saveSoon();toast("New lane take made. Undo brings the last one back.");
+  pushHist();
+  const VB=window.PennioVoiceBeat, lane=LANES.find(l=>l.id===id)||{}; let name="", done=false;
+  if(VB&&VB.recreateLane){
+    laneRank[id]=(laneRank[id]||0)+1;
+    const lb=window.__lastVoiceBeat, act=(lb&&lb.analysis&&lb.analysis.N===N&&rawBuf)? lb.analysis.act : new Array(N).fill(0);
+    const r=VB.recreateLane(id,{N,pattern,act},laneRank[id]-1,PRESETS,lane.states);
+    if(r){ const o=new Array(16).fill(0); r.a.forEach((v,i)=>{ if(i<16) o[i]=v; }); pattern[id]=o; name=r.name; done=true; }
+  }
+  if(!done) pattern[id]=newLanePattern(id);
+  banks[bank]=pattern;render();renderLayers();markPresets(-1);saveSoon();
+  toast("New "+(lane.name||"lane")+" part"+(name?" ("+name+")":"")+". Undo brings the last one back.");
 }
 const LAYER_DEFS=[
   ...LANES.filter(l=>l.id!=="vox").map(l=>({id:l.id,name:l.name,sub:l.sub,kind:"drum"})),

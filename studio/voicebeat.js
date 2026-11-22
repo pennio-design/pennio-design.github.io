@@ -226,6 +226,73 @@
     return { accentLock: top.length ? locked / top.length : 0, locked, total: top.length, topAccents: top.map(x => x.s) };
   }
 
-  const api = { gridScore, beatProminence, analyse, design, match, chroma, estimateKey, chooseGrid, estimateSwing, chooseProgression, EXTRA, SC };
+  /* ---------- tracks: parts that fit the rest, and a first mix ----------
+     Each lane can be rebuilt on its own. Candidates come from the authored styles and from Euclidean rhythms (evenly spread
+     hits, rotated), and every candidate is scored against what the other lanes are already playing: percussion fills the
+     gaps the kick and clap leave, the bass locks to the kick, harmony and melody keep out of the voice. The best one is taken;
+     pressing again takes the next best, so it cycles through good parts rather than rolling dice. */
+  const TARGET = { shek: [6, 16], agogo: [4, 9], bata: [2, 6], duru: [2, 6], clap: [1, 4], udu: [3, 7], bass: [2, 7], keys: [1, 3], gtr: [3, 8], pluck: [2, 6], flute: [1, 4], reed: [1, 4], dd: [0, 6] };
+  const LANE_IDS = ["udu", "clap", "bass", "bata", "agogo", "shek", "duru", "keys", "gtr", "pluck", "flute", "reed", "dd"];
+  const rng = seed => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
+  const hash = str => { let h = 2166136261; for (const c of str) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; };
+  function euclid(k, n, rot) { const a = new Array(n).fill(0); for (let i = 0; i < n; i++) if (((i * k) % n) < k) a[(i + rot) % n] = 1; return a; }
+  function candidates(id, N, presets, states) {
+    const out = [], seen = new Set(), add = (a, name) => { const key = a.join(""); if (!seen.has(key) && a.some(Boolean)) { seen.add(key); out.push({ a, name }); } };
+    presets.concat(EXTRA.map(e => Object.assign({}, e, { p: Object.fromEntries(Object.entries(e.p).map(([k, v]) => [k, L(v)])) })))
+      .forEach(p => { if (p.n === N && p.p[id]) { const a = new Array(N).fill(0); for (let i = 0; i < N; i++) a[i] = p.p[id][i] || 0; add(a, p.name); } });
+    const r = rng(hash(id + N)), top = Math.max(1, states || 1), val = () => 1 + Math.floor(r() * top);
+    const ks = { shek: [8, 6], agogo: [5, 7, 4], bata: [3, 4, 5], duru: [3, 4], clap: [2], udu: [3, 4, 5], bass: [3, 4, 5], keys: [1, 2], gtr: [4, 5, 6], pluck: [3, 4, 5], flute: [2, 3], reed: [2, 3], dd: [4, 5] }[id] || [3, 4];
+    const anchored = id === "udu" || id === "bass"; /* these always start on beat one, so only the rhythm varies */
+    ks.forEach(k => { for (let rot = 0; rot < (anchored ? 1 : N); rot++) { const e = euclid(k, N, rot); if (anchored && !e[0]) continue; add(e.map(x => x ? val() : 0), "Euclid " + k + "/" + N); } });
+    return out;
+  }
+  function scoreLane(id, cand, ctx) {
+    const N = ctx.N, P = ctx.pattern || {}, kick = P.udu || [], clap = P.clap || [], act = ctx.act || [], half = N / 2, step = N / 4;
+    const hits = []; cand.forEach((v, i) => { if (v) hits.push(i); });
+    const n = hits.length, [lo, hi] = TARGET[id] || [2, 8]; let s = 0;
+    s -= n < lo ? (lo - n) : n > hi ? (n - hi) : 0;
+    const perc = id === "bata" || id === "agogo" || id === "duru", mel = id === "gtr" || id === "pluck" || id === "flute" || id === "reed" || id === "keys";
+    if (perc) hits.forEach(i => { if (kick[i] || clap[i]) s -= .9; else s += .3; });
+    if (id === "bass") { const lock = hits.filter(i => kick[i]).length / Math.max(1, n); s += 3 * lock + (cand[0] ? 1 : 0); }
+    if (id === "udu") { s += cand[0] ? 2 : -2; hits.forEach(i => { s += .6 * (act[i] || 0); }); }
+    if (id === "clap") { const back = [step, 3 * step].filter(i => cand[i]).length; s += back * 1.2; }
+    if (mel) { hits.forEach(i => { if ((act[i] || 0) >= .45) s -= .8; if (clap[i]) s -= .3; if (i % step !== 0 && id !== "keys") s += .2; }); }
+    if (id === "shek") { const acc = hits.filter(i => i % step === 0 && cand[i] === 2).length; s += .2 * acc; }
+    s += (hash(id + cand.join("")) % 1000) / 100000;
+    return s;
+  }
+  function recreateLane(id, ctx, rank, presets, states) {
+    const cur = (ctx.pattern && ctx.pattern[id] || []).slice(0, ctx.N).join("");
+    const ranked = candidates(id, ctx.N, presets, states).filter(c => c.a.join("") !== cur).map(c => ({ c, s: scoreLane(id, c.a, ctx) })).sort((x, y) => y.s - x.s);
+    if (!ranked.length) return null;
+    const pick = ranked[(rank || 0) % Math.min(6, ranked.length)].c;
+    return { a: pick.a, name: pick.name };
+  }
+  /* a whole beat without a voice: the best-fitting style, every lane filled, in the key and tempo already set */
+  function composeBeat(ctx, presets, variant, states) {
+    const N = ctx.N, a = { N, bpm: ctx.bpm, swing: ctx.swing, mode: ctx.mode, act: new Array(N).fill(0), density: 2 };
+    const plan = design(a, presets, variant, []);
+    const pattern = plan.pattern, filled = [];
+    const full = Math.floor((variant || 0) / Math.max(1, styleOrder(a, presets).length));
+    LANE_IDS.forEach(id => {
+      if (id === "dd") return;
+      const empty = !pattern[id].some(Boolean), refresh = full > 0 && ["bata", "agogo", "gtr", "pluck"].includes(id);
+      if (empty && !["flute", "reed", "duru"].includes(id) || refresh) { const r = recreateLane(id, { N, pattern, act: a.act }, full + (variant || 0), presets, states && states[id]); if (r) { pattern[id] = r.a; filled.push(id); } }
+    });
+    return { pattern, style: plan.style, filled };
+  }
+  /* a first mix by role. Levels and effects, not a rebuild: the master chain does the glue. */
+  function autoMix(pattern, hasVoice) {
+    const base = { dd: .9, bata: .82, agogo: .66, shek: .55, udu: 1, duru: .8, clap: .7, bass: .98, keys: .55, gtr: .6, pluck: .58, flute: .66, reed: .6 };
+    const duck = hasVoice ? .8 : 1, gains = {}, fx = {};
+    Object.keys(base).forEach(id => { const on = pattern[id] && pattern[id].some(Boolean); gains[id] = +(base[id] * (on ? duck : 1)).toFixed(3); fx[id] = { eq: 0, comp: 0, rev: 0, echo: 0 }; });
+    fx.bass.comp = 1; fx.udu.comp = 1; fx.dd.comp = 1; fx.dd.eq = 1;
+    fx.keys.eq = 1; fx.gtr.eq = 1; fx.agogo.eq = 1; fx.shek.eq = 1;
+    fx.pluck.eq = 1; fx.pluck.rev = 1; fx.flute.rev = 1; fx.reed.rev = 1; fx.clap.rev = 1;
+    if (hasVoice) { gains.full = 1; gains.vox = 1; }
+    return { gains, fx };
+  }
+
+  const api = { euclid, candidates, scoreLane, recreateLane, composeBeat, autoMix, LANE_IDS, gridScore, beatProminence, analyse, design, match, chroma, estimateKey, chooseGrid, estimateSwing, chooseProgression, EXTRA, SC };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.PennioVoiceBeat = api;
 })(typeof window !== "undefined" ? window : globalThis);
