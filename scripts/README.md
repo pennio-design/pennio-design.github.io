@@ -168,3 +168,7 @@ needs neither.
 ## Voice match benchmark
 
 `scripts/voice-match/` scores "Make a beat from my voice" against sung test voices with known tempo, downbeat, key, swing and feel. Baseline before the Voice match engine (October 2026 code): key exact 2/12, mode always minor, swing random, 12/8 feel never found. Now: tempo 11/12, downbeat 12/12, swing within 2 points, key exact or relative 11/12. Run it after any change to `studio/voicebeat.js`.
+
+## Voice cleanup benchmark
+
+`scripts/voice-clean/` scores the Studio voice cleanup on synthetic voices (male, female, wide dynamics) degraded with hiss, 50 Hz hum and room noise. Before the November 2026 work: signal to noise +11.8 dB, mains hum not removed (still ~21 to 24 dB above the floor), harsh s sounds 5 dB worse. Now: +12.9 dB, hum 3.6 dB above the floor, s sounds 0.8 dB above the input. Run it after changing `denoise()` or `styleVoice()`.
