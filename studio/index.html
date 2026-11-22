@@ -2317,7 +2317,7 @@ function makeMaster(ctx){
   wireMaster(comp); return comp;
 }
 function wireMaster(comp){
-  const n=comp.pennioNodes, ctx=n.ctx, rich=SOUND.rich, lite=!(window.OfflineAudioContext&&ctx instanceof OfflineAudioContext)&&!!(window.PennioPerf&&PennioPerf.lite), key=rich?(lite?"rich-lite":"rich"):"classic";
+  const n=comp.pennioNodes, ctx=n.ctx, rich=SOUND.rich, lite=!!(window.PennioPerf&&PennioPerf.lite), key=rich?(lite?"rich-lite":"rich"):"classic";
   if(n.mode===key) return; n.mode=key;
   [comp,n.hp,n.mud,n.pres,n.air,n.lim,n.wet].forEach(x=>{ try{ x.disconnect(); }catch(e){} });
   if(n.room){ try{ n.room.disconnect(); }catch(e){} }
@@ -2329,7 +2329,7 @@ function wireMaster(comp){
   if(lite){ comp.connect(n.pres); n.pres.connect(n.air); n.air.connect(n.lim); } /* Smooth: two filters and the limiter, no low-cut or low-mid cut */
   else{ comp.connect(n.hp); n.hp.connect(n.mud); n.mud.connect(n.pres); n.pres.connect(n.air); n.air.connect(n.lim); }
   if(!lite){ /* a short shared room; skipped in Smooth mode because a convolver is the costliest node here */
-    if(!n.room){ n.room=ctx.createConvolver(); n.room.buffer=impulse(ctx,.45); }
+    if(!n.room){ n.room=ctx.createConvolver(); n.room.buffer=impulse(ctx,.35); }
     n.pres.connect(n.room); n.room.connect(n.wet); n.wet.connect(n.lim);
   }
   n.lim.connect(n.g); n.g.connect(ctx.destination);
@@ -2890,21 +2890,54 @@ function limiterCurve(ch,G,ceil,sr){
   const out=new Float32Array(n); for(let i=0;i<n;i++){ const lo=Math.max(0,i-W+1); out[i]=(P[i+1]-P[lo])/(i+1-lo); }
   return out;
 }
-/* set the mix to the target loudness with a limiter, searching for the gain that lands on target without clipping */
+/* Set the mix to the target loudness with a limiter. The gain search runs on a block envelope (about 1 ms per block),
+   so each trial costs a few thousand steps instead of a pass over every sample; the real samples are touched twice:
+   once to read them, once to apply the result. The limiter keeps the same guarantee as before: the gain at any
+   sample never exceeds the gain needed to hold that sample under the ceiling. */
 const yieldUI=()=>new Promise(r=>setTimeout(r,0));
+function blockSize(sr){ const hop=Math.round(.1*sr), blk=Math.round(.4*sr); for(let d=16;d>=1;d--) if(hop%d===0&&blk%d===0) return d; return 1; }
+function blockStats(ch,k,B){
+  const n=ch[0].length, nb=Math.ceil(n/B), pk=new Float32Array(nb), ke=new Float64Array(nb);
+  for(let b=0;b<nb;b++){ const a=b*B, z=Math.min(n,a+B); let m=0,e=0;
+    for(let c=0;c<ch.length;c++){ const x=ch[c], y=k[c]; for(let i=a;i<z;i++){ const v=x[i]<0?-x[i]:x[i]; if(v>m) m=v; e+=y[i]*y[i]; } }
+    pk[b]=m; ke[b]=e; }
+  return {pk,ke,nb,B,n};
+}
+function blockGains(st,G,ceil,sr){
+  const {pk,nb,B}=st, Wb=Math.max(2,Math.ceil(sr*.0015/B)), g=new Float32Array(nb), m=new Float32Array(nb);
+  for(let b=0;b<nb;b++){ const a=pk[b]*G; g[b]=a>ceil? ceil/a : 1; }
+  for(let b=0;b<nb;b++){ let v=1; for(let j=Math.max(0,b-Wb+1);j<=Math.min(nb-1,b+Wb-1);j++) if(g[j]<v) v=g[j]; m[b]=v; }
+  const rel=1-Math.exp(-B/(.06*sr)); let r=1; for(let b=0;b<nb;b++){ r=Math.min(m[b],r+(1-r)*rel); m[b]=r; }
+  const out=new Float32Array(nb); for(let b=0;b<nb;b++){ let t=0,c=0; for(let j=Math.max(0,b-Wb+1);j<=b;j++){ t+=m[j]; c++; } out[b]=t/c; }
+  return out;
+}
+function blockLufs(st,G,g,sr){
+  const {ke,nb,B}=st, e=new Float64Array(nb+1);
+  for(let b=0;b<nb;b++){ const gg=G*g[b]; e[b+1]=e[b]+ke[b]*gg*gg; }
+  const blk=Math.round(.4*sr)/B, hop=Math.round(.1*sr)/B, ms=[], L=x=>-0.691+10*Math.log10(x||1e-12);
+  for(let i=0;i+blk<=nb;i+=hop) ms.push((e[i+blk]-e[i])/(blk*B));
+  let q=ms.filter(x=>L(x)>-70); if(!q.length) return -70;
+  const rel=L(q.reduce((a,b)=>a+b,0)/q.length)-10; q=q.filter(x=>L(x)>rel);
+  return q.length? L(q.reduce((a,b)=>a+b,0)/q.length) : -70;
+}
 async function matchLoudness(buf,tgt){
-  const target= tgt==null? -14 : tgt, sr=buf.sampleRate, ceil=Math.pow(10,-1.5/20);
-  const k=await kWeight(buf); await yieldUI(); const before=lufsFromK(k,sr,1); await yieldUI();
+  const target= tgt==null? -14 : tgt, sr=buf.sampleRate, ceil=Math.pow(10,-1.9/20), B=blockSize(sr);
+  const ch=[...Array(buf.numberOfChannels).keys()].map(c=>buf.getChannelData(c));
+  const k=await kWeight(buf); await yieldUI();
+  const st=blockStats(ch,k,B); await yieldUI();
+  const ones=new Float32Array(st.nb).fill(1), before=blockLufs(st,1,ones,sr);
   if(before<-60) return {before, after:before, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:0};
-  const dry=[...Array(buf.numberOfChannels).keys()].map(c=>buf.getChannelData(c).slice());
   let gdb=Math.min(24,target-before), best=null, it=0;
-  for(;it<6;it++){
-    const G=Math.pow(10,gdb/20); await yieldUI(); const gc=limiterCurve(dry,G,ceil,sr); await yieldUI(); const after=lufsFromK(k,sr,G,gc);
-    if(!best||Math.abs(target-after)<Math.abs(target-best.after)) best={G,gc,after};
-    const err=target-after; if(Math.abs(err)<=.15) break;
-    gdb+=err*(it<2?1:.8); if(gdb>24){ gdb=24; }
+  for(;it<8;it++){
+    const G=Math.pow(10,gdb/20), g=blockGains(st,G,ceil,sr), after=blockLufs(st,G,g,sr);
+    if(!best||Math.abs(target-after)<Math.abs(target-best.after)) best={G,g,after};
+    const err=target-after; if(Math.abs(err)<=.05) break;
+    gdb+=err*(it<2?1:.8); if(gdb>24) gdb=24;
   }
-  for(let c=0;c<buf.numberOfChannels;c++){ await yieldUI(); const d=buf.getChannelData(c), x=dry[c]; for(let i=0;i<d.length;i++) d[i]=x[i]*best.G*best.gc[i]; }
+  /* apply once: block gains, linearly interpolated between block centres (never above the gain a neighbouring block needs) */
+  const {G,g}=best, nb=st.nb, n=st.n;
+  for(let c=0;c<ch.length;c++){ if(c) await yieldUI(); const d=ch[c];
+    for(let i=0;i<n;i++){ const pos=(i+.5)/B-.5, b0=pos<0?0:Math.floor(pos), b1=b0+1<nb?b0+1:nb-1, t=pos<0?0:pos-b0; d[i]*=G*(g[b0]*(1-t)+g[b1]*t); } }
   return {before, after:best.after, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:it+1};
 }
 let lameP=null;
@@ -3110,7 +3143,21 @@ async function saveExport(x){
   catch(e){await downloads.save({filename:x.name,data:new Uint8Array(await x.blob.arrayBuffer())});}
 }
 /* decode the finished file again and compare it with what was rendered */
-async function verifyBlob(blob,buf,isMp3){
+/* walk the MP3 frames: sync, version, layer, bitrate, sample rate, padding. Gives duration and channel mode without decoding. */
+function mp3Structure(u8){
+  let p=0; if(u8[0]===73&&u8[1]===68&&u8[2]===51) p=10+((u8[6]<<21)|(u8[7]<<14)|(u8[8]<<7)|u8[9]);
+  const BR=[0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0], SR=[44100,48000,32000];
+  let frames=0, sr=0, mode=-1;
+  while(p+4<=u8.length){
+    if(u8[p]!==255||(u8[p+1]&0xE0)!==0xE0){ p++; continue; }
+    const ver=(u8[p+1]>>3)&3, layer=(u8[p+1]>>1)&3, bri=u8[p+2]>>4, sri=(u8[p+2]>>2)&3, pad=(u8[p+2]>>1)&1;
+    if(ver!==3||layer!==1||bri===0||bri===15||sri>2){ p++; continue; }
+    const len=Math.floor(144000*BR[bri]/SR[sri])+pad; if(!sr){ sr=SR[sri]; mode=u8[p+3]>>6; }
+    frames++; p+=len;
+  }
+  return {frames,sr,mode,sec:sr?frames*1152/sr:0};
+}
+async function verifyBlob(blob,buf,isMp3,metrics){
   const R=window.PennioRender;
   try{
     const ab=await blob.arrayBuffer();
@@ -3119,9 +3166,13 @@ async function verifyBlob(blob,buf,isMp3){
       const ok=tag==="RIFF"&&dv.getUint32(24,true)===buf.sampleRate&&dv.getUint16(22,true)===buf.numberOfChannels&&dv.getUint32(40,true)===buf.length*buf.numberOfChannels*2;
       return {ok,note:ok?"WAV header and length match":"WAV header does not match"};
     }
+    if(PERF.lite){ /* a phone: check the frames instead of decoding the whole file again */
+      const m=mp3Structure(new Uint8Array(ab)), durDiff=Math.abs(m.sec-buf.duration), ok=m.frames>0&&m.sr===buf.sampleRate&&m.mode!==3&&durDiff<=.12;
+      return {ok,note:"checked "+m.frames+" frames, "+m.sec.toFixed(2)+" s, stereo",durDiff,lvl:0};
+    }
     const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
     const d=await new OC(2,1,44100).decodeAudioData(ab.slice(0));
-    const durDiff=Math.abs(d.duration-buf.duration), lvl=R?Math.abs(R.analyze(d).rmsDb-R.analyze(buf).rmsDb):0;
+    const durDiff=Math.abs(d.duration-buf.duration), ref=metrics||(R&&R.analyze(buf)), lvl=R&&ref?Math.abs(R.analyze(d).rmsDb-ref.rmsDb):0;
     const ok=d.numberOfChannels===2&&durDiff<=.12&&lvl<=1;
     return {ok,note:"decoded "+d.duration.toFixed(2)+" s, level differs "+lvl.toFixed(2)+" dB",durDiff,lvl};
   }catch(e){ return {ok:false,note:"could not decode: "+((e&&e.message)||e)}; }
@@ -3134,7 +3185,7 @@ async function buildExport(){
     const buf=await st("render","Render mix",()=>renderMix());
     if(run) run.meta.expectedSec=buf.pennioPlanSec||buf.duration;
     let lufsBefore=null, lufs=null, info="";
-    if(matchOn){ const m=await st("match","Match loudness",async()=>{ const r=await matchLoudness(buf,TARGET); r.after=await lufsOf(buf); return r; }); lufsBefore=m.before; lufs=m.after; info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
+    if(matchOn){ const m=await st("match","Match loudness",async()=>{ const r=await matchLoudness(buf,TARGET); if(!PERF.lite) r.after=await lufsOf(buf); return r; }); lufsBefore=m.before; lufs=m.after; info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
     else { lufs=await st("meter","Measure loudness",()=>lufsOf(buf)); }
     /* never ship a peak that can clip after decoding: trim to -1.2 dBTP and re-check */
     let fixed=false, metrics=R? await st("check","Quality check",()=>R.analyze(buf)) : null;
@@ -3142,9 +3193,9 @@ async function buildExport(){
       const g=Math.pow(10,(-1.2-metrics.truePeakDb)/20); for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++) d[i]*=g; }
       fixed=true; if(lufs!=null) lufs+=20*Math.log10(g); metrics=R.analyze(buf); if(run) run.fixed=true;
     }
-    let blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ return isMp3?await mp3(buf):new Blob([wav(buf)],{type:"audio/wav"}); });
+    let blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ return isMp3?await mp3(buf,p=>{ expGo.textContent="Encoding "+Math.round(p*100)+"%"; }):new Blob([wav(buf)],{type:"audio/wav"}); });
     const tagged=await st("tags","Credits and cover art",()=>PennioCredits.tag(blob,isMp3?"mp3":"wav","beat")); blob=tagged.blob;
-    const verify=await st("verify","Verify file",()=>verifyBlob(blob,buf,isMp3));
+    const verify=await st("verify","Verify file",()=>verifyBlob(blob,buf,isMp3,metrics));
     const name=tagged.name;
     info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+" Credited to "+(tagged.meta.artist||"PENNIO Studio")+", with cover art.";
     if(run){ run.finish({metrics,lufs,lufsBefore,matched:matchOn,verify,tags:tagged.check,fixed,bytes:blob.size,sec:buf.duration});
@@ -3154,12 +3205,12 @@ async function buildExport(){
 }
 expGo.onclick=async()=>{
   if(!downloads){ toast("Export is not available in this view."); return; }
-  expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…";
+  expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…"; if(window.PennioRender) PennioRender.onStage=l=>{ expGo.textContent=l+"…"; expShare.textContent=l+"…"; };
   try{ const x=await buildExport(); expMeta.textContent=x.info;
     await saveExport(x);
     toast("Track exported."); }
   catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : e&&e.message==="render-blocked"? "Export stopped: the file failed its quality check ("+(e.detail||"see report")+")." : "Export was cancelled or blocked."); }
-  expGo.disabled=expShare.disabled=false; expGo.textContent="Download";
+  expGo.disabled=expShare.disabled=false; expGo.textContent="Download"; expShare.textContent="Share to WhatsApp";
 };
 expShare.onclick=async()=>{
   expGo.disabled=expShare.disabled=true;expShare.textContent="Rendering…";

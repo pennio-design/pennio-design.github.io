@@ -97,7 +97,7 @@
     const run = { id: Date.now().toString(36), meta: Object.assign({}, meta), stages: [], t0: performance.now(), t1: null, state: "running", gates: [], verdict: null, metrics: null };
     cur = run;
     run.stage = async (name, label, fn) => {
-      const s = { name, label, ms: null, state: "running" }; run.stages.push(s); emit();
+      const s = { name, label, ms: null, state: "running" }; run.stages.push(s); emit(); try { if (typeof api !== "undefined" && api.onStage) api.onStage(label); else if (window.PennioRender && window.PennioRender.onStage) window.PennioRender.onStage(label); } catch (e) {}
       const t = performance.now();
       try { const r = await fn(); s.ms = performance.now() - t; s.state = "done"; emit(); return r; }
       catch (e) { s.ms = performance.now() - t; s.state = "fail"; s.err = String((e && e.message) || e); emit(); throw e; }
