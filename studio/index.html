@@ -2947,19 +2947,47 @@ async function matchLoudness(buf,tgt){
 let lameP=null;
 function loadLame(){ if(window.lamejs) return Promise.resolve(); if(lameP) return lameP;
   lameP=new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="vendor/lame.min.js"; sc.onload=()=>res(); sc.onerror=()=>{ lameP=null; rej(new Error("encoder")); }; document.head.appendChild(sc); }); return lameP; }
-function mp3Worker(buf,onP){
+/* MP3 frame boundaries in a byte array (MPEG-1 Layer III, constant bitrate) */
+function mp3Frames(u8){
+  const BR=[0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0], SR=[44100,48000,32000], out=[]; let p=0;
+  while(p+4<=u8.length){
+    if(u8[p]!==255||(u8[p+1]&0xE0)!==0xE0){ p++; continue; }
+    const ver=(u8[p+1]>>3)&3, layer=(u8[p+1]>>1)&3, bri=u8[p+2]>>4, sri=(u8[p+2]>>2)&3, pad=(u8[p+2]>>1)&1;
+    if(ver!==3||layer!==1||bri===0||bri===15||sri>2){ p++; continue; }
+    const len=Math.floor(144000*BR[bri]/SR[sri])+pad; out.push([p,Math.min(u8.length,p+len)]); p+=len;
+  }
+  return out;
+}
+function encodePiece(L,R,sr,onP){
   return new Promise((res,rej)=>{
     let w; try{ w=new Worker("mp3-worker.js"); }catch(e){ rej(e); return; }
-    const L=buf.getChannelData(0).slice(), R=(buf.numberOfChannels>1?buf.getChannelData(1):buf.getChannelData(0)).slice();
-    w.onmessage=e=>{ const d=e.data; if(d.p!=null){ onP&&onP(d.p); } else if(d.done){ w.terminate(); res(new Blob(d.chunks,{type:"audio/mpeg"})); } else if(d.error){ w.terminate(); rej(new Error(d.error)); } };
+    w.onmessage=e=>{ const d=e.data; if(d.p!=null){ onP&&onP(d.p); } else if(d.done){ w.terminate(); const n=d.chunks.reduce((t,c)=>t+c.length,0), u=new Uint8Array(n); let k=0; d.chunks.forEach(c=>{ u.set(c,k); k+=c.length; }); res(u); } else if(d.error){ w.terminate(); rej(new Error(d.error)); } };
     w.onerror=e=>{ w.terminate(); rej(new Error(e.message||"worker")); };
-    w.postMessage({L,R,sr:buf.sampleRate,kbps:192},[L.buffer,R.buffer]);
+    w.postMessage({L,R,sr,kbps:192,q:5},[L.buffer,R.buffer]);
   });
+}
+/* The encoder has no bit reservoir, so every frame stands alone. The audio is cut into pieces on frame boundaries, each piece
+   starts WARM blocks early so the filterbank and masking model are in the same state they would have been in, and the page
+   keeps only the frames that belong to the piece. One stream comes out, the same length and frame count a single encoder gives. */
+const MP3_WARM=6, MP3_BLK=1152;
+async function mp3Worker(buf,onP,workers){
+  const L0=buf.getChannelData(0), R0=buf.numberOfChannels>1?buf.getChannelData(1):L0, n=L0.length, sr=buf.sampleRate, N=Math.ceil(n/MP3_BLK);
+  const cores=navigator.hardwareConcurrency||2, k=workers||(N<900?1:Math.max(1,Math.min(4,cores-1)));
+  const per=Math.ceil(N/k), jobs=[];
+  for(let i=0;i<k;i++){ const s=i*per, e=Math.min(N,s+per); if(s>=e) break; const from=Math.max(0,s-MP3_WARM); jobs.push({s,e,from,warm:s-from,last:e===N}); }
+  const prog=jobs.map(()=>0), tell=()=>{ onP&&onP(prog.reduce((a,b)=>a+b,0)/jobs.length); };
+  const parts=await Promise.all(jobs.map((j,i)=>encodePiece(L0.slice(j.from*MP3_BLK,Math.min(n,j.e*MP3_BLK)),R0.slice(j.from*MP3_BLK,Math.min(n,j.e*MP3_BLK)),sr,p=>{ prog[i]=p; tell(); }).then(u=>{ prog[i]=1; tell(); return u; })));
+  if(jobs.length===1) return new Blob([parts[0]],{type:"audio/mpeg"});
+  const keep=[];
+  parts.forEach((u,i)=>{ const j=jobs[i], fr=mp3Frames(u), a=j.warm, z=j.last?fr.length:j.warm+(j.e-j.s);
+    if(fr.length<z) throw new Error("piece "+i+" returned "+fr.length+" frames, expected "+z);
+    for(let f=a;f<z;f++) keep.push(u.subarray(fr[f][0],fr[f][1])); });
+  return new Blob(keep,{type:"audio/mpeg"});
 }
 async function mp3(buf,onP){
   try{ return await mp3Worker(buf,onP); }catch(e){ console.warn("MP3 worker unavailable, encoding on the page:",e&&e.message||e); }
   await loadLame();
-  const enc=new lamejs.Mp3Encoder(2,buf.sampleRate,192), L=buf.getChannelData(0), R=buf.numberOfChannels>1?buf.getChannelData(1):L, n=L.length, out=[], blk=1152, l=new Int16Array(blk), rr=new Int16Array(blk);
+  const enc=new lamejs.Mp3Encoder(2,buf.sampleRate,192,5), L=buf.getChannelData(0), R=buf.numberOfChannels>1?buf.getChannelData(1):L, n=L.length, out=[], blk=1152, l=new Int16Array(blk), rr=new Int16Array(blk);
   const s16=v=>Math.max(-32768,Math.min(32767,Math.round(v*32767)));
   for(let i=0;i<n;i+=blk){
     const m=Math.min(blk,n-i); for(let j=0;j<m;j++){ l[j]=s16(L[i+j]); rr[j]=s16(R[i+j]); }
@@ -2969,6 +2997,7 @@ async function mp3(buf,onP){
   const e=enc.flush(); if(e.length) out.push(new Uint8Array(e));
   return new Blob(out,{type:"audio/mpeg"});
 }
+window.PennioEncode={mp3:(buf,onP,workers)=>mp3Worker(buf,onP,workers),frames:mp3Frames,key:()=>exportKey(true)};
 /* ---------- OGBIFỌ̀: detect Yoruba or English, translate to the other ----------
    Detection runs on the phone. Live translation is not connected yet: when it is,
    set OGB_ENDPOINT to the Supabase function URL and ogbTranslate() will use it. */
@@ -3181,35 +3210,78 @@ async function verifyBlob(blob,buf,isMp3,metrics){
     return {ok,note:"decoded "+d.duration.toFixed(2)+" s, level differs "+lvl.toFixed(2)+" dB",durDiff,lvl};
   }catch(e){ return {ok:false,note:"could not decode: "+((e&&e.message)||e)}; }
 }
-async function buildExport(){
-  const R=window.PennioRender, isMp3=expFmt==="mp3", matchOn=swLoud.classList.contains("on"), TARGET=-14;
-  const run=R? R.begin({kind:"export",fmt:isMp3?"mp3":"wav",targetLufs:TARGET,bpm:+bpmEl.value}) : null;
-  const st=(n,l,f)=>run? run.stage(n,l,f) : f();
-  try{
-    const buf=await st("render","Render mix",()=>renderMix());
+/* The last finished mix, kept so a second export of the same sound is instant: a new title or cover, the other format, or
+   a repeat download reuses the rendered, loudness-matched audio and any file already encoded. Any edit (saveSoon) clears it. */
+const expCache=window.__expCache={v:null,key:""};
+const bufIds=new WeakMap(); let bufSeq=0; const bufId=b=>b?(bufIds.get(b)||(bufIds.set(b,++bufSeq),bufSeq)):0;
+function exportKey(matchOn){
+  return JSON.stringify({s:snap(),g:gainsV,fx:Object.keys(gainsV).map(k=>{ const f=stripFx[k]||{}; return [+f.pan||0,f.eq?1:0,f.comp?1:0,f.rev?1:0,f.echo?1:0]; }),solo:[...soloed],mute:muted,on:LANES.map(l=>laneOn(l.id)),rich:SOUND.rich,lite:PERF.lite,bars:expBars,drum:expDrum,match:matchOn,
+    buf:[bufId(rawBuf),bufId(proBuf),bufId(drumBuf)],enh:useEnhanced,sl:slices});
+}
+/* render, match, check and encode: the slow part. With a run it reports every stage; without one it works quietly in the background. */
+async function prepareMix(isMp3,matchOn,run){
+  const R=window.PennioRender, TARGET=-14, fmt=isMp3?"mp3":"wav", st=(n,l,f)=>run? run.stage(n,l,f) : f();
+  const key=exportKey(matchOn), hit=(expCache.v&&expCache.key===key&&Date.now()-expCache.t<600000)?expCache.v:null;
+  let buf, lufsBefore=null, lufs=null, info="", fixed=false, metrics=null;
+  if(hit){
+    /* same sound as the last export: nothing to render, match or measure again */
+    buf=await st("render","Mix (reused)",async()=>hit.buf);
     if(run) run.meta.expectedSec=buf.pennioPlanSec||buf.duration;
-    let lufsBefore=null, lufs=null, info="";
+    await st(matchOn?"match":"meter","Loudness (reused)",async()=>0);
+    await st("check","Quality check (reused)",async()=>0);
+    lufsBefore=hit.lufsBefore; lufs=hit.lufs; info=hit.info; fixed=hit.fixed; metrics=hit.metrics; if(run&&fixed) run.fixed=true;
+  }else{
+    buf=await st("render","Render mix",()=>renderMix());
+    if(run) run.meta.expectedSec=buf.pennioPlanSec||buf.duration;
     if(matchOn){ const m=await st("match","Match loudness",async()=>{ const r=await matchLoudness(buf,TARGET); if(!PERF.lite) r.after=await lufsOf(buf); return r; }); lufsBefore=m.before; lufs=m.after; info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
     else { lufs=await st("meter","Measure loudness",()=>lufsOf(buf)); }
     /* never ship a peak that can clip after decoding: trim to -1.2 dBTP and re-check */
-    let fixed=false, metrics=R? await st("check","Quality check",()=>R.analyze(buf)) : null;
+    metrics=R? await st("check","Quality check",()=>R.analyze(buf)) : null;
     if(metrics&&metrics.nan===0&&metrics.truePeakDb>-1){
       const g=Math.pow(10,(-1.2-metrics.truePeakDb)/20); for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++) d[i]*=g; }
       fixed=true; if(lufs!=null) lufs+=20*Math.log10(g); metrics=R.analyze(buf); if(run) run.fixed=true;
     }
-    let blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ return isMp3?await mp3(buf,p=>{ if(window.PennioRender) PennioRender.progress(p); }):new Blob([wav(buf)],{type:"audio/wav"}); });
+    expCache.v={buf,lufsBefore,lufs,info,fixed,metrics,blobs:{}}; expCache.key=key; expCache.t=Date.now();
+  }
+  const entry=expCache.v&&expCache.key===key?expCache.v:null;
+  let blob;
+  if(entry&&entry.blobs[fmt]) blob=await st("encode",(isMp3?"MP3":"WAV")+" (reused)",async()=>entry.blobs[fmt]);
+  else{ blob=await st("encode",isMp3?"Encode MP3":"Write WAV",async()=>{ return isMp3?await mp3(buf,p=>{ if(window.PennioRender) PennioRender.progress(p); }):new Blob([wav(buf)],{type:"audio/wav"}); }); if(entry) entry.blobs[fmt]=blob; }
+  return {buf,lufsBefore,lufs,info,fixed,metrics,blob};
+}
+/* While the Export panel is open and nothing is playing, prepare the mix quietly so Download is already done by the time it is tapped. */
+let warmJob=null, warmT=0, expBusy=false;
+function warmExport(){
+  if(warmJob||expBusy||expPanel.hidden||playing||document.hidden||document.body.classList.contains("recorder-active")) return;
+  const isMp3=expFmt==="mp3", matchOn=swLoud.classList.contains("on"), key=exportKey(matchOn);
+  if(expCache.v&&expCache.key===key&&expCache.v.blobs[isMp3?"mp3":"wav"]) return;
+  warmJob=(async()=>{ try{ await prepareMix(isMp3,matchOn,null); }catch(e){} finally{ warmJob=null; } })();
+}
+const warmSoon=()=>{ clearTimeout(warmT); warmT=setTimeout(warmExport,500); };
+async function buildExport(){ expBusy=true; clearTimeout(warmT); try{ return await buildExportInner(); } finally{ expBusy=false; } }
+async function buildExportInner(){
+  const R=window.PennioRender, isMp3=expFmt==="mp3", matchOn=swLoud.classList.contains("on"), TARGET=-14;
+  const run=R? R.begin({kind:"export",fmt:isMp3?"mp3":"wav",targetLufs:TARGET,bpm:+bpmEl.value}) : null;
+  const st=(n,l,f)=>run? run.stage(n,l,f) : f();
+  try{
+    if(warmJob){ await st("wait","Finishing the mix",async()=>{ try{ await warmJob; }catch(e){} }); }
+    const m=await prepareMix(isMp3,matchOn,run);
+    const buf=m.buf, metrics=m.metrics, lufs=m.lufs, lufsBefore=m.lufsBefore, fixed=m.fixed;
+    let blob=m.blob, info=m.info;
     const tagged=await st("tags","Credits and cover art",()=>PennioCredits.tag(blob,isMp3?"mp3":"wav","beat")); blob=tagged.blob;
     const verify=await st("verify","Verify file",()=>verifyBlob(blob,buf,isMp3,metrics));
     const name=tagged.name;
     info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+" Credited to "+(tagged.meta.artist||"PENNIO Studio")+", with cover art.";
     if(run){ run.finish({metrics,lufs,lufsBefore,matched:matchOn,verify,tags:tagged.check,fixed,bytes:blob.size,sec:buf.duration});
-      if(run.blocked){ const bad=run.gates.filter(g=>g.block&&g.level==="fail").map(g=>g.label.toLowerCase()).join(", "); const err=new Error("render-blocked"); err.detail=bad; throw err; } }
+      if(run.blocked){ const bad=run.gates.filter(g=>g.block&&g.level==="fail").map(g=>g.label.toLowerCase()).join(", "); const err=new Error("render-blocked"); err.detail=bad; expCache.v=null; throw err; } }
     return {blob,name,info};
   }catch(e){ if(run&&run.state==="running") run.fail(e); throw e; }
 }
+expPanel.addEventListener("click",warmSoon);
+new MutationObserver(()=>{ if(!expPanel.hidden) warmSoon(); }).observe(expPanel,{attributes:true,attributeFilter:["hidden"]});
 expGo.onclick=async()=>{
   if(!downloads){ toast("Export is not available in this view."); return; }
-  expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…"; if(window.PennioRender) PennioRender.onStage=(l,o)=>{ expGo.textContent=l+" "+Math.round((o||0)*100)+"%"; };
+  expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…"; if(window.PennioRender) PennioRender.onStage=(l,o)=>{ expGo.textContent=o<0?l+"…":l+" "+Math.round((o||0)*100)+"%"; };
   try{ const x=await buildExport(); expMeta.textContent=x.info;
     await saveExport(x);
     toast("Track exported."); }
@@ -3217,7 +3289,7 @@ expGo.onclick=async()=>{
   expGo.disabled=expShare.disabled=false; expGo.textContent="Download"; expShare.textContent="Share to WhatsApp";
 };
 expShare.onclick=async()=>{
-  expGo.disabled=expShare.disabled=true;expShare.textContent="Working…"; if(window.PennioRender) PennioRender.onStage=(l,o)=>{ expShare.textContent=l+" "+Math.round((o||0)*100)+"%"; };
+  expGo.disabled=expShare.disabled=true;expShare.textContent="Working…"; if(window.PennioRender) PennioRender.onStage=(l,o)=>{ expShare.textContent=o<0?l+"…":l+" "+Math.round((o||0)*100)+"%"; };
   const text="Made with PENNIO Studio. Bring your voice. Leave with a record: https://pennio.agency/studio/?utm_source=studio&utm_medium=whatsapp&utm_campaign=creator_export";
   const phone=savedWhatsApp();
   let canShareFile=false;
@@ -4281,6 +4353,7 @@ function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ r
 function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
 function stateNow(){ banks[bank]=pattern; return {fx:stripFx, bank, banks, shown:[...shownRows], pattern, chopOrder, bpm:+bpmEl.value, sw:+swEl.value, n:N, muted, gains:gainsV, tune:tuneV, lay:LAY, nudge:vocalNudge, ddBase, uduBase, vocalOffset, useEnhanced, vstyle, harm:H}; }
 function saveSoon(withAudio){
+  if(window.__expCache) window.__expCache.v=null;
   if(!ready||restoring) return;
   clearTimeout(saveT); saveT=setTimeout(saveNow,500);
 }
@@ -6512,6 +6585,9 @@ body:has(#v-home.on) .logo>span,body:has(#v-home.on) #studioPanelPosition,body:h
 .rm[hidden]{display:none}
 .rm[data-state="pass"]{border-color:rgba(70,180,110,.55)}.rm[data-state="warn"]{border-color:rgba(214,155,54,.7)}.rm[data-state="fail"]{border-color:var(--danger)}
 .rm-bar{height:6px;border-radius:99px;background:rgba(var(--fg-rgb),.12);overflow:hidden;margin:0 0 8px}
+.rm-bar.ind i{width:35%!important;animation:rmInd 1.1s ease-in-out infinite alternate}
+@keyframes rmInd{from{margin-left:0}to{margin-left:65%}}
+@media (prefers-reduced-motion:reduce){.rm-bar.ind i{animation:none;margin-left:30%}}
 .rm-bar i{display:block;height:100%;background:var(--orange);border-radius:99px;transition:width .12s linear}
 .rm-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px}
 .rm-head span{font-variant-numeric:tabular-nums;color:var(--ts);font-size:12px}
