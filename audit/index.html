@@ -83,7 +83,8 @@
   .nav { display: flex; align-items: center; justify-content: space-between; padding: 26px 6vw; }
   .nav-wordmark svg path { fill: currentColor; }
   .nav-wordmark { display: flex; align-items: center; gap: 7px; font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; text-decoration: none; }
-  .nav-wordmark span { color: var(--orange-ink); }
+  .nav-wordmark .wm { color: inherit; }
+  .nav-wordmark span span { color: var(--orange-ink); }
   .nav-actions { display: inline-flex; align-items: center; gap: 12px; }
   .theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0; background: none; border: 1px solid var(--line); border-radius: 4px; color: var(--fg); cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease; }
   .theme-toggle:hover { border-color: var(--grey-4); background: rgba(var(--fg-rgb),0.06); }
@@ -186,13 +187,14 @@
   .success-primary { display: inline-flex; margin-top: 10px; background: var(--orange); color: var(--white); text-decoration: none; font-size: 0.82rem; font-weight: 700; padding: 14px 26px; border-radius: 6px; min-height: 44px; align-items: center; }
   .success-primary:hover { background: var(--orange-dark); }
 </style>
+<link rel="stylesheet" href="/site-nav.css">
 </head>
 <body>
 
-<nav class="nav">
+<nav class="nav" data-site-nav aria-label="Site">
   <a href="/" class="nav-wordmark">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81.67 102.67" width="14" height="18" aria-hidden="true"><path d="M81.67,40.84a40.67,40.67,0,0,1-5.46,20.41,41.11,41.11,0,0,1-15,15,40.64,40.64,0,0,1-20.41,5.46V61.25a20.42,20.42,0,0,0,0-40.83H20.42V76.21a40.7,40.7,0,0,0,20.42,5.46v21A61.55,61.55,0,0,1,0,87.26V40.84A40.68,40.68,0,0,1,5.46,20.42a41.11,41.11,0,0,1,15-15,40.9,40.9,0,0,1,40.83,0,41.11,41.11,0,0,1,15,15,40.68,40.68,0,0,1,5.46,20.42" fill="white"/></svg>
-    PENNIO<span>.</span>
+    <span class="wm">PENNIO<span>.</span></span>
   </a>
   <span class="nav-actions">
     <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false" aria-label="Switch to light theme">
