@@ -2842,16 +2842,23 @@ async function renderMix(){
   const loops = expBars || Math.max(base, Math.ceil(base/vb)*vb), sd=stepDur(), total=loops*N*sd+1.6, sr=44100;
   const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
   const oc=new OC(2,Math.ceil((total+.2)*sr),sr); const m=makeMaster(oc); const bs=makeBusses(oc,m);
-  for(let L=0;L<loops;L++){
+  /* One bar is scheduled at a time, just ahead of the render. Creating every note of a long track up front leaves thousands of idle
+     nodes in the graph, and the audio engine visits all of them on every tick: a 65 s render took 20 s here and 230 s on a phone,
+     where an 11 s render took 0.75 s. Scheduling a bar ahead keeps the graph small, so the cost grows with the length instead of its square. */
+  const scheduleBar=L=>{
     barNow=L;
     tracks.forEach(tr=>{ if(L%barsFor(tr)===0) playTrack(oc,bs[tr.bus],L*N*sd+.02+.2,tr); });
     for(let i=0;i<N;i++){
       const t=(L*N+i)*sd + swingOffset(i) + .02 + .2;
       LANES.forEach(l=>{const v=pattern[l.id][i]; if(v&&laneOn(l.id)&&!(l.id==="vox"&&!LAY.vox)) trigger(l.id,oc,bs[l.id],t,v,i);});
     }
+  };
+  const len=oc.length;
+  scheduleBar(0); if(loops>1) scheduleBar(1);
+  for(let k=1;k<loops-1;k++){
+    const at=Math.ceil((k*N*sd+.22)*sr/128)*128; if(at>=len) break;
+    oc.suspend(at/sr).then(()=>{ try{ scheduleBar(k+1); window.PennioRender&&PennioRender.progress(at/len); }catch(e){} return oc.resume(); }).catch(()=>{});
   }
-  /* the offline renderer reports nothing while it runs, so pause it at a few checkpoints to learn how far it has got */
-  try{ const len=oc.length, step=Math.max(.5,(len/sr)/16); for(let t=step;t<len/sr-.1;t+=step){ const at=Math.ceil(t*sr/128)*128; if(at>=len) break; oc.suspend(at/sr).then(()=>{ try{ window.PennioRender&&PennioRender.progress(at/len); }catch(e){} return oc.resume(); }).catch(()=>{}); } }catch(e){}
   const out=await oc.startRendering(); out.pennioPlanSec=total+.2; return out;
 }
 /* loudness (ITU BS.1770 style: K-weighting, 400 ms blocks, gating)
@@ -2877,6 +2884,7 @@ function lufsFromK(k,sr,G,gc){
   return g.length? L(g.reduce((a,b)=>a+b,0)/g.length) : -70;
 }
 async function lufsOf(buf){ return lufsFromK(await kWeight(buf),buf.sampleRate,1); }
+async function peakOfAsync(buf){ const tick=slicer(); let p=0; for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++){ if((i&65535)===0) await tick(); const a=Math.abs(d[i]); if(a>p) p=a; } } return p; }
 function peakOf(buf){ let p=0; for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++){ const a=Math.abs(d[i]); if(a>p) p=a; } } return p; }
 /* look-ahead brick-wall limiter gain curve: needed gain, minimum over +-W samples, slow release, then a W-sample smoother.
    The result never exceeds the gain needed at any sample, so peaks stay under the ceiling. */
@@ -2898,10 +2906,12 @@ function limiterCurve(ch,G,ceil,sr){
    once to read them, once to apply the result. The limiter keeps the same guarantee as before: the gain at any
    sample never exceeds the gain needed to hold that sample under the ceiling. */
 const yieldUI=()=>new Promise(r=>setTimeout(r,0));
+/* give the page back every ~25 ms, however slow the phone is, so taps and scrolling stay alive during long loops */
+const slicer=()=>{ let t=performance.now(); return async()=>{ if(performance.now()-t>25){ await yieldUI(); t=performance.now(); } }; };
 function blockSize(sr){ const hop=Math.round(.1*sr), blk=Math.round(.4*sr); for(let d=16;d>=1;d--) if(hop%d===0&&blk%d===0) return d; return 1; }
-function blockStats(ch,k,B){
-  const n=ch[0].length, nb=Math.ceil(n/B), pk=new Float32Array(nb), ke=new Float64Array(nb);
-  for(let b=0;b<nb;b++){ const a=b*B, z=Math.min(n,a+B); let m=0,e=0;
+async function blockStats(ch,k,B){
+  const n=ch[0].length, nb=Math.ceil(n/B), pk=new Float32Array(nb), ke=new Float64Array(nb), tick=slicer();
+  for(let b=0;b<nb;b++){ if((b&255)===0) await tick(); const a=b*B, z=Math.min(n,a+B); let m=0,e=0;
     for(let c=0;c<ch.length;c++){ const x=ch[c], y=k[c]; for(let i=a;i<z;i++){ const v=x[i]<0?-x[i]:x[i]; if(v>m) m=v; e+=y[i]*y[i]; } }
     pk[b]=m; ke[b]=e; }
   return {pk,ke,nb,B,n};
@@ -2928,25 +2938,26 @@ async function matchLoudness(buf,tgt){
   const ch=[...Array(buf.numberOfChannels).keys()].map(c=>buf.getChannelData(c));
   const prog=f=>{ try{ window.PennioRender&&PennioRender.progress(f); }catch(e){} };
   const k=await kWeight(buf); prog(.4); await yieldUI();
-  const st=blockStats(ch,k,B); prog(.6); await yieldUI();
+  const st=await blockStats(ch,k,B); prog(.6); await yieldUI();
   const ones=new Float32Array(st.nb).fill(1), before=blockLufs(st,1,ones,sr);
   if(before<-60) return {before, after:before, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:0};
   let gdb=Math.min(24,target-before), best=null, it=0;
   for(;it<8;it++){
-    const G=Math.pow(10,gdb/20), g=blockGains(st,G,ceil,sr), after=blockLufs(st,G,g,sr);
+    await yieldUI(); const G=Math.pow(10,gdb/20), g=blockGains(st,G,ceil,sr); await yieldUI(); const after=blockLufs(st,G,g,sr);
     if(!best||Math.abs(target-after)<Math.abs(target-best.after)) best={G,g,after};
     const err=target-after; if(Math.abs(err)<=.05) break;
     gdb+=err*(it<2?1:.8); if(gdb>24) gdb=24;
   }
   /* apply once: block gains, linearly interpolated between block centres (never above the gain a neighbouring block needs) */
   const {G,g}=best, nb=st.nb, n=st.n;
-  for(let c=0;c<ch.length;c++){ prog(.7+.3*c/ch.length); if(c) await yieldUI(); const d=ch[c];
-    for(let i=0;i<n;i++){ const pos=(i+.5)/B-.5, b0=pos<0?0:Math.floor(pos), b1=b0+1<nb?b0+1:nb-1, t=pos<0?0:pos-b0; d[i]*=G*(g[b0]*(1-t)+g[b1]*t); } }
-  return {before, after:best.after, peakDb:20*Math.log10(peakOf(buf)||1e-9), iterations:it+1};
+  const tick=slicer();
+  for(let c=0;c<ch.length;c++){ prog(.7+.3*c/ch.length); const d=ch[c];
+    for(let i=0;i<n;i++){ if((i&32767)===0) await tick(); const pos=(i+.5)/B-.5, b0=pos<0?0:Math.floor(pos), b1=b0+1<nb?b0+1:nb-1, t=pos<0?0:pos-b0; d[i]*=G*(g[b0]*(1-t)+g[b1]*t); } }
+  return {before, after:best.after, peakDb:20*Math.log10(await peakOfAsync(buf)||1e-9), iterations:it+1};
 }
 let lameP=null;
 function loadLame(){ if(window.lamejs) return Promise.resolve(); if(lameP) return lameP;
-  lameP=new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="vendor/lame.min.js"; sc.onload=()=>res(); sc.onerror=()=>{ lameP=null; rej(new Error("encoder")); }; document.head.appendChild(sc); }); return lameP; }
+  lameP=new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src="vendor/lame.min.js?v=3"; sc.onload=()=>res(); sc.onerror=()=>{ lameP=null; rej(new Error("encoder")); }; document.head.appendChild(sc); }); return lameP; }
 /* MP3 frame boundaries in a byte array (MPEG-1 Layer III, constant bitrate) */
 function mp3Frames(u8){
   const BR=[0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0], SR=[44100,48000,32000], out=[]; let p=0;
@@ -3181,15 +3192,15 @@ async function saveExport(x){
 function mp3Structure(u8){
   let p=0; if(u8[0]===73&&u8[1]===68&&u8[2]===51) p=10+((u8[6]<<21)|(u8[7]<<14)|(u8[8]<<7)|u8[9]);
   const BR=[0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0], SR=[44100,48000,32000];
-  let frames=0, sr=0, mode=-1;
+  let frames=0, sr=0, mode=-1, kbps=0;
   while(p+4<=u8.length){
     if(u8[p]!==255||(u8[p+1]&0xE0)!==0xE0){ p++; continue; }
     const ver=(u8[p+1]>>3)&3, layer=(u8[p+1]>>1)&3, bri=u8[p+2]>>4, sri=(u8[p+2]>>2)&3, pad=(u8[p+2]>>1)&1;
     if(ver!==3||layer!==1||bri===0||bri===15||sri>2){ p++; continue; }
-    const len=Math.floor(144000*BR[bri]/SR[sri])+pad; if(!sr){ sr=SR[sri]; mode=u8[p+3]>>6; }
+    const len=Math.floor(144000*BR[bri]/SR[sri])+pad; if(!sr){ sr=SR[sri]; mode=u8[p+3]>>6; kbps=BR[bri]; }
     frames++; p+=len;
   }
-  return {frames,sr,mode,sec:sr?frames*1152/sr:0};
+  return {frames,sr,mode,kbps,sec:sr?frames*1152/sr:0};
 }
 async function verifyBlob(blob,buf,isMp3,metrics){
   const R=window.PennioRender;
@@ -3201,8 +3212,8 @@ async function verifyBlob(blob,buf,isMp3,metrics){
       return {ok,note:ok?"WAV header and length match":"WAV header does not match"};
     }
     if(PERF.lite){ /* a phone: check the frames instead of decoding the whole file again */
-      const m=mp3Structure(new Uint8Array(ab)), durDiff=Math.abs(m.sec-buf.duration), ok=m.frames>0&&m.sr===buf.sampleRate&&m.mode!==3&&durDiff<=.12;
-      return {ok,note:"checked "+m.frames+" frames, "+m.sec.toFixed(2)+" s, stereo",durDiff,lvl:0};
+      const m=mp3Structure(new Uint8Array(ab)), durDiff=Math.abs(m.sec-buf.duration), ok=m.frames>0&&m.sr===buf.sampleRate&&m.mode!==3&&m.kbps===192&&durDiff<=.12;
+      return {ok,note:"checked "+m.frames+" frames, "+m.sec.toFixed(2)+" s, "+(m.mode===3?"MONO":"stereo")+" "+m.kbps+" kbps"+(m.sr!==buf.sampleRate?", "+m.sr+" Hz (expected "+buf.sampleRate+")":"")+(durDiff>.12?", length off by "+durDiff.toFixed(2)+" s":""),durDiff,lvl:0};
     }
     const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
     const d=await new OC(2,1,44100).decodeAudioData(ab.slice(0));
@@ -3237,10 +3248,10 @@ async function prepareMix(isMp3,matchOn,run){
     if(matchOn){ const m=await st("match","Match loudness",async()=>{ const r=await matchLoudness(buf,TARGET); if(!PERF.lite) r.after=await lufsOf(buf); return r; }); lufsBefore=m.before; lufs=m.after; info="Loudness "+m.after.toFixed(1)+" LUFS (was "+m.before.toFixed(1)+"), peak "+m.peakDb.toFixed(1)+" dB. "; }
     else { lufs=await st("meter","Measure loudness",()=>lufsOf(buf)); }
     /* never ship a peak that can clip after decoding: trim to -1.2 dBTP and re-check */
-    metrics=R? await st("check","Quality check",()=>R.analyze(buf)) : null;
+    metrics=R? await st("check","Quality check",()=>R.analyzeAsync(buf)) : null;
     if(metrics&&metrics.nan===0&&metrics.truePeakDb>-1){
       const g=Math.pow(10,(-1.2-metrics.truePeakDb)/20); for(let c=0;c<buf.numberOfChannels;c++){ const d=buf.getChannelData(c); for(let i=0;i<d.length;i++) d[i]*=g; }
-      fixed=true; if(lufs!=null) lufs+=20*Math.log10(g); metrics=R.analyze(buf); if(run) run.fixed=true;
+      fixed=true; if(lufs!=null) lufs+=20*Math.log10(g); metrics=await R.analyzeAsync(buf); if(run) run.fixed=true;
     }
     expCache.v={buf,lufsBefore,lufs,info,fixed,metrics,blobs:{}}; expCache.key=key; expCache.t=Date.now();
   }
@@ -3274,7 +3285,7 @@ async function buildExportInner(){
     const name=tagged.name;
     info+=(isMp3?"MP3":"WAV")+", "+buf.duration.toFixed(1)+" s, "+(blob.size/1048576).toFixed(1)+" MB."+" Credited to "+(tagged.meta.artist||"PENNIO Studio")+", with cover art.";
     if(run){ run.finish({metrics,lufs,lufsBefore,matched:matchOn,verify,tags:tagged.check,fixed,bytes:blob.size,sec:buf.duration});
-      if(run.blocked){ const bad=run.gates.filter(g=>g.block&&g.level==="fail").map(g=>g.label.toLowerCase()).join(", "); const err=new Error("render-blocked"); err.detail=bad; expCache.v=null; throw err; } }
+      if(run.blocked){ const bad=run.gates.filter(g=>g.block&&g.level==="fail").map(g=>g.label.toLowerCase()).join(", "); const err=new Error("render-blocked"); err.detail=bad; err.stale=/MONO|kbps,? ?\(|Hz \(expected/.test((run.gates.find(g=>g.id==="file")||{}).value||"")&&!/192 kbps$/.test((run.gates.find(g=>g.id==="file")||{}).value||""); expCache.v=null; throw err; } }
     return {blob,name,info};
   }catch(e){ if(run&&run.state==="running") run.fail(e); throw e; }
 }
@@ -3286,7 +3297,7 @@ expGo.onclick=async()=>{
   try{ const x=await buildExport(); expMeta.textContent=x.info;
     await saveExport(x);
     toast("Track exported."); }
-  catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : e&&e.message==="render-blocked"? "Export stopped: the file failed its quality check ("+(e.detail||"see report")+")." : "Export was cancelled or blocked."); }
+  catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : e&&e.message==="render-blocked"? (e.stale? "The MP3 encoder on this phone is out of date. Close the Studio completely, open it again, then export again." : "Export stopped: the file failed its quality check ("+(e.detail||"see report")+").") : "Export was cancelled or blocked."); }
   expGo.disabled=expShare.disabled=false; expGo.textContent="Download"; expShare.textContent="Share to WhatsApp";
 };
 expShare.onclick=async()=>{
@@ -3323,7 +3334,7 @@ expShare.onclick=async()=>{
     }
   }catch(e){
     if(whatsappWindow)whatsappWindow.close();
-    toast(e&&e.message==="encoder"?"The MP3 encoder did not load. Check your connection, or export WAV.":"Sharing did not work here. Use Download, then send the file in WhatsApp.");
+    toast(e&&e.message==="encoder"?"The MP3 encoder did not load. Check your connection, or export WAV.":e&&e.stale?"The MP3 encoder on this phone is out of date. Close the Studio completely, open it again, then try again.":"Sharing did not work here. Use Download, then send the file in WhatsApp.");
   }
   expGo.disabled=expShare.disabled=false;expGo.textContent="Download";expShare.textContent="Share to WhatsApp";
 };
@@ -6902,7 +6913,7 @@ function fitPops(){
 addEventListener("resize",fitPops); addEventListener("orientationchange",()=>setTimeout(fitPops,200));
 new MutationObserver(()=>requestAnimationFrame(fitPops)).observe($("expPanel"),{attributes:true,attributeFilter:["hidden"],subtree:false});
 document.addEventListener("toggle",e=>{ if(e.target&&e.target.id==="expCred") requestAnimationFrame(fitPops); },true);
-window.addEventListener("pennio:render",()=>{ const r=$("rmBox"); requestAnimationFrame(()=>{ fitPops(); if(r&&!r.hidden&&!expPanel.hidden){ const st=window.PennioRender&&PennioRender.last&&PennioRender.last(); if(st&&st.state==="running"&&!r._seen){ r._seen=1; r.scrollIntoView({block:"nearest"}); } if(st&&st.state!=="running") r._seen=0; } }); });
+window.addEventListener("pennio:render",()=>{ const r=$("rmBox"), st=window.PennioRender&&PennioRender.last&&PennioRender.last(); if(!r||!st) return; const key=st.id+":"+st.state; if(r._fit===key) return; r._fit=key; requestAnimationFrame(()=>{ fitPops(); if(!r.hidden&&!expPanel.hidden&&st.state==="running") r.scrollIntoView({block:"nearest"}); }); });
 /* ---- Export: one button, one popover; the source is chosen inside it ---- */
 const expSrc=$("expSrc");
 expSrc.addEventListener("click",e=>{
