@@ -2,7 +2,7 @@
    Pages: network first, so a new version shows as soon as you are online.
    Fonts, icons and the MP3 encoder: cache first, they rarely change.
    Anything on another site (forms, Kit, cloud saving) is never touched. */
-const CACHE = "pennio-studio-v6";
+const CACHE = "pennio-studio-v7";
 const SHELL = [
   "/studio/", "/studio/guide/", "/studio/manifest.webmanifest",
   "/favicon.svg", "/apple-touch-icon.png",

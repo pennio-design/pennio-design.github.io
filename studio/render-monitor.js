@@ -64,7 +64,62 @@
       dc: sum / Math.max(1, tot), clipped, nan, silenceRatio, leadMs: Math.round(lead * 100), trailMs: Math.round(trail * 100),
       corr: ch > 1 && sl > 0 && sr2 > 0 ? slr / Math.sqrt(sl * sr2) : 1
     };
+  }  /* The same measurements, giving the page back every ~25 ms so a long track does not freeze a slow phone.
+     The hot loops are plain functions over a chunk (loops inside an async function run much slower); only the hand-back is async. */
+  async function analyzeAsync(buf) {
+    const ch = buf.numberOfChannels, n = buf.length, sr = buf.sampleRate, d = [];
+    for (let c = 0; c < ch; c++) d.push(buf.getChannelData(c));
+    const win = Math.max(1, Math.round(sr * 0.1)), wins = Math.ceil(n / win), wr = new Float64Array(wins), CH = 65536;
+    const acc = { peak: 0, sumsq: 0, sum: 0, clipped: 0, nan: 0, sl: 0, sr2: 0, slr: 0 };
+    let _t = performance.now(); const tick = async () => { if (performance.now() - _t > 25) { await new Promise(r => setTimeout(r, 0)); _t = performance.now(); } };
+    const pass1 = (x, lo, hi) => {
+      let peak = acc.peak, sumsq = acc.sumsq, sum = acc.sum, clipped = acc.clipped, nan = acc.nan;
+      for (let i = lo; i < hi; i++) {
+        const v = x[i];
+        if (v !== v || v === Infinity || v === -Infinity) { nan++; continue; }
+        const a = v < 0 ? -v : v;
+        if (a > peak) peak = a;
+        if (a >= 0.9995) clipped++;
+        sumsq += v * v; sum += v; wr[(i / win) | 0] += v * v;
+      }
+      acc.peak = peak; acc.sumsq = sumsq; acc.sum = sum; acc.clipped = clipped; acc.nan = nan;
+    };
+    for (let c = 0; c < ch; c++) for (let lo = 0; lo < n; lo += CH) { pass1(d[c], lo, Math.min(n, lo + CH)); await tick(); }
+    const stereo = (L, R, lo, hi) => { let sl = acc.sl, sr2 = acc.sr2, slr = acc.slr; for (let i = lo; i < hi; i++) { const l = L[i], r = R[i]; sl += l * l; sr2 += r * r; slr += l * r; } acc.sl = sl; acc.sr2 = sr2; acc.slr = slr; };
+    if (ch > 1) for (let lo = 0; lo < n; lo += CH) { stereo(d[0], d[1], lo, Math.min(n, lo + CH)); await tick(); }
+    const { peak, sumsq, sum, clipped, nan, sl, sr2, slr } = acc, tot = n * ch;
+    const winDb = Array.from(wr, (s, i) => dB(Math.sqrt(s / (Math.min(win, n - i * win) * ch))));
+    const active = winDb.filter(v => v > -60).length, silenceRatio = wins ? 1 - active / wins : 1;
+    let lead = 0; while (lead < wins && winDb[lead] <= -60) lead++;
+    let trail = 0; while (trail < wins && winDb[wins - 1 - trail] <= -60) trail++;
+    /* inter-sample (true) peak: 4x cubic interpolation around the loudest samples only */
+    let tp = peak;
+    if (peak > 0.5) {
+      const thr = peak * 0.8, st = { checked: 0, tp: peak };
+      const tpass = (x, lo, hi) => {
+        let checked = st.checked, tpv = st.tp;
+        for (let i = Math.max(1, lo); i < Math.min(hi, n - 2) && checked < 40000; i++) {
+          if ((x[i] < 0 ? -x[i] : x[i]) < thr) continue; checked++;
+          const p0 = x[i - 1], p1 = x[i], p2 = x[i + 1], p3 = x[i + 2];
+          for (let k = 1; k < 4; k++) {
+            const t = k / 4, t2 = t * t, t3 = t2 * t;
+            const v = 0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3);
+            const a = v < 0 ? -v : v; if (a > tpv) tpv = a;
+          }
+        }
+        st.checked = checked; st.tp = tpv;
+      };
+      for (let c = 0; c < ch && st.checked < 40000; c++) for (let lo = 0; lo < n && st.checked < 40000; lo += CH) { tpass(d[c], lo, lo + CH); await tick(); }
+      tp = st.tp;
+    }
+    const rms = Math.sqrt(sumsq / Math.max(1, tot));
+    return {
+      sr, len: n, sec: n / sr, ch, peak, peakDb: dB(peak), truePeakDb: dB(tp), rmsDb: dB(rms), crestDb: dB(peak) - dB(rms),
+      dc: sum / Math.max(1, tot), clipped, nan, silenceRatio, leadMs: Math.round(lead * 100), trailMs: Math.round(trail * 100),
+      corr: ch > 1 && sl > 0 && sr2 > 0 ? slr / Math.sqrt(sl * sr2) : 1
+    };
   }
+
 
   /* quality and speed gates. level: pass | warn | fail. Failing a "block" gate stops the export. */
   function gates(m, c) {
@@ -188,5 +243,5 @@
     window.addEventListener("pennio:render", e => paint(e.detail));
   }
 
-  window.PennioRender = { progress: f => { if (cur && cur.progress) cur.progress(f); }, begin, analyze, gates, summary, text, mount, log: load, clear: () => save([]), last: () => cur };
+  window.PennioRender = { analyzeAsync, progress: f => { if (cur && cur.progress) cur.progress(f); }, begin, analyze, gates, summary, text, mount, log: load, clear: () => save([]), last: () => cur };
 })();
