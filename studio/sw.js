@@ -1,4 +1,4 @@
-/* pennio.studio service worker: makes the studio installable and lets it open offline.
+/* PENNIO Studio service worker: makes the studio installable and lets it open offline.
    Pages: network first, so a new version shows as soon as you are online.
    Fonts, icons and the MP3 encoder: cache first, they rarely change.
    Anything on another site (forms, Kit, cloud saving) is never touched. */
