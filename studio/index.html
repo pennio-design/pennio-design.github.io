@@ -3350,7 +3350,7 @@ expGo.onclick=async()=>{
   expGo.disabled=expShare.disabled=true; expGo.textContent="Rendering…"; if(window.PennioRender) PennioRender.onStage=(l,o)=>{ expGo.textContent=o<0?l+"…":l+" "+Math.round((o||0)*100)+"%"; };
   try{ const x=await buildExport(); expMeta.textContent=x.info;
     await saveExport(x);
-    (window.PennioMascot?PennioMascot.moment("celebrate","Track exported.","Saved with your credits and cover art."):toast("Track exported.")); }
+    toast("Track exported."); }
   catch(e){ toast(e&&e.message==="encoder"? "The MP3 encoder did not load. Check your connection, or export WAV." : e&&e.message==="render-blocked"? (e.stale? "The MP3 encoder on this phone is out of date. Close the Studio completely, open it again, then export again." : "Export stopped: the file failed its quality check ("+(e.detail||"see report")+").") : "Export was cancelled or blocked."); }
   expGo.disabled=expShare.disabled=false; expGo.textContent="Download"; expShare.textContent="Share to WhatsApp";
 };
@@ -3414,7 +3414,7 @@ expShare.onclick=async()=>{
       const r=await R().make({buf:m.buf,cover,title:cm.title,artist:cm.artist,bpm:cm.bpm,keyName:cm.keyName,ratio:pick.r,look:pick.k,seconds:pick.s,onProgress:(p,d)=>{ go.textContent="Recording "+Math.min(d,Math.round(p*d))+" / "+Math.round(d)+" s"; }});
       made=r; if(url) URL.revokeObjectURL(url); url=URL.createObjectURL(r.blob); vid.src=url; out.hidden=false;
       meta.textContent=r.w+" x "+r.h+", "+Math.round(r.sec)+" s, "+(r.blob.size/1048576).toFixed(1)+" MB, "+r.ext.toUpperCase()+(r.ext==="webm"?". This browser records WebM; WhatsApp and Instagram may need MP4, so open the Studio in Safari or a current Chrome for MP4.":".");
-      (window.PennioMascot?PennioMascot.moment("success","Reel ready.","Tap Share or Save."):toast("Reel ready. Tap Share or Save."));
+      toast("Reel ready. Tap Share or Save.");
     }catch(e){ toast(msg(e)); }
     go.disabled=false; go.textContent=label;
   };
@@ -6142,7 +6142,6 @@ window.PennioStudioProgress={begin(label="Working",description="Your work is bei
 <script src="/studio/render-monitor.js" defer></script>
 <script src="/studio/credits.js" defer></script>
 <script src="/studio/reel.js" defer></script>
-<script src="/studio/mascot.js" defer></script>
 <script src="/studio/voicebeat.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
@@ -6993,10 +6992,10 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 #v-home{padding:0}
 #v-home .dh{max-width:1040px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:26px}
 .dh-hero{position:relative;display:grid;grid-template-columns:1fr;min-height:240px;border-radius:24px;overflow:hidden;background:#FAF7F3;color:#1E1713;box-shadow:0 20px 60px rgba(0,0,0,.35),inset 0 0 0 1px rgba(30,23,19,.08)}
-.dh-copy{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:30px 28px;min-width:0}
-.dh-hi{margin:0;font-size:13px;font-weight:600;letter-spacing:.02em;color:#6b5b4b}
-.dh-title{margin:0 0 6px;font-size:clamp(30px,5vw,50px);line-height:1.03;letter-spacing:-.03em;font-weight:800;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.dh-actions{display:flex;flex-wrap:wrap;gap:10px}
+.dh-copy{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;padding:36px 28px;min-width:0}
+.dh-hi{margin:0;width:100%;text-align:center;font-size:13px;font-weight:600;letter-spacing:.02em;color:#6b5b4b}
+.dh-title{margin:0 0 6px;width:100%;text-align:center;font-size:clamp(30px,5vw,50px);line-height:1.03;letter-spacing:-.03em;font-weight:800;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dh-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
 .dh-primary,.dh-ghost{min-height:48px;padding:0 18px;border-radius:14px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:transform .12s ease,background .15s ease}
 .dh-primary{background:#F26522;color:#1a0d05;border:0;box-shadow:0 6px 18px rgba(242,101,34,.35)}
 .dh-primary:hover{background:#FF7436}.dh-primary:active,.dh-ghost:active{transform:scale(.97)}
@@ -7027,13 +7026,13 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 .dh-foot{margin:0;text-align:center;font-size:12px;color:var(--tt)}
 @media (max-width:760px){
   .dh-hero{grid-template-columns:1fr;min-height:0}
-  .dh-copy{padding:22px 20px 22px;max-width:62%}
-  .dh-actions{flex-direction:column;align-items:stretch}
+  .dh-copy{padding:26px 20px 24px;max-width:none}
+  .dh-actions{flex-direction:column;align-items:stretch;width:100%}
   .dh-primary,.dh-ghost{justify-content:center;padding:0 14px}
   #v-home .dash-rooms{grid-template-columns:repeat(2,minmax(0,1fr))}
   .dh-sessions{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-@media (max-width:420px){.dh-copy{max-width:58%;padding:20px 16px}.dh-title{font-size:28px}}
+@media (max-width:420px){.dh-copy{max-width:none;padding:22px 16px}.dh-title{font-size:28px}}
 .reel{border:1px solid var(--line);border-radius:12px;margin:10px 0;padding:0 12px;background:rgba(255,255,255,.02)}
 .reel>summary{cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;font-weight:700;font-size:13px}
 .reel>summary::-webkit-details-marker{display:none}
