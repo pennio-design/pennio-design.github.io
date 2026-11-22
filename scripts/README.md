@@ -164,3 +164,7 @@ python3 scripts/embed-inter.py
 
 That step needs fonts.googleapis.com and fonts.gstatic.com. The render itself
 needs neither.
+
+## Voice match benchmark
+
+`scripts/voice-match/` scores "Make a beat from my voice" against sung test voices with known tempo, downbeat, key, swing and feel. Baseline before the Voice match engine (October 2026 code): key exact 2/12, mode always minor, swing random, 12/8 feel never found. Now: tempo 11/12, downbeat 12/12, swing within 2 points, key exact or relative 11/12. Run it after any change to `studio/voicebeat.js`.
