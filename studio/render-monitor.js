@@ -97,10 +97,16 @@
     const run = { id: Date.now().toString(36), meta: Object.assign({}, meta), stages: [], t0: performance.now(), t1: null, state: "running", gates: [], verdict: null, metrics: null };
     cur = run;
     run.stage = async (name, label, fn) => {
-      const s = { name, label, ms: null, state: "running" }; run.stages.push(s); emit(); try { if (typeof api !== "undefined" && api.onStage) api.onStage(label); else if (window.PennioRender && window.PennioRender.onStage) window.PennioRender.onStage(label); } catch (e) {}
+      const s = { name, label, ms: null, state: "running" }; run.stages.push(s); emit(); run.cur = s; s.p = 0; try { const h = window.PennioRender && window.PennioRender.onStage; if (h) h(label, overall(run)); } catch (e) {}
       const t = performance.now();
       try { const r = await fn(); s.ms = performance.now() - t; s.state = "done"; emit(); return r; }
       catch (e) { s.ms = performance.now() - t; s.state = "fail"; s.err = String((e && e.message) || e); emit(); throw e; }
+    };
+    run.progress = f => {
+      const s = run.cur; if (!s || s.state !== "running") return;
+      s.p = Math.max(0, Math.min(1, +f || 0));
+      const now = performance.now(); if (now - (run.lastEmit || 0) < 90 && s.p < 1) return; run.lastEmit = now;
+      emit(); try { const h = window.PennioRender && window.PennioRender.onStage; if (h) h(s.label || s.name, overall(run)); } catch (e) {}
     };
     run.finish = info => {
       run.t1 = performance.now(); run.state = "done";
@@ -147,18 +153,29 @@
   }
 
   /* small live panel */
+  /* how much of an export each stage is worth, so one bar can run across all of them */
+  const WEIGHT = { render: .46, match: .12, meter: .08, check: .04, encode: .22, tags: .04, verify: .04 };
+  const overall = run => {
+    let done = 0, total = 0; const planned = ["render", "match", "check", "encode", "tags", "verify"];
+    const names = planned.concat(run.stages.some(s => s.name === "meter") ? ["meter"] : []);
+    names.forEach(n => { total += WEIGHT[n]; });
+    run.stages.forEach(s => { const w = WEIGHT[s.name] || 0; if (!names.includes(s.name)) return; done += s.state === "done" ? w : s.state === "running" ? w * (s.p || 0) : 0; });
+    return total ? Math.min(1, done / total) : 0;
+  };
   function mount(root) {
     const esc = s => String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
     const word = { pass: "Ready", warn: "Ready, with notes", fail: "Needs attention" };
     function paint(run) {
       if (!run) return;
       root.hidden = false; root.dataset.state = run.state === "running" ? "running" : run.verdict || "fail";
-      const head = run.state === "running" ? "Rendering" : run.state === "error" ? "Render failed" : word[run.verdict] + (run.fixed ? " (auto-corrected)" : "");
+      const pct = run.state === "running" ? Math.round(overall(run) * 100) : 100;
+      const head = run.state === "running" ? "Working " + pct + "%" : run.state === "error" ? "Render failed" : word[run.verdict] + (run.fixed ? " (auto-corrected)" : "");
       const total = run.speed ? Math.round(run.speed.totalMs) + " ms" : "";
       const sum = summary();
       root.innerHTML =
+        (run.state === "running" ? '<div class="rm-bar" role="progressbar" aria-label="Export progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' : '') +
         '<div class="rm-head"><b role="status" aria-live="polite">' + esc(head) + '</b><span>' + esc(total) + '</span></div>' +
-        '<ol class="rm-stages">' + run.stages.map(s => '<li class="' + s.state + '"><span>' + esc(s.label || s.name) + '</span><em>' + (s.ms != null ? Math.round(s.ms) + ' ms' : '…') + '</em></li>').join("") + '</ol>' +
+        '<ol class="rm-stages">' + run.stages.map(s => '<li class="' + s.state + '"><span>' + esc(s.label || s.name) + '</span><em>' + (s.ms != null ? Math.round(s.ms) + ' ms' : (s.p > 0 ? Math.round(s.p * 100) + '%' : '…')) + '</em></li>').join("") + '</ol>' +
         (run.gates.length ? '<div class="rm-gates">' + run.gates.map(g => '<span class="rm-chip ' + g.level + (g.perf ? ' perf' : '') + '" title="' + esc(g.label + ": " + g.value + " (limit " + g.limit + ")") + '">' + esc(g.label) + '</span>').join("") + '</div>' : "") +
         (run.state !== "running" ? '<div class="rm-foot"><small>' + (sum.runs ? sum.runs + ' runs, ' + sum.pass + ' passed' + (sum.medianRtf ? ', median ' + sum.medianRtf + 'x real time' : '') : '') + '</small><span><button type="button" class="rm-btn" data-rm="copy">Copy report</button><button type="button" class="rm-btn" data-rm="log">Log</button></span></div>' : "");
     }
@@ -170,5 +187,5 @@
     window.addEventListener("pennio:render", e => paint(e.detail));
   }
 
-  window.PennioRender = { begin, analyze, gates, summary, text, mount, log: load, clear: () => save([]), last: () => cur };
+  window.PennioRender = { progress: f => { if (cur && cur.progress) cur.progress(f); }, begin, analyze, gates, summary, text, mount, log: load, clear: () => save([]), last: () => cur };
 })();
