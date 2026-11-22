@@ -1424,6 +1424,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
           <button type="button" class="dh-ghost" id="dhRec"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.5"/></svg>Record</button>
         </div>
       </div>
+      <img class="dh-art" src="/studio/art/mascot/b-beanbag-laptop.webp" width="742" height="490" alt="Illustration of a woman on an orange beanbag with headphones on, laptop on her lap" decoding="async">
     </header>
     <section class="dh-block" id="dhSessionsBlock" hidden>
       <div class="dh-head"><h2>Recent</h2><button type="button" class="dh-link" id="dhAll">All sessions</button></div>
@@ -6991,11 +6992,12 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 /* ================= Studio dashboard ================= */
 #v-home{padding:0}
 #v-home .dh{max-width:1040px;margin:0 auto;padding:18px 16px 40px;display:grid;gap:26px}
-.dh-hero{position:relative;display:grid;grid-template-columns:1fr;min-height:240px;border-radius:24px;overflow:hidden;background:#FAF7F3;color:#1E1713;box-shadow:0 20px 60px rgba(0,0,0,.35),inset 0 0 0 1px rgba(30,23,19,.08)}
-.dh-copy{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px;padding:36px 28px;min-width:0}
-.dh-hi{margin:0;width:100%;text-align:center;font-size:13px;font-weight:600;letter-spacing:.02em;color:#6b5b4b}
-.dh-title{margin:0 0 6px;width:100%;text-align:center;font-size:clamp(30px,5vw,50px);line-height:1.03;letter-spacing:-.03em;font-weight:800;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.dh-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.dh-hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);min-height:300px;border-radius:24px;overflow:hidden;background:#FAF7F3;color:#1E1713;box-shadow:0 20px 60px rgba(0,0,0,.35),inset 0 0 0 1px rgba(30,23,19,.08)}
+.dh-copy{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;gap:10px;padding:36px 32px;min-width:0}
+.dh-hi{margin:0;font-size:13px;font-weight:600;letter-spacing:.02em;color:#6b5b4b}
+.dh-title{margin:0 0 6px;font-size:clamp(30px,5vw,50px);line-height:1.03;letter-spacing:-.03em;font-weight:800;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dh-actions{display:flex;flex-wrap:wrap;gap:10px}
+.dh-art{display:block;width:100%;height:100%;min-height:240px;object-fit:cover;object-position:center}
 .dh-primary,.dh-ghost{min-height:48px;padding:0 18px;border-radius:14px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:transform .12s ease,background .15s ease}
 .dh-primary{background:#F26522;color:#1a0d05;border:0;box-shadow:0 6px 18px rgba(242,101,34,.35)}
 .dh-primary:hover{background:#FF7436}.dh-primary:active,.dh-ghost:active{transform:scale(.97)}
@@ -7026,6 +7028,7 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 .dh-foot{margin:0;text-align:center;font-size:12px;color:var(--tt)}
 @media (max-width:760px){
   .dh-hero{grid-template-columns:1fr;min-height:0}
+  .dh-art{order:-1;height:auto;min-height:0;aspect-ratio:3/2}
   .dh-copy{padding:26px 20px 24px;max-width:none}
   .dh-actions{flex-direction:column;align-items:stretch;width:100%}
   .dh-primary,.dh-ghost{justify-content:center;padding:0 14px}
