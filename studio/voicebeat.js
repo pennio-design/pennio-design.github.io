@@ -119,6 +119,48 @@
   }
 
   /* ---------- the analysis ---------- */
+
+  /* Fit the grid to the voice. The detector's tempo is a whole number, which drifts 0.1 s or more across a 30 s take, so this
+     refits tempo (to 0.1 BPM) and the downbeat by robust least squares over the on-beat entries, growing the window from the
+     start so an early estimate cannot pull later entries onto the wrong step. Swung off-beats are left out of the fit. */
+  function refineGrid(times, bpm, offset, N, lockTempo) {
+    const div = N / 4, tri = N === 12;
+    if (times.length < 8) return null;
+    const stats = (s, o) => { const r = []; times.forEach(t => { if (t < o - .03) return; const k = Math.round((t - o) / s); if (!tri && k % 2) return; r.push(Math.abs(t - o - k * s)); }); return r; };
+    const summarise = (s, o) => { const r = stats(s, o); return { n: r.length, within20: r.length ? r.filter(x => x <= .02).length / r.length : 0, within40: r.length ? r.filter(x => x <= .04).length / r.length : 0, medianMs: Math.round(median(r) * 10000) / 10 }; };
+    let s = 60 / bpm / div, o = offset; const before = summarise(s, o);
+    const last = times[times.length - 1];
+    for (const win of [6, 12, 24, 48, 1e9]) {
+      for (let it = 0; it < 6; it++) {
+        const tol = it < 2 ? .035 : .022, pts = [];
+        times.forEach(t => { if (t > o + win || t < o - .03) return; const k = Math.round((t - o) / s); if (!tri && k % 2) return; const r = t - o - k * s; if (Math.abs(r) < tol * 1.6) pts.push([k, t, Math.pow(1 - Math.pow(Math.abs(r) / (tol * 1.6), 2), 2)]); });
+        if (pts.length < 6) break;
+        let sw = 0, sk = 0, st = 0, skk = 0, skt = 0;
+        pts.forEach(([k, t, w]) => { sw += w; sk += w * k; st += w * t; skk += w * k * k; skt += w * k * t; });
+        const den = sw * skk - sk * sk; if (Math.abs(den) < 1e-9) break;
+        const ns = lockTempo ? s : (sw * skt - sk * st) / den, no = (st - ns * sk) / sw;
+        if (!(ns > 0) || Math.abs(ns / s - 1) > .03) break;
+        s = ns; o = no;
+      }
+    }
+    if (last - o < 1.2) return null;
+    let nb = lockTempo ? bpm : Math.round(60 / (s * div) * 10) / 10;
+    /* the offset again, with the tempo rounded to the 0.1 BPM the slider can hold */
+    const s2 = 60 / nb / div; let sw = 0, sd = 0;
+    times.forEach(t => { if (t < o - .03) return; const k = Math.round((t - o) / s2); if (!tri && k % 2) return; const r = t - k * s2 - o; if (Math.abs(r) > .035) return; const w = 1 - Math.pow(Math.abs(r) / .035, 2); sw += w; sd += w * (t - k * s2); });
+    let o2 = sw ? sd / sw : o; const bar = 4 * 60 / nb; while (o2 - bar >= -.02) o2 -= bar; while (o2 < 0) o2 += bar;
+    const after = summarise(s2, o2);
+    if (after.medianMs > before.medianMs || after.within20 < before.within20 - .02) return null; /* never leave the grid worse than it was */
+    return { bpm: nb, offset: o2, before, after, driftMs: Math.round(Math.abs(60 / bpm - 60 / nb) * ((last - o2) * nb / 60) * 1000) };
+  }
+
+  /* which of the four beats is "one": the one with most entries, taking the earliest when several are close, and never later than the first entry */
+  function pickDownbeat(timing, phi, beat) {
+    const sums = [0, 1, 2, 3].map(j => { let s = 0; timing.forEach(t => { const k = Math.round((t - phi) / beat); if (((k % 4) + 4) % 4 === j && Math.abs(t - phi - k * beat) < beat * .12) s += 1; }); return s; });
+    const mx = Math.max(...sums), first = timing.length ? timing[0] : 0;
+    let bestT = 1e9, jj = 0; sums.forEach((s, j) => { if (s < mx * .8) return; let x = phi + j * beat; while (x + 4 * beat <= first - beat * .25) x += 4 * beat; while (x < first - beat * .25) x += 4 * beat; if (x < bestT) { bestT = x; jj = j; } });
+    return phi + jj * beat;
+  }
   function offsetGuess(db, beat) { let d = db; while (d - 4 * beat >= -.02) d -= 4 * beat; return d < 0 ? d + 4 * beat : d; }
   function analyse(inp) {
     const frames = inp.frames || [], dur = inp.duration || 0;
@@ -135,14 +177,19 @@
     let downbeat = inp.downbeat;
     if (grid.changed) { /* only when the tempo level was changed; otherwise the detector's finer downbeat stands */
       const sc = gridScore(timing, bpm, feel); let phi = sc.phi;
-      const sums = [0, 1, 2, 3].map(j => { let s = 0; timing.forEach(t => { const k = Math.round((t - phi) / beat); if (((k % 4) + 4) % 4 === j && Math.abs(t - phi - k * beat) < beat * .12) s += 1; }); return s; });
-      const mx = Math.max(...sums), first = timing.length ? timing[0] : 0;
-      let bestT = 1e9, jj = 0; sums.forEach((s, j) => { if (s < mx * .8) return; let x = phi + j * beat; while (x + 4 * beat <= first - beat * .25) x += 4 * beat; while (x < first - beat * .25) x += 4 * beat; if (x < bestT) { bestT = x; jj = j; } });
-      downbeat = phi + jj * beat;
+      downbeat = pickDownbeat(timing, phi, beat);
     }
     let db = downbeat; while (db - 4 * beat >= -.02) db -= 4 * beat; if (db < 0) db += 4 * beat;
-    const offset = Math.max(0, db);
-    const N = feel === "triplet" ? 12 : 16, step = beat / (N / 4);
+    let offset = Math.max(0, db);
+    const N = feel === "triplet" ? 12 : 16;
+    const align = inp.noRefine ? null : refineGrid(timing, bpm, offset, N, !!inp.fixedTempo);
+    if (align) {
+      bpm = align.bpm; const b2 = 60 / bpm, cnt = p => timing.filter(t => { const k = Math.round((t - p) / b2); return Math.abs(t - p - k * b2) < b2 * .12; }).length;
+      const fo = timing[0] || 0, sc2 = q => cnt(q) * (1 + .3 * (Math.abs((fo - q) / b2 - Math.round((fo - q) / b2)) * b2 < .03 ? 1 : 0)); let phi = align.offset; if (sc2(phi + b2 / 2) > sc2(phi) * 1.05) phi += b2 / 2; /* the fit only sees on-beat entries, so it cannot tell a beat from the "and" after it */
+      let d2 = pickDownbeat(timing, phi, b2); const bar2 = 4 * b2; while (d2 - bar2 >= -.02) d2 -= bar2; while (d2 < 0) d2 += bar2;
+      offset = d2;
+    }
+    const step = 60 / bpm / (N / 4);
     /* key: the few best pitch-class matches, each judged again by how well a one-chord-per-bar progression fits the sung notes */
     const ranked = [];
     for (const mode of ["major", "minor"]) for (let t = 0; t < 12; t++) { const rot = ch.c.map((_, i) => ch.c[(i + t) % 12]); ranked.push({ tonic: t, mode, r: pearson(rot, KS[mode]) }); }
@@ -169,7 +216,7 @@
     const scaleSet = SC[key.mode].map(x => (key.tonic + x) % 12);
     const totalC = ch.c.reduce((a, b) => a + b, 0) || 1, inKey = ch.c.reduce((a, w, pc) => a + (scaleSet.includes(pc) ? w : 0), 0) / totalC;
     return {
-      bpm, feel, N, step, offset, swing: sw.swing, swingSamples: sw.n, key: key.tonic, mode: key.mode, keyR: key.r, keyMargin: key.margin, tuning: ch.tuning,
+      bpm, feel, N, step, offset, align, swing: sw.swing, swingSamples: sw.n, key: key.tonic, mode: key.mode, keyR: key.r, keyMargin: key.margin, tuning: ch.tuning,
       prog: prog.prog, chordFit: prog.fit, act: actN, density, onsetCount: on, gridLock: on ? lock / on : 0, inKey, levelChanged: !!grid.changed, tempoGuess: inp.bpm,
       pitchFrames: ch.n, f0: median(frames.filter(f => f.f > 0).map(f => f.f)) || 200
     };
@@ -293,6 +340,6 @@
     return { gains, fx };
   }
 
-  const api = { euclid, candidates, scoreLane, recreateLane, composeBeat, autoMix, LANE_IDS, gridScore, beatProminence, analyse, design, match, chroma, estimateKey, chooseGrid, estimateSwing, chooseProgression, EXTRA, SC };
+  const api = { refineGrid, euclid, candidates, scoreLane, recreateLane, composeBeat, autoMix, LANE_IDS, gridScore, beatProminence, analyse, design, match, chroma, estimateKey, chooseGrid, estimateSwing, chooseProgression, EXTRA, SC };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.PennioVoiceBeat = api;
 })(typeof window !== "undefined" ? window : globalThis);
