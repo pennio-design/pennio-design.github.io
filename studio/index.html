@@ -1430,6 +1430,18 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <div class="dh-head"><h2>Recent</h2><button type="button" class="dh-link" id="dhAll">All sessions</button></div>
       <div class="dh-sessions" id="dhSessions"></div>
     </section>
+    <section class="dh-block" id="dhSharedBlock" hidden>
+      <div class="dh-head"><h2>Shared with me</h2></div>
+      <div class="dh-sessions" id="dhShared"></div>
+    </section>
+    <section class="dh-block" id="dhTemplatesBlock">
+      <div class="dh-head"><h2>Templates</h2><span class="dh-hint">Start from a groove</span></div>
+      <div class="dh-sessions" id="dhTemplates"></div>
+    </section>
+    <section class="dh-block" id="dhAssetsBlock" hidden>
+      <div class="dh-head"><h2>Assets</h2><span class="dh-hint">Your recordings</span></div>
+      <div class="dh-assets" id="dhAssets"></div>
+    </section>
     <section class="dh-block">
       <div class="dh-head"><h2>Rooms</h2></div>
       <div class="dash-rooms" id="dashRooms">
@@ -3057,9 +3069,22 @@ async function mp3(buf,onP){
 window.PennioSessions={
   async list(){ const all=((await allProjects())||[]).sort((a,b)=>b.updated-a.updated);
     return all.map(r=>({id:r.id,name:r.name||"Untitled beat",updated:r.updated,created:r.created,kind:r.kind||"",voice:!!r.audio,bpm:r.state&&r.state.bpm,key:(r.state&&r.state.harm)?KEYN[(r.state.harm.key|0)%12]+" "+(r.state.harm.scale==="major"?"major":"minor"):"",n:(r.state&&r.state.n)||16,pattern:(r.state&&r.state.pattern)||null,current:r.id===currentId})); },
-  async open(id){ const rec=((await allProjects())||[]).find(x=>x.id===id); if(!rec) return false; await saveNow(); await openProject(rec); ready=true; return true; },
-  async create(){ await saveNow(); await newProject(); return true; },
-  current:()=>currentId
+  async open(id){ const rec=((await allProjects())||[]).find(x=>x.id===id); if(!rec) return false; await saveNow(); await openProject(rec); ready=true; window.__pennioKeepSession=rec.id; return true; },
+  async create(){ await saveNow(); await newProject(); window.__pennioKeepSession=currentId; return true; },
+  current:()=>currentId,
+  async createFromPreset(i){ await saveNow(); const list=(await allProjects())||[], pr=PRESETS[i]; if(!pr) return false;
+    const rec={id:newId(), name:pr.name+" "+(list.length+1), created:Date.now(), updated:Date.now(), state:null, audio:null};
+    await openProject(rec); loadPreset(i); ready=true; await saveNow(); window.__pennioKeepSession=rec.id; return true; },
+  templates(){ return PRESETS.map((p,i)=>({i,name:p.name,bpm:p.bpm,n:p.n,pattern:p.p,key:p.h?KEYN[(p.h.key|0)%12]+" "+(p.h.scale==="major"?"major":"minor"):""})); },
+  async assets(){ return ((await allProjects())||[]).filter(r=>r.audio&&r.audio.bytes).sort((a,b)=>b.updated-a.updated).map(r=>({id:r.id,session:r.name||"Untitled beat",name:r.audio.name||"Recording",size:r.audio.bytes.byteLength,updated:r.updated,bytes:r.audio.bytes})); }
+};
+/* handles for studio/collab.js (shared sessions); nothing here changes behaviour on its own */
+window.PennioCore={
+  snap:()=>snap(), applySnap:s=>applySnap(s), fetch:(p,o)=>sbFetch(p,o), user:()=>sbSess&&sbSess.user||null, cloud:()=>!!(CLOUD_ON&&sbSess&&sbSess.user),
+  currentId:()=>currentId, toast:m=>toast(m), sessionName:()=>document.getElementById("pname").value.trim()||"Untitled beat",
+  async getRec(id){ return ((await allProjects())||[]).find(r=>r.id===id)||null; },
+  async putRec(rec){ return tx("projects","readwrite",st=>st.put(rec)); },
+  async openRec(rec){ await saveNow(); await openProject(rec); ready=true; window.__pennioKeepSession=rec.id; }
 };
 window.PennioVoice={raw:()=>rawBuf,pro:()=>proBuf,clean:()=>cleanCache&&cleanCache.buf,hum:()=>cleanCache&&cleanCache.hum||null};
 window.PennioState={harm:()=>({key:H.key,scale:H.scale,prog:H.prog}),offset:()=>vocalOffset,N:()=>N,pattern:()=>JSON.parse(JSON.stringify(pattern)),ddBase:()=>ddBase,uduBase:()=>uduBase,lastBeat:()=>window.__lastVoiceBeat||null};
@@ -4596,7 +4621,7 @@ async function saveNow(){
   if(!currentId) return; const sn=document.getElementById("savedNote"); if(sn) sn.textContent="Saving…";
   const rec={id:currentId, name:document.getElementById("pname").value.trim()||"Untitled beat", updated:Date.now(), state:JSON.parse(JSON.stringify(stateNow())), audio:currentAudio};
   const old=await tx("projects","readonly",st=>st.get(currentId)); rec.created=(old&&old.created)||Date.now();
-  if(curMeta.kind) rec.kind=curMeta.kind; if(curMeta.group) rec.group=curMeta.group;
+  if(curMeta.kind) rec.kind=curMeta.kind; if(curMeta.group) rec.group=curMeta.group; if(old&&old.collab) rec.collab=old.collab;
   rec.sittings=((old&&old.sittings)||[]).filter(x=>x.start!==sitting.start); if(sitting.start){ sitting.end=Date.now(); rec.sittings.push({...sitting}); rec.sittings=rec.sittings.slice(-100); }
   edits++; maybeAutoCheckpoint();
   const ok=await tx("projects","readwrite",st=>st.put(rec));
@@ -4637,6 +4662,8 @@ function newId(){ return "p"+Date.now().toString(36)+Math.random().toString(36).
 async function openWorkspaceMusicProject(project){
   if(!project||!project.id) return false;
   if(window.__pennioAyanBoot)await window.__pennioAyanBoot;
+  /* the dashboard and shared sessions open a session first, then enter this room: keep that session instead of the project's mapped one */
+  if(window.__pennioKeepSession&&window.__pennioKeepSession===currentId){ window.__pennioKeepSession=null; activeWorkspaceAyanProjectId=project.id; return true; }
   if(activeWorkspaceAyanProjectId===project.id)return true;
   await stopWorkspaceRecordings();
   if(!db) db=await idb();
@@ -5115,6 +5142,7 @@ async function cloudFlush(){
 }
 function cloudErr(e){ const m=String(e&&e.message||e); return /404|42P01|relation/.test(m)? "Cloud saving is not set up on the server yet." : /signed-out/.test(m)? "Signed out." : "Could not reach the cloud. Your work is safe here and will sync later."; }
 async function cloudPushProject(rec){
+  if(rec.collab) return; /* a session shared with me lives in its owner's account; I keep a local copy only */
   const uid=sbSess.user.id, sigs=lsGet("ps.cloudAudio")||{}; let audio_path=null;
   if(rec.audio&&rec.audio.bytes){
     const sig=rec.audio.name+":"+rec.audio.bytes.byteLength, path=uid+"/"+rec.id;
@@ -5147,7 +5175,7 @@ async function cloudSyncAll(opts){
   if(!sbSess||!sbSess.user||sbSyncing) return;
   sbSyncing=true; setCloudStat("Syncing…");
   try{
-    const r=await sbFetch("/rest/v1/projects?select=*"); if(!r.ok) throw new Error("list "+r.status+" "+(await r.text().catch(()=> "")));
+    const r=await sbFetch("/rest/v1/projects?select=*&user_id=eq."+sbSess.user.id); if(!r.ok) throw new Error("list "+r.status+" "+(await r.text().catch(()=> "")));
     const remote=await r.json(), local=(await allProjects())||[], lmap=new Map(local.map(x=>[x.id,x])), sigs=lsGet("ps.cloudAudio")||{};
     let reopen=null;
     for(const row of remote){
@@ -6097,6 +6125,20 @@ document.getElementById("sylIn").oninput=sylRender;
    b.onclick=async()=>{b.disabled=true;try{await S().open(sess.id);go("ayan");}finally{b.disabled=false;}};
    wrap.append(b);
   });
+  try{
+   const tw=$("dhTemplates"); if(tw&&S()&&!tw.children.length){ S().templates().forEach(t=>{ const b=document.createElement("button");b.type="button";b.className="dh-card";
+    b.innerHTML='<span class="dh-thumb">'+thumb({n:t.n,pattern:t.pattern,name:t.name})+'</span><b></b><small></small>'; b.querySelector("b").textContent=t.name;
+    b.querySelector("small").textContent=[t.bpm+" BPM",t.key].filter(Boolean).join(" · "); b.setAttribute("aria-label","Start a new session from the "+t.name+" template");
+    b.onclick=async()=>{b.disabled=true;try{await S().createFromPreset(t.i);go("ayan");}finally{b.disabled=false;}}; tw.append(b); }); }
+   const as=S()?await S().assets():[]; const aw=$("dhAssets"); aw.replaceChildren(); $("dhAssetsBlock").hidden=!as.length;
+   const kb=n=>n>1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.round(n/1024))+" KB";
+   as.slice(0,8).forEach(a=>{ const row=document.createElement("div");row.className="dh-asset";
+    row.innerHTML='<div class="dh-asset-copy"><b></b><small></small></div><button type="button" data-a="play">Play</button><a data-a="dl" download>Download</a><button type="button" data-a="open">Open</button>';
+    row.querySelector("b").textContent=a.name; row.querySelector("small").textContent=a.session+" · "+kb(a.size)+" · "+ago(a.updated);
+    const url=URL.createObjectURL(new Blob([a.bytes])); const dl=row.querySelector('[data-a="dl"]'); dl.href=url; dl.download=a.name.replace(/[^\w.\- ]+/g,"_")||"recording";
+    let au=null; const pb=row.querySelector('[data-a="play"]'); pb.onclick=()=>{ if(au&&!au.paused){au.pause();pb.textContent="Play";return;} au=au||new Audio(url); au.onended=()=>{pb.textContent="Play";}; au.play().then(()=>{pb.textContent="Pause";}).catch(()=>toast("This recording could not be played.")); };
+    row.querySelector('[data-a="open"]').onclick=async()=>{try{await S().open(a.id);go("ayan");}catch(e){}}; aw.append(row); });
+  }catch(e){}
   $("dhFoot").textContent=list.length?list.length+(list.length===1?" session":" sessions")+" saved on this device":"";
  }
  $("dhContinue").onclick=async()=>{const b=$("dhContinue");b.disabled=true;try{if(heroSession)await S().open(heroSession.id);else await S().create();go("ayan");}finally{b.disabled=false;}};
@@ -6143,6 +6185,7 @@ window.PennioStudioProgress={begin(label="Working",description="Your work is bei
 <script src="/studio/render-monitor.js" defer></script>
 <script src="/studio/credits.js" defer></script>
 <script src="/studio/reel.js" defer></script>
+<script src="/studio/collab.js" defer></script>
 <script src="/studio/voicebeat.js" defer></script>
 <script src="/studio/daw.js" defer></script>
 <script src="/studio/recording.js" defer></script>
@@ -7044,6 +7087,13 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 .reel-body{padding:2px 0 12px;display:grid;gap:10px}
 .reel-out{display:grid;gap:10px}
 .reel-out video{width:100%;max-height:46vh;border-radius:12px;background:#000;object-fit:contain}
+.dh-hint{font-size:11px;color:var(--ts)}
+.dh-assets{display:grid;gap:8px}
+.dh-asset{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:14px;background:var(--surface-1);min-width:0}
+.dh-asset{flex-wrap:wrap}.dh-asset-copy{flex:1 1 180px;min-width:0}@media (max-width:520px){.dh-asset-copy{flex-basis:100%}.dh-asset button,.dh-asset a{flex:1;justify-content:center}}.dh-asset-copy b{display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dh-asset-copy small{font-size:11px;color:var(--ts)}
+.dh-asset button,.dh-asset a{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--border);font-size:12px;font-weight:600;display:inline-flex;align-items:center;color:var(--tp);background:transparent;text-decoration:none;cursor:pointer}
+.dh-asset button:hover,.dh-asset a:hover{border-color:rgba(var(--fg-rgb),.4)}
+.dh-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:rgba(242,101,34,.16);color:var(--orange-ink,#F26522);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
