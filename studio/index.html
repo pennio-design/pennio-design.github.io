@@ -1421,14 +1421,19 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
         <button type="button" class="dh-link dh-profile" id="dhProfile" hidden>Add your name to finish your profile</button>
         <div class="dh-actions">
           <button type="button" class="dh-primary" id="dhContinue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg><span id="dhContinueLbl">Start</span></button>
-          <button type="button" class="dh-ghost" id="dhNew"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>New beat</button>
+          <button type="button" class="dh-ghost" id="dhNew"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>New project</button>
           <button type="button" class="dh-ghost" id="dhRec"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.5"/></svg>Record</button>
         </div>
       </div>
       <img class="dh-art" src="/studio/art/mascot/b-beanbag-laptop.webp" width="742" height="490" alt="Illustration of a woman on an orange beanbag with headphones on, laptop on her lap" decoding="async">
     </header>
+    <section class="dh-block" id="dhProjectsBlock">
+      <div class="dh-head"><h2>Projects</h2><button type="button" class="dh-link" id="dashNewProject"><span aria-hidden="true">+</span> New project</button></div>
+      <div id="dashProjects" class="dash-projects" aria-label="Projects"></div>
+      <div class="dh-empty" id="dhProjectsEmpty" hidden><p>No projects yet. A project keeps your beats, writing and film together.</p><button type="button" class="dh-primary" id="dhEmptyNew">New project</button></div>
+    </section>
     <section class="dh-block" id="dhSessionsBlock" hidden>
-      <div class="dh-head"><h2>Recent</h2><button type="button" class="dh-link" id="dhAll">All sessions</button></div>
+      <div class="dh-head"><h2>Recent sessions</h2><button type="button" class="dh-link" id="dhAll">All sessions</button></div>
       <div class="dh-sessions" id="dhSessions"></div>
     </section>
     <section class="dh-block" id="dhSharedBlock" hidden>
@@ -1451,10 +1456,6 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <button class="dash-room" data-room="faajiplace" aria-label="Ilé Eré"><span class="dash-room-icon room-icon-film" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="8" y="12" width="32" height="24" rx="3"/><path d="m20 18 11 6-11 6z"/><path d="M13 8v4m8-4v4m8-4v4m8-4v4M13 36v4m8-4v4m8-4v4m8-4v4" opacity=".55"/></svg></span><b>Ilé Eré</b></button>
     <button class="dash-room" data-room="beauty" aria-label="Ojuloge"><span class="dash-room-icon room-icon-portrait" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 39c2-9 8-13 16-13s14 4 16 13"/><circle cx="24" cy="16" r="8"/><path d="M7 8h8M7 8v8M41 8h-8m8 0v8M7 40h8m-8 0v-8m34 8h-8m8 0v-8" opacity=".5"/></svg></span><b>Ojuloge</b></button>
   </div>
-    </section>
-    <section class="dh-block" id="dhProjectsBlock">
-      <div class="dh-head"><h2>Projects</h2><button type="button" class="dh-link" id="dashNewProject"><span aria-hidden="true">+</span> New project</button></div>
-      <div id="dashProjects" class="dash-projects" aria-label="Projects"></div>
     </section>
     <p class="dh-foot" id="dhFoot"></p>
   </div>
@@ -6121,13 +6122,14 @@ document.getElementById("sylIn").oninput=sylRender;
  });
  function renderProjects(){
   const list=read().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0));projects.replaceChildren();
-  const pb=document.getElementById("dhProjectsBlock");if(pb)pb.classList.toggle("empty",!list.length);
+  const pb=document.getElementById("dhProjectsBlock");if(pb)pb.classList.toggle("empty",!list.length);{ const em=document.getElementById("dhProjectsEmpty"); if(em) em.hidden=!!list.length; }
   if(!list.length)return;
   (showAllProjects?list:list.slice(0,5)).forEach(item=>{
    const row=document.createElement("article");row.className="dash-project";
     const copy=document.createElement("div");copy.className="dash-project-copy";
    const title=document.createElement("b");title.textContent=item.name;
-   copy.append(title);
+   const meta=document.createElement("small");{ const m=Math.max(0,Math.round((Date.now()-(item.updated||item.created||Date.now()))/60000)); meta.textContent=(roomNames[item.room]||"Àyàn")+" · "+(m<1?"now":m<60?m+" min":m<1440?Math.round(m/60)+" h":m<10080?Math.round(m/1440)+" d":new Date(item.updated||item.created).toLocaleDateString(undefined,{day:"numeric",month:"short"})); }
+   copy.append(title,meta);
    const actions=document.createElement("div");actions.className="dash-project-actions";
    const open=document.createElement("button");open.textContent="Open";open.className="dash-open";open.onclick=()=>{window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project:item}}));go(roomNames[item.room]?item.room:"ayan");if(item.room==="ayan"&&$("pname"))$("pname").value=item.name;};
    const edit=document.createElement("button");edit.textContent="✎";edit.setAttribute("aria-label","Rename "+item.name);edit.onclick=()=>openModal(item);
@@ -6171,7 +6173,7 @@ document.getElementById("sylIn").oninput=sylRender;
  }
  const ago=t=>{const m=Math.max(0,Math.round((Date.now()-(t||Date.now()))/60000));return m<1?"now":m<60?m+" min":m<1440?Math.round(m/60)+" h":m<10080?Math.round(m/1440)+" d":new Date(t).toLocaleDateString(undefined,{day:"numeric",month:"short"});};
  const S=()=>window.PennioSessions;
- let heroSession=null;
+ let heroSession=null, heroProject=null;
  async function refreshDash(){
   let list=[];try{list=S()?await S().list():[];}catch(e){}
   let prof=null;try{prof=JSON.parse(localStorage.getItem("ps.profile")||"null");}catch(e){}
@@ -6179,8 +6181,9 @@ document.getElementById("sylIn").oninput=sylRender;
   $("dhHi").textContent=(hr<12?"Good morning":hr<18?"Good afternoon":"Good evening")+(first?", "+first:"");
   heroSession=list[0]||null;
   $("dhProfile").hidden=!(prof&&prof.provisional);
-  $("dhTitle").textContent=heroSession?heroSession.name:"Start a beat";
-  $("dhContinueLbl").textContent=heroSession?"Continue":"Start";
+  heroProject=read().slice().sort((a,b)=>(b.updated||b.created||0)-(a.updated||a.created||0))[0]||null;
+  $("dhTitle").textContent=heroProject?heroProject.name:(heroSession?heroSession.name:"Start a project");
+  $("dhContinueLbl").textContent=(heroProject||heroSession)?"Continue":"New project";
   const wrap=$("dhSessions");wrap.replaceChildren();
   $("dhSessionsBlock").hidden=!list.length;
   list.slice(0,6).forEach(sess=>{
@@ -6209,8 +6212,13 @@ document.getElementById("sylIn").oninput=sylRender;
   $("dhFoot").textContent=list.length?list.length+(list.length===1?" session":" sessions")+" saved on this device":"";
  }
  $("dhProfile").onclick=()=>{ const o=document.getElementById("onboard"); const pr=JSON.parse(localStorage.getItem("ps.profile")||"{}"); document.getElementById("obName").value=pr.name||""; const em=document.getElementById("obEmail"); em.value=pr.email||""; em.readOnly=!!pr.email; document.getElementById("obErr").textContent=""; document.getElementById("obLater").hidden=false; o.classList.add("on"); setTimeout(()=>document.getElementById("obName").focus(),50); };
- $("dhContinue").onclick=async()=>{const b=$("dhContinue");b.disabled=true;try{if(heroSession)await S().open(heroSession.id);else await S().create();go("ayan");}finally{b.disabled=false;}};
- $("dhNew").onclick=async()=>{const b=$("dhNew");b.disabled=true;try{await S().create();go("ayan");}finally{b.disabled=false;}};
+ $("dhContinue").onclick=async()=>{const b=$("dhContinue");b.disabled=true;try{
+  if(heroProject){ window.dispatchEvent(new CustomEvent("pennio:workspace-project-open",{detail:{project:heroProject}})); go(roomNames[heroProject.room]?heroProject.room:"ayan"); if(heroProject.room==="ayan"&&$("pname")) $("pname").value=heroProject.name; }
+  else if(heroSession){ await S().open(heroSession.id); go("ayan"); }
+  else $("dashNewProject").click();
+ }finally{b.disabled=false;}};
+ $("dhEmptyNew").onclick=()=>$("dashNewProject").click();
+ $("dhNew").onclick=()=>$("dashNewProject").click();
  $("dhRec").onclick=()=>{const r=document.getElementById("studioRecLaunch");if(r)r.click();};
  $("dhAll").onclick=()=>{const w=document.getElementById("openWork");if(w)w.click();};
  const homeEl=$("v-home");new MutationObserver(()=>{if(homeEl.classList.contains("on"))refreshDash();}).observe(homeEl,{attributes:true,attributeFilter:["class"]});
@@ -6946,9 +6954,9 @@ body.studio-shell .dash-modal-backdrop:not([hidden]){position:fixed;inset:0;z-in
 #v-home .dash-room{min-height:clamp(120px,22vh,200px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:16px}
 #v-home .dash-room b{font-size:clamp(20px,3.4vw,28px);font-weight:700;letter-spacing:-.02em}
 #v-home .dash-room-icon{margin:0}
-#v-home .dash-projects{display:grid;gap:8px;margin:22px 0 0}
-#v-home .dash-project{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 6px 6px 16px;min-height:52px}
-#v-home .dash-project-copy{flex:1;min-width:0;cursor:pointer;min-height:44px;display:flex;align-items:center}
+#v-home .dash-projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin:0}
+#v-home .dash-project{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 6px 6px 16px;min-height:64px}
+#v-home .dash-project-copy{flex:1;min-width:0;cursor:pointer;min-height:44px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center}
 #v-home .dash-project-copy b{font-size:16px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #v-home .dash-project-actions{display:flex;gap:4px}
 #v-home .dash-project-actions button{min-width:44px;min-height:44px}
@@ -7144,8 +7152,6 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 .dh-mic svg{position:static;width:13px;height:13px;fill:none;stroke:#F26522;stroke-width:2.2;stroke-linecap:round}
 #v-home .dash-rooms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0}
 #v-home .dash-room{min-height:128px;border-radius:18px}
-#dhProjectsBlock.empty .dh-head h2{display:none}
-#dhProjectsBlock.empty .dash-projects{display:none}
 .dh-foot{margin:0;text-align:center;font-size:12px;color:var(--tt)}
 @media (max-width:760px){
   .dh-hero{grid-template-columns:1fr;min-height:0}
@@ -7176,6 +7182,8 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 .tight-row{display:inline-flex;align-items:center;gap:10px;min-height:44px}.tight-row b{font-size:13px;white-space:nowrap}#tightAmt{display:none}.tight-row:has(.sw.on) #tightAmt{display:inline-flex}
 .tight-note{display:block;margin:2px 0 4px;font-size:11px;color:var(--ts,#a9a39b);line-height:1.3}
 @media (max-height:520px){.tight-note{display:none}}
+.dh-empty{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:18px;border:1px dashed var(--border);border-radius:16px}.dh-empty p{margin:0;font-size:13px;color:var(--ts);max-width:46ch}
+.dash-project-copy small{display:block;margin-top:2px;font-size:11px;color:var(--ts)}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
