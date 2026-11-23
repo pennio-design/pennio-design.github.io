@@ -1407,7 +1407,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
     <small style="display:block;margin-top:8px;opacity:.7">Choose the section to keep. The original take remains available until you start a new recording.</small>
   </div>
   <div class="studio-rec-result" id="studioRecResult" hidden><button type="button" class="btn" id="studioRecSave">Save to device</button><button type="button" class="btn primary" id="studioRecUse">Send to Beat</button><button type="button" class="btn" id="studioRecTongue">Send to Tongue</button><button type="button" class="btn" id="studioRecFilm">Use in Film</button><button type="button" class="btn" id="studioRecExtract" hidden>Extract audio</button><button type="button" class="btn" id="studioRecAgain">New take</button></div>
-  <p class="studio-rec-status" id="studioRecStatus" aria-live="polite">Your recording stays on this device until you save or use it.</p>
+  <p class="studio-rec-status" id="studioRecStatus" aria-live="polite">Take your time. Your recording stays on this device until you save or use it.</p>
 </aside>
 
 
@@ -1657,6 +1657,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <div class="seg" id="ab"><button data-k="raw">Before</button><button data-k="pro" class="on">Enhanced</button></div>
       <div class="vstyle" id="vstyle" aria-label="Voice style"><span>Voice style</span><button data-s="natural">Natural</button><button data-s="studio" class="on">Studio</button><button data-s="radio">Radio</button><button data-s="afro">Afro vocal</button><button data-s="hall">Hall</button></div>
       <button class="btn" id="vprev" disabled>Preview</button>
+      <button type="button" class="btn" id="vpBeat" aria-pressed="false" title="Listen back with the beat playing under your voice">With beat</button>
       <button class="btn" id="vdel" disabled hidden>Delete recording</button>
       <button class="btn primary" id="vbeat" disabled>Make a beat from my voice</button>
       <button class="btn" id="vtap" disabled>Tap along</button>
@@ -2621,7 +2622,7 @@ const phQ=[]; function phLoop(){ if(!playing){ phQ.length=0; return; } while(phQ
 let playing=false, cur=0, nextT=0, timer=null, loopIdx=0, fullSrcs=[], recClick=false, seekFrom=-1, preRoll=0, loopA=-1, loopB=-1;
 let drumBuf=null;
 /* full-length layers: your whole vocal, and the talking-drum version of it */
-function fullTracks(){ const t=[]; if(LAY.full&&vbuf()) t.push({buf:vbuf(),off:vocalOffset+vocalNudge/-1000,bus:"full"}); if(LAY.drum&&drumBuf) t.push({buf:drumBuf,off:0,bus:"drumv"}); return t; }
+function fullTracks(){ const t=[]; if(previewExtra) t.push({buf:previewExtra,off:0,bus:"full"}); else if(LAY.full&&vbuf()) t.push({buf:vbuf(),off:vocalOffset+vocalNudge/-1000,bus:"full"}); if(LAY.drum&&drumBuf) t.push({buf:drumBuf,off:0,bus:"drumv"}); return t; }
 function barsFor(tr){ return Math.max(1,Math.ceil((tr.buf.duration-Math.max(0,tr.off))/(N*stepDur()))); }
 function playTrack(ctx,out,t,tr,k){ const s=ctx.createBufferSource(); s.buffer=tr.buf; s.connect(out); const pos=(k||0)*N*stepDur()+tr.off; if(pos>=0) s.start(t,Math.min(pos,tr.buf.duration-.05)); else s.start(t-pos,0); return s; }
 function playFull(ctx,out,t,buf){ if(!buf) return null; const s=ctx.createBufferSource(); s.buffer=buf; s.connect(out); s.start(t); return s; }
@@ -2652,8 +2653,9 @@ function clockStop(){ clearInterval(timer); timer=null; if(tickWorker){ try{ tic
 function stopTracks(){ fullSrcs.forEach(s=>{ try{s.stop();}catch(e){} }); fullSrcs=[]; }
 function stopTracksAt(t){ fullSrcs.forEach(s=>{ try{s.stop(t);}catch(e){} }); fullSrcs=[]; }
 function start(t0,bar,pre){ ensureAudio(); preRoll=pre||0; stopPreviews(); setTransportOutput(.85); stopTracks(); clockStop(); PERF.reset(); const was=playing; playing=true; cur=0; bar=bar||0; loopIdx=bar; seekFrom=bar>0?bar:-1; barNow=bar; nextT= (typeof t0==="number")? t0 : ac.currentTime+.06; clockStart(); schedule(); phQ.length=0; if(!was) requestAnimationFrame(phLoop); setIcon(); }
-function stop(){ playing=false; clockStop(); seekFrom=-1; preRoll=0; stopTracks(); setTransportOutput(0); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
+function stop(){ try{ Preview.release(); }catch(e){} playing=false; clockStop(); seekFrom=-1; preRoll=0; stopTracks(); setTransportOutput(0); mark(-1); setIcon(); paintStrip(-1); npUpdate(); }
 /* ---------- one sound at a time, shown in the Now playing bar ---------- */
+let previewExtra=null; /* a take being listened back with the beat: it plays from bar one instead of the project's voice */
 let npKind=null, prevSrc=null, drumPrev=null, npSrc=null, npT0=0, npDur=0, npRaf=0;
 const mmss=x=>{ x=Math.max(0,Math.round(x)); return Math.floor(x/60)+":"+String(x%60).padStart(2,"0"); };
 function npTick(){ npRaf=0; if(!npKind) return; const bar=document.getElementById("npBar"), tm=document.getElementById("npTime");
@@ -2664,13 +2666,58 @@ function npUpdate(){
   const bar=document.getElementById("np"); if(!bar) return;
   let k=null, label="";
   let recording=false; try{ recording= !!(mrec && mrec.state==="recording"); }catch(e){}
-  if(prevSrc){ k="voice"; label="Your voice · "+(useEnhanced&&proBuf?"Enhanced":"Before"); }
+  if(Preview.active()&&Preview.label){ k="voice"; label=Preview.label; }
+  else if(prevSrc){ k="voice"; label="Your voice · "+(useEnhanced&&proBuf?"Enhanced":"Before"); }
   else if(drumPrev){ k="drum"; label="Talking drum alone"; }
   else if(playing && recording){ k="beat"; label="Recording over the beat"; }
   const src=prevSrc||drumPrev; if(k!==npKind || src!==npSrc){ npSrc=src; npT0=ac?ac.currentTime:0; npDur=src&&src.buffer?src.buffer.duration:0; }
   npKind=k; if(k && !npRaf) npRaf=requestAnimationFrame(npTick); bar.hidden=!k; document.body.classList.toggle("np-on",!!k); document.getElementById("npL").textContent=label;
 }
+/* ---------- listening back to a recording, with or without the beat ----------
+   One controller owns it. States: idle, starting, playing. Whatever starts it first stops every other sound; whatever stops it
+   (the button, the main Play, a new recording, the tab going away) ends in the same place, which puts back anything it changed. */
+const Preview=(()=>{
+  let state="idle", mode=(()=>{ try{ return localStorage.getItem("ps.previewMode")==="beat"?"beat":"solo"; }catch(e){ return "solo"; } })(), token=0, undo=null, label="";
+  const listeners=new Set(), emit=()=>{ listeners.forEach(f=>{ try{ f(api); }catch(e){} }); };
+  let hold=false; /* true while play() is calling start(), which itself clears previews */
+  const hasBeat=()=>LANES.some(l=>l.id!=="vox"&&pattern[l.id]&&pattern[l.id].some(Boolean));
+  function release(){ /* put back everything play() changed; safe to call twice */
+    if(hold) return;
+    token++; const u=undo; undo=null; previewExtra=null;
+    if(u){ LAY.full=u.full; LAY.vox=u.vox; try{ renderLayers(); }catch(e){} }
+    const was=state; state="idle"; label=""; if(was!=="idle") emit();
+  }
+  async function play(buf,opts){
+    opts=opts||{}; const m=opts.mode||mode; if(!buf){ toast("There is no recording to play yet."); return false; }
+    stopAll(); /* ends every other preview and the transport, and calls release() */
+    const my=++token; state="starting"; emit();
+    try{ ensureAudio(); if(ac.state==="suspended") await ac.resume(); }
+    catch(e){ state="idle"; emit(); toast("I could not start the sound on this device. Tap once on the page and try again."); return false; }
+    if(my!==token) return false; /* something stopped it while the audio was waking up */
+    try{
+      if(m==="beat"){
+        if(!hasBeat()){ state="idle"; emit(); toast("There is no beat to play with yet. Make one in Pattern, or tap Make a beat from my voice."); return false; }
+        undo={full:LAY.full,vox:LAY.vox}; LAY.vox=false; LAY.full=!opts.take; if(opts.take) previewExtra=buf; label=(opts.name||"Your recording")+" · with the beat";
+        try{ renderLayers(); }catch(e){}
+        hold=true; try{ setTransportOutput(.85); start(); }finally{ hold=false; } /* the beat loops from bar one and the voice is part of it */
+        if(my!==token) return false; state="playing"; emit(); return true;
+      }
+      setTransportOutput(.85); const src=playFull(ac,busses.full,ac.currentTime+.02,buf); if(!src){ state="idle"; emit(); return false; }
+      prevSrc=src; label=(opts.name||"Your recording")+" · without the beat";
+      src.onended=()=>{ if(prevSrc===src){ prevSrc=null; } if(my===token){ state="idle"; label=""; emit(); } npUpdate(); };
+      state="playing"; emit(); npUpdate(); return true;
+    }catch(e){ console.warn("preview",e); release(); stopAll(); toast("That recording would not play. Try again."); return false; }
+  }
+  function stop(){ if(state==="idle"&&!prevSrc) return; stopAll(); }
+  const api={ play, stop, release, hasBeat, listeners, get state(){ return state; }, get mode(){ return mode; }, get label(){ return label; },
+    setMode(m){ mode=m==="beat"?"beat":"solo"; try{ localStorage.setItem("ps.previewMode",mode); }catch(e){} emit(); },
+    active(){ return state!=="idle"; }, on(f){ listeners.add(f); return ()=>listeners.delete(f); } };
+  return api;
+})();
+window.PennioPreview=Preview;
+addEventListener("pagehide",()=>{ try{ Preview.stop(); }catch(e){} });
 function stopPreviews(){
+  try{ Preview.release(); }catch(e){}
   if(prevSrc){ const s=prevSrc; prevSrc=null; try{ s.onended=null; s.stop(); }catch(e){} vprev.textContent="Preview"; }
   if(drumPrev){ const s=drumPrev; drumPrev=null; try{ s.onended=null; s.stop(); }catch(e){} hearDrum.textContent="Hear drum"; }
   setTransportOutput(0);
@@ -3112,7 +3159,7 @@ window.PennioCore={
   async probeMix(which){ const lay={...LAY}, mu={...muted}; try{ if(which==='voice'){ LANES.forEach(l=>{ muted[l.id]=true; }); LAY.drum=false; } if(which==='beat'){ LAY.full=false; } expCache.v=null; const m=await prepareMix(false,false,null); return {lufs:m.lufs,lufsBefore:m.lufsBefore,metrics:m.metrics}; } finally{ Object.assign(LAY,lay); Object.keys(muted).forEach(k=>delete muted[k]); Object.assign(muted,mu); expCache.v=null; } }
 };
 window.PennioVoice={raw:()=>rawBuf,pro:()=>proBuf,clean:()=>cleanCache&&cleanCache.buf,hum:()=>cleanCache&&cleanCache.hum||null};
-window.PennioState={harm:()=>({key:H.key,scale:H.scale,prog:H.prog}),offset:()=>vocalOffset,N:()=>N,pattern:()=>JSON.parse(JSON.stringify(pattern)),ddBase:()=>ddBase,uduBase:()=>uduBase,lastBeat:()=>window.__lastVoiceBeat||null};
+window.PennioState={lay:()=>({...LAY}),harm:()=>({key:H.key,scale:H.scale,prog:H.prog}),offset:()=>vocalOffset,N:()=>N,pattern:()=>JSON.parse(JSON.stringify(pattern)),ddBase:()=>ddBase,uduBase:()=>uduBase,lastBeat:()=>window.__lastVoiceBeat||null};
 window.PennioEncode={mp3:(buf,onP,workers)=>mp3Worker(buf,onP,workers),frames:mp3Frames,key:()=>exportKey(true)};
 /* ---------- OGBIFỌ̀: detect Yoruba or English, translate to the other ----------
    Detection runs on the phone. Live translation is not connected yet: when it is,
@@ -3669,12 +3716,19 @@ function drawWave(){
   slices.forEach((s,i)=>{ const x=s.start/b.duration*W; c.fillRect(x,0,1.5,H); c.font="18px Inter"; c.fillText(String(i+1),x+4,20); });
 }
 document.querySelectorAll("#vstyle button").forEach(b=>b.onclick=()=>setVoiceStyle(b.dataset.s));
-function setEnhanced(on){ const wasPrev=!!prevSrc; useEnhanced=on; if(wasPrev){ stopPreviews(); setTimeout(()=>vprev.click(),0); } document.querySelectorAll("#ab button").forEach(x=>x.classList.toggle("on",(x.dataset.k==="pro")===on)); drawWave(); saveSoon(); }
+/* what went wrong with the microphone, in plain words, and what to do about it */
+function micMessage(e){ const n=e&&e.name; return n==="NotAllowedError"? "I cannot reach your microphone yet. Allow access in your browser's site settings, then press Record again. Nothing has been recorded." : n==="NotFoundError"? "I cannot find a microphone. Plug one in or check your device's input, or use Add voice file." : n==="NotReadableError"? "Another app seems to be using the microphone. Close it and press Record again." : "The microphone is not available here. You can use Add voice file instead."; }
+function setEnhanced(on){ const was=Preview.active(); useEnhanced=on; document.querySelectorAll("#ab button").forEach(x=>x.classList.toggle("on",(x.dataset.k==="pro")===on)); drawWave(); saveSoon(); if(was) Preview.play(vbuf(),{name:"Your voice · "+(on&&proBuf?"Enhanced":"Before")}); }
 document.querySelectorAll("#ab button").forEach(bn=>bn.onclick=()=>setEnhanced(bn.dataset.k==="pro"));
 function restartTracks(){ stopTracks(); loopIdx=0; }
-vprev.onclick=()=>{ ensureAudio(); if(prevSrc){ stopPreviews(); npUpdate(); return; }
-  stopAll(); setTransportOutput(.85); prevSrc=playFull(ac,busses.full,ac.currentTime+.02,vbuf()); if(!prevSrc) return; vprev.textContent="Stop preview"; prevSrc.onended=()=>{prevSrc=null; vprev.textContent="Preview"; npUpdate();}; npUpdate(); };
-
+vprev.onclick=()=>{ if(Preview.active()){ Preview.stop(); return; } Preview.play(vbuf(),{name:"Your voice · "+(useEnhanced&&proBuf?"Enhanced":"Before")}); };
+Preview.on(()=>{ vprev.textContent=Preview.active()?"Stop preview":"Preview"; vprev.setAttribute("aria-pressed",String(Preview.active())); { const bb=document.getElementById("vpBeat"); if(bb){ const on=Preview.mode==="beat"; bb.classList.toggle("primary",on); bb.setAttribute("aria-pressed",String(on)); } } });
+{ const bb=document.getElementById("vpBeat"); if(bb){ bb.onclick=()=>{ const was=Preview.active(); Preview.setMode(Preview.mode==="beat"?"solo":"beat"); if(was) Preview.play(vbuf(),{name:"Your voice · "+(useEnhanced&&proBuf?"Enhanced":"Before")}); }; bb.classList.toggle("primary",Preview.mode==="beat"); bb.setAttribute("aria-pressed",String(Preview.mode==="beat")); } }
+/* a take from the recorder: listen back with or without the beat */
+window.addEventListener("pennio:preview-take",async e=>{ const d=e.detail||{}; if(!d.blob) return;
+  if(Preview.active()&&Preview.label&&Preview.mode===d.mode&&d.toggle){ Preview.stop(); return; }
+  try{ ensureAudio(); const ab=await d.blob.arrayBuffer(), buf=await new Promise((res,rej)=>{ const pr=ac.decodeAudioData(ab,res,rej); if(pr&&pr.then) pr.then(res,rej); }); Preview.setMode(d.mode); await Preview.play(buf,{take:true,mode:d.mode,name:"Your take"}); }
+  catch(err){ toast("I could not play that take back. It is still saved on this device."); } });
 /* ---------- voice to talking drum ---------- */
 function analysePitch(b){
   // mono, downsample to ~11 kHz, autocorrelation pitch per 10 ms frame
@@ -4251,7 +4305,7 @@ async function micTake(btn,label,maxSec,onDone,noteEl){
       finally{resolveDone();btn._recDone=null;}
     };
     r.start();btn._t=setInterval(()=>{const elapsed=Math.floor((Date.now()-t0)/1000);btn.textContent="■ Stop · "+elapsed+"s";if(elapsed>=maxSec)r.stop();},250);
-  }catch(e){btn.hidden=true;noteEl.textContent="Microphone is not available here. Use Add recording.";}
+  }catch(e){if(!(e&&(e.name==="NotAllowedError"||e.name==="NotReadableError")))btn.hidden=true;noteEl.textContent=micMessage(e);}
 }
 async function stopWorkspaceRecordings(){
  const buttons=[...document.querySelectorAll("button")].filter(button=>button._rec||button._recDone);
@@ -4428,7 +4482,7 @@ vrec.onclick=async()=>{
     mstart=Date.now();
     npUpdate();
     mtimer=setInterval(()=>{ const s=Math.floor((Date.now()-mstart)/1000); setRecLabel(true,s); if(s>=60) mrec.stop(); },250);
-  }catch(e){ vrec.style.display="none"; recOpts.hidden=true; toast("Microphone is not available here. Use Add voice file."); }
+  }catch(e){ const blocked=e&&(e.name==="NotAllowedError"||e.name==="NotReadableError"); if(!blocked){ vrec.style.display="none"; recOpts.hidden=true; } toast(micMessage(e)); }
 };
 /* measure the round trip: play clicks through the speaker, hear them on the mic */
 document.getElementById("latTest").onclick=async()=>{
@@ -7188,6 +7242,7 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 @media (max-height:520px){.tight-note{display:none}}
 .dh-empty{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:18px;border:1px dashed var(--border);border-radius:16px}.dh-empty p{margin:0;font-size:13px;color:var(--ts);max-width:46ch}
 .dash-project-copy small{display:block;margin-top:2px;font-size:11px;color:var(--ts)}
+.studio-rec-listen{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px}.studio-rec-listen .btn{min-height:44px;flex:1 1 150px}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).

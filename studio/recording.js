@@ -32,6 +32,31 @@ function showPreview(){
  if(!blob)return;if(blobUrl)URL.revokeObjectURL(blobUrl);blobUrl=URL.createObjectURL(blob);preview.innerHTML="";
  const media=document.createElement(mode==="video"?"video":"audio");media.controls=true;media.src=blobUrl;if(mode==="video")media.playsInline=true;
  preview.append(media);preview.hidden=false;configureTrim(media);
+ if(mode==="audio"){
+  const row=document.createElement("div");row.className="studio-rec-listen";row.setAttribute("role","group");row.setAttribute("aria-label","Listen back");
+  row.innerHTML='<button type="button" class="btn" data-lb="solo">Play without the beat</button><button type="button" class="btn" data-lb="beat">Play with the beat</button>';
+  row.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{media.pause();window.dispatchEvent(new CustomEvent("pennio:preview-take",{detail:{blob,mode:b.dataset.lb,toggle:true}}));}));
+  preview.append(row);media.addEventListener("play",()=>{if(window.PennioPreview)window.PennioPreview.stop();});
+ }
+}
+/* Say what was heard, kindly and with the real numbers: silence, too quiet, clipped, or good. */
+async function assessTake(b){
+ try{
+  const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return null;const ctx=new Ctx();
+  try{const buf=await ctx.decodeAudioData(await b.arrayBuffer()),d=buf.getChannelData(0),w=Math.max(1,Math.floor(buf.sampleRate*.05));let peak=0;for(let i=0;i<d.length;i++){const v=Math.abs(d[i]);if(v>peak)peak=v;}
+   const rms=[];for(let i=0;i+w<=d.length;i+=w){let e=0;for(let j=0;j<w;j++)e+=d[i+j]*d[i+j];rms.push(Math.sqrt(e/w));}rms.sort((x,y)=>x-y);
+   const top=rms[rms.length-1]||0,act=rms.filter(x=>x>top*.2),m=act.length?Math.sqrt(act.reduce((a,x)=>a+x*x,0)/act.length):0;
+   return{sec:buf.duration,peakDb:20*Math.log10(peak+1e-9),rmsDb:20*Math.log10(m+1e-9)};
+  }finally{try{ctx.close();}catch(e){}}
+ }catch(e){return null;}
+}
+function takeMessage(a){
+ if(!a)return"Take ready. Listen back with or without the beat, then add it to Àyàn or save it to your device.";
+ if(a.peakDb<-50)return"I could not hear anything in that take. Check that your microphone is not muted, then try again whenever you are ready. Nothing was lost.";
+ if(a.sec<1)return"That was very short. Take your time and try again when you are ready, or keep it if that is what you wanted.";
+ if(a.rmsDb<-38)return"That is a gentle take, quite quiet ("+Math.round(a.rmsDb)+" dBFS). Moving a little closer to the microphone will help. You can keep it, or record again.";
+ if(a.peakDb>-0.5)return"A few moments got loud enough to distort. If it sounds harsh, step back a little and record again. Otherwise it is yours to keep.";
+ return"Lovely take, "+Math.round(a.sec)+" seconds and a clean level. Listen back with or without the beat, then add it to Àyàn or save it to your device.";
 }
 function encodeWav(buffer){
  const channels=buffer.numberOfChannels,length=buffer.length,rate=buffer.sampleRate,bytes=44+length*channels*2,view=new DataView(new ArrayBuffer(bytes));
@@ -94,13 +119,13 @@ start.addEventListener("click",async()=>{
    document.body.classList.remove("recorder-active");stopTracks();blob=new Blob(chunks,{type:recorder.mimeType||(mode==="audio"?"audio/webm":"video/webm")});
    if(!blob.size){setStatus("No recording was captured. Try again.");return;}
    sourceBlob=blob;showPreview();result.hidden=false;useAyan.hidden=mode!=="audio";useTongue.hidden=mode!=="audio";useFilm.hidden=false;extract.hidden=mode!=="video";
-   setStatus(mode==="audio"?"Take ready. Add it to Àyàn or save it to your device.":"Scene captured. Preview it, then save it with Film as a visual reference.");
+   if(mode==="audio"){setStatus("Take ready. Listening for how it sounds…");const mine=blob;assessTake(mine).then(a=>{if(blob===mine)setStatus(takeMessage(a));});}else setStatus("Scene captured. Preview it, then save it with Film as a visual reference.");
    start.disabled=false;stop.disabled=true;clearInterval(ticker);
   };
-  recorder.start(250);document.body.classList.add("recorder-active");if(liveRec)liveRec.hidden=false;started=Date.now();start.disabled=true;stop.disabled=false;setStatus(mode==="audio"?"Recording audio…":"Recording scene…");
+  recorder.start(250);document.body.classList.add("recorder-active");if(liveRec)liveRec.hidden=false;started=Date.now();start.disabled=true;stop.disabled=false;setStatus(mode==="audio"?"Recording. Take your time, and press Stop whenever you are ready.":"Recording scene…");
   ticker=setInterval(()=>{const sec=Math.floor((Date.now()-started)/1000);clock.textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");},250);
- }catch(e){document.body.classList.remove("recorder-active");stopTracks();start.disabled=false;stop.disabled=true;setStatus("Could not start capture: "+(e.message||"Check microphone/camera permission and try again."));}
-}); stop.addEventListener("click",()=>{if(recorder&&recorder.state==="recording"){recorder.stop();setStatus("Preparing your take…");}});
+ }catch(e){document.body.classList.remove("recorder-active");stopTracks();start.disabled=false;stop.disabled=true;setStatus(e&&e.name==="NotAllowedError"?"I cannot reach your microphone"+(mode==="video"?" or camera":"")+" yet. Allow access in your browser's site settings, then press Record again. Nothing has been recorded.":e&&e.name==="NotFoundError"?"I cannot find a microphone"+(mode==="video"?" or camera":"")+". Plug one in or check your device's input, then try again.":e&&e.name==="NotReadableError"?"Another app seems to be using the microphone. Close it and press Record again.":"I could not start recording: "+(e&&e.message||"check microphone permission")+". Nothing has been lost; try again when you are ready.");}
+}); stop.addEventListener("click",()=>{if(recorder&&recorder.state==="recording"){recorder.stop();setStatus("Got it. Preparing your take…");}});
 $("studioRecSave").addEventListener("click",()=>{if(!blob||!blobUrl)return;const a=document.createElement("a");a.href=blobUrl;const ext=(blob.type.includes("mp4")?"mp4":blob.type.includes("ogg")?"ogg":"webm");a.download=(mode==="audio"?"pennio-voice-take":"pennio-video-take")+"."+ext;document.body.append(a);a.click();a.remove();setStatus("Recording saved to your device.");});
 
 
