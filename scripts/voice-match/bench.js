@@ -5,7 +5,7 @@
    Reports tempo, downbeat, key (exact, or the relative major/minor that plays the same chords), feel and swing. */
 const { chromium } = require("playwright"), fs = require("fs"), path = require("path");
 const dir = __dirname, base = process.argv[2] || "http://localhost:3000";
-const truth = JSON.parse(fs.readFileSync(path.join(dir, "voices/truth.json"), "utf8"));
+const truth = JSON.parse(fs.readFileSync(path.join(dir, "voices/truth.json"), "utf8")).filter(t => !process.env.ONLY || new RegExp(process.env.ONLY).test(t.name));
 const KEYN = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
 (async () => {
   const b = await chromium.launch(); const rows = [];
@@ -21,13 +21,14 @@ const KEYN = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
     const o = await p.evaluate(() => ({ bpm: +document.getElementById("bpm").value, sw: +document.getElementById("swing").value, N: PennioState.N(), h: PennioState.harm(), off: PennioState.offset() }));
     const tempo = Math.abs(o.bpm - t.bpm) / t.bpm < .02, tempoE = Math.abs(o.bpm - t.bpm), feel = o.N === t.grid, down = Math.abs(o.off - t.downbeat) < .04;
     const exact = o.h.key === t.key && o.h.scale === t.mode, rel = (t.mode === "minor" && o.h.scale === "major" && o.h.key === (t.key + 3) % 12) || (t.mode === "major" && o.h.scale === "minor" && o.h.key === (t.key + 9) % 12);
-    rows.push({ t, o, tempo, tempoE, downE: Math.abs(o.off - t.downbeat) * 1000, tempo, feel, down, exact, rel, swE: t.grid === 16 ? Math.abs(o.sw - t.swing) : null });
+    rows.push({ t, o, biasMs: (o.off - (t.pcenter || t.downbeat)) * 1000, tempo, tempoE, downE: Math.abs(o.off - t.downbeat) * 1000, tempo, feel, down, exact, rel, swE: t.grid === 16 ? Math.abs(o.sw - t.swing) : null });
     console.log(t.name.padEnd(14), `${o.bpm}/${t.bpm} BPM`, tempo ? "ok " : "BAD", `N ${o.N}/${t.grid}`, `key ${KEYN[o.h.key]} ${o.h.scale}/${KEYN[t.key]} ${t.mode}`, exact ? "exact" : rel ? "relative" : "BAD", `swing ${o.sw}/${t.swing}`, `downbeat ${o.off.toFixed(2)}/${t.downbeat}`);
     await ctx.close();
   }
   await b.close();
   const fr = rows.filter(r => r.t.bpm % 1); const avg = (a, f) => a.length ? (a.reduce((x, r) => x + f(r), 0) / a.length).toFixed(2) : "-";
   console.log(`\nfractional tempos (${fr.length}): mean tempo error ${avg(fr, r => r.tempoE)} BPM; all voices: mean tempo error ${avg(rows, r => r.tempoE)} BPM, mean downbeat error ${avg(rows, r => r.downE)} ms`);
+  const sf = rows.filter(r => r.t.soft); if (sf.length) console.log(`soft-attack voices (${sf.length}): grid sits ${avg(sf, r => r.biasMs)} ms from the vowel attack on average (negative = beat lands before the voice); per voice ` + sf.map(r => r.biasMs.toFixed(0)).join(", ") + " ms");
   const n = rows.length, c = f => rows.filter(f).length, sw = rows.filter(r => r.swE != null);
   console.log(`\ntempo ${c(r => r.tempo)}/${n}   feel ${c(r => r.feel)}/${n}   downbeat ${c(r => r.down)}/${n}   key exact ${c(r => r.exact)}/${n}, relative ${c(r => !r.exact && r.rel)}/${n}   swing mean abs error ${(sw.reduce((a, r) => a + r.swE, 0) / sw.length).toFixed(1)} points`);
 })();

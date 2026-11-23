@@ -1659,12 +1659,14 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <button class="btn" id="vdel" disabled hidden>Delete recording</button>
       <button class="btn primary" id="vbeat" disabled>Make a beat from my voice</button>
       <button class="btn" id="vtap" disabled>Tap along</button>
+      <span class="tight-row" id="tightRow"><button class="sw" id="swTight" role="switch" aria-checked="false" aria-label="Tighten voice to the beat"><i></i></button><b>Tighten</b><span class="seg" id="tightAmt" aria-label="How much to tighten"><button data-a="0.5">Light</button><button data-a="0.8" class="on">Firm</button><button data-a="1">Full</button></span></span>
       <button class="btn" id="dawHumBeat" type="button" disabled title="Select a passage on a Playlist clip first, then hum along to it">Hum to beat</button>
     </div>
     <div class="take" id="take" hidden>
       <div class="tk"><b>Your recording</b> <span id="takeLen"></span><small>Not happy with it? Press Record again to replace it, or delete it. The beat stays.</small></div>
       <button class="btn" id="takeDel">Delete</button>
     </div>
+    <small id="tightNote" class="tight-note">Off: your voice plays exactly as recorded.</small>
     <canvas id="wave" width="900" height="192"></canvas>
     <div class="vmeta" id="vmeta">No recording yet. The Vox lane stays silent until you add one.</div>
   </div>
@@ -2188,7 +2190,25 @@ const KINDS=[{id:"song",name:"Song"},{id:"beat",name:"Beat only"},{id:"jingle",n
 const kindName=id=>{ const k=KINDS.find(k=>k.id===id); return k? k.name : ""; };
 let curMeta={kind:"", group:""};
 let rawBuf=null, proBuf=null, useEnhanced=true, slices=[], chopOrder=[...Array(16).keys()];
-function vbuf(){ return useEnhanced && proBuf ? proBuf : rawBuf; }
+/* Tighten to the beat: the voice played back and exported is a copy with each entry moved onto the grid (studio/voicetight.js) */
+let tight={on:false,strength:.8,onsets:[],sig:"",busy:false,cache:new Map(),report:null};
+function vbuf(){ const b=useEnhanced && proBuf ? proBuf : rawBuf; return tight.on&&b? (tight.cache.get(b)||b) : b; }
+function tightSig(){ return [tight.on,tight.strength,+bpmEl.value,+swEl.value,N,vocalOffset,vocalNudge,tight.onsets.length,tight.onsets[0]||0,rawBuf&&rawBuf.length,proBuf&&proBuf.length].join("|"); }
+async function rebuildTight(){
+  if(tight.busy) return; const T=window.PennioVoiceTight; if(!T||!tight.on||!rawBuf||!tight.onsets.length) return;
+  const sig=tightSig(); if(sig===tight.sig) return; tight.busy=true;
+  try{
+    const grid={bpm:+bpmEl.value,offset:Math.max(0,vocalOffset+vocalNudge/-1000),N,swing:+swEl.value}, made=new Map(); let rep=null;
+    for(const b of [proBuf,rawBuf]){ if(!b||made.has(b)) continue; await new Promise(r=>setTimeout(r,0));
+      const r=T.tighten(Object.assign({x:b.getChannelData(0),sr:b.sampleRate,onsets:tight.onsets,strength:tight.strength},grid));
+      ensureAudio(); const nb=ac.createBuffer(1,r.data.length,b.sampleRate); nb.getChannelData(0).set(r.data); made.set(b,nb); if(!rep) rep=r; }
+    tight.cache=made; tight.sig=sig; tight.report=rep?{n:rep.changed,before:Math.round(rep.before),after:Math.round(rep.after)}:null;
+    if(playing&&restartTracks) restartTracks(); const el=document.getElementById("tightNote"); if(el) el.textContent=tightText();
+  }catch(e){ console.warn("tighten",e); }
+  tight.busy=false;
+}
+function tightText(){ const r=tight.report; return tight.on? (r&&r.n? "Moved "+r.n+" entries onto the grid: the typical distance fell from "+r.before+" ms to "+r.after+" ms at "+Math.round(tight.strength*100)+"%." : "Working out where your entries sit…") : "Off: your voice plays exactly as recorded."; }
+setInterval(()=>{ if(tight.on) rebuildTight(); },500);
 let N = 16;
 let pattern = {};
 let muted = {};
@@ -3310,10 +3330,11 @@ const bufIds=new WeakMap(); let bufSeq=0; const bufId=b=>b?(bufIds.get(b)||(bufI
 function exportKey(matchOn){
   const sn=snap(); delete sn.mix; /* the mix is keyed below in a normalised form */
   return JSON.stringify({s:sn,g:gainsV,fx:Object.keys(gainsV).map(k=>{ const f=stripFx[k]||{}; return [+f.pan||0,f.eq?1:0,f.comp?1:0,f.rev?1:0,f.echo?1:0]; }),solo:[...soloed],mute:muted,on:LANES.map(l=>laneOn(l.id)),rich:SOUND.rich,lite:PERF.lite,bars:expBars,drum:expDrum,match:matchOn,
-    buf:[bufId(rawBuf),bufId(proBuf),bufId(drumBuf)],enh:useEnhanced,sl:slices});
+    buf:[bufId(rawBuf),bufId(proBuf),bufId(drumBuf)],enh:useEnhanced,sl:slices,tight:[tight.on,tight.strength,tight.sig]});
 }
 /* render, match, check and encode: the slow part. With a run it reports every stage; without one it works quietly in the background. */
 async function prepareMix(isMp3,matchOn,run){
+  if(tight.on){ for(let i=0;i<40&&(tight.busy||tight.sig!==tightSig());i++){ if(!tight.busy) rebuildTight(); await new Promise(r=>setTimeout(r,150)); } }
   const R=window.PennioRender, TARGET=-14, fmt=isMp3?"mp3":"wav", st=(n,l,f)=>run? run.stage(n,l,f) : f();
   const key=exportKey(matchOn), hit=(expCache.v&&expCache.key===key&&Date.now()-expCache.t<600000)?expCache.v:null;
   let buf, lufsBefore=null, lufs=null, info="", fixed=false, metrics=null;
@@ -3461,6 +3482,7 @@ expShare.onclick=async()=>{
 const wave=document.getElementById("wave"), vmeta=document.getElementById("vmeta"), vprev=document.getElementById("vprev");
 let currentAudio=null;
 async function loadVoice(bytes,name,fromRestore){
+  if(!fromRestore){ tight={on:false,strength:tight.strength,onsets:[],sig:"",busy:false,cache:new Map(),report:null}; const sw=document.getElementById('swTight'); if(sw){ sw.classList.remove('on'); sw.setAttribute('aria-checked','false'); } const tn=document.getElementById('tightNote'); if(tn) tn.textContent=tightText(); }
   ensureAudio();
   currentAudio={name, bytes:bytes.slice(0)};
   rawBuf=await new Promise((res,rej)=>{ const p=ac.decodeAudioData(bytes.slice(0),res,rej); if(p&&p.then) p.then(res,rej); });
@@ -3597,6 +3619,8 @@ async function styleVoice(clean,key){
   if(P.dl){ const d=oc.createDelay(1); d.delayTime.value=P.dl; const fb=oc.createGain(); fb.gain.value=.15; const dw=oc.createGain(); dw.gain.value=P.dlw; node.connect(d); d.connect(fb); fb.connect(d); d.connect(dw); dw.connect(oc.destination); }
   src.start(0);
   const out=await oc.startRendering();
+  /* the compressor looks 6 ms ahead and so delays the voice by that much; take it back so the styled voice sits exactly where the raw one did */
+  { const lag=Math.round(.006*sr); for(let c=0;c<out.numberOfChannels;c++){ const d=out.getChannelData(c); d.copyWithin(0,lag); d.fill(0,d.length-lag); } }
   try{ await matchLoudness(out,-16); }catch(e){}
   return out;
 }
@@ -4516,6 +4540,31 @@ let tapFit=null;
 /* Voice match: the analysis and the groove design live in voicebeat.js; this applies the plan to the Studio. */
 const pitchCache=new WeakMap();
 function pitchOf(b){ let r=pitchCache.get(b); if(!r){ r=analysePitch(b); pitchCache.set(b,r); } return r; }
+/* Where each entry is heard to start. The spectral detector marks the first trace of sound; a sung or spoken syllable is heard on its attack,
+   the point where the level has climbed halfway to that syllable's peak, tens of milliseconds later. A beat pinned to the first trace lands before
+   the voice, so the voice seems to come in after it. */
+function attackTimes(buf,onsets){
+  const d=buf.getChannelData(0), sr=buf.sampleRate, hop=Math.max(1,Math.round(sr*.002)), win=Math.round(sr*.006), n=Math.floor(d.length/hop), e=new Float32Array(n);
+  for(let i=0;i<n;i++){ const a=i*hop, b=Math.min(d.length,a+win); let s=0; for(let j=a;j<b;j++) s+=d[j]*d[j]; e[i]=Math.sqrt(s/Math.max(1,b-a)); }
+  for(let i=1;i<n-1;i++) e[i]=(e[i-1]+2*e[i]+e[i+1])/4;
+  return onsets.map((t0,idx)=>{
+    const next=onsets[idx+1], i0=Math.max(1,Math.floor((t0-.03)*sr/hop)), iPk=Math.min(n-1,Math.floor(Math.min(t0+.18,next!=null?next-.02:1e9)*sr/hop));
+    if(iPk<=i0+2) return t0;
+    let pk=0; for(let i=i0;i<=iPk;i++) if(e[i]>pk) pk=e[i];
+    let base=1e9; const iB=Math.min(iPk,i0+Math.ceil(.05*sr/hop)); for(let i=i0;i<=iB;i++) if(e[i]<base) base=e[i];
+    if(!(pk>base*1.5)) return t0;
+    const lvl=base+.5*(pk-base);
+    for(let i=i0;i<=iPk;i++) if(e[i]>=lvl){ const pv=e[i-1], f=e[i]>pv?(lvl-pv)/(e[i]-pv):1, tt=((i-1+f)*hop+win/2)/sr; return Math.min(t0+.15,Math.max(t0-.02,tt)); }
+    return t0;
+  });
+}
+(()=>{ const sw=document.getElementById("swTight"); if(!sw) return;
+  const set=on=>{ tight.on=on; tight.sig=""; sw.classList.toggle("on",on); sw.setAttribute("aria-checked",String(on)); const el=document.getElementById("tightNote"); if(el) el.textContent=tightText(); if(on) rebuildTight(); else if(playing&&restartTracks) restartTracks(); saveSoon(); };
+  sw.onclick=()=>{ if(!rawBuf){ toast("Add a voice first."); return; } if(!tight.onsets.length&&!tight.on){ tight.onsets=voiceEntries(); if(tight.onsets.length<3){ toast("I could not find enough entries in this voice to tighten."); return; } } set(!tight.on); };
+  document.querySelectorAll("#tightAmt button").forEach(b=>b.onclick=()=>{ tight.strength=+b.dataset.a; document.querySelectorAll("#tightAmt button").forEach(x=>x.classList.toggle("on",x===b)); tight.sig=""; const el=document.getElementById("tightNote"); if(el) el.textContent=tightText(); if(tight.on) rebuildTight(); saveSoon(); });
+})();
+/* the entries to tighten: where each is heard to start */
+function voiceEntries(){ try{ const buf=cleanCache?cleanCache.buf:rawBuf, det=cleanCache?tempoFromFlux(cleanCache.flux,cleanCache.hop):null; if(!det||!det.onsets||det.onsets.length<3) return []; return attackTimes(buf,det.onsets.slice().sort((x,y)=>x-y)).sort((x,y)=>x-y); }catch(e){ return []; } }
 let beatVariant=0, beatVariantFor=null;
 function beatFromVoice(fit){
   const VB=window.PennioVoiceBeat; if(!VB) return beatFromVoiceLegacy(fit);
@@ -4529,7 +4578,12 @@ function beatFromVoice(fit){
   on=[...new Set(on.map(t=>Math.round(t*100)/100))].sort((a,b)=>a-b);
   if(on.length<3 && !fit){ toast("Not enough rhythm in this recording. Try a longer phrase, or tap along."); return false; }
   if(!det){ toast("Could not hear a steady pulse. Use Tap along to set it yourself."); return false; }
-  const a=VB.analyse({frames,onsets:on,fluxOnsets:(det.onsets||[]),bpm:det.bpm,downbeat:det.downbeat,duration:rawBuf.duration,PROGS,fixedTempo:!!fit});
+  /* the grid is fitted to where entries are heard, not to the first trace of sound */
+  const fluxOn=(det.onsets||[]).slice().sort((x,y)=>x-y); let attOn=fluxOn, attShift=0;
+  try{ if(fluxOn.length>=8){ const raw=attackTimes(cleanCache?cleanCache.buf:rawBuf,fluxOn), dl=raw.map((t,i)=>t-fluxOn[i]).sort((x,y)=>x-y); attOn=raw.slice().sort((x,y)=>x-y); attShift=dl[Math.floor(dl.length/2)]||0; } }catch(e){ attOn=fluxOn; attShift=0; }
+  const a=VB.analyse({frames,onsets:on,fluxOnsets:attOn,bpm:det.bpm,downbeat:det.downbeat+attShift,duration:rawBuf.duration,PROGS,fixedTempo:!!fit});
+  a.attackShiftMs=Math.round(attShift*1000);
+  const tightOn=attOn.length>=8;
   /* pressing again for the same voice moves to the next style that fits, not a random one */
   if(beatVariantFor!==rawBuf){ beatVariantFor=rawBuf; beatVariant=0; } else beatVariant++;
   const sy=segmentSyllables(frames); classify(sy);
@@ -4548,6 +4602,7 @@ function beatFromVoice(fit){
   const pct=x=>Math.round(100*x)+"%", lowKey=a.keyMargin<.04||a.keyR<.55;
   window.__lastVoiceBeat={analysis:a,plan,match:M,variant:beatVariant,input:{frames:frames.map(f=>[+f.t.toFixed(3),+f.e.toFixed(5),+(f.f||0).toFixed(1)]),onsets:on,fluxOnsets:det.onsets||[],bpm:det.bpm,downbeat:det.downbeat,duration:rawBuf.duration}};
   document.getElementById("vmeta").textContent="Heard "+a.bpm+" BPM"+(a.N===12?" in a 12/8 feel":"")+(a.swing?", swing "+a.swing+"%":"")+". Key "+KEYN[a.key]+" "+a.mode+(lowKey?" (less sure)":"")+": "+pct(a.inKey)+" of your notes sit in it, and the chords follow your melody. "+pct(a.gridLock)+" of your entries land on the beat grid"+(a.align? ". Tempo fitted to "+a.bpm+" BPM: on-beat entries sit a median "+a.align.after.medianMs+" ms from the grid, "+pct(a.align.after.within20)+" within 20 ms"+(a.align.driftMs>=20?"; a whole-number tempo would have drifted "+a.align.driftMs+" ms by the end of the take":"")+". ":" and ")+M.locked+" of your "+M.total+" strongest accents have a drum under them. Style: "+style+". Tap again for the next style that fits, or Undo to go back.";
+  if(tightOn){ tight.on=true; tight.onsets=attOn.filter(t=>t>.02); tight.sig=""; const sw=document.getElementById('swTight'); if(sw){ sw.classList.add('on'); sw.setAttribute('aria-checked','true'); } rebuildTight().then(()=>{ const el=document.getElementById('tightNote'); if(el) el.textContent=tightText(); }); }
   if(!playing) start(); else { loopIdx=0; }
   return true;
 }
@@ -4613,7 +4668,7 @@ const kvSet=(k,v)=>tx("kv","readwrite",st=>st.put(v,k));
 const allProjects=()=>tx("projects","readonly",st=>st.getAll());
 function lsGet(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
 function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
-function stateNow(){ banks[bank]=pattern; return {fx:stripFx, bank, banks, shown:[...shownRows], pattern, chopOrder, bpm:+bpmEl.value, sw:+swEl.value, n:N, muted, gains:gainsV, tune:tuneV, lay:LAY, nudge:vocalNudge, ddBase, uduBase, vocalOffset, useEnhanced, vstyle, harm:H}; }
+function stateNow(){ banks[bank]=pattern; return {fx:stripFx, bank, banks, shown:[...shownRows], pattern, chopOrder, bpm:+bpmEl.value, sw:+swEl.value, n:N, muted, gains:gainsV, tune:tuneV, lay:LAY, nudge:vocalNudge, ddBase, uduBase, vocalOffset, useEnhanced, vstyle, harm:H, tight:{on:tight.on,strength:tight.strength,onsets:tight.onsets.map(t=>Math.round(t*1000)/1000)}}; }
 function saveSoon(withAudio){
   if(window.__expCache) window.__expCache.v=null;
   if(!ready||restoring) return;
@@ -4652,6 +4707,7 @@ async function openProject(rec,keepSitting){
   if(st.lay) Object.assign(LAY,st.lay); else { LAY.vox=st.vmode!=="full"; LAY.full=st.vmode==="full"; LAY.drum=false; }
   bpmEl.value=st.bpm||100; bpmEl.oninput(); swEl.value=st.sw||0; swEl.oninput();
   ddBase=st.ddBase||208; uduBase=st.uduBase||62; vocalOffset=st.vocalOffset||0;
+  { const tg=st.tight||{}; tight={on:!!tg.on,strength:typeof tg.strength==='number'?tg.strength:.8,onsets:Array.isArray(tg.onsets)?tg.onsets.filter(t=>isFinite(t)):[],sig:"",busy:false,cache:new Map(),report:null}; const sw=document.getElementById('swTight'); if(sw){ sw.classList.toggle('on',tight.on); sw.setAttribute('aria-checked',String(tight.on)); } const tn=document.getElementById('tightNote'); if(tn) tn.textContent=tightText(); }
   rawBuf=proBuf=drumBuf=null; slices=[]; currentAudio=null; drawWave();
   vprev.disabled=true; document.getElementById("vbeat").disabled=true; document.getElementById("toDrum").disabled=true; document.getElementById("vdel").disabled=true;
   vmeta.textContent="No recording yet. The Vox lane stays silent until you add one.";
@@ -6197,6 +6253,7 @@ window.PennioStudioProgress={begin(label="Working",description="Your work is bei
 <script src="/studio/render-monitor.js" defer></script>
 <script src="/studio/credits.js" defer></script>
 <script src="/studio/reel.js" defer></script>
+<script src="/studio/voicetight.js" defer></script>
 <script src="/studio/collab.js" defer></script>
 <script src="/studio/voicebeat.js" defer></script>
 <script src="/studio/daw.js" defer></script>
@@ -7107,6 +7164,9 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 .dh-asset button:hover,.dh-asset a:hover{border-color:rgba(var(--fg-rgb),.4)}
 .dh-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:rgba(242,101,34,.16);color:var(--orange-ink,#F26522);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .dh-profile{justify-self:start;min-height:44px;padding:0;font-size:13px;font-weight:700;color:#BC440B;text-decoration:underline;background:none;border:0;cursor:pointer}
+.tight-row{display:inline-flex;align-items:center;gap:10px;min-height:44px}.tight-row b{font-size:13px;white-space:nowrap}#tightAmt{display:none}.tight-row:has(.sw.on) #tightAmt{display:inline-flex}
+.tight-note{display:block;margin:2px 0 4px;font-size:11px;color:var(--ts,#a9a39b);line-height:1.3}
+@media (max-height:520px){.tight-note{display:none}}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
