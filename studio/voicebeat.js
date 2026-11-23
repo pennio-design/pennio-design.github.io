@@ -118,6 +118,14 @@
     return { prog: best.i, fit: best.s };
   }
 
+
+  /* A tune usually opens and closes on its home chord. How much of the first and last bars' sung notes sit in this key's tonic chord. */
+  function tonicEvidence(frames, tonic, mode, offset, bpm, dur) {
+    const bar = 4 * 60 / bpm, sc = SC[mode], tones = [0, 2, 4].map(k => (tonic + sc[k]) % 12), lastStart = offset + Math.floor(Math.max(0, dur - offset) / bar) * bar - bar;
+    const frac = (a, b) => { let all = 0, hit = 0; frames.forEach(f => { if (!(f.f > 0) || f.t < a || f.t >= b) return; const pc = (((Math.round(12 * Math.log2(f.f / 440) + 69)) % 12) + 12) % 12; all += 1; if (tones.includes(pc)) hit += 1; }); return all >= 8 ? hit / all : null; };
+    const first = frac(offset - .02, offset + bar), last = lastStart > offset + bar ? frac(lastStart - .02, lastStart + bar + .5) : null;
+    return (first == null ? 0 : first) * .6 + (last == null ? 0 : last) * .4;
+  }
   /* ---------- the analysis ---------- */
 
   /* Fit the grid to the voice. The detector's tempo is a whole number, which drifts 0.1 s or more across a 30 s take, so this
@@ -195,7 +203,7 @@
     for (const mode of ["major", "minor"]) for (let t = 0; t < 12; t++) { const rot = ch.c.map((_, i) => ch.c[(i + t) % 12]); ranked.push({ tonic: t, mode, r: pearson(rot, KS[mode]) }); }
     ranked.sort((x, y) => y.r - x.r);
     const shortlist = ranked.filter(k => k.r >= ranked[0].r - .1).slice(0, 6);
-    shortlist.forEach(k => { const pr = chooseProgression(frames, k.tonic, k.mode, bpm, offset, inp.PROGS); k.prog = pr.prog; k.fit = pr.fit; k.score = k.r + .6 * pr.fit; });
+    shortlist.forEach(k => { const pr = chooseProgression(frames, k.tonic, k.mode, bpm, offset, inp.PROGS); k.prog = pr.prog; k.fit = pr.fit; k.tonic_ev = tonicEvidence(frames, k.tonic, k.mode, offset, bpm, dur); k.score = k.r + .6 * pr.fit + .3 * k.tonic_ev; });
     shortlist.sort((x, y) => y.score - x.score);
     const key = { tonic: shortlist[0].tonic, mode: shortlist[0].mode, r: shortlist[0].r, margin: shortlist.length > 1 ? shortlist[0].score - shortlist[1].score : .3 };
     const sw = feel === "triplet" ? { swing: 0, n: 0 } : estimateSwing(timing, bpm, offset);

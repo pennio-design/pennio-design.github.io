@@ -6,7 +6,7 @@ SR=44100
 MAJ=[0,2,4,5,7,9,11]; MIN=[0,2,3,5,7,8,10]
 PROGS={'minor':[0,5,2,6],'major':[0,4,5,3]}
 def mtof(m): return 440*2**((m-69)/12)
-def note(sig,t0,dur,f,rng,amp=.5):
+def note(sig,t0,dur,f,rng,amp=.5,attack=.02,burst=True):
     n=int(dur*SR); t=np.arange(n)/SR
     vib=1+0.007*np.sin(2*np.pi*5.5*t)*np.clip(t/.15,0,1)
     port=np.exp(-t/.04)*0.03   # slight scoop into the note
@@ -16,14 +16,15 @@ def note(sig,t0,dur,f,rng,amp=.5):
         fh=f*h
         form=np.exp(-((fh-600)/500)**2)+.6*np.exp(-((fh-1700)/700)**2)+.25*np.exp(-((fh-3000)/900)**2)
         y+=np.sin(h*ph)*(1/h**1.05)*(.25+form)
-    env=np.minimum(1,t/.02)*np.exp(-t/(dur*3))   # soft attack, gentle decay
+    env=np.minimum(1,t/attack)*np.exp(-t/(dur*3))   # soft attack, gentle decay
     rel=np.minimum(1,(dur-t)/.06); env*=np.clip(rel,0,1)
     y=y*env
     # consonant burst at the onset
-    nb=int(.03*SR); burst=rng.normal(0,1,nb)*np.hanning(nb)*.5
-    y[:nb]+=burst[:min(nb,n)]
+    if burst:
+        nb=int(.03*SR); bb=rng.normal(0,1,nb)*np.hanning(nb)*.5
+        y[:nb]+=bb[:min(nb,n)]
     i0=int(t0*SR); sig[i0:i0+n]+=amp*y[:max(0,len(sig)-i0)][:n] if i0+n<=len(sig) else amp*y[:len(sig)-i0]
-def make(name,bpm,key,mode,swing,grid,seed,bars=8,lead=0.9):
+def make(name,bpm,key,mode,swing,grid,seed,soft=0,bars=8,lead=0.9):
     rng=np.random.default_rng(seed); r=random.Random(seed)
     beat=60/bpm; steps=16 if grid==16 else 12; per_beat=steps//4
     step=beat/per_beat
@@ -46,23 +47,25 @@ def make(name,bpm,key,mode,swing,grid,seed,bars=8,lead=0.9):
             dur=max(.12,(nxt-s)*step*.85)
             off=(step*swing/100*.5) if (grid==16 and s%2==1) else 0
             t0=lead+(b*steps+s)*step+off
+            if soft and not (b==0 and s==pick[0]): t0+=r.uniform(-.015,.015)
             deg=r.choice([0,0,1,2,2,4,4,5])
             pc=(key+(tones[(deg%3)] if r.random()<.7 else scale[r.randrange(7)]))%12
             midi=60+((pc-60)%12) if pc>=5 else 72+pc-12+12  # keep roughly 60-76
             midi=int(60+((pc-0)%12)+ (12 if pc<5 else 0))
-            note(sig,t0,dur,mtof(midi),rng)
+            note(sig,t0,dur,mtof(midi),rng,attack=(.07 if soft else .02),burst=not soft)
             onsets.append(t0)
     sig+=rng.normal(0,.0015,len(sig))
     sig/=np.max(np.abs(sig))*1.1
     pcm=(sig*32767).astype(np.int16)
     with wave.open(f'voices/{name}.wav','wb') as w:
         w.setnchannels(1);w.setsampwidth(2);w.setframerate(SR);w.writeframes(pcm.tobytes())
-    return {'name':name,'bpm':bpm,'downbeat':lead,'key':key,'mode':mode,'swing':swing,'grid':grid,'seconds':len(sig)/SR,'onsets':onsets}
+    return {'name':name,'bpm':bpm,'downbeat':lead,'key':key,'mode':mode,'swing':swing,'grid':grid,'seconds':len(sig)/SR,'onsets':onsets,'soft':soft,'attack':(.07 if soft else .02),'pcenter':lead+((.035) if soft else 0)}
 cases=[
  ('f_min_101',101,5,'minor',14,16,1),('a_min_88',88,9,'minor',0,16,2),('d_maj_112',112,2,'major',20,16,3),
  ('g_maj_124',124,7,'major',6,16,4),('c_min_96',96,0,'minor',30,16,5),('eb_maj_104',104,3,'major',10,16,6),
  ('bb_min_118',118,10,'minor',0,16,7),('e_min_92',92,4,'minor',24,16,8),('a_maj_108',108,9,'major',14,16,9),
  ('d_min_112_tri',112,2,'minor',0,12,10),('g_maj_96_tri',96,7,'major',0,12,11),('f_min_84',84,5,'minor',12,16,12),
+  ('s_c_min_100',100,0,'minor',8,16,21,1),('s_a_maj_97p6',97.6,9,'major',12,16,22,1),('s_e_min_111p3',111.3,4,'minor',0,16,23,1),('s_g_maj_90',90,7,'major',14,16,24,1),
  ('c_maj_103p4',103.4,0,'major',10,16,13),('a_min_97p6',97.6,9,'minor',14,16,14),('e_min_121p8',121.8,4,'minor',8,16,15),('g_min_88p3',88.3,7,'minor',0,16,16),
 ]
 truth=[make(*c) for c in cases]
