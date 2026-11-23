@@ -3107,7 +3107,9 @@ window.PennioCore={
   currentId:()=>currentId, toast:m=>toast(m), sessionName:()=>document.getElementById("pname").value.trim()||"Untitled beat",
   async getRec(id){ return ((await allProjects())||[]).find(r=>r.id===id)||null; },
   async putRec(rec){ return tx("projects","readwrite",st=>st.put(rec)); },
-  async openRec(rec){ await saveNow(); await openProject(rec); ready=true; window.__pennioKeepSession=rec.id; }
+  async openRec(rec){ await saveNow(); await openProject(rec); ready=true; window.__pennioKeepSession=rec.id; },
+  /* measurement only: the rendered mix with the voice or the beat left out, for level checks */
+  async probeMix(which){ const lay={...LAY}, mu={...muted}; try{ if(which==='voice'){ LANES.forEach(l=>{ muted[l.id]=true; }); LAY.drum=false; } if(which==='beat'){ LAY.full=false; } expCache.v=null; const m=await prepareMix(false,false,null); return {lufs:m.lufs,lufsBefore:m.lufsBefore,metrics:m.metrics}; } finally{ Object.assign(LAY,lay); Object.keys(muted).forEach(k=>delete muted[k]); Object.assign(muted,mu); expCache.v=null; } }
 };
 window.PennioVoice={raw:()=>rawBuf,pro:()=>proBuf,clean:()=>cleanCache&&cleanCache.buf,hum:()=>cleanCache&&cleanCache.hum||null};
 window.PennioState={harm:()=>({key:H.key,scale:H.scale,prog:H.prog}),offset:()=>vocalOffset,N:()=>N,pattern:()=>JSON.parse(JSON.stringify(pattern)),ddBase:()=>ddBase,uduBase:()=>uduBase,lastBeat:()=>window.__lastVoiceBeat||null};
@@ -3622,7 +3624,9 @@ async function styleVoice(clean,key){
   const out=await oc.startRendering();
   /* the compressor looks 6 ms ahead and so delays the voice by that much; take it back so the styled voice sits exactly where the raw one did */
   { const lag=Math.round(.006*sr); for(let c=0;c<out.numberOfChannels;c++){ const d=out.getChannelData(c); d.copyWithin(0,lag); d.fill(0,d.length-lag); } }
-  try{ await matchLoudness(out,-16); }catch(e){}
+  /* the styled voice should not play quieter than the recording it came from (a quieter A/B reads as worse): match the recording's loudness, kept between -16 and -12.5 LUFS */
+  let tgt=-16; try{ if(rawBuf){ const lr=await lufsOf(rawBuf); if(isFinite(lr)) tgt=Math.max(-16,Math.min(-12.5,lr)); } }catch(e){}
+  try{ await matchLoudness(out,tgt); }catch(e){}
   return out;
 }
 /* the level of the quietest fifth of the recording, in dB: what the background sounds like when nobody is speaking */
