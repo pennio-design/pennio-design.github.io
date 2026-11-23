@@ -1418,6 +1418,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       <div class="dh-copy">
         <p class="dh-hi" id="dhHi"></p>
         <h1 class="dh-title" id="dhTitle">Start a beat</h1>
+        <button type="button" class="dh-link dh-profile" id="dhProfile" hidden>Add your name to finish your profile</button>
         <div class="dh-actions">
           <button type="button" class="dh-primary" id="dhContinue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg><span id="dhContinueLbl">Start</span></button>
           <button type="button" class="dh-ghost" id="dhNew"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>New beat</button>
@@ -1964,6 +1965,7 @@ A clear image or action.
     <div class="err" id="obErr"></div>
     <button class="btn primary" type="submit" style="width:100%;margin-top:6px;padding:13px">Enter the studio</button>
   </form>
+  <button class="btn" id="obLater" type="button" style="width:100%;margin-top:10px" hidden>Not now</button>
   <button class="btn" id="obReturn" type="button" style="width:100%;margin-top:10px">Sign out and leave</button>
 </div></div>
 
@@ -5059,6 +5061,7 @@ document.getElementById("obForm").onsubmit=async e=>{
   const prof={name,email,make:obMake,joined:sameAccount&&prev.joined?prev.joined:Date.now(),sent:sameAccount&&!!prev.sent,kit:sameAccount&&!!prev.kit,kitPending:sameAccount&&!!prev.kitPending,kitAttemptAt:sameAccount?(prev.kitAttemptAt||0):0};
   lsSet("ps.profile",prof); await kvSet("profile",prof);
   paintAvatar();
+  try{ document.getElementById("obLater").hidden=true; if(window.PennioDashRefresh) PennioDashRefresh(); }catch(e){}
   const greetingName=document.getElementById("dashUserName");
   if(greetingName) greetingName.textContent=name.trim().split(/\s+/)[0]+".";
   const mailStatus=await sendProfileIfNeeded(true);
@@ -5199,7 +5202,7 @@ async function cloudSyncAll(opts){
     await cloudPutData("words",(await kvGet("words"))||lsGet("ps.words")||[]);
     const cp=await cloudGetData("profile"), lp=lsGet("ps.profile");
     if(cp && !lp){ lsSet("ps.profile",Object.assign({},cp,{sent:true,kit:true})); await kvSet("profile",cp); ob.classList.remove("on"); }
-    else if(lp) await cloudPutData("profile",{name:lp.name,email:lp.email,make:lp.make,joined:lp.joined});
+    else if(lp&&!lp.provisional) await cloudPutData("profile",{name:lp.name,email:lp.email,make:lp.make,joined:lp.joined});
     // on a fresh device, open the newest project from the cloud
     if(fresh){
       const newest=remote.slice().sort((a,b)=>Date.parse(b.updated_at)-Date.parse(a.updated_at))[0];
@@ -5271,6 +5274,7 @@ document.getElementById("sbWipe").onclick=async()=>{
     toast("Your cloud copy is deleted. Your work is still in this browser.");
   }catch(e){ toast("Could not delete right now. Email contact@pennio.agency and we will remove it."); }
 };
+document.getElementById("obLater").onclick=()=>{ ob.classList.remove("on"); };
 document.getElementById("obReturn").onclick=async()=>{ try{if(sbSess)await sbFetch("/auth/v1/logout",{method:"POST"});}catch(e){} sbClear(); location.reload(); };
 
 /* boot: the workspace is mounted only after Supabase confirms a valid account session. */
@@ -5281,6 +5285,8 @@ async function startPENNIOWorkspace(authState){
   const authEmail=(sbSess&&sbSess.user&&sbSess.user.email||"").trim().toLowerCase();
   let prof=lsGet("ps.profile")||(await kvGet("profile"));
   if(prof&&((authEmail&&String(prof.email||"").trim().toLowerCase()!==authEmail)||!String(prof.name||"").trim())) prof=null;
+  if(!prof&&authEmail){ /* the dashboard is the welcome screen; capturing a name comes after it, not before it */
+    const nm=authEmail.split("@")[0].replace(/[._-]+/g," ").trim().split(/\s+/)[0]||""; prof={name:nm.charAt(0).toUpperCase()+nm.slice(1),email:authEmail,make:"",joined:Date.now(),sent:false,kit:false,kitPending:false,kitAttemptAt:0,provisional:true}; }
   if(!prof){pendingWorkspaceAuthState=authState||{};pennioProfileGateOpen=true;document.getElementById("authGate").hidden=true;document.body.classList.add("profile-required");const obEmail=document.getElementById("obEmail");document.getElementById("obName").value="";obEmail.value=authEmail;obEmail.readOnly=!!authEmail;document.getElementById("obErr").textContent="";ob.classList.add("on");requestAnimationFrame(()=>document.getElementById("obName").focus());return;}
   pennioWorkspaceStarted=true;lsSet("ps.profile",prof);document.body.classList.remove("auth-locked","profile-required");document.getElementById("authGate").hidden=true;
   const curId=lsGet("ps.current")||(await kvGet("current"));
@@ -5305,7 +5311,7 @@ async function startPENNIOWorkspace(authState){
   if(!g){ const pend=lsGet("ps.pendingGroove"); if(pend&&pend.g&&Date.now()-pend.t<864e5) g=pend.g; }
   try{ localStorage.removeItem("ps.pendingGroove"); }catch(e){}
   if(g){ try{ const st=grooveDecode(g); await saveNow(); const shared={id:newId(), name:"Shared groove", created:Date.now(), updated:Date.now(), state:{...st, banks:null}, audio:null};
-      await openProject(shared); ready=true; await saveNow(); toast("Opened a shared groove as a new session. Your own work is in Sessions."); }
+      await openProject(shared); ready=true; await saveNow(); toast("Opened a shared groove as a new session. Your own work is in Sessions."); { const nb=document.querySelector('nav button[data-v="ayan"]'); if(nb) nb.click(); } }
     catch(e){ toast("That groove link is broken or incomplete."); }
     try{ history.replaceState(null,"",location.pathname+location.hash); }catch(e){} }
   const fresh=!!(authState&&authState.fromLink) && (((await allProjects())||[]).every(p=>!p.audio && Date.now()-(p.created||0)<15*60000));
@@ -5369,7 +5375,7 @@ async function kitSubscribe(prof){
   }catch(e){ return "failed"; }
 }
 async function sendProfileIfNeeded(force=false){
-  const prof=lsGet("ps.profile"); if(!prof) return "failed";
+  const prof=lsGet("ps.profile"); if(!prof) return "failed"; if(prof.provisional) return "skipped"; /* nothing is sent until the person adds their name */
   let mailStatus=prof.kit?"accepted":"skipped";
   const recentAttempt=prof.kitAttemptAt&&Date.now()-prof.kitAttemptAt<30*60*1000;
   if(force||(!prof.kit&&!recentAttempt)){
@@ -5601,7 +5607,7 @@ function show(v){
 }
 document.querySelectorAll("nav button[data-v]").forEach(b=>b.onclick=()=>{ show(b.dataset.v); try{history.replaceState(null,"",b.dataset.v==="home"?"/studio/":"#"+b.dataset.v);}catch(e){} });
 const hs=x=>{x=x.replace("#",""); return x==="film"?"faajiplace":x;};
-const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan"||h==="home") show(h); else show("ayan");
+const h=hs(location.hash); if(h==="faajiplace"||h==="write"||h==="beauty"||h==="ayan"||h==="home") show(h); else show("home");
 window.addEventListener("hashchange",()=>{const x=hs(location.hash); if(x==="faajiplace"||x==="ayan"||x==="write"||x==="beauty") show(x);});
 
 /* Ojuloge camera controls */
@@ -6112,6 +6118,7 @@ document.getElementById("sylIn").oninput=sylRender;
   const first=((prof&&prof.name)||"").trim().split(/\s+/)[0], hr=new Date().getHours();
   $("dhHi").textContent=(hr<12?"Good morning":hr<18?"Good afternoon":"Good evening")+(first?", "+first:"");
   heroSession=list[0]||null;
+  $("dhProfile").hidden=!(prof&&prof.provisional);
   $("dhTitle").textContent=heroSession?heroSession.name:"Start a beat";
   $("dhContinueLbl").textContent=heroSession?"Continue":"Start";
   const wrap=$("dhSessions");wrap.replaceChildren();
@@ -6141,6 +6148,7 @@ document.getElementById("sylIn").oninput=sylRender;
   }catch(e){}
   $("dhFoot").textContent=list.length?list.length+(list.length===1?" session":" sessions")+" saved on this device":"";
  }
+ $("dhProfile").onclick=()=>{ const o=document.getElementById("onboard"); const pr=JSON.parse(localStorage.getItem("ps.profile")||"{}"); document.getElementById("obName").value=pr.name||""; const em=document.getElementById("obEmail"); em.value=pr.email||""; em.readOnly=!!pr.email; document.getElementById("obErr").textContent=""; document.getElementById("obLater").hidden=false; o.classList.add("on"); setTimeout(()=>document.getElementById("obName").focus(),50); };
  $("dhContinue").onclick=async()=>{const b=$("dhContinue");b.disabled=true;try{if(heroSession)await S().open(heroSession.id);else await S().create();go("ayan");}finally{b.disabled=false;}};
  $("dhNew").onclick=async()=>{const b=$("dhNew");b.disabled=true;try{await S().create();go("ayan");}finally{b.disabled=false;}};
  $("dhRec").onclick=()=>{const r=document.getElementById("studioRecLaunch");if(r)r.click();};
@@ -7094,6 +7102,7 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 .dh-asset button,.dh-asset a{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--border);font-size:12px;font-weight:600;display:inline-flex;align-items:center;color:var(--tp);background:transparent;text-decoration:none;cursor:pointer}
 .dh-asset button:hover,.dh-asset a:hover{border-color:rgba(var(--fg-rgb),.4)}
 .dh-tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:rgba(242,101,34,.16);color:var(--orange-ink,#F26522);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.dh-profile{justify-self:start;min-height:44px;padding:0;font-size:13px;font-weight:700;color:#BC440B;text-decoration:underline;background:none;border:0;cursor:pointer}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
