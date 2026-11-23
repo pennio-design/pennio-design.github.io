@@ -63,6 +63,7 @@ cases=[
  ('g_maj_124',124,7,'major',6,16,4),('c_min_96',96,0,'minor',30,16,5),('eb_maj_104',104,3,'major',10,16,6),
  ('bb_min_118',118,10,'minor',0,16,7),('e_min_92',92,4,'minor',24,16,8),('a_maj_108',108,9,'major',14,16,9),
  ('d_min_112_tri',112,2,'minor',0,12,10),('g_maj_96_tri',96,7,'major',0,12,11),('f_min_84',84,5,'minor',12,16,12),
+ ('c_maj_103p4',103.4,0,'major',10,16,13),('a_min_97p6',97.6,9,'minor',14,16,14),('e_min_121p8',121.8,4,'minor',8,16,15),('g_min_88p3',88.3,7,'minor',0,16,16),
 ]
 truth=[make(*c) for c in cases]
 json.dump(truth,open('voices/truth.json','w'),indent=1)

@@ -1511,7 +1511,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
 
     <div class="tp-pop" id="tpPop" role="dialog" aria-label="Tempo, swing and steps" hidden>
       <div class="tp-pop-head"><b>Tempo and feel</b><button class="btn ic pop-x" type="button" data-pop-close aria-label="Close">×</button></div>
-          <div class="ctl x"><label>Tempo <b id="bpmV">104</b></label><input type="range" id="bpm" min="60" max="160" value="104" aria-label="Tempo"></div>
+          <div class="ctl x"><label>Tempo <b id="bpmV">104</b></label><input type="range" id="bpm" min="60" max="160" step="0.1" value="104" aria-label="Tempo"></div>
           <div class="ctl x"><label>Swing <b id="swV">12%</b></label><input type="range" id="swing" min="0" max="60" value="12" aria-label="Swing"></div>
       <div class="tp-pop-row"><span>Steps per bar</span>    <div class="seg x" id="len" aria-label="Steps per bar"><button data-n="12">12</button><button data-n="16" class="on">16</button></div></div>
       <div class="tp-pop-row"><span>Playback</span><div class="seg x" id="perfMode" aria-label="Playback mode"><button data-m="auto" class="on">Auto</button><button data-m="smooth">Smooth</button><button data-m="full">Full</button></div></div>
@@ -3188,7 +3188,7 @@ function grooveEncode(){ const o={v:1,n:N,b:+bpmEl.value,s:+swEl.value,h:[H.key,
   return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
 function grooveDecode(g){ const o=JSON.parse(decodeURIComponent(escape(atob(g.replace(/-/g,"+").replace(/_/g,"/"))))); if(o.v!==1) throw 0;
   const pat={}; LANES.forEach(l=>{ pat[l.id]= o.p[l.id]? o.p[l.id].split(",").map(Number).map(v=>Math.max(-l.states,Math.min(l.states,v|0))) : new Array(16).fill(0); while(pat[l.id].length<16) pat[l.id].push(0); });
-  return {pattern:pat, n:o.n===12?12:16, bpm:Math.max(60,Math.min(160,o.b|0||100)), sw:Math.max(0,Math.min(60,o.s|0)), harm:{key:((o.h&&o.h[0])|0)%12, scale:(o.h&&o.h[1])==="major"?"major":"minor", prog:(o.h&&o.h[2])|0}}; }
+  return {pattern:pat, n:o.n===12?12:16, bpm:Math.max(60,Math.min(160,Math.round((+o.b||100)*10)/10)), sw:Math.max(0,Math.min(60,o.s|0)), harm:{key:((o.h&&o.h[0])|0)%12, scale:(o.h&&o.h[1])==="major"?"major":"minor", prog:(o.h&&o.h[2])|0}}; }
 document.getElementById("expLink").onclick=async()=>{ const url=location.origin+"/studio/?g="+grooveEncode();
   try{ await navigator.clipboard.writeText(url); toast("Link copied. Whoever opens it gets this groove as a new session."); }
   catch(e){ if(navigator.share) try{ await navigator.share({url, text:"Try my groove on PENNIO Studio"}); }catch(x){} else prompt("Copy this link", url); } };
@@ -3529,6 +3529,8 @@ function notchInPlace(x,sr,f,Q){
   const w0=2*Math.PI*f/sr, al=Math.sin(w0)/(2*Q), cs=Math.cos(w0), a0=1+al, b0=1/a0, b1=-2*cs/a0, b2=1/a0, a1=-2*cs/a0, a2=(1-al)/a0;
   let x1=0,x2=0,y1=0,y2=0; for(let i=0;i<x.length;i++){ const v=x[i], y=b0*v+b1*x1+b2*x2-a1*y1-a2*y2; x2=x1; x1=v; y2=y1; y1=y; x[i]=y; }
 }
+/* exponential integral E1(x), for the log-spectral-amplitude gain */
+function expInt1(x){ if(x<=1) return -.5772156649-Math.log(x)+x-x*x/4+x*x*x/18-x*x*x*x/96; return Math.exp(-x)/x*(x*x+2.334733*x+.250621)/(x*x+3.330657*x+1.681534); }
 async function denoise(b){
   const sr=b.sampleRate, n=b.length, chs=b.numberOfChannels, x=new Float32Array(n);
   for(let c=0;c<chs;c++){ const d=b.getChannelData(c); for(let i=0;i<n;i++) x[i]+=d[i]/chs; }
@@ -3553,10 +3555,12 @@ async function denoise(b){
   for(let f=1;f<F;f++){ let s=0; for(let k=k0;k<k1;k++){ const d=Math.log(1+mags[f*B+k]/noise[k])-Math.log(1+mags[(f-1)*B+k]/noise[k]); if(d>0) s+=d; } flux[f]=s; }
   // spectral gate with smoothing, so speech stays natural and the hiss goes
   const G=new Float32Array(B), floor=.1, y=new Float32Array(n+N), wsum=new Float32Array(n+N);
+  /* decision-directed a-priori SNR with a log-spectral-amplitude gain: speech keeps its detail and the leftover hiss does not twinkle */
+  const prevS=new Float32Array(B), DDA=.9;
   for(let f=0;f<F;f++){
     const floorF=energy[f]<quietE*3? .03 : floor; /* quieter in the gaps between phrases, as before inside them */
     const wantEss=(energy[f]>quietE*6&&ratio[f]>essThr)? Math.max(.3,Math.pow(essThr/ratio[f],.9)) : 1; ess= wantEss<ess? wantEss : ess*.7+wantEss*.3;
-    for(let k=0;k<B;k++){ const m=mags[f*B+k], snr=(m*m)/(noise[k]*noise[k]); let g=Math.max(floorF,Math.sqrt(Math.max(0,1-1.6/(snr+1e-9)))); g=Math.min(1,g); if(ess<1&&k>=h0-8&&k<=h1+8){ const edge=Math.min(1,Math.min(k-(h0-8),(h1+8)-k)/8); g*=1-(1-ess)*Math.max(0,edge); } G[k]= g>G[k]? g : G[k]*.55+g*.45; }
+    for(let k=0;k<B;k++){ const m=mags[f*B+k], gam=(m*m)/(noise[k]*noise[k]+1e-18), xi=Math.max(.003,DDA*prevS[k]+(1-DDA)*Math.max(gam-1,0)), vv=Math.max(1e-3,xi/(1+xi)*gam); let g=Math.min(1,Math.max(floorF,xi/(1+xi)*Math.exp(.5*expInt1(vv)))); prevS[k]=g*g*gam; if(ess<1&&k>=h0-8&&k<=h1+8){ const edge=Math.min(1,Math.min(k-(h0-8),(h1+8)-k)/8); g*=1-(1-ess)*Math.max(0,edge); } G[k]= g>G[k]? g : G[k]*.55+g*.45; }
     for(let k=0;k<B;k++){ const g=(k>0&&k<B-1)? (G[k-1]+2*G[k]+G[k+1])/4 : G[k]; const m=mags[f*B+k]*g, ph=phs[f*B+k]; re[k]=m*Math.cos(ph); im[k]=m*Math.sin(ph); if(k>0&&k<N/2){ re[N-k]=re[k]; im[N-k]=-im[k]; } }
     for(let i=0;i<N;i++) im[i]=-im[i]; fft(re,im);
     const st=f*H-N/2; for(let i=0;i<N;i++){ const k=st+i; if(k<0||k>=n) continue; y[k]+=re[i]/N*win[i]; wsum[k]+=win[i]*win[i]; }
@@ -4543,7 +4547,7 @@ function beatFromVoice(fit){
   LAY.full=true; LAY.vox=false; vocalNudge=0; restartTracks(); renderLayers(); setN(a.N); markPresets(-1);
   const pct=x=>Math.round(100*x)+"%", lowKey=a.keyMargin<.04||a.keyR<.55;
   window.__lastVoiceBeat={analysis:a,plan,match:M,variant:beatVariant,input:{frames:frames.map(f=>[+f.t.toFixed(3),+f.e.toFixed(5),+(f.f||0).toFixed(1)]),onsets:on,fluxOnsets:det.onsets||[],bpm:det.bpm,downbeat:det.downbeat,duration:rawBuf.duration}};
-  document.getElementById("vmeta").textContent="Heard "+a.bpm+" BPM"+(a.N===12?" in a 12/8 feel":"")+(a.swing?", swing "+a.swing+"%":"")+". Key "+KEYN[a.key]+" "+a.mode+(lowKey?" (less sure)":"")+": "+pct(a.inKey)+" of your notes sit in it, and the chords follow your melody. "+pct(a.gridLock)+" of your entries land on the beat grid and "+M.locked+" of your "+M.total+" strongest accents have a drum under them. Style: "+style+". Tap again for the next style that fits, or Undo to go back.";
+  document.getElementById("vmeta").textContent="Heard "+a.bpm+" BPM"+(a.N===12?" in a 12/8 feel":"")+(a.swing?", swing "+a.swing+"%":"")+". Key "+KEYN[a.key]+" "+a.mode+(lowKey?" (less sure)":"")+": "+pct(a.inKey)+" of your notes sit in it, and the chords follow your melody. "+pct(a.gridLock)+" of your entries land on the beat grid"+(a.align? ". Tempo fitted to "+a.bpm+" BPM: on-beat entries sit a median "+a.align.after.medianMs+" ms from the grid, "+pct(a.align.after.within20)+" within 20 ms"+(a.align.driftMs>=20?"; a whole-number tempo would have drifted "+a.align.driftMs+" ms by the end of the take":"")+". ":" and ")+M.locked+" of your "+M.total+" strongest accents have a drum under them. Style: "+style+". Tap again for the next style that fits, or Undo to go back.";
   if(!playing) start(); else { loopIdx=0; }
   return true;
 }
