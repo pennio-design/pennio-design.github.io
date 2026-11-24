@@ -33,23 +33,45 @@ Yorùbá names appear in brackets as labels for Paul: **[confirm name and tones]
 
 > Character reference sheet on a plain warm-grey background: front, three-quarter and profile views. A twelve-year-old Yorùbá child, curious and a little shy, short natural hair, simple white shirt and indigo trousers, bare forearms, small hands. Open, attentive expression. Invented child, not a real person.
 
-## 3. Set plates (the tree)
+## 3. Set plates: the Igi Olú (the mushroom tree)
+
+### 3.0 The world (show lore, invented by Paul)
+
+The tree is a **giant olú (mushroom) that never dies**: *igi olú*, the mushroom tree **[Paul to confirm the Yorùbá and tones]**. Its cap is the canopy. Old caps fall and new ones rise from the same stalk, so the shade is never lost. That is the show's image of knowledge: it does not end, it regrows.
+
+Rules for the world:
+- **This is fiction, and the show says it is a story device.** A giant undying mushroom is not a claim about real fungi. Anything the show says about real mushrooms or fungal networks goes through a dossier with sources.
+- **Do not paint it as a fly agaric.** No red cap with white spots. That reads as a video-game or fairy-tale cliché and works against the weight of the subject. Use pale ivory, ochre and warm earth, with indigo shadows and amber light.
+- **Keep it organic and grounded.** A thick fluted stalk like an old trunk, a broad domed cap, warm light under it. Not psychedelic, not neon.
+- The old iroko tree is retired from the set. This also avoids depicting a tree that many people hold sacred.
 
 ### 3.1 Day plate
 
-> Wide locked-off shot of a Yorùbá family backyard in warm afternoon light. A huge iroko tree with a broad canopy, dappled shade on swept red earth. Under it, two carved wooden stools, one guest chair, a low round table with a calabash of a deep-red drink, a plate of snacks and a small dish of kola nuts. Soft lights hang in the branches like fruit. Faint adire-pattern light drifts in the air. A transparent slate floats at table height. No people.
+> Wide locked-off shot of a Yorùbá family backyard in warm afternoon light. A colossal ancient mushroom tree stands in the middle: a thick fluted ivory-ochre stalk with growth rings like an old trunk, and a broad domed cap high above acting as a canopy, its underside lined with faintly glowing amber gills. Dappled shade on swept red earth. Under it, two carved wooden stools, one guest chair, a low round table with a calabash of a deep-red drink, a plate of snacks and a small dish of kola nuts. Faint adire-pattern light drifts in the air. A transparent slate floats at table height. No people.
 
 ### 3.2 Dusk plate
 
-> The same backyard under the iroko tree in blue-hour dusk. The lights in the branches glow brighter, the adire-pattern light is more visible, the table is lit from above by the canopy. No people.
+> The same backyard in blue-hour dusk. The gills under the giant mushroom cap glow amber-gold like lanterns, tiny spores drift like fireflies, and fine threads of soft light run along the red earth from the base of the stalk toward the horizon. The table is lit from above. No people.
 
-### 3.3 Table detail
+### 3.3 Under the cap
 
-> Close, slow push-in on the low round table: a calabash, a dish of kola nuts, a small plate of food, a cloth in indigo and white. Branch lights soft in the background. No people.
+> Looking straight up from the table into the underside of an enormous mushroom cap: radiating gills glowing soft amber, tiny drifting spores, adire-pattern light faintly moving. Locked camera. No people.
 
-### 3.4 Canopy detail
+### 3.4 The stalk
 
-> Looking up through the iroko canopy: leaves, soft glowing lights like fruit, faint adire-pattern light drifting. Locked camera. No people.
+> Close on the base of a giant ivory-ochre mushroom stalk: fluted surface, growth rings, small new mushrooms budding around the roots, red earth, soft morning light. Slow push-in. No people.
+
+### 3.5 Table detail
+
+> Close, slow push-in on the low round table: a calabash, a dish of kola nuts, a small plate of food, a cloth in indigo and white. Amber light from the gills above softly lights the scene. No people.
+
+### 3.6 The cap that never dies (optional, symbolic)
+
+> Time-lapse of a giant mushroom cap: its old edge slowly folds and falls away in soft pieces while a new cap pushes up from beneath it, the amber glow never going out. Locked camera, wide. No people.
+
+### 3.7 The threads (optional, symbolic, for the seven-towns series)
+
+> A stylised cross-section of red earth under the giant mushroom: glowing amber threads spread outward through the soil toward seven small distant points of warm light. Slow lateral move. Symbolic, not a diagram of real roots.
 
 ## 4. The seven towns (series opener and transitions)
 

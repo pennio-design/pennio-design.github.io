@@ -42,6 +42,8 @@ Reuse both sheets as ingredient/reference images in every shot.
 
 ## 4. The set (Flow plates)
 
+**Superseded (24 November 2026): the tree is now the Igi Olú, a giant undying mushroom. Use the plates in `flow-prompts-series-1.md`, section 3. The iroko prompts below are retired.**
+
 One backyard. Two plates cover the season.
 
 ### Prompt: day plate
