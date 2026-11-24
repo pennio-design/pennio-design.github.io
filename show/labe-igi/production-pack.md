@@ -13,7 +13,7 @@ Rule for this whole file: every Yorùbá string is marked **[YÒRÙBÁ: Paul to 
 | Ritual line | **Dáhùn ìbéèrè ìjìnlẹ̀** | Supplied by Paul; "Answer the deep question" to confirm |
 | English subtitle (metadata, thumbnails) | Interviews under the tree | Draft |
 
-`sàn-án`, `tààrà`, `gidigidi` belong to one category (intensifiers). Paul to give the Yorùbá term for it.
+`sàn-án`, `tààrà`, `gidigidi`, `yékéyéké` belong to one category: words used to qualify another word (*a máa ń fi wọ́n yán ọ̀rọ̀*), e.g. *ó ti yé mi yékéyéké* (I understand it thoroughly). Working term **àyán**, Paul to confirm the exact term and tones. Note: the Studio's beat room is **Àyàn** (the drum), a different word. Do not let the two collide in public copy.
 
 ## 2. Premise
 
@@ -23,18 +23,18 @@ Thesis for season 1: Africa's future of learning is built from the oral traditio
 
 ## 3. The hosts (Flow character sheets)
 
-Two hosts, one tree. They alternate who asks. The one not asking sits in silence and offers the proverb in Round 2. Placeholder names: **Baba** and **Ìyá**. Paul to name them.
+Two hosts, one tree. They alternate who asks. The one not asking sits in silence and offers the proverb in Round 2. Names (decided): **Baba Olú** and **Mama Olú**.
 
 Cautions:
 - Do not depict a real religious office, orisha or rite. White cloth on a wise elder is enough.
 - Never base a face on a real person. Generate from the sheet, with no likeness, and lock it.
 - The sacred register lives in manner: slow pace, silence, the ritual line.
 
-### Prompt: Baba (character sheet, run first)
+### Prompt: Baba Olú (character sheet, run first)
 
 > Character reference sheet, front, three-quarter and side views on a plain warm-grey background. An elderly Yorùbá man in his seventies, calm and warm, close-cropped grey hair, short white beard, deep laugh lines, dark brown skin with natural texture. He wears a flowing white agbada with fine white-on-white embroidery at the neckline and a white fila cap, a single strand of small white and indigo beads at the wrist. Posture upright and unhurried, hands resting open. Expression: attentive, faintly amused. Soft natural light. Photorealistic stylised animation, painterly, 3D animated feature look, consistent proportions. No text, no logos, no real person's likeness.
 
-### Prompt: Ìyá (character sheet)
+### Prompt: Mama Olú (character sheet)
 
 > Character reference sheet, front, three-quarter and side views on a plain warm-grey background. An elderly Yorùbá woman in her seventies, composed and watchful, silver hair wrapped in a white gele tied low and neat, dark brown skin with natural texture, kind direct eyes. She wears a white buba and iro with fine white-on-white embroidery and a white shawl, one strand of small white and indigo beads at the neck. Posture upright, hands folded. Expression: patient, quietly sharp. Soft natural light. Photorealistic stylised animation, painterly, 3D animated feature look, consistent proportions. No text, no logos, no real person's likeness.
 
@@ -55,15 +55,15 @@ Same as the day plate, in blue-hour dusk, branch lights brighter, patterns more 
 ## 5. Flow test (one hour, before any scripting)
 
 1. Generate the day plate once.
-2. Generate Baba once and reuse the reference in five shots.
-3. Shot 1: Baba walks to the stool and sits.
-4. Shot 2: close on Baba, speaks the title line.
-5. Shot 3: Ìyá, same set, same light.
-6. Shot 4: two-shot, Baba asks, Ìyá listens.
+2. Generate Baba Olú once and reuse the reference in five shots.
+3. Shot 1: Baba Olú walks to the stool and sits.
+4. Shot 2: close on Baba Olú, speaks the title line.
+5. Shot 3: Mama Olú, same set, same light.
+6. Shot 4: two-shot, Baba Olú asks, Mama Olú listens.
 7. Shot 5: wide, guest chair empty.
 
 Pass criteria:
-- Baba and Ìyá look the same across shots.
+- Baba Olú and Mama Olú look the same across shots.
 - The set does not drift.
 - The title line is pronounced correctly, tone and elision. **If this fails, record Yorùbá lines yourself and lay them over the video.**
 
@@ -97,32 +97,32 @@ Pilot: fictional composite guests, **labelled on screen as characters**: a teach
 
 ## 9. Episode 1 script: "Who teaches the child?"
 
-Guest: **Adé**, a secondary-school teacher (character). Hosts: Baba asks, Ìyá holds the proverb.
+Guest: **Adé**, a secondary-school teacher (character). Hosts: Baba Olú asks, Mama Olú holds the proverb.
 
-**Shot 1 (wide, day plate).** Branch lights flicker on. Baba sits.
+**Shot 1 (wide, day plate).** Branch lights flicker on. Baba Olú sits.
 
-**Shot 2 (Baba, close).**
-- Baba: "L'ábẹ́ igi, a joko." **[YÒRÙBÁ: Paul to confirm]**
-- Baba: "Dáhùn ìbéèrè ìjìnlẹ̀." **[YÒRÙBÁ: Paul to confirm]**
+**Shot 2 (Baba Olú, close).**
+- Baba Olú: "L'ábẹ́ igi, a joko." **[YÒRÙBÁ: Paul to confirm]**
+- Baba Olú: "Dáhùn ìbéèrè ìjìnlẹ̀." **[YÒRÙBÁ: Paul to confirm]**
 
-**Shot 3 (Baba).**
-- Baba (English): "Adé. A child is born in Ibadan today. Who should teach her to speak Yorùbá: her school, her mother, or a machine?"
+**Shot 3 (Baba Olú).**
+- Baba Olú (English): "Adé. A child is born in Ibadan today. Who should teach her to speak Yorùbá: her school, her mother, or a machine?"
 
 **Round 1, The Story (guest).** Adé tells of a class where half the students answer him in English though they understand Yorùbá at home. He says the machine would be patient, and he does not trust it with tone. **[Paul to rewrite in Adé's voice; keep one joke.]**
 
-**Round 2, The Proverb (Ìyá).**
-- Ìyá offers a proverb about who raises a child. **[YÒRÙBÁ: Paul to supply the proverb and its meaning. I will not invent one.]**
+**Round 2, The Proverb (Mama Olú).**
+- Mama Olú offers a proverb about who raises a child. **[YÒRÙBÁ: Paul to supply the proverb and its meaning. I will not invent one.]**
 - Adé fights it: "That was a village. The village now has Wi-Fi."
 
-**Round 3, language moment (20 seconds, Baba).**
-- Baba: "Why is it *l'ábẹ́ igi* and not *ní abẹ́ igi*?" Slate shows the elision: **ní + abẹ́ → l'ábẹ́.** *i* drops, high tone lands on the *a*.
-- Baba: "A machine that reads the letters but not this will speak Yorùbá like a stranger." **[Paul to confirm the linguistic wording.]**
+**Round 3, language moment (20 seconds, Baba Olú).**
+- Baba Olú: "Why is it *l'ábẹ́ igi* and not *ní abẹ́ igi*?" Slate shows the elision: **ní + abẹ́ → l'ábẹ́.** *i* drops, high tone lands on the *a*.
+- Baba Olú: "A machine that reads the letters but not this will speak Yorùbá like a stranger." **[Paul to confirm the linguistic wording.]**
 
-**Round 4, Tààrà (Ìyá).**
-- Ìyá: "If the machine speaks it better than your students, will you still insist they learn it from you?" Adé is silent for a beat, then answers honestly. **[Paul to decide Adé's answer.]**
+**Round 4, Tààrà (Mama Olú).**
+- Mama Olú: "If the machine speaks it better than your students, will you still insist they learn it from you?" Adé is silent for a beat, then answers honestly. **[Paul to decide Adé's answer.]**
 
-**Close (Baba).**
-- Adé gives one line. Baba ends with the ritual line again. **[YÒRÙBÁ: Paul to confirm.]**
+**Close (Baba Olú).**
+- Adé gives one line. Baba Olú ends with the ritual line again. **[YÒRÙBÁ: Paul to confirm.]**
 
 ## 10. What this must not do
 
@@ -131,9 +131,16 @@ Guest: **Adé**, a secondary-school teacher (character). Hosts: Baba asks, Ìyá
 - Show a Yorùbá line that Paul has not reviewed.
 - Call the guests real people when they are characters.
 
-## 11. Open decisions
+## 11. Decisions
 
-1. Names for Baba and Ìyá.
-2. Who records the Yorùbá voices (Paul or an actor), after the Flow pronunciation test.
-3. Yorùbá term for the intensifier category.
-4. Confirm the meaning of `sàn-án` in the descriptor.
+Decided (November 2026):
+1. Hosts: **Baba Olú** and **Mama Olú**.
+2. Voices: Paul records, with a second person joining. A woman's voice for Mama Olú is recommended. Pronunciation still gets tested in Flow first.
+3. Category term: working term **àyán** (to qualify a word). Paul to confirm.
+4. `sàn-án` in the descriptor means "straight / exactly". Confirmed.
+
+Still open:
+- Confirm the exact Yorùbá term and tones for the category.
+- Who is the second voice, and are they a Yorùbá first-language speaker?
+
+See `season-1-plan.md` for the season.
