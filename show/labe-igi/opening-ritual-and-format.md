@@ -1,18 +1,18 @@
 # L'ábẹ́ Igi: the opening ritual and the child-led format
 
-Internal. Written from Paul's brief, 24 November 2026. **Every Yorùbá string is Paul's own words, kept exactly as he typed them, marked [confirm] where I see a possible gap. The English glosses are my reading, not a translation to rely on.**
+Internal. Written from Paul's brief, 24 November 2026. **Every Yorùbá string is Paul's own words, **kept exactly as he typed them**. Paul has confirmed the greeting and the blessing are as used: they are the older forms, and are not to be completed or modernised. The English glosses are my reading, not a translation to rely on.**
 
 ## 1. What Paul described
 
 A Gen Alpha child enters the yard under the Igi Olú. The child **prostrates (a boy) or kneels (a girl)** to greet Baba Olú and Mama Olú in Yorùbá:
 
-> Baba Olú, Mama Olú... ẹ kún. ẹ ǹlẹ́, mo kíi yín... **[confirm: "ẹ kún" looks incomplete, and the line breaks off]**
+> Baba Olú, Mama Olú... ẹ kún. ẹ ǹlẹ́, mo kíi yín...
 
 The elders answer:
 
-> ọmọ 're, kaabo s'ábẹ igi olú **[confirm: the tone on the last vowel of *abẹ́*, and the tones on *kaabo*]**
+> ọmọ 're, kaabo s'ábẹ igi olú
 
-> oó d'àgbà... **[confirm: the rest of the blessing]**
+> oó d'àgbà...
 
 Then the elders answer the questions the child has.
 
@@ -58,9 +58,9 @@ A different child each episode, **alternating boy and girl**, so both greetings 
 | Shot | Visual | Audio |
 |---|---|---|
 | 1 | Child (boy episode) walks into the yard, looks up at the Igi Olú. Trainers, a backpack, earbuds round the neck. | Ambient |
-| 2 | Child stops before the elders and lowers into the prostrate greeting. | Child (Paul or an actor): *Baba Olú, Mama Olú... ẹ kún. ẹ ǹlẹ́, mo kíi yín...* **[confirm]** |
-| 3 | Baba Olú and Mama Olú smile, gesture to the child to rise. | Elders: *ọmọ 're, kaabo s'ábẹ igi olú* **[confirm]** |
-| 4 | Mama Olú's hand rests briefly on the child's shoulder. | Elders: *oó d'àgbà...* **[confirm]** |
+| 2 | Child stops before the elders and lowers into the prostrate greeting. | Child (Paul or an actor): *Baba Olú, Mama Olú... ẹ kún. ẹ ǹlẹ́, mo kíi yín...* |
+| 3 | Baba Olú and Mama Olú smile, gesture to the child to rise. | Elders: *ọmọ 're, kaabo s'ábẹ igi olú* |
+| 4 | Mama Olú's hand rests briefly on the child's shoulder. | Elders: *oó d'àgbà...* |
 | 5 | The child sits at the low table, takes out a tablet. | The child asks the question. |
 
 In a girl episode, shot 2 becomes the kneeling greeting. **[Confirm the exact movement and whether anything else accompanies it.]**
@@ -101,11 +101,12 @@ Append the style block from `flow-prompts-series-1.md`, section 1, to each.
 
 **Test before relying on any of these:** a full prostration is the likeliest shot for Flow to render badly. If it does, shoot it from behind, as a silhouette, or as a wide shot.
 
-## 9. Open questions for Paul
+## 9. Decisions (Paul, 24 November 2026)
 
-1. The full greeting and the full blessing, typed with tones, and what "ẹ kún" continues into.
-2. Is *Dáhùn ìbéèrè ìjìnlẹ̀* still the ritual line, now said by the elders when they begin to answer? Or does the child have an opening line of his own?
-3. Should the child's questions be in Yorùbá, English, Pidgin or a mix, and is the arc that Yorùbá grows in his mouth over the season?
-4. Does the child's age, around ten, work? Gen Alpha is roughly under 13 as of 2026.
-5. Confirm the shoulder touch, or cut it.
-6. Is the elders' *"oó d'àgbà"* the same for a boy and a girl?
+1. **The greeting and the blessing are final as typed.** They are the older, ancient forms. Do not complete, correct or modernise them. They appear on screen exactly as Paul wrote them.
+2. ***Dáhùn ìbéèrè ìjìnlẹ̀* is not the elders' line**, because the elders are the ones answering. It is no longer in the greeting scene. Held in reserve as a call to the viewer (an end-card line asking the audience to answer), or dropped. Paul's call.
+3. **The child asks in modern, mixed Yorùbá**, not Pidgin. In drafts the child's lines are written in English and marked for Paul or the voice actor to render in the mixed Yorùbá the child would actually use. I will not invent that Yorùbá.
+4. **The child is about ten.** Confirmed.
+5. **The blessing is the same for a boy and a girl.** Confirmed.
+
+Still open: the shoulder touch in shot 4 (confirm or cut).
