@@ -85,3 +85,49 @@ Paul to name who he can actually reach. Real people only, with consent and archi
 3. University of Ibadan theses and the National Archives, Ibadan, on Ibarapa.
 4. The *Ibarapa Programme* paper in full, for the community-health history.
 5. Local sources: palace archives and town historians.
+
+---
+
+# Addendum v1.1: Paul's account and follow-up search (24 November 2026)
+
+Paul is from Lanlate. What follows from Paul is **grade C: an oral account from a named bearer**, recorded as his, not upgraded. Where Paul reports what his father or others say, that is a second-hand oral account, also C, and is attributed that way. Paul's spellings are kept as given and need his confirmation.
+
+## A. What Paul supplied
+
+| # | Claim | Grade | Source | Effect on v1 |
+|---|---|---|---|---|
+| P1 | The name Ibarapa comes from *Egusi Ibara* | **C** | Paul | Confirms v1 claim 3. Was D, now C. A second bearer would make it stronger. |
+| P2 | Lanlate does not share a common history with the other towns. **Each of the seven has its own history.** Lanlate's is distinct because it is bordered by high hills that served as its fort and protection for a period | **C** | Paul | Changes v1 claim 6. It was "a lead" because of weak sourcing. The hills detail is new. The hills themselves can be checked on a map or in a geography source. The *protective role in history* stays oral. |
+| P3 | Eruwa is right next to Lanlate. Lanlate gave a piece of land to Eruwa in solidarity, which is part of what is now called "New Eruwa", next to Agasha of Lanlate | **C** (Paul, as told) | Paul | New. A single account. **Needs a second bearer, ideally from Eruwa as well as Lanlate**, since each town may tell this differently. "Agasha" spelling and what it is (a quarter, a place?) to confirm. |
+| P4 | Most Ibarapa people are mostly migrants and settlers from Egba, including business people | **C** | Paul | Supports one side of v1 section 4. **It does not settle the conflict.** The "from Old Oyo" account is the usual written one. Both are now on the table, attributed. The script presents both as accounts and lets a historian speak. |
+| P5 | How Ibarapa came under Ibadan and Oyo State: Paul has no clear story | gap | Paul | Confirms the gap in v1 section 5. |
+| P6 | Paul's father sometimes wonders why Ibarapa did not go with Ogun State | **C** (second-hand) | Paul, from his father | Connects to the 1976 boundary question (v1 claim 9). A lovely human question for the table. |
+| P7 | The Ibarapa dialect is unique, and is sometimes mistaken for the Oke-Ogun dialect | **C** | Paul | New. See section B. |
+| P8 | Yoruba children now speak Pidgin and English at home, and this is the result of the mother tongue being demoted, not an accident | **C** | Paul | **Observation and interpretation.** Studies exist (section B) but none found measures Pidgin at home by generation. |
+
+## B. What the follow-up search found
+
+| # | Claim | Grade | Source |
+|---|---|---|---|
+| S1 | Yoruba dialects are usually grouped into five regions (Northwest, Northeast, Central, Southwest, Southeast), based on Adetugbo's 1982 *Towards a Yoruba dialectology*. Estimates of the number of dialects range from twelve to twenty-six, so classifications are not settled. Egba falls in the Northwest group. **Where Ibarapa falls was not confirmed.** | **B** | [Glottolog entry for Adetugbo 1982](https://glottolog.org/resource/reference/id/568032), [Voices Unheard (arXiv)](https://arxiv.org/html/2406.19564v1) |
+| S2 | Standard Yoruba is usually dated to the 1850s, tied to Crowther's grammar and Bible translation, built mostly on the Oyo and Ibadan dialects with features from others. It was not the result of a deliberate language policy. Which variety counts as "genuine" or "pure" Yoruba is contested | **B** | [Linguistik online](https://bop.unibe.ch/linguistik-online/article/download/3563/5413/12322?inline=1), [Cambridge](https://www.cambridge.org/core/product/CC682B3D24A7A9648C018BABC1E2EDEA), [University of Georgia](https://africa.uga.edu/Yoruba/yorubaabout.html) |
+| S3 | A study of Yoruba-speaking parents in Lagos (Ayoola and Soneye) found that children preferred English in eight of twelve domains, reported in a 2016 paper titled *Mother Tongue Eclipsing...* | **B** | [DOAJ record](https://doaj.org/article/e3d1f63f8b3c450ba624c0a31ef2cc08) |
+| S4 | Studies of Nigerian families abroad and of mixed marriages report English displacing the home language | **B** | [Botswana study](https://journals.ub.bw/index.php/marang/article/view/445/187), others |
+| S5 | **Not found:** a Lagos survey measuring Pidgin use at home by generation, or any document of **stigma against non-standard Yoruba dialects (accent shaming)** | gap | n/a |
+| S6 | Lanlate's early settlement is described as Ile-Bioku, co-founded by Bioku and Labebe, with Bioku as chief. The ruler is the Onilala of Lanlate. A rocky hill with imprinted knees, Eekun Iyawo, is mentioned | **D** | [Brief History of Lanlate](https://oyoaffairs.net/brief-history-of-lanlate) (a local site) |
+| S7 | Ibarapa East Local Government comprises Eruwa and Lanlate | **B** | [Eruwa](https://www.Wikipedia.com/wiki/Eruwa) |
+
+S6 is a single local source. **Paul and others from Lanlate should confirm, correct or reject it.** Spellings (Eekun Iyawo, Onilala) need Paul's tone marks.
+
+## C. Updated gaps
+
+- **Ibarapa's own dialect has no documentation I could find.** The only way to record it is from speakers, which is exactly what the show can do.
+- No source on accent shaming or dialect stigma. This will need people's own stories (grade C) plus any sociolinguistic study a researcher at a university can point to.
+- No documented account of the land gift between Lanlate and Eruwa from a second source.
+- How Ibarapa came under Ibadan and Oyo State.
+
+## D. What this changes
+
+1. **Lanlate's hills and their protective role** are a real, specific story that a Lanlate elder can tell. It is a better episode seed than the generic origin question.
+2. **The Eruwa and Lanlate land gift** is the most concrete, human piece of Ibarapa history so far. It needs two tellers, one from each town.
+3. **The Egba and Oyo origin accounts both stay.** The show does not pick. It lets each be told, by a named person, and brings a historian to say what the written record supports.
