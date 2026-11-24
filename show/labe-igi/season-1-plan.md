@@ -1,6 +1,6 @@
 # L'ábẹ́ Igi: Season 1 plan
 
-Internal. Yorùbá strings are marked **[Paul to confirm]** until signed off. Words Paul has supplied (yékéyéké, sàn-án, tààrà, gidigidi) are used as given.
+Internal. **TikTok-first revision in `tiktok-first.md` supersedes the schedule and episode length below.** Yorùbá strings are marked **[Paul to confirm]** until signed off. Words Paul has supplied (yékéyéké, sàn-án, tààrà, gidigidi) are used as given.
 
 ## 1. What season 1 has to prove
 
