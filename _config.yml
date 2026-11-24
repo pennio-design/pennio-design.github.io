@@ -14,5 +14,6 @@ exclude:
   - portfolio-src
   - campaign
   - reel-studio
+  - show
   - branch-archive
   - _config.yml
