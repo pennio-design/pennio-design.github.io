@@ -149,3 +149,7 @@ Open points for the mark:
 3. For a circular avatar crop, build a compact version (hand and three leaflets) as well as the full one.
 4. Use the brand orange, not the near-orange in the draft.
 5. Redraw as a vector. AI-generated artwork may not be protectable as drawn.
+
+## Logo: vector draft (24 November 2026)
+
+`show/labe-igi/brand/` holds a first vector draft built from `build-mark.py`: `ewe-mark.svg`, `ewe-mark-compact.svg`, `ewe-lockup.svg`. It is a **draft, not the final mark**: the hand is blocky, the akoko leaflets are stylised and unchecked against a real leaf, and the wordmark is Inter ExtraBold as a **placeholder** for Paul's Afrofuturist wordmark (the original is not available as a font or vector here). "àti" is dropped: the name is **ewé èwe**. Dark ground only. Orange is `#F26522`.
