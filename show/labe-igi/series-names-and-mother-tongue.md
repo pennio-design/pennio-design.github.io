@@ -133,3 +133,19 @@ Brief for Flow and for design, not to be finished here:
 4. Two bearers, **one from Lanlate and one from Eruwa**, for the land gift. You said "someone", but I have no names. Real names are needed before any script.
 5. Which leaf is in the logo, and its Yorùbá name.
 6. A person from each of Idere, Tapa, Aiyete, Igangan and Igbo-Ora who can speak for the town.
+
+## Logo update (24 November 2026): the leaf is *ewé akoko*
+
+Paul chose **akoko** (*Newbouldia laevis*). Second round supplied: a solid white child's hand gripping an orange stem with a five-leaflet sprig, on black. Direction accepted in principle, pending Paul's final say.
+
+What the web supports about akoko (see the sources in the chat record):
+- **Boundary marker.** Often planted to mark boundaries (Wikipedia, grade B).
+- **Revered among the Yorùbá; grown in shrines; its leaves used in the installation of kings or chiefs.** One source, the International Journal of Intangible Heritage article (grade B at best, single source). **Do not state the installation role in public until a second source or a named bearer confirms it.**
+- **Widely used in medicine** in West Africa per ethnobotanical studies. **Not used in any caption or claim.** No health claims anywhere near the mark.
+
+Open points for the mark:
+1. Confirm with elders that using akoko as a logo is respectful, given its shrine and installation roles. Do not depict a rite.
+2. A thin orange stem will vanish at 40 px. Widen it.
+3. For a circular avatar crop, build a compact version (hand and three leaflets) as well as the full one.
+4. Use the brand orange, not the near-orange in the draft.
+5. Redraw as a vector. AI-generated artwork may not be protectable as drawn.
