@@ -8,7 +8,7 @@ The unit is no longer the episode. It is the **post**. An "episode" is a week of
 
 | Post type | Length | Job |
 |---|---|---|
-| **The Word** (àyán) | 15 to 25 s | One Yorùbá word or rule, said correctly. Highest save and share potential. Cheapest to make: one elder, one shot or two. |
+| **The Word** (ayán) | 15 to 25 s | One Yorùbá word or rule, said correctly. Highest save and share potential. Cheapest to make: one elder, one shot or two. |
 | **The Question** | 45 to 90 s | The cold open plus the guest's answer. Hook is the question. |
 | **The Proverb** | 30 to 45 s | The silent elder's proverb and the guest's pushback. |
 | **Tààrà** | 30 to 60 s | The hard follow-up and the answer. The comment-bait post. |
@@ -38,7 +38,7 @@ Plenty of AI video is on TikTok. Almost none has correctly toned Yorùbá spoken
 
 | When | Milestone |
 |---|---|
-| Week of 30 Nov | Flow test, 9:16 included. Record the title line and one àyán word yourself. |
+| Week of 30 Nov | Flow test, 9:16 included. Record the title line and one ayán word yourself. |
 | By 8 Dec | Account set up (see section 7). Five **Word** posts banked. |
 | 9 Dec onward | Start posting The Word, 2 to 3 a week. Cheap, fast, and tests the audience before the interviews. |
 | Mid Dec | Episode 1 posts (the mother-tongue question) banked. |
@@ -88,6 +88,6 @@ A vertical clip works in a classroom and in a WhatsApp group. The six discussion
 ## 10. Next actions
 
 1. Flow test, with 9:16.
-2. Record one àyán word (*yékéyéké* is a strong first) in Yorùbá yourself, and test it as a 20-second post.
+2. Record one ayán word (*yékéyéké* is a strong first) in Yorùbá yourself, and test it as a 20-second post.
 3. Check the account handle.
 4. Bank five Word posts before the first goes out.

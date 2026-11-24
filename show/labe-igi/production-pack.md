@@ -13,7 +13,7 @@ Rule for this whole file: every Yorùbá string is marked **[YÒRÙBÁ: Paul to 
 | Ritual line | **Dáhùn ìbéèrè ìjìnlẹ̀** | Supplied by Paul; "Answer the deep question" to confirm |
 | English subtitle (metadata, thumbnails) | Interviews under the tree | Draft |
 
-`sàn-án`, `tààrà`, `gidigidi`, `yékéyéké` belong to one category: words used to qualify another word (*a máa ń fi wọ́n yán ọ̀rọ̀*), e.g. *ó ti yé mi yékéyéké* (I understand it thoroughly). Working term **àyán**, Paul to confirm the exact term and tones. Note: the Studio's beat room is **Àyàn** (the drum), a different word. Do not let the two collide in public copy.
+`sàn-án`, `tààrà`, `gidigidi`, `yékéyéké` belong to one category: words used to qualify another word (*a máa ń fi wọ́n yán ọ̀rọ̀*), e.g. *ó ti yé mi yékéyéké* (I understand it thoroughly). Working term **ayán**, Paul to confirm the exact term and tones. Note: the Studio's beat room is **Àyàn** (the drum), a different word. Do not let the two collide in public copy.
 
 ## 2. Premise
 
@@ -136,7 +136,7 @@ Guest: **Adé**, a secondary-school teacher (character). Hosts: Baba Olú asks, 
 Decided (November 2026):
 1. Hosts: **Baba Olú** and **Mama Olú**.
 2. Voices: Paul records, with a second person joining. A woman's voice for Mama Olú is recommended. Pronunciation still gets tested in Flow first.
-3. Category term: working term **àyán** (to qualify a word). Paul to confirm.
+3. Category term: working term **ayán** (to qualify a word). Paul to confirm.
 4. `sàn-án` in the descriptor means "straight / exactly". Confirmed.
 
 Still open:

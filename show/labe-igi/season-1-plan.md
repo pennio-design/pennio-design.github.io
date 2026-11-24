@@ -22,9 +22,9 @@ Anything else (followers, views) is a result, not a goal. I will not set invente
 
 ## 3. The six episodes
 
-Each episode has one deep question and one **àyán word** that carries the language moment. The word is chosen to rhyme with the question.
+Each episode has one deep question and one **ayán word** that carries the language moment. The word is chosen to rhyme with the question.
 
-| # | Question | Àyán word of the episode | Why this word |
+| # | Question | Ayán word of the episode | Why this word |
 |---|---|---|---|
 | 1 | Who should teach a child their mother tongue: school, parent or a machine? | *l'ábẹ́* (ní + abẹ́ elision) | The title itself. Episode 1 explains the show's name. |
 | 2 | If a machine can answer anything, what is a teacher for? | *yékéyéké*: *ó ti yé mi yékéyéké* | There is a degree of understanding. A machine gives you the answer. A teacher gets you to *yékéyéké*. |
@@ -71,7 +71,7 @@ If episode 1 takes more than a week, the schedule moves to fortnightly. A hurrie
 - 1 long episode (8 to 12 minutes).
 - 3 to 5 vertical clips: the question, the proverb, the language moment, the *tààrà* exchange.
 - 1 discussion guide (one page: the question, the proverb, three prompts for a classroom or family).
-- 1 proverb or àyán card (a shareable still).
+- 1 proverb or ayán card (a shareable still).
 
 Six episodes make a **school pack** of six guides and six cards. This is the sellable asset, and the reason education was the right theme.
 
@@ -92,7 +92,7 @@ Six episodes make a **school pack** of six guides and six cards. This is the sel
 | Sacred register offends | Never depict a real office, rite or orisha. White cloth and manner only. |
 | Guests uncomfortable with being animated | Show them first. Consent before release. |
 | One person is the bottleneck | Second voice, and a Yorùbá-literate reviewer. Paul stays the final reviewer. |
-| The name collides with the Studio | Àyàn (drum, the Studio room) and àyán (qualifying word) are different words. Keep them apart in copy. |
+| The name collides with the Studio | Àyàn (drum, the Studio room) and ayán (qualifying word) are different words. Keep them apart in copy. |
 | Education turns preachy | Entertainment first. The funny, wrong or stubborn moment is mandatory. |
 
 ## 10. Next actions
