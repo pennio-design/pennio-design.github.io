@@ -57,12 +57,27 @@
     elapsed.name = 'fill_seconds';
     form.appendChild(elapsed);
 
+    // Which channel brought this visitor (see source.js). Written at submit so it is current.
+    var srcFields = {};
+    if (window.PennioSource) {
+      var initial = window.PennioSource.fields();
+      Object.keys(initial).forEach(function (k) {
+        if (form.querySelector('[name="' + k + '"]')) return;
+        var h = document.createElement('input');
+        h.type = 'hidden';
+        h.name = k;
+        form.appendChild(h);
+        srcFields[k] = h;
+      });
+    }
+
     // Capture phase, so this settles before the page's own submit handler
     // builds its FormData.
     form.addEventListener(
       'submit',
       function (e) {
         elapsed.value = ((Date.now() - startedAt) / 1000).toFixed(1);
+        if (window.PennioSource) { var cur = window.PennioSource.fields(); Object.keys(srcFields).forEach(function (k) { srcFields[k].value = cur[k] || ''; }); }
         // Never drop the submit. Browser autofill and password managers do fill
         // off-screen fields, and a silent drop looked to the visitor like a form
         // that does nothing. Flag it in the subject and still send it, so the

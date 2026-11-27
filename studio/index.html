@@ -1458,6 +1458,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
   </div>
     </section>
     <p class="dh-foot" id="dhFoot"></p>
+    <p class="dh-links"><a href="/audit/?ref=studio-dash">Running a business? Take the free Brand Check</a><a href="/studio/pro/?ref=studio-dash">What should Studio Pro cost?</a></p>
   </div>
 </section>
 
@@ -1577,6 +1578,7 @@ body.auth-locked>*:not(#authGate):not(script):not(style){display:none!important}
       </div>
     </details>
     <p class="exp-meta exp-beat-only" id="expMeta"></p>
+    <p class="exp-meta exp-beat-only"><a href="/studio/pro/?ref=studio-export" style="color:inherit">Tell me what a credit-free export should cost</a></p>
     <div class="rm exp-beat-only" id="rmBox" hidden aria-label="Render report"></div>
   </div>
   </div>
@@ -5477,7 +5479,7 @@ const FS="https://formsubmit.co/ajax/385f3fed9367873e3a24fa92c673e010";
 async function sendForm(fields){
   if(inClaude) return false;
   try{
-    const res=await fetch(FS,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(Object.assign({_captcha:"false",_template:"table"},fields))});
+    const res=await fetch(FS,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(Object.assign({_captcha:"false",_template:"table"},window.PennioSource?window.PennioSource.fields():{},fields))});
     const d=await res.json().catch(()=>({}));
     return res.ok && d.success!=="false" && d.success!==false;
   }catch(e){ return false; }
@@ -6317,6 +6319,7 @@ window.PennioStudioProgress={begin(label="Working",description="Your work is bei
 </script>
 <script src="/studio/workspace.js" defer></script>
 <script src="/studio/render-monitor.js" defer></script>
+<script src="/source.js" defer></script>
 <script src="/studio/credits.js" defer></script>
 <script src="/studio/reel.js" defer></script>
 <script src="/studio/voicetight.js" defer></script>
@@ -7243,6 +7246,7 @@ body.studio-chrome:not(.studio-shell) .hright{margin-left:auto}
 .dh-empty{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:18px;border:1px dashed var(--border);border-radius:16px}.dh-empty p{margin:0;font-size:13px;color:var(--ts);max-width:46ch}
 .dash-project-copy small{display:block;margin-top:2px;font-size:11px;color:var(--ts)}
 .studio-rec-listen{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px}.studio-rec-listen .btn{min-height:44px;flex:1 1 150px}
+.dh-links{display:flex;flex-wrap:wrap;gap:4px 18px;justify-content:center;margin:0 0 8px}.dh-links a{display:inline-flex;align-items:center;min-height:44px;font-size:12px;color:var(--ts);text-decoration:underline}.dh-links a:hover{color:var(--tp)}
 </style>
 <script id="studio-shell-js">
 /* One-screen Studio shell (docs/studio-prd.md section 3a, build step 1).
