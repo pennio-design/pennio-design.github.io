@@ -50,6 +50,9 @@ add(sweep(0,2.4,True)[:int(.9*SR)],BEAT*4-0.9,.9)      # into the cards
 add(crash(),BEAT*4*3,.9); add(sweep(0,2.4,True)[:int(.9*SR)],BEAT*4*3-0.9,.9)   # into the line
 add(sweep(0,2.4,True)[:int(.9*SR)],BEAT*4*4-0.9,.6)   # into the steps
 add(sweep(0,2.4,True)[:int(.9*SR)],BEAT*4*6-0.9,.9); add(crash(),BEAT*4*6,.9)   # into the close
+# a soft wooden tick on every statement, so the words land on the beat
+for t in (0.0,1.2,2.4,3.6,4.8,6.0,7.2,9.6,10.8,12.0,12.8,13.6,14.4):
+    n=int(.09*SR); tt=np.arange(n)/SR; add(np.sin(2*np.pi*(660 if t not in (7.2,14.4) else 440)*tt)*np.exp(-tt/.02)*.3,t,.7)
 fade=np.ones(N); L=int(1.2*SR); fade[int(BEAT*4*BARS*SR)-L:int(BEAT*4*BARS*SR)]=np.linspace(1,0,L); fade[int(BEAT*4*BARS*SR):]=0
 mix*=fade
 # gentle limiter and level
