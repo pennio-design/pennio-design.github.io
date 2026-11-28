@@ -1,7 +1,7 @@
-"""Synthesises the reel's soundtrack from scratch (no samples, no licensed music): an Afro-pulse groove at 100 BPM, 34.8 s, fifteen bars (cut 5).
+"""Synthesises the reel's soundtrack from scratch (no samples, no licensed music): an Afro-pulse groove at 100 BPM, 37.8 s, sixteen bars (cut 6).
 Run: python3 audio.py out.wav   (needs numpy)"""
 import sys, wave, numpy as np
-SR=44100; BPM=100; BEAT=60/BPM; STEP=BEAT/4; BARS=15; N=int(SR*BEAT*4*BARS)+SR
+SR=44100; BPM=100; BEAT=60/BPM; STEP=BEAT/4; BARS=16; N=int(SR*BEAT*4*BARS)+SR
 rng=np.random.default_rng(7)
 mix=np.zeros(N,dtype=np.float64)
 def add(sig,t,gain=1.0):
@@ -42,16 +42,16 @@ for bar in range(BARS):
             pass
     if bar>=2:
         for s,r in bassline: add(bass(A*r),t0+s*STEP,.9)
-    if 3<=bar<=11:
+    if 3<=bar<=12:
         for s,n in mel: add(pluck(NOTE[n]),t0+s*STEP+(STEP*.12 if s%2 else 0),.8)
-    if bar>=12:
+    if bar>=13:
         for s in (0,8): add(bass(A*2,.5)*.5,t0+s*STEP,.8)
 SW=sweep(0,2.4,True)[:int(.9*SR)]
 add(SW,7.2-0.9,.9); add(crash(),7.2,.9)      # into the work
-add(SW,18.6-0.9,.6)                          # into the line
-add(SW,30.0-0.9,.9); add(crash(),30.0,.9)    # into the close
-for t in (0.0,1.8,3.6,5.4,7.2,9.0,10.8,12.6,14.4,16.2,18.6,22.2,24.6,26.4,30.0):
-    n=int(.09*SR); tt=np.arange(n)/SR; add(np.sin(2*np.pi*(660 if t not in (7.2,30.0) else 440)*tt)*np.exp(-tt/.02)*.3,t,.7)
+add(SW,21.6-0.9,.6)                          # into the line
+add(SW,33.0-0.9,.9); add(crash(),33.0,.9)    # into the close
+for t in (0.0,1.8,3.6,5.4,7.2,12.0,13.8,15.6,17.4,19.2,21.6,25.2,27.6,29.4,33.0):
+    n=int(.09*SR); tt=np.arange(n)/SR; add(np.sin(2*np.pi*(660 if t not in (7.2,33.0) else 440)*tt)*np.exp(-tt/.02)*.3,t,.7)
 fade=np.ones(N); L=int(1.2*SR); fade[int(BEAT*4*BARS*SR)-L:int(BEAT*4*BARS*SR)]=np.linspace(1,0,L); fade[int(BEAT*4*BARS*SR):]=0
 mix*=fade
 # gentle limiter and level
