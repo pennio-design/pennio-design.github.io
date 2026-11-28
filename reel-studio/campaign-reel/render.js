@@ -10,7 +10,7 @@ execFileSync('python3', [path.join(__dirname, 'audio.py'), tmpWav], { stdio: 'in
   await p.goto(base + '/reel-studio/campaign-reel/' + (process.env.SCENE || 'scene.html')); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(600);
   const dur = await p.evaluate(() => window.DURATION), frames = Math.round(dur * FPS);
   const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-i', tmpWav,
-    '-t', String(dur), '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-movflags', '+faststart', '-af', 'lowpass=f=14000,volume=0.8', '-c:a', 'aac', '-b:a', '224k', out], { stdio: ['pipe', 'inherit', 'inherit'] });
+    '-t', String(dur), '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-movflags', '+faststart', '-af', 'lowpass=f=14000,volume=0.72', '-c:a', 'aac', '-b:a', '224k', out], { stdio: ['pipe', 'inherit', 'inherit'] });
   for (let i = 0; i < frames; i++) {
     await p.evaluate(t => window.render(t), i / FPS);
     const buf = await p.screenshot({ type: 'jpeg', quality: 94 });

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<title>PENNIO campaign reel, cut 2</title>
-<!-- 1080 x 1920, 19.2 s, 100 BPM, eight bars. render(t) is a pure function of time. Cut 2: it opens on a question the viewer has lived,
+<title>PENNIO campaign reel, cut 3</title>
+<!-- 1080 x 1920, 28.8 s, 100 BPM, twelve bars. Cut 3 is cut 2 slowed to reading pace: a line holds for three or four beats (1.8 to 2.4 s), about three words a second. render(t) is a pure function of time. Cut 2: it opens on a question the viewer has lived,
      then one short statement per half bar, each a step up from the last. No scarcity, no price, no client, no metric: the only facts are
      ones the site already states (free Brand Check, 15 questions; 20-minute Review, credited if you hire me). -->
 <style>
@@ -68,50 +68,51 @@ var eo=function(x){return 1-Math.pow(1-x,3)};
 var $=function(id){return document.getElementById(id)};
 function pop(el,p,dy){el.style.opacity=p;el.style.transform='translateY('+((1-eo(p))*(dy===undefined?34:dy))+'px)'}
 /* Each statement: start, end (seconds), top (px), size (px), html with <b> for the orange word. Half a bar is 1.2 s. */
+var BT=.6; /* one beat at 100 BPM */
 var ST=[
- {t0:0.0, t1:1.15, top:430, size:104, h:'Do customers ask for a <b>discount</b>'},
- {t0:1.2, t1:2.35, top:430, size:104, h:'before they ask what you <b>do?</b>'},
- {t0:2.4, t1:3.55, top:430, size:128, h:'It is not your <b>product.</b>'},
- {t0:3.6, t1:4.75, top:430, size:128, h:'It is how it <b>looks.</b>'},
- {t0:4.8, t1:5.95, top:430, size:116, h:'They decide in <b>seconds.</b>'},
- {t0:6.0, t1:7.15, top:430, size:116, h:'Then they decide what you are <b>worth.</b>'},
- {t0:7.2, t1:9.55, top:520, size:150, h:'Stop looking <span id="chp" style="position:relative;display:inline-block" class="or">cheaper<i id="strike" style="position:absolute;left:0;top:54%;height:16px;background:#F26522;border-radius:8px;width:0"></i></span> than you are.'},
- {t0:9.6, t1:10.75, top:520, size:112, h:'I build brands for <b>African founders.</b>'},
- {t0:10.8, t1:11.95, top:520, size:140, h:'Start <b>free.</b>'}
-];
+ {b0:0,  b1:3,  top:430, size:104, h:'Do customers ask for a <b>discount</b>'},
+ {b0:3,  b1:6,  top:430, size:104, h:'before they ask what you <b>do?</b>'},
+ {b0:6,  b1:9,  top:430, size:128, h:'It is not your <b>product.</b>'},
+ {b0:9,  b1:12, top:430, size:128, h:'It is how it <b>looks.</b>'},
+ {b0:12, b1:15, top:430, size:116, h:'They decide in <b>seconds.</b>'},
+ {b0:15, b1:19, top:430, size:116, h:'Then they decide what you are <b>worth.</b>'},
+ {b0:19, b1:25, top:520, size:150, h:'Stop looking <span id="chp" style="position:relative;display:inline-block" class="or">cheaper<i id="strike" style="position:absolute;left:0;top:54%;height:16px;background:#F26522;border-radius:8px;width:0"></i></span> than you are.'},
+ {b0:25, b1:29, top:520, size:112, h:'I build brands for <b>African founders.</b>'},
+ {b0:29, b1:31, top:520, size:140, h:'Start <b>free.</b>'}
+].map(function(s){ s.t0=s.b0*BT; s.t1=s.b1*BT; return s; });
 var stage=$('stage'), els=ST.map(function(s){var d=document.createElement('div');d.className='st';d.style.top=s.top+'px';d.style.fontSize=s.size+'px';
   d.innerHTML=s.h.replace(/<b>(.*?)<\/b>/g,'<span class="or">$1</span>');stage.appendChild(d);return d;});
 /* words rise in one after another, so a line reads as it is said */
 els.forEach(function(d){var walk=function(n){ if(n.nodeType===3){ var f=document.createDocumentFragment(); n.textContent.split(/(\s+)/).forEach(function(p){ if(/^\s+$/.test(p)||!p){ f.appendChild(document.createTextNode(p)); } else { var w=document.createElement('span'); w.className='w'; w.textContent=p; f.appendChild(w);} }); n.parentNode.replaceChild(f,n); } else if(n.childNodes&&n.id!=='strike'){ Array.prototype.slice.call(n.childNodes).forEach(walk); } }; Array.prototype.slice.call(d.childNodes).forEach(walk); });
 function statement(i,t){
-  var s=ST[i],d=els[i],ws=d.querySelectorAll('.w'),a=t-s.t0,out=1-seg(t,s.t1-.1,s.t1);
+  var s=ST[i],d=els[i],ws=d.querySelectorAll('.w'),a=t-s.t0,out=1-seg(t,s.t1-.15,s.t1);
   if(t<s.t0||t>=s.t1){ d.style.opacity=0; return; }
   d.style.opacity=out;
-  for(var k=0;k<ws.length;k++){ var p=seg(a,k*.09,k*.09+.24); ws[k].style.opacity=p; ws[k].style.transform='translateY('+((1-eo(p))*40)+'px)'; }
+  for(var k=0;k<ws.length;k++){ var p=seg(a,k*.14,k*.14+.3); ws[k].style.opacity=p; ws[k].style.transform='translateY('+((1-eo(p))*40)+'px)'; }
 }
 function render(t){
-  $('glow').style.opacity=.5+.3*Math.sin(t*2.6)+.25*seg(t,7.2,7.5);
+  $('glow').style.opacity=.5+.3*Math.sin(t*2.6)+.25*seg(t,11.4,11.7);
   for(var i=0;i<ST.length;i++) statement(i,t);
   /* the strike-through draws over "cheaper" */
-  var sk=$('strike'),chp=$('chp'); sk.style.width=(eo(seg(t,8.1,8.55))*chp.offsetWidth)+'px';
+  var sk=$('strike'),chp=$('chp'); sk.style.width=(eo(seg(t,13.0,13.6))*chp.offsetWidth)+'px';
   /* one product, two presentations: shown under "It is not your product. It is how it looks." and "They decide in seconds." */
-  var vis=seg(t,2.4,2.8)*(1-seg(t,7.0,7.2));
-  var swap=eo(seg(t,3.7,4.4));
+  var vis=seg(t,3.6,4.0)*(1-seg(t,8.8,9.0));
+  var swap=eo(seg(t,5.8,6.6));
   var A=$('cardA'),B=$('cardB'),tg=$('tagA');
   A.style.opacity=vis*(1-swap); B.style.opacity=vis*swap;
-  A.style.transform='translateY('+((1-eo(seg(t,2.4,3.0)))*70)+'px) rotate('+(Math.sin(t*7)*.5*(1-swap))+'deg)'; B.style.transform='translateY('+((1-swap)*30)+'px)';
+  A.style.transform='translateY('+((1-eo(seg(t,3.6,4.2)))*70)+'px) rotate('+(Math.sin(t*7)*.5*(1-swap))+'deg)'; B.style.transform='translateY('+((1-swap)*30)+'px)';
   tg.style.opacity=vis; tg.textContent=swap>.5?'What it is worth':'What they see'; tg.style.color=swap>.5?'#F26522':'rgba(255,255,255,.7)';
   /* the steps */
-  var d=t-12.0;
-  pop($('r1'),seg(d,0,.3),30); pop($('r2'),seg(d,.8,1.1),30); pop($('r3'),seg(d,1.6,1.9),30);
-  var rowsOut=1-seg(t,14.25,14.4); ['r1','r2','r3'].forEach(function(id){ $(id).style.opacity=parseFloat($(id).style.opacity||0)*rowsOut; });
+  var d=t-18.6;
+  pop($('r1'),seg(d,0,.4),30); pop($('r2'),seg(d,1.8,2.2),30); pop($('r3'),seg(d,3.6,4.0),30);
+  var rowsOut=1-seg(t,23.8,24.0); ['r1','r2','r3'].forEach(function(id){ $(id).style.opacity=parseFloat($(id).style.opacity||0)*rowsOut; });
   /* the close */
-  var e=t-14.4;
+  var e=t-24.0;
   pop($('logo'),seg(e,0,.4),24);
-  var h=$('pill'); pop(h,seg(e,.5,.9),26); h.style.transform+=' scale('+(1+.02*Math.sin(e*5)*seg(e,.9,1.2))+')';
-  pop($('url'),seg(e,1.0,1.4),18); pop($('no'),seg(e,1.7,2.1),18);
+  var h=$('pill'); pop(h,seg(e,.6,1.0),26); h.style.transform+=' scale('+(1+.02*Math.sin(e*5)*seg(e,.9,1.2))+')';
+  pop($('url'),seg(e,1.5,1.9),18); pop($('no'),seg(e,2.4,2.8),18);
   /* the close has its own line, set when it first appears */
   var cl=$('closeLine'); if(cl) pop(cl,seg(e,.1,.55),30);
 }
-window.render=render; window.DURATION=19.2; render(0);
+window.render=render; window.DURATION=28.8; render(0);
 </script></body></html>
