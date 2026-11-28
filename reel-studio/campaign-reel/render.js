@@ -4,13 +4,15 @@
 const { chromium } = require('playwright'), { spawn, execFileSync } = require('child_process'), fs = require('fs'), path = require('path'), os = require('os');
 const out = path.resolve(process.argv[2] || 'pennio-campaign-reel.mp4'), base = process.env.BASE || 'http://localhost:3000';
 const FPS = 30, tmpWav = path.join(os.tmpdir(), 'pennio-reel.wav');
-execFileSync('python3', [path.join(__dirname, 'audio.py'), tmpWav], { stdio: 'inherit' });
+/* MUSIC=/path/track.mp3 (optional MUSIC_START seconds, MUSIC_DUR seconds) uses a licensed track instead of audio.py; the mp3 is never committed. */
+if (process.env.MUSIC) execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-ss', process.env.MUSIC_START || '0', '-t', process.env.MUSIC_DUR || '60', '-i', process.env.MUSIC, '-af', 'afade=t=out:st=' + (Number(process.env.MUSIC_DUR || 60) - 2) + ':d=2,alimiter=limit=0.7:level=false', '-ac', '2', '-ar', '44100', tmpWav], { stdio: 'inherit' });
+else execFileSync('python3', [path.join(__dirname, 'audio.py'), tmpWav], { stdio: 'inherit' });
 (async () => {
   const b = await chromium.launch(), p = await b.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
   await p.goto(base + '/reel-studio/campaign-reel/' + (process.env.SCENE || 'scene.html')); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(600);
   const dur = await p.evaluate(() => window.DURATION), frames = Math.round(dur * FPS);
   const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-i', tmpWav,
-    '-t', String(dur), '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-movflags', '+faststart', '-af', 'lowpass=f=14000,volume=0.62', '-c:a', 'aac', '-b:a', '224k', out], { stdio: ['pipe', 'inherit', 'inherit'] });
+    '-t', String(dur), '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', '-profile:v', 'high', '-movflags', '+faststart', '-af', (process.env.MUSIC ? 'volume=0.85,alimiter=limit=0.9:level=false' : 'lowpass=f=14000,volume=0.62'), '-c:a', 'aac', '-b:a', '224k', out], { stdio: ['pipe', 'inherit', 'inherit'] });
   for (let i = 0; i < frames; i++) {
     await p.evaluate(t => window.render(t), i / FPS);
     const buf = await p.screenshot({ type: 'jpeg', quality: 94 });
