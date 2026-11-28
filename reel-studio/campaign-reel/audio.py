@@ -1,7 +1,7 @@
-"""Synthesises the reel's soundtrack from scratch (no samples, no licensed music): an Afro-pulse groove at 100 BPM, 19.2 s, eight bars.
+"""Synthesises the reel's soundtrack from scratch (no samples, no licensed music): an Afro-pulse groove at 100 BPM, 28.8 s, twelve bars (cut 3).
 Run: python3 audio.py out.wav   (needs numpy)"""
 import sys, wave, numpy as np
-SR=44100; BPM=100; BEAT=60/BPM; STEP=BEAT/4; BARS=8; N=int(SR*BEAT*4*BARS)+SR
+SR=44100; BPM=100; BEAT=60/BPM; STEP=BEAT/4; BARS=12; N=int(SR*BEAT*4*BARS)+SR
 rng=np.random.default_rng(7)
 mix=np.zeros(N,dtype=np.float64)
 def add(sig,t,gain=1.0):
@@ -42,17 +42,18 @@ for bar in range(BARS):
             pass
     if bar>=2:
         for s,r in bassline: add(bass(A*r),t0+s*STEP,.9)
-    if bar in (3,4,5,6):
-        for s,n in mel: add(pluck(NOTE[n]),t0+s*STEP+(STEP*.12 if s%2 else 0),.8 if bar<6 else 1.0)
-    if bar>=6:
+    if bar in (5,6,7,8,9,10):
+        for s,n in mel: add(pluck(NOTE[n]),t0+s*STEP+(STEP*.12 if s%2 else 0),.8 if bar<10 else 1.0)
+    if bar>=10:
         for s in (0,8): add(bass(A*2,.5)*.5,t0+s*STEP,.8)
 add(sweep(0,2.4,True)[:int(.9*SR)],BEAT*4-0.9,.9)      # into the cards
-add(crash(),BEAT*4*3,.9); add(sweep(0,2.4,True)[:int(.9*SR)],BEAT*4*3-0.9,.9)   # into the line
-add(sweep(0,2.4,True)[:int(.9*SR)],BEAT*4*4-0.9,.6)   # into the steps
-add(sweep(0,2.4,True)[:int(.9*SR)],BEAT*4*6-0.9,.9); add(crash(),BEAT*4*6,.9)   # into the close
+SW=sweep(0,2.4,True)[:int(.9*SR)]
+add(SW,3.6*0+11.4-0.9,.9); add(crash(),11.4,.9)      # into the line
+add(SW,18.6-0.9,.6)                                  # into the steps
+add(SW,24.0-0.9,.9); add(crash(),24.0,.9)            # into the close
 # a soft wooden tick on every statement, so the words land on the beat
-for t in (0.0,1.2,2.4,3.6,4.8,6.0,7.2,9.6,10.8,12.0,12.8,13.6,14.4):
-    n=int(.09*SR); tt=np.arange(n)/SR; add(np.sin(2*np.pi*(660 if t not in (7.2,14.4) else 440)*tt)*np.exp(-tt/.02)*.3,t,.7)
+for t in (0.0,1.8,3.6,5.4,7.2,9.0,11.4,15.0,17.4,18.6,20.4,22.2,24.0):
+    n=int(.09*SR); tt=np.arange(n)/SR; add(np.sin(2*np.pi*(660 if t not in (11.4,24.0) else 440)*tt)*np.exp(-tt/.02)*.3,t,.7)
 fade=np.ones(N); L=int(1.2*SR); fade[int(BEAT*4*BARS*SR)-L:int(BEAT*4*BARS*SR)]=np.linspace(1,0,L); fade[int(BEAT*4*BARS*SR):]=0
 mix*=fade
 # gentle limiter and level
